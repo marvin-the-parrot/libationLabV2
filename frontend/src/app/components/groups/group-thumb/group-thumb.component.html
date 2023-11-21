@@ -1,0 +1,10 @@
+<h3>{{group.name}}</h3>
+<p>The host is {{group.host}}</p>
+<h5>Selected Cocktails:</h5>
+<ul>
+  <li *ngFor="let cocktail of group.cocktails">{{cocktail}}</li>
+</ul>
+
+<span>
+  <p>Members: {{group.numMembers}}</p>
+</span>

@@ -1,5 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
-  <a class="navbar-brand ml-lg-5" href="">SE PR Group Phase</a>
+  <a class="navbar-brand ml-lg-5" href="">
+    <img src="assets/images/logo.png" height="50" class="d-inline-block align-top" alt="">
+  </a>
   <button class="navbar-toggler ml-5" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
           aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -13,7 +15,9 @@
     </ul>
     <ul class="navbar-nav mr-5">
       <a class="nav-link" *ngIf="!authService.isLoggedIn()" routerLink="/login" routerLinkActive="active">Login</a>
-      <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/" (click)="authService.logoutUser()">Logout</a>
+      <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/">Cocktails</a>
+      <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/">Ingredients</a>
+      <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/" (click)="authService.logoutUser()">Username</a>
     </ul>
   </div>
 </nav>
