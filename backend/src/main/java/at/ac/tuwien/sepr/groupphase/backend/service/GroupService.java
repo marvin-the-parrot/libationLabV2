@@ -4,7 +4,7 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.Group;
 
 import java.util.List;
 
-import at.ac.tuwien.sepr.groupphase.backend.entity.Member;
+import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 
 public interface GroupService {
 
@@ -15,10 +15,10 @@ public interface GroupService {
      * @return the group entry
      */
         Group findOne(Long id);
-        
+
         Boolean deleteGroup(Long groupId, Long hostId);
-        
+
         Boolean deleteMember(Long groupId, Long hostId, Long memberId);
-        
-        List<Member> searchForMember(Long groupId, String memberName);
+
+        List<UserGroup> searchForMember(Long groupId, String memberName);
 }

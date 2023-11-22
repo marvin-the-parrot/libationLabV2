@@ -21,20 +21,13 @@ public class Group {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private boolean isHost;
-
-    // TODO: change to cockatil entity
-    @Column()
-    private String cocktail;
-
     @ManyToMany
     @JoinTable(
-            name = "member_gruppen",
+            name = "user_groups",
             joinColumns = @JoinColumn(name = "group_id"),
-            inverseJoinColumns = @JoinColumn(name = "member_id"))
-    private Set<Member> members;
-    
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<User> users;
+
     public Long getId() {
         return id;
     }
@@ -51,37 +44,19 @@ public class Group {
         this.name = name;
     }
 
-    public boolean isHost() {
-        return isHost;
-    }
-
-    public void setHost(boolean host) {
-        isHost = host;
-    }
-
-    public String getCocktail() {
-        return cocktail;
-    }
-
-    public void setCocktail(String cocktail) {
-        this.cocktail = cocktail;
-    }
-
-	public Set<Member> getMembers() {
-		return members;
+	public Set<User> getMembers() {
+		return users;
 	}
 
-	public void setMembers(Set<Member> members) {
-		this.members = members;
+	public void setMembers(Set<UserGroup> userGroups) {
+		this.users = users;
 	}
 
     public static final class GroupBuilder {
         private Long id;
         private String name;
-        private boolean isHost;
-        private String cocktail;
-        private Set<Member> members;
-        
+        private Set<UserGroup> groupUsers;
+
         private GroupBuilder() {
         }
 
@@ -99,18 +74,8 @@ public class Group {
             return this;
         }
 
-        public GroupBuilder withIsHost(boolean isHost) {
-            this.isHost = isHost;
-            return this;
-        }
-
-        public GroupBuilder withCocktail(String cocktail) {
-            this.cocktail = cocktail;
-            return this;
-        }
-
-        public GroupBuilder withMembers(Set<Member> members) {
-            this.members = members;
+        public GroupBuilder withMembers(Set<UserGroup> userGroups) {
+            this.groupUsers = userGroups;
             return this;
         }
 
@@ -118,9 +83,7 @@ public class Group {
             Group group = new Group();
             group.setId(id);
             group.setName(name);
-            group.setHost(isHost);
-            group.setCocktail(cocktail);
-            group.setMembers(members);
+            group.setMembers(groupUsers);
             return group;
         }
     }

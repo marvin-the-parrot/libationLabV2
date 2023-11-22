@@ -1,1 +1,27 @@
-<p>group-detail works!</p>
+
+<div class="grid-container">
+  <div class="grid-item-1">
+    <h3>Members</h3>
+    <div class="col-lg-6 mb-2">
+      <app-autocomplete
+        name="memberSelection"
+        textInputClass="form-control"
+        [suggestions]="memberSuggestions"
+        [formatModel]="formatMember"
+        valueNeedsToMatchSuggestion="true"
+        [(ngModel)]="dummyMemberSelectionModel"
+        (ngModelChange)="addMember($event)"
+      >
+      </app-autocomplete>
+    </div>
+    <ul>
+      <!-- TODO   li *ngFor="let member of group.members">{{member.name}}</li-->
+    </ul>
+  </div>
+  <div class="grid-item-2">
+    <h3>Menu</h3>
+  </div>
+  <div class="grid-item-3">
+    <h3>Ingredients</h3>
+  </div>
+</div>

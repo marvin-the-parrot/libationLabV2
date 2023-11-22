@@ -1,5 +1,10 @@
 package at.ac.tuwien.sepr.groupphase.backend.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
 //TODO: replace this class with a correct ApplicationUser Entity implementation
 public class ApplicationUser {
 
