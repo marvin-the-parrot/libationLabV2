@@ -49,4 +49,14 @@ export class GroupsService {
   getById(id: number): Observable<Group> {
     return this.httpClient.get<Group>(`${this.baseUri}/${id}`);
   }
+
+  /**
+   * Gets a members by name and group id.
+   *
+   * @param groupId the id of the group
+   * @param name the name of member
+   */
+  getByName(groupId: number, name: string): Observable<Group> {
+    return this.httpClient.get<Group>(`${this.baseUri}/${groupId}/${name}`);
+  }
 }
