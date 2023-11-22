@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.DetailedMessageDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageInquiryDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.SimpleMessageDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.MessageMapper;
@@ -49,7 +49,7 @@ public class MessageEndpoint {
     @Secured("ROLE_USER")
     @GetMapping(value = "/{id}")
     @Operation(summary = "Get detailed information about a specific message", security = @SecurityRequirement(name = "apiKey"))
-    public DetailedMessageDto find(@PathVariable Long id) {
+    public MessageDetailDto find(@PathVariable Long id) {
         LOGGER.info("GET /api/v1/messages/{}", id);
         return messageMapper.messageToDetailedMessageDto(messageService.findOne(id));
     }
@@ -58,7 +58,7 @@ public class MessageEndpoint {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @Operation(summary = "Publish a new message", security = @SecurityRequirement(name = "apiKey"))
-    public DetailedMessageDto create(@Valid @RequestBody MessageInquiryDto messageDto) {
+    public MessageDetailDto create(@Valid @RequestBody MessageInquiryDto messageDto) {
         LOGGER.info("POST /api/v1/messages body: {}", messageDto);
         return messageMapper.messageToDetailedMessageDto(
             messageService.publishMessage(messageMapper.messageInquiryDtoToMessage(messageDto)));

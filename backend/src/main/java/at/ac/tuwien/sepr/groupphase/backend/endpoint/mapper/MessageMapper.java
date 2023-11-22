@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.DetailedMessageDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageInquiryDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.SimpleMessageDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Message;
@@ -23,9 +23,9 @@ public interface MessageMapper {
     @IterableMapping(qualifiedByName = "simpleMessage")
     List<SimpleMessageDto> messageToSimpleMessageDto(List<Message> message);
 
-    DetailedMessageDto messageToDetailedMessageDto(Message message);
+    MessageDetailDto messageToDetailedMessageDto(Message message);
 
-    Message detailedMessageDtoToMessage(DetailedMessageDto detailedMessageDto);
+    Message detailedMessageDtoToMessage(MessageDetailDto messageDetailDto);
 
     Message messageInquiryDtoToMessage(MessageInquiryDto messageInquiryDto);
 
