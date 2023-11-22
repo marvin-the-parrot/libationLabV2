@@ -11,8 +11,10 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 
 
-
-//TODO: replace this class with a correct ApplicationUser Entity implementation
+/**
+ * Entity of table UserGroups.
+ *
+ */
 @Entity
 @Table(name = "user_groups")
 public class UserGroup {
