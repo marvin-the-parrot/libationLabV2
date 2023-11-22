@@ -14,7 +14,7 @@ public interface GroupRepository extends
     /*@Query("SELECT m FROM Group g JOIN g.members m WHERE g.id = :groupId AND LOWER(m.name) LIKE LOWER(CONCAT('%', :memberName, '%'))")
     List<UserGroup> searchForMembers(@Param("groupId") Long groupId, @Param("memberName") String memberName);
 
-	@Modifying
+    @Modifying
     @Query("DELETE FROM Group g WHERE g.id = :groupId AND :memberId MEMBER OF g.members")
     void removeMemberById(@Param("groupId") Long groupId, @Param("memberId") Long memberId);
 */

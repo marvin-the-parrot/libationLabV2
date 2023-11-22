@@ -1,7 +1,15 @@
 package at.ac.tuwien.sepr.groupphase.backend.entity;
 
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
+
 
 
 //TODO: replace this class with a correct ApplicationUser Entity implementation
@@ -25,28 +33,28 @@ public class UserGroup {
     @Column(name = "is_host")
     private boolean isHost;
 
-	public ApplicationUser getUser() {
-		return applicationUser;
-	}
+    public ApplicationUser getUser() {
+        return applicationUser;
+    }
 
-	public void setUser(ApplicationUser user) {
-		this.applicationUser = user;
-	}
+    public void setUser(ApplicationUser user) {
+        this.applicationUser = user;
+    }
 
-	public ApplicationGroup getGroups() {
-		return applicationGroup;
-	}
+    public ApplicationGroup getGroups() {
+        return applicationGroup;
+    }
 
-	public void setGroups(ApplicationGroup applicationGroup) {
-		this.applicationGroup = applicationGroup;
-	}
+    public void setGroups(ApplicationGroup applicationGroup) {
+        this.applicationGroup = applicationGroup;
+    }
 
-	public boolean isHost() {
-		return isHost;
-	}
+    public boolean isHost() {
+        return isHost;
+    }
 
-	public void setHost(boolean isHost) {
-		this.isHost = isHost;
-	}
+    public void setHost(boolean isHost) {
+        this.isHost = isHost;
+    }
 
 }

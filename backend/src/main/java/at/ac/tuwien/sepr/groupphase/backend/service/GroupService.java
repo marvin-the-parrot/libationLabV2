@@ -14,11 +14,11 @@ public interface GroupService {
      * @param id the id of the group entry
      * @return the group entry
      */
-        ApplicationGroup findOne(Long id);
+    ApplicationGroup findOne(Long id);
 
-        Boolean deleteGroup(Long groupId, Long hostId);
+    Boolean deleteGroup(Long groupId, Long hostId);
 
-        Boolean deleteMember(Long groupId, Long hostId, Long memberId);
+    Boolean deleteMember(Long groupId, Long hostId, Long memberId);
 
-        List<UserGroup> searchForMember(Long groupId, String memberName);
+    List<UserGroup> searchForMember(Long groupId, String memberName);
 }

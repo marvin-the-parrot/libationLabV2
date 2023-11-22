@@ -23,10 +23,10 @@ public class GroupServiceImpl implements GroupService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
-	private GroupRepository groupRepository;
+    private GroupRepository groupRepository;
 
-	@Autowired
-	private MemberRepository memberRepository;
+    @Autowired
+    private MemberRepository memberRepository;
 
     public GroupServiceImpl(GroupRepository groupRepository) {
         this.groupRepository = groupRepository;
@@ -44,48 +44,48 @@ public class GroupServiceImpl implements GroupService {
     }
 
 
-	@Override
-	public Boolean deleteGroup(Long groupId, Long hostId) {
-		Optional<UserGroup> host = memberRepository.findById(hostId);
+    @Override
+    public Boolean deleteGroup(Long groupId, Long hostId) {
+        Optional<UserGroup> host = memberRepository.findById(hostId);
 
-		if(groupRepository.findById(groupId).isEmpty() && isHostExists(host)) {
-			return false;
-		}
+        if (groupRepository.findById(groupId).isEmpty() && isHostExists(host)) {
+            return false;
+        }
 
-		groupRepository.deleteById(groupId);
-		return true;
-	}
+        groupRepository.deleteById(groupId);
+        return true;
+    }
 
-	@Override
-	public Boolean deleteMember(Long groupId, Long hostId, Long memberId) {
-		Optional<UserGroup> host = memberRepository.findById(hostId);
-		Optional<UserGroup> memberToDelete = memberRepository.findById(hostId);
-		Optional<ApplicationGroup> group = groupRepository.findById(groupId);
-		//Set<UserGroup> userGroups = group.get().getMembers();
+    @Override
+    public Boolean deleteMember(Long groupId, Long hostId, Long memberId) {
+        Optional<UserGroup> host = memberRepository.findById(hostId);
+        Optional<UserGroup> memberToDelete = memberRepository.findById(hostId);
+        Optional<ApplicationGroup> group = groupRepository.findById(groupId);
+        //Set<UserGroup> userGroups = group.get().getMembers();
 
         // TODO uncomment
         //if(group.isEmpty() && isHostExists(host) && memberToDelete.isEmpty() && !userGroups.contains(memberToDelete)) {
-        //	return false;
+        //return false;
         //}
 
-	    //	groupRepository. delete member of group
+        //groupRepository. delete member of group
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public List<UserGroup> searchForMember(Long groupId, String memberName) {
+    @Override
+    public List<UserGroup> searchForMember(Long groupId, String memberName) {
         // TODO uncomment
-		/*Optional<Group> group = groupRepository.findById(groupId);
-		if (group.isEmpty()) {
-			return List.of();
-		}
-		return groupRepository.searchForMembers(groupId, memberName);*/
+        /*Optional<Group> group = groupRepository.findById(groupId);
+        if (group.isEmpty()) {
+        return List.of();
+        }
+        return groupRepository.searchForMembers(groupId, memberName);*/
         return null;
-	}
+    }
 
 
-	private boolean isHostExists(Optional<UserGroup> host) {
-		return host.isEmpty() || !host.get().isHost();
-	}
+    private boolean isHostExists(Optional<UserGroup> host) {
+        return host.isEmpty() || !host.get().isHost();
+    }
 }

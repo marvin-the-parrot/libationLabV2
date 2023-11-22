@@ -2,7 +2,13 @@ package at.ac.tuwien.sepr.groupphase.backend.entity;
 
 import java.util.Set;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Column;
+
 
 @Entity
 public class ApplicationGroup {
@@ -33,13 +39,13 @@ public class ApplicationGroup {
         this.name = name;
     }
 
-	public Set<UserGroup> getMembers() {
-		return userGroups;
-	}
+    public Set<UserGroup> getMembers() {
+        return userGroups;
+    }
 
-	public void setMembers(Set<UserGroup> userGroups) {
-		this.userGroups = userGroups;
-	}
+    public void setMembers(Set<UserGroup> userGroups) {
+        this.userGroups = userGroups;
+    }
 
     public static final class GroupBuilder {
         private Long id;
