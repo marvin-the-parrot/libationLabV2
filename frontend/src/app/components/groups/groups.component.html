@@ -1,8 +1,7 @@
-
+<!-- a gallery of the groups a user is in -->
 <section id="gallery" class="gallery">
   <div class="grid-container">
       <app-group-thumb class="thumb" *ngFor="let group of groups" [group]="group"></app-group-thumb>
     <app-group-thumb class="thumb" [group]="null"></app-group-thumb>
   </div>
 </section>
-

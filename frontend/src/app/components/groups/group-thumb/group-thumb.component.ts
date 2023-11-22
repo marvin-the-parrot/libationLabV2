@@ -8,9 +8,6 @@ import {Group} from "../../../dtos/group";
 })
 export class GroupThumbComponent {
 
+  // get the group to display from the parent component
   @Input() group: Group;
-
-  createGroup() {
-    // todo
-  }
 }

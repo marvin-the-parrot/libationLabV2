@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {Group} from "../../dtos/group";
+import {GroupsService} from "../../services/groups.service";
 
 @Component({
   selector: 'app-groups',
@@ -27,7 +28,10 @@ export class GroupsComponent implements OnInit {
     }, {name: "Petra", id: 14}, {name: "Mark", id: 13}, {name: "Rafael", id: 12}])];
 
 
-  constructor(public authService: AuthService) {
+  constructor(
+    public authService: AuthService,
+    public service: GroupsService,
+  ) {
   }
 
   ngOnInit() {
