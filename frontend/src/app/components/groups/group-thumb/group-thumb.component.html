@@ -1,17 +1,22 @@
-
-<a [routerLink]="[group.id, 'detail']">
+<a *ngIf="group !== null" [routerLink]="[group.id, 'detail']">
   <div class="grid-item">
 
-      <h3>{{group.name}}</h3>
-      <p>The host is {{group.host}}</p>
-      <h5>Selected Cocktails:</h5>
-      <ul>
-        <li *ngFor="let cocktail of group.cocktails">{{cocktail}}</li>
-      </ul>
+    <h3>{{group.name}}</h3>
+    <p>The host is {{group.host}}</p>
+    <h5>Selected Cocktails:</h5>
+    <ul>
+      <li *ngFor="let cocktail of group.cocktails">{{cocktail}}</li>
+    </ul>
 
-      <span>
-        <p>Members: {{group.numMembers}}</p>
+    <span>
+        <p>Members: {{group.members.length}}</p>
       </span>
 
+  </div>
+</a>
+<a routerLink="create">
+  <div *ngIf="group === null">
+    <h3>Create new group:</h3>
+    <span class="material-icons">add</span>
   </div>
 </a>

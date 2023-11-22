@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {Group} from "../../../dtos/group";
-import {GroupService} from "../../../services/group.service";
+import {GroupsService} from "../../../services/groups.service";
 import {ActivatedRoute} from "@angular/router";
 
 @Component({
@@ -13,13 +13,13 @@ export class GroupDetailComponent {
   group: Group = {
     id: 1,
     name: 'Cocktail Party',
-    host: 'Mr X',
+    host: {name: 'Mr X', id: 1},
     cocktails: ['Mochito', 'Mai Tai', 'White Russian'],
-    numMembers: 15
+    members: [{name: 'Sep', id: 4}, {name: 'Jan', id: 5}, {name: 'Peter', id: 6}, {name: 'Susanne', id: 7}],
   }
 
   constructor(
-    private service: GroupService,
+    private service: GroupsService,
     private route: ActivatedRoute,
   ) {
   }

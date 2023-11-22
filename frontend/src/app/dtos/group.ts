@@ -1,15 +1,17 @@
-export class Group {
-  id: number;
-  name: string;
-  host: string;
-  cocktails: string[];
-  numMembers: number;
+import {UserListDto} from "./user";
 
-  constructor(id: number, name: string, host: string, cocktails: string[], numMembers: number) {
+export class Group {
+  id?: number;
+  name: string;
+  host: UserListDto;
+  cocktails?: string[];
+  members: UserListDto[];
+
+  constructor(id: number, name: string, host: UserListDto, cocktails: string[], members: UserListDto[]) {
    this.id = id;
    this.name = name;
    this.host = host;
    this.cocktails = cocktails;
-   this.numMembers = numMembers;
+   this.members = members
   }
 }

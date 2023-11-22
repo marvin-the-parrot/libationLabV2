@@ -10,4 +10,7 @@ export class GroupThumbComponent {
 
   @Input() group: Group;
 
+  createGroup() {
+    // todo
+  }
 }
