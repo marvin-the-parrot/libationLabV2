@@ -2,7 +2,7 @@ package at.ac.tuwien.sepr.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepr.groupphase.backend.basetest.TestData;
 import at.ac.tuwien.sepr.groupphase.backend.config.properties.SecurityProperties;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.DetailedMessageDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageInquiryDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.SimpleMessageDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.MessageMapper;
@@ -134,10 +134,10 @@ public class MessageEndpointTest implements TestData {
             () -> assertEquals(MediaType.APPLICATION_JSON_VALUE, response.getContentType())
         );
 
-        DetailedMessageDto detailedMessageDto = objectMapper.readValue(response.getContentAsString(),
-            DetailedMessageDto.class);
+        MessageDetailDto messageDetailDto = objectMapper.readValue(response.getContentAsString(),
+            MessageDetailDto.class);
 
-        assertEquals(message, messageMapper.detailedMessageDtoToMessage(detailedMessageDto));
+        assertEquals(message, messageMapper.detailedMessageDtoToMessage(messageDetailDto));
     }
 
     @Test
@@ -169,8 +169,8 @@ public class MessageEndpointTest implements TestData {
         assertEquals(HttpStatus.CREATED.value(), response.getStatus());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, response.getContentType());
 
-        DetailedMessageDto messageResponse = objectMapper.readValue(response.getContentAsString(),
-            DetailedMessageDto.class);
+        MessageDetailDto messageResponse = objectMapper.readValue(response.getContentAsString(),
+            MessageDetailDto.class);
 
         assertNotNull(messageResponse.getId());
         assertNotNull(messageResponse.getPublishedAt());

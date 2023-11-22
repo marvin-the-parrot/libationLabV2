@@ -12,6 +12,11 @@ import {LoginComponent} from './components/login/login.component';
 import {MessageComponent} from './components/message/message.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {httpInterceptorProviders} from './interceptors';
+import { GroupsComponent } from './components/groups/groups.component';
+import { GroupThumbComponent } from './components/groups/group-thumb/group-thumb.component';
+import { GroupCreateEditComponent } from './components/groups/group-create-edit/group-create-edit.component';
+import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
+import { GroupDetailComponent } from './components/groups/group-detail/group-detail.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +26,11 @@ import {httpInterceptorProviders} from './interceptors';
     HomeComponent,
     LoginComponent,
     MessageComponent,
+    GroupsComponent,
+    GroupThumbComponent,
+    GroupCreateEditComponent,
+    AutocompleteComponent,
+    GroupDetailComponent,
   ],
   imports: [
     BrowserModule,

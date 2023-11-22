@@ -3,7 +3,7 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class DetailedMessageDto extends SimpleMessageDto {
+public class MessageDetailDto extends SimpleMessageDto {
 
     private String text;
 
@@ -20,7 +20,7 @@ public class DetailedMessageDto extends SimpleMessageDto {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof DetailedMessageDto that)) {
+        if (!(o instanceof MessageDetailDto that)) {
             return false;
         }
         if (!super.equals(o)) {
@@ -81,14 +81,14 @@ public class DetailedMessageDto extends SimpleMessageDto {
             return this;
         }
 
-        public DetailedMessageDto build() {
-            DetailedMessageDto detailedMessageDto = new DetailedMessageDto();
-            detailedMessageDto.setId(id);
-            detailedMessageDto.setPublishedAt(publishedAt);
-            detailedMessageDto.setText(text);
-            detailedMessageDto.setTitle(title);
-            detailedMessageDto.setSummary(summary);
-            return detailedMessageDto;
+        public MessageDetailDto build() {
+            MessageDetailDto messageDetailDto = new MessageDetailDto();
+            messageDetailDto.setId(id);
+            messageDetailDto.setPublishedAt(publishedAt);
+            messageDetailDto.setText(text);
+            messageDetailDto.setTitle(title);
+            messageDetailDto.setSummary(summary);
+            return messageDetailDto;
         }
     }
 }

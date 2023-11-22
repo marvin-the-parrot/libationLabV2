@@ -1,0 +1,76 @@
+<h1 class="display-1">{{heading}}</h1>
+
+<form #form="ngForm" [class.was-validated]="form.submitted" (ngSubmit)="onSubmit(form)">
+  <div class="row">
+    <div class="mb-2 col-lg-6">
+      <!-- When nesting rows, always make row > col-* > row. The Bootstrap classes do not work right when an element is both col* and row -->
+      <div class="row">
+        <label for="groupName" class="col-form-label text-md-end text-muted col-md-2 col-lg-4">
+          Name
+        </label>
+        <div class="col-md-10 col-lg-8">
+          <input type="text"
+                 id="groupName"
+                 name="groupName"
+                 placeholder="Group name"
+                 class="form-control"
+                 [class]="dynamicCssClassesForInput(groupNameModel)"
+                 [(ngModel)]="group.name"
+                 #groupNameModel="ngModel"
+                 required
+          >
+          <div class="invalid-feedback">
+            <!-- This is shown, when the form validation deems the name input to be invalid -->
+            Name is required
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- select members -->
+  <div>
+    <h2>Members</h2>
+    <div class="row">
+      <div class="col-lg-6 mb-2">
+        <app-autocomplete
+          name="memberSelection"
+          textInputClass="form-control"
+          [suggestions]="memberSuggestions"
+          [formatModel]="formatMember"
+          valueNeedsToMatchSuggestion="true"
+          [(ngModel)]="dummyMemberSelectionModel"
+          (ngModelChange)="addMember($event)"
+        >
+        </app-autocomplete>
+      </div>
+
+      <div class="col-lg-6">
+        <table class="table align-baseline">
+          <tbody>
+          <tr *ngFor="let member of group.members; index as i">
+            <td>{{i}}:</td>
+            <td>{{formatMember(member)}}</td>
+            <td class="min-width">
+              <!-- Make button just hidden, when no participant is present, to keep layout correct -->
+              <button type="button"
+                      class="btn btn-light ms-2"
+                      (click)="removeMember(i)"
+                      [style.visibility]="member ? 'visible' : 'hidden'">
+                <i class="bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4 d-flex flex-row">
+    <button type="submit"
+            class="btn btn-primary"
+            [disabled]="!form.valid">{{submitButtonText}}</button>
+  </div>
+
+</form>
