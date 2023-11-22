@@ -59,4 +59,26 @@ export class GroupsService {
   getByName(groupId: number, name: string): Observable<Group> {
     return this.httpClient.get<Group>(`${this.baseUri}/${groupId}/${name}`);
   }
+
+  /**
+   * Delete a Group by its id.
+   *
+   * @param groupId the id of the group
+   * @param hostId the id of host
+   */
+  deleteById(groupId: number, hostId: number): void {
+    this.httpClient.delete<Group>(`${this.baseUri}/${groupId}/${hostId}`);
+  }
+
+  /**
+   * Delete a member of Group by its id.
+   *
+   * @param id the id of the group
+   * @param memberId the id of member to delete
+   * @param hostId the id of host
+   */
+  deleteByMemberByIdAndGroupId(groupId: number, memberId: number, hostId: number): void {
+    this.httpClient.delete<Group>(`${this.baseUri}/${groupId}/${memberId}/${hostId}`);
+  }
+
 }
