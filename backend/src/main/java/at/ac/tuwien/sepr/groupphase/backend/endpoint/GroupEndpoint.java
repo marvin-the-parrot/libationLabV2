@@ -2,7 +2,7 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
-import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
@@ -10,7 +10,7 @@ import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.lang.invoke.MethodHandles;
-import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,8 +107,9 @@ public class GroupEndpoint {
   */
   @RequestMapping(value = "searchGroupMember/{groupId}/{memberName}", method = RequestMethod.GET)
   @ResponseStatus(HttpStatus.OK)
-  public List<UserGroup> searchGroupMember(@PathVariable Long groupId,
+  public Optional<ApplicationUser> searchGroupMember(@PathVariable Long groupId,
       @PathVariable String memberName) {
+    LOGGER.info("GET " + BASE_PATH + "/{}", groupId, memberName);
     return groupService.searchForMember(groupId, memberName);
   }
 

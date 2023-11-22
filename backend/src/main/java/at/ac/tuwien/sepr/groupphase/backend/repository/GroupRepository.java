@@ -1,21 +1,27 @@
 package at.ac.tuwien.sepr.groupphase.backend.repository;
 
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+import jakarta.transaction.Transactional;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import jakarta.transaction.Transactional;
 
+/**
+ * Repository of Group entity.
+ *
+ */
 @Repository
 @Transactional
 public interface GroupRepository extends
     JpaRepository<ApplicationGroup, Long> {
-    // TODO uncomment
-    /*@Query("SELECT m FROM Group g JOIN g.members m WHERE g.id = :groupId AND LOWER(m.name) LIKE LOWER(CONCAT('%', :memberName, '%'))")
-    List<UserGroup> searchForMembers(@Param("groupId") Long groupId, @Param("memberName") String memberName);
 
-    @Modifying
-    @Query("DELETE FROM Group g WHERE g.id = :groupId AND :memberId MEMBER OF g.members")
-    void removeMemberById(@Param("groupId") Long groupId, @Param("memberId") Long memberId);
-*/
+  @Query("SELECT ug.applicationUser FROM UserGroup ug "
+      + "WHERE ug.applicationGroup.id = :groupId AND ug.applicationGroup.name LIKE %:partialName%")
+  Optional<ApplicationUser> searchForMembers(@Param("groupId") Long groupId, 
+      @Param("partialName") String memberName);
+
 }

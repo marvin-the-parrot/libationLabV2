@@ -1,8 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
-import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
-import java.util.List;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+import java.util.Optional;
 
 
 /**
@@ -42,5 +42,5 @@ public interface GroupService {
   * @param groupId the id of the group
   * @param memberName the id of the member of group 
   */
-  List<UserGroup> searchForMember(Long groupId, String memberName);
+  Optional<ApplicationUser> searchForMember(Long groupId, String memberName);
 }

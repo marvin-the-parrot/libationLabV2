@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
@@ -8,7 +9,6 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.MemberRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import java.lang.invoke.MethodHandles;
-import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +54,7 @@ public class GroupServiceImpl implements GroupService {
 
   @Override
   public void deleteGroup(Long groupId, Long hostId) {
+    LOGGER.debug("Delete group by host with group id {}", groupId, hostId);
     Optional<UserGroup> host = memberRepository.findById(hostId);
     if (isHostExists(host)) {
       groupRepository.deleteById(groupId);
@@ -62,8 +63,11 @@ public class GroupServiceImpl implements GroupService {
     }
   }
 
+  @SuppressWarnings("unlikely-arg-type")
   @Override
   public void deleteMember(Long groupId, Long hostId, Long memberId) {
+    LOGGER.debug("Delete group member by host with group and member id {}", 
+        groupId, hostId, memberId);
     ApplicationGroup group = groupRepository.findById(groupId).orElse(null);
     Optional<UserGroup> host = memberRepository.findById(hostId);
     if (!isHostExists(host)) {
@@ -84,14 +88,9 @@ public class GroupServiceImpl implements GroupService {
   }
 
   @Override
-  public List<UserGroup> searchForMember(Long groupId, String memberName) {
-        // TODO uncomment
-        /*Optional<Group> group = groupRepository.findById(groupId);
-        if (group.isEmpty()) {
-        return List.of();
-        }
-        return groupRepository.searchForMembers(groupId, memberName);*/
-    return null;
+  public Optional<ApplicationUser> searchForMember(Long groupId, String memberName) {
+    LOGGER.debug("Search for member in group, by member name and group id {}", groupId, memberName);
+    return groupRepository.searchForMembers(groupId, memberName);
   }
 
 
