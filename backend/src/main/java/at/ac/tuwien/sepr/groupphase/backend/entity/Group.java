@@ -1,6 +1,15 @@
 package at.ac.tuwien.sepr.groupphase.backend.entity;
 
-import jakarta.persistence.*;
+import java.util.Set;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 
 @Entity
 public class Group {
@@ -19,10 +28,13 @@ public class Group {
     @Column()
     private String cocktail;
 
-    // TODO: many to many relationship with user
-    @Column(nullable = false)
-    private Long membersId;
-
+    @ManyToMany
+    @JoinTable(
+            name = "member_gruppen",
+            joinColumns = @JoinColumn(name = "group_id"),
+            inverseJoinColumns = @JoinColumn(name = "member_id"))
+    private Set<Member> members;
+    
     public Long getId() {
         return id;
     }
@@ -55,33 +67,21 @@ public class Group {
         this.cocktail = cocktail;
     }
 
-    public Long getMembersId() {
-        return membersId;
-    }
+	public Set<Member> getMembers() {
+		return members;
+	}
 
-    public void setMembersId(Long membersId) {
-        this.membersId = membersId;
-    }
-
-    @Override
-    public String toString() {
-        return "Message{"
-            + "id=" + id
-            + ", name=" + name
-            + ", host='" + isHost + '\''
-            + ", cocktails='" + cocktail + '\''
-            + ", members='" + membersId + '\''
-            + '}';
-    }
-
+	public void setMembers(Set<Member> members) {
+		this.members = members;
+	}
 
     public static final class GroupBuilder {
         private Long id;
         private String name;
         private boolean isHost;
         private String cocktail;
-        private Long membersId;
-
+        private Set<Member> members;
+        
         private GroupBuilder() {
         }
 
@@ -109,8 +109,8 @@ public class Group {
             return this;
         }
 
-        public GroupBuilder withMembersId(Long membersId) {
-            this.membersId = membersId;
+        public GroupBuilder withMembers(Set<Member> members) {
+            this.members = members;
             return this;
         }
 
@@ -120,8 +120,9 @@ public class Group {
             group.setName(name);
             group.setHost(isHost);
             group.setCocktail(cocktail);
-            group.setMembersId(membersId);
+            group.setMembers(members);
             return group;
         }
     }
+
 }
