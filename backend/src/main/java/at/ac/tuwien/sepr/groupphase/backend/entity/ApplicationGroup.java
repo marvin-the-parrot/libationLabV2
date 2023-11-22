@@ -13,7 +13,7 @@ import java.util.Set;
  *
  */
 @Entity
-public class Group {
+public class ApplicationGroup {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
