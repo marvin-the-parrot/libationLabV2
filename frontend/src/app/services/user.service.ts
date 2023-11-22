@@ -2,6 +2,7 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 import {Globals} from "../global/globals";
 import {Injectable} from "@angular/core";
 import {UserListDto, UserSearch} from "../dtos/user";
+import {CreateAccount} from "../dtos/create-account";
 import {Observable} from "rxjs";
 
 @Injectable({
@@ -32,5 +33,15 @@ export class UserService {
       params = params.append('limit', searchParams.limit);
     }
     return this.httpClient.get<UserListDto[]>(this.baseUri, {params});
+  }
+
+  /**
+   * create a new user
+   * @param user the user to create
+   * @return an Observable for the created user
+   */
+  create(user: CreateAccount): Observable<UserListDto> {
+    console.log("creating user")
+    return this.httpClient.post<UserListDto>(this.baseUri, user);
   }
 }
