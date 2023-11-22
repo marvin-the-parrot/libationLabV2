@@ -14,6 +14,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {httpInterceptorProviders} from './interceptors';
 import { GroupsComponent } from './components/groups/groups.component';
 import { GroupThumbComponent } from './components/groups/group-thumb/group-thumb.component';
+import { GroupDetailComponent } from './components/groups/group-detail/group-detail.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { GroupThumbComponent } from './components/groups/group-thumb/group-thumb
     MessageComponent,
     GroupsComponent,
     GroupThumbComponent,
+    GroupDetailComponent,
   ],
   imports: [
     BrowserModule,
