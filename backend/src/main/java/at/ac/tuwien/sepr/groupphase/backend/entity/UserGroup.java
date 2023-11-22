@@ -15,30 +15,30 @@ public class UserGroup {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("user_id")
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private ApplicationUser applicationUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("group_id")
     @JoinColumn(name = "group_id", nullable = false)
-    private Group groups;
+    private ApplicationGroup applicationGroup;
 
     @Column(name = "is_host")
     private boolean isHost;
 
-	public User getUser() {
-		return user;
+	public ApplicationUser getUser() {
+		return applicationUser;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUser(ApplicationUser user) {
+		this.applicationUser = user;
 	}
 
-	public Group getGroups() {
-		return groups;
+	public ApplicationGroup getGroups() {
+		return applicationGroup;
 	}
 
-	public void setGroups(Group groups) {
-		this.groups = groups;
+	public void setGroups(ApplicationGroup applicationGroup) {
+		this.applicationGroup = applicationGroup;
 	}
 
 	public boolean isHost() {

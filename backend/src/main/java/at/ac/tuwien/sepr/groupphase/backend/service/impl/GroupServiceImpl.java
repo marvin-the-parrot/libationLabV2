@@ -1,10 +1,10 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import at.ac.tuwien.sepr.groupphase.backend.entity.Group;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.util.Optional;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class GroupServiceImpl implements GroupService {
@@ -34,9 +33,9 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Group findOne(Long id) {
+    public ApplicationGroup findOne(Long id) {
         LOGGER.debug("Find group with id {}", id);
-        Optional<Group> group = groupRepository.findById(id);
+        Optional<ApplicationGroup> group = groupRepository.findById(id);
         if (group.isPresent()) {
             return group.get();
         } else {
@@ -61,7 +60,7 @@ public class GroupServiceImpl implements GroupService {
 	public Boolean deleteMember(Long groupId, Long hostId, Long memberId) {
 		Optional<UserGroup> host = memberRepository.findById(hostId);
 		Optional<UserGroup> memberToDelete = memberRepository.findById(hostId);
-		Optional<Group> group = groupRepository.findById(groupId);
+		Optional<ApplicationGroup> group = groupRepository.findById(groupId);
 		//Set<UserGroup> userGroups = group.get().getMembers();
 
         // TODO uncomment
@@ -69,7 +68,7 @@ public class GroupServiceImpl implements GroupService {
         //	return false;
         //}
 
-	//	groupRepository. delete member of group
+	    //	groupRepository. delete member of group
 
 		return true;
 	}

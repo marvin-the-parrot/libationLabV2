@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
-import at.ac.tuwien.sepr.groupphase.backend.entity.Group;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public interface GroupService {
      * @param id the id of the group entry
      * @return the group entry
      */
-        Group findOne(Long id);
+        ApplicationGroup findOne(Long id);
 
         Boolean deleteGroup(Long groupId, Long hostId);
 

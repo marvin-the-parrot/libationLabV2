@@ -5,7 +5,7 @@ import java.util.Set;
 import jakarta.persistence.*;
 
 @Entity
-public class Group {
+public class ApplicationGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,12 +14,8 @@ public class Group {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "group")
-    @JoinTable(
-            name = "user_groups",
-            joinColumns = @JoinColumn(name = "group_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<UserGroup> groupUsers;
+    @OneToMany(mappedBy = "applicationGroup")
+    private Set<UserGroup> userGroups;
 
     public Long getId() {
         return id;
@@ -38,11 +34,11 @@ public class Group {
     }
 
 	public Set<UserGroup> getMembers() {
-		return groupUsers;
+		return userGroups;
 	}
 
 	public void setMembers(Set<UserGroup> userGroups) {
-		this.groupUsers = userGroups;
+		this.userGroups = userGroups;
 	}
 
     public static final class GroupBuilder {
@@ -72,12 +68,12 @@ public class Group {
             return this;
         }
 
-        public Group build() {
-            Group group = new Group();
-            group.setId(id);
-            group.setName(name);
-            group.setMembers(groupUsers);
-            return group;
+        public ApplicationGroup build() {
+            ApplicationGroup applicationGroup = new ApplicationGroup();
+            applicationGroup.setId(id);
+            applicationGroup.setName(name);
+            applicationGroup.setMembers(groupUsers);
+            return applicationGroup;
         }
     }
 
