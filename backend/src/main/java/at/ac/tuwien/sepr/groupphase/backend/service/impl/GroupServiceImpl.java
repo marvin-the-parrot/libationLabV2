@@ -5,6 +5,7 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.MemberRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
@@ -12,7 +13,9 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Group service implementation.
@@ -30,6 +33,9 @@ public class GroupServiceImpl implements GroupService {
   @Autowired
   private MemberRepository memberRepository;
 
+  @Autowired
+  private UserGroupRepository userGroupRepository;
+  
   public GroupServiceImpl(GroupRepository groupRepository) {
     this.groupRepository = groupRepository;
   }
@@ -49,25 +55,32 @@ public class GroupServiceImpl implements GroupService {
   @Override
   public void deleteGroup(Long groupId, Long hostId) {
     Optional<UserGroup> host = memberRepository.findById(hostId);
-    if (groupRepository.findById(groupId).isEmpty() && isHostExists(host)) {
+    if (isHostExists(host)) {
       groupRepository.deleteById(groupId);
+    } else {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
   }
 
   @Override
   public void deleteMember(Long groupId, Long hostId, Long memberId) {
+    ApplicationGroup group = groupRepository.findById(groupId).orElse(null);
     Optional<UserGroup> host = memberRepository.findById(hostId);
-    Optional<UserGroup> memberToDelete = memberRepository.findById(hostId);
-    Optional<ApplicationGroup> group = groupRepository.findById(groupId);
-    //Set<UserGroup> userGroups = group.get().getMembers();
+    if (!isHostExists(host)) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
+    if (group != null) {
+      UserGroup userToRemove = group.getMembers().stream()
+          .filter(user -> user.getUser().getId().equals(memberId))
+          .findFirst()
+          .orElse(null);
 
-    // TODO uncomment
-    //if(group.isEmpty() && isHostExists(host) && memberToDelete.isEmpty() && !userGroups.contains(memberToDelete)) {
-    //return false;
-    //}
-
-    //groupRepository. delete member of group
-
+      if (userToRemove != null) {
+        group.getMembers().remove(userToRemove.getUser());
+        groupRepository.save(group);
+      }
+    }  
+    userGroupRepository.deleteByUserIdAndGroupId(memberId, groupId);
   }
 
   @Override

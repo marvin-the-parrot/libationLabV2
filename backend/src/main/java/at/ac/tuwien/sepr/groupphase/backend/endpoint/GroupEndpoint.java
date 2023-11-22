@@ -88,7 +88,14 @@ public class GroupEndpoint {
   @Operation(security = @SecurityRequirement(name = "apiKey"))
   public void deleteMemberOfGroup(@PathVariable Long groupId, 
       @PathVariable Long memberId, @PathVariable Long hostId) {
-    groupService.deleteMember(groupId, hostId, memberId); 
+    LOGGER.info("DELETE " + BASE_PATH + "/{}", groupId, memberId, hostId);
+    try {
+      groupService.deleteMember(groupId, hostId, memberId); 
+    } catch (NotFoundException e) {
+      HttpStatus status = HttpStatus.NOT_FOUND;
+      logClientError(status, "Group to delete not found", e);
+      throw new ResponseStatusException(status, e.getMessage(), e);
+    }
   }
 
   /**
