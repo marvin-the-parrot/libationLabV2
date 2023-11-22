@@ -2,14 +2,7 @@ package at.ac.tuwien.sepr.groupphase.backend.entity;
 
 import java.util.Set;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 
 @Entity
 public class Group {
@@ -21,12 +14,12 @@ public class Group {
     @Column(nullable = false)
     private String name;
 
-    @ManyToMany
+    @OneToMany(mappedBy = "group")
     @JoinTable(
             name = "user_groups",
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> users;
+    private Set<UserGroup> groupUsers;
 
     public Long getId() {
         return id;
@@ -44,12 +37,12 @@ public class Group {
         this.name = name;
     }
 
-	public Set<User> getMembers() {
-		return users;
+	public Set<UserGroup> getMembers() {
+		return groupUsers;
 	}
 
 	public void setMembers(Set<UserGroup> userGroups) {
-		this.users = users;
+		this.groupUsers = userGroups;
 	}
 
     public static final class GroupBuilder {

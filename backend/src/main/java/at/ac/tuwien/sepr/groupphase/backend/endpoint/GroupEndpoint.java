@@ -43,13 +43,13 @@ public class GroupEndpoint {
         return groupMapper.groupToGroupDetailDto(groupService.findOne(id));
     }
 
-    @RequestMapping(value = "deleteGroup/{groupId}/{hostId}",method = RequestMethod.DELETE)
+    @RequestMapping(value = "deleteGroup/{groupId}/{hostId}", method = RequestMethod.DELETE)
 	@ResponseStatus(HttpStatus.OK)
 	  public Boolean deleteGroup(@PathVariable Long groupId, @PathVariable Long hostId) {
 	    return groupService.deleteGroup(groupId, hostId);
 	  }
 
-	@RequestMapping(value = "deleteMemberOfGroup/{groupId}/{hostId}/{memberId}",method = RequestMethod.DELETE)
+	@RequestMapping(value = "deleteMemberOfGroup/{groupId}/{hostId}/{memberId}", method = RequestMethod.DELETE)
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean deleteMemberOfGroup(@PathVariable Long groupId, @PathVariable Long hostId, @PathVariable Long memberId) {
 	  return groupService.deleteMember(groupId, hostId, memberId);

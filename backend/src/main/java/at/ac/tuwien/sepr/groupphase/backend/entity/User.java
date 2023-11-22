@@ -20,8 +20,8 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @ManyToMany(mappedBy = "users")
-    private Set<Group> groups;
+    @OneToMany(mappedBy = "users")
+    private Set<UserGroup> groups;
 
     public Long getId() {
         return id;
@@ -55,11 +55,11 @@ public class User {
         this.password = password;
     }
 
-    public Set<Group> getGroups() {
+    public Set<UserGroup> getGroups() {
         return groups;
     }
 
-    public void setGroups(Set<Group> groups) {
+    public void setGroups(Set<UserGroup> groups) {
         this.groups = groups;
     }
 }
