@@ -13,11 +13,11 @@ import java.io.Serializable;
 @Embeddable
 public class UserGroupKey implements Serializable {
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
-  private User user;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private ApplicationUser user;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "group_id")
-  private Group group;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id")
+    private ApplicationUser group;
 }
