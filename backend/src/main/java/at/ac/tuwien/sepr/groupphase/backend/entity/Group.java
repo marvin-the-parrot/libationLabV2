@@ -5,9 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import java.util.Set;
 
 /**
@@ -24,12 +22,8 @@ public class Group {
   @Column(nullable = false)
   private String name;
 
-  @ManyToMany
-  @JoinTable(
-      name = "user_groups",
-      joinColumns = @JoinColumn(name = "group_id"),
-      inverseJoinColumns = @JoinColumn(name = "user_id"))
-  private Set<User> users;
+  @OneToMany(mappedBy = "id.group")
+  private Set<UserGroup> groupUsers;
 
   public Long getId() {
     return id;
@@ -47,12 +41,12 @@ public class Group {
     this.name = name;
   }
 
-  public Set<User> getMembers() {
-    return users;
+  public Set<UserGroup> getMembers() {
+    return groupUsers;
   }
 
-  public void setMembers(Set<User> users) {
-    this.users = users;
+  public void setMembers(Set<UserGroup> userGroups) {
+    this.groupUsers = userGroups;
   }
 
   public static final class GroupBuilder {
@@ -86,7 +80,7 @@ public class Group {
       Group group = new Group();
       group.setId(id);
       group.setName(name);
-      //group.setMembers(groupUsers); //TODO - should be User
+      group.setMembers(groupUsers); 
       return group;
     }
   }

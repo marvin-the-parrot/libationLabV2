@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import java.util.Set;
 
 /**
@@ -28,8 +28,8 @@ public class User {
   @Column(nullable = false)
   private String password;
 
-  @ManyToMany(mappedBy = "users")
-  private Set<Group> groups;
+  @OneToMany(mappedBy = "id.user")
+  private Set<UserGroup> groups;
 
   public Long getId() {
     return id;
@@ -63,11 +63,12 @@ public class User {
     this.password = password;
   }
 
-  public Set<Group> getGroups() {
+  public Set<UserGroup> getGroups() {
     return groups;
   }
 
-  public void setGroups(Set<Group> groups) {
+  public void setGroups(Set<UserGroup> groups) {
     this.groups = groups;
   }
+
 }

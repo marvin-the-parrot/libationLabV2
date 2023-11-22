@@ -1,29 +1,36 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
-import java.util.List;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.invoke.MethodHandles;
+import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v1/groups")
+@RequestMapping(path = GroupEndpoint.BASE_PATH)
 public class GroupEndpoint {
+
+    static final String BASE_PATH = "/api/v1/groups";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final GroupService groupService;
@@ -43,21 +50,36 @@ public class GroupEndpoint {
         return groupMapper.groupToGroupDetailDto(groupService.findOne(id));
     }
 
-    @RequestMapping(value = "deleteGroup/{groupId}/{hostId}",method = RequestMethod.DELETE)
-	@ResponseStatus(HttpStatus.OK)
-	  public Boolean deleteGroup(@PathVariable Long groupId, @PathVariable Long hostId) {
-	    return groupService.deleteGroup(groupId, hostId);
-	  }
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(security = @SecurityRequirement(name = "apiKey"))
+    public void delete(@PathVariable Long id) throws ValidationException, ConflictException {
+        LOGGER.info("DELETE " + BASE_PATH + "/{}", id);
+        try {
+            // todo: throw exceptions to indicate errors instead of returning false. eg: `void delete(long id) throws NotFoundException, ConflictException;`
+            groupService.deleteGroup(id, 0L); // todo: if host is necessary, get it from the database (we can not trust users to not alter the request)
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Group to delete not found", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
 
-	@RequestMapping(value = "deleteMemberOfGroup/{groupId}/{hostId}/{memberId}",method = RequestMethod.DELETE)
-	@ResponseStatus(HttpStatus.OK)
-	public Boolean deleteMemberOfGroup(@PathVariable Long groupId, @PathVariable Long hostId, @PathVariable Long memberId) {
-	  return groupService.deleteMember(groupId, hostId, memberId);
-	}
+    @DeleteMapping("{groupId}/{memberId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(security = @SecurityRequirement(name = "apiKey"))
+    public void deleteMemberOfGroup(@PathVariable Long groupId, @PathVariable Long memberId) {
+        groupService.deleteMember(groupId, 0L, memberId); // todo: handle delete member like delete group (see above)
+    }
 
-	@RequestMapping(value = "searchGroupMember/{groupId}/{memberName}", method = RequestMethod.GET)
-	@ResponseStatus(HttpStatus.OK)
-	public List<UserGroup> searchGroupMember(@PathVariable Long groupId, @PathVariable String memberName) {
-	  return groupService.searchForMember(groupId, memberName);
-	}
+    @RequestMapping(value = "searchGroupMember/{groupId}/{memberName}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public List<UserGroup> searchGroupMember(@PathVariable Long groupId, @PathVariable String memberName) {
+        return groupService.searchForMember(groupId, memberName);
+    }
+
+
+    private void logClientError(HttpStatus status, String message, Exception e) {
+        LOGGER.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
+    }
 }
