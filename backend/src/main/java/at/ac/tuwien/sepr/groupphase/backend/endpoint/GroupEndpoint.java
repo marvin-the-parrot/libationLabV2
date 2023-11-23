@@ -9,10 +9,6 @@ import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-
-import java.lang.invoke.MethodHandles;
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +17,16 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.lang.invoke.MethodHandles;
+import java.util.Optional;
 
 /**
  * Group endpoint controller.
@@ -54,6 +55,23 @@ public class GroupEndpoint {
     public GroupDetailDto find(@PathVariable Long id) {
         LOGGER.info("GET /api/v1/groups/{}", id);
         return groupMapper.groupToGroupDetailDto(groupService.findOne(id));
+    }
+
+    /**
+     * Creating a new group entry.
+     *
+     * @param toCreate the group entry to create
+     * @return the created group entry
+     * @throws ValidationException if the data is not valid
+     * @throws ConflictException  if the data conflicts with existing data
+     */
+    @PostMapping()
+    @Operation(security = @SecurityRequirement(name = "apiKey"))
+    @ResponseStatus(HttpStatus.CREATED)
+    public GroupDetailDto create(@RequestBody GroupDetailDto toCreate) throws ValidationException, ConflictException {
+        LOGGER.info("POST " + BASE_PATH + "/{}", toCreate);
+        LOGGER.debug("Body of request:\n{}", toCreate);
+        return groupService.create(toCreate);
     }
 
     /**

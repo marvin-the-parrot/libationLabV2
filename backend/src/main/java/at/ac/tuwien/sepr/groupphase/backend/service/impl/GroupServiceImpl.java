@@ -1,9 +1,12 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.MemberRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
@@ -12,6 +15,7 @@ import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import java.lang.invoke.MethodHandles;
 import java.util.Optional;
 
+import at.ac.tuwien.sepr.groupphase.backend.service.validators.GroupValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +41,11 @@ public class GroupServiceImpl implements GroupService {
     @Autowired
     private UserGroupRepository userGroupRepository;
 
-    public GroupServiceImpl(GroupRepository groupRepository) {
+    private final GroupValidator validator;
+
+    public GroupServiceImpl(GroupRepository groupRepository, GroupValidator validator) {
         this.groupRepository = groupRepository;
+        this.validator = validator;
     }
 
     @Override
@@ -92,6 +99,14 @@ public class GroupServiceImpl implements GroupService {
     public Optional<ApplicationUser> searchForMember(Long groupId, String memberName) {
         LOGGER.debug("Search for member in group, by member name and group id {}", groupId, memberName);
         return groupRepository.searchForMembers(groupId, memberName);
+    }
+
+    @Override
+    public GroupDetailDto create(GroupDetailDto toCreate) throws ValidationException, ConflictException {
+        LOGGER.trace("create({})", toCreate);
+        validator.validateForCreate(toCreate);
+        // todo save group in database
+        return null; // todo return created group
     }
 
 
