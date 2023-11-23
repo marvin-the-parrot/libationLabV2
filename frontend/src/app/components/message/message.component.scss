@@ -1,0 +1,40 @@
+
+h5 {
+  display: inline-block;
+}
+
+h6 {
+  display: inline-block;
+}
+
+.card-text {
+  display: inline-block;
+}
+
+.card-buttons {
+  display: inline-block;
+}
+
+.card-deck {
+  border: solid 1px #ccc;
+  border-radius: 0;
+}
+
+.card {
+  border: solid 2px #ccc;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  border-radius: 0 4px 4px 0;
+}
+
+.btn-info {
+  background-color: green;
+  border-color: green;
+}
+
+h2 {
+  padding-bottom: 10px;
+}
