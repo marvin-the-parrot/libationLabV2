@@ -149,7 +149,7 @@ public class GroupEndpoint {
     @RequestMapping(value = "searchGroupMember/{groupId}/{memberName}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Optional<ApplicationUser> searchGroupMember(@PathVariable Long groupId, @PathVariable String memberName) {
-        LOGGER.info("GET " + BASE_PATH + "/{}", groupId, memberName);
+        LOGGER.info("GET " + BASE_PATH + "searchGroupMember/{}", groupId, memberName);
         return groupService.searchForMember(groupId, memberName);
     }
 
