@@ -25,7 +25,7 @@ public class GroupValidator {
      *
      * @param toCreate the group to create
      * @throws ValidationException if the create data given for the group is in itself incorrect (no name, name too long …)
-     * @throws ConflictException if the create data given for the group is in conflict the data currently in the system (group member does not exist, …)
+     * @throws ConflictException   if the create data given for the group is in conflict the data currently in the system (group member does not exist, …)
      */
     public void validateForCreate(GroupDetailDto toCreate) throws ValidationException, ConflictException {
         LOGGER.trace("validateForCreate({})", toCreate);
@@ -38,6 +38,25 @@ public class GroupValidator {
 
         // todo: check for possible conflicts (eg. group member does not exist)
 
+    }
+
+    /**
+     * Validates a group that should get updated.
+     *
+     * @param toUpdate the group to update
+     * @throws ValidationException if the update data given for the group is in itself incorrect (no name, name too long …)
+     * @throws ConflictException  if the update data given for the group is in conflict the data currently in the system (group member does not exist, …)
+     */
+    public void validateForUpdate(GroupDetailDto toUpdate) throws ValidationException, ConflictException {
+        LOGGER.trace("validateForUpdate({})", toUpdate);
+
+        List<String> validationErrors = getValidationErrors(toUpdate);
+
+        if (!validationErrors.isEmpty()) {
+            throw new ValidationException("Validation of group for update failed", validationErrors);
+        }
+
+        // todo: check for possible conflicts (eg. group member does not exist)
     }
 
     /**

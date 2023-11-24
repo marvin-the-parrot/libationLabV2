@@ -4,6 +4,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 
 import java.util.Optional;
@@ -56,4 +57,15 @@ public interface GroupService {
      * @throws ConflictException  if the data given for the group is in conflict the data currently in the system
      */
     GroupDetailDto create(GroupDetailDto toCreate) throws ValidationException, ConflictException;
+
+    /**
+     * Updates the group with given ID with the data given in {@code toUpdate}.
+     *
+     * @param toUpdate the data of the group to update
+     * @return the updated group
+     * @throws NotFoundException if the group with given ID does not exist in the persistent data store
+     * @throws ValidationException if the data given for the group is in itself incorrect (no name, name too long …)
+     * @throws ConflictException if the data given for the group is in conflict the data currently in the system
+     */
+    GroupDetailDto update(GroupDetailDto toUpdate) throws NotFoundException, ValidationException, ConflictException;
 }

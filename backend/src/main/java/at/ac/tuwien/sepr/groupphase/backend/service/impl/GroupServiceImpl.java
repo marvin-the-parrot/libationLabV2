@@ -109,6 +109,14 @@ public class GroupServiceImpl implements GroupService {
         return null; // todo return created group
     }
 
+    @Override
+    public GroupDetailDto update(GroupDetailDto toUpdate) throws NotFoundException, ValidationException, ConflictException {
+        LOGGER.trace("update({})", toUpdate);
+        validator.validateForUpdate(toUpdate);
+        // todo update group in database
+        return null; // todo return updated group
+    }
+
 
     private boolean isHostExists(Optional<UserGroup> host) {
         return !host.isEmpty() || host.get().isHost();

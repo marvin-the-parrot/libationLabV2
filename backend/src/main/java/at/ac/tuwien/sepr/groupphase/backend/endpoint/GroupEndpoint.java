@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,8 +38,7 @@ public class GroupEndpoint {
 
     static final String BASE_PATH = "/api/v1/groups";
 
-    private static final Logger LOGGER
-        = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final GroupService groupService;
     private final GroupMapper groupMapper;
 
@@ -50,8 +50,7 @@ public class GroupEndpoint {
 
     @Secured("ROLE_USER")
     @GetMapping(value = "/{id}")
-    @Operation(summary = "Get detailed information about a specific group",
-        security = @SecurityRequirement(name = "apiKey"))
+    @Operation(summary = "Get detailed information about a specific group", security = @SecurityRequirement(name = "apiKey"))
     public GroupDetailDto find(@PathVariable Long id) {
         LOGGER.info("GET /api/v1/groups/{}", id);
         return groupMapper.groupToGroupDetailDto(groupService.findOne(id));
@@ -63,7 +62,7 @@ public class GroupEndpoint {
      * @param toCreate the group entry to create
      * @return the created group entry
      * @throws ValidationException if the data is not valid
-     * @throws ConflictException  if the data conflicts with existing data
+     * @throws ConflictException   if the data conflicts with existing data
      */
     @PostMapping()
     @Operation(security = @SecurityRequirement(name = "apiKey"))
@@ -75,6 +74,31 @@ public class GroupEndpoint {
     }
 
     /**
+     * Update an existing group entry.
+     *
+     * @param id       the id of the group
+     * @param toUpdate the group entry to update
+     * @return the updated group entry
+     * @throws ValidationException if the data is not valid
+     * @throws ConflictException   if the data conflicts with existing data
+     */
+    @PutMapping("{id}")
+    public GroupDetailDto update(@PathVariable long id, @RequestBody GroupDetailDto toUpdate) throws ValidationException, ConflictException {
+        LOGGER.info("PUT " + BASE_PATH + "/{}", toUpdate);
+        LOGGER.debug("Body of request:\n{}", toUpdate);
+
+        toUpdate.setId(id);
+        try {
+            return groupService.update(toUpdate);
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Group to update not found", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+
+    /**
      * Deleting group entry by id, only possible by host.
      *
      * @param id     the id of the group
@@ -83,8 +107,7 @@ public class GroupEndpoint {
     @DeleteMapping("{id}/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(security = @SecurityRequirement(name = "apiKey"))
-    public void delete(@PathVariable Long id, @PathVariable Long userId)
-        throws ValidationException, ConflictException {
+    public void delete(@PathVariable Long id, @PathVariable Long userId) throws ValidationException, ConflictException {
         LOGGER.info("DELETE " + BASE_PATH + "/{}", id, userId);
         try {
             groupService.deleteGroup(id, userId);
@@ -105,8 +128,7 @@ public class GroupEndpoint {
     @DeleteMapping("{groupId}/{memberId}/{hostId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(security = @SecurityRequirement(name = "apiKey"))
-    public void deleteMemberOfGroup(@PathVariable Long groupId,
-                                    @PathVariable Long memberId, @PathVariable Long hostId) {
+    public void deleteMemberOfGroup(@PathVariable Long groupId, @PathVariable Long memberId, @PathVariable Long hostId) {
         LOGGER.info("DELETE " + BASE_PATH + "/{}", groupId, memberId, hostId);
         try {
             groupService.deleteMember(groupId, hostId, memberId);
@@ -126,15 +148,13 @@ public class GroupEndpoint {
      */
     @RequestMapping(value = "searchGroupMember/{groupId}/{memberName}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Optional<ApplicationUser> searchGroupMember(@PathVariable Long groupId,
-                                                       @PathVariable String memberName) {
+    public Optional<ApplicationUser> searchGroupMember(@PathVariable Long groupId, @PathVariable String memberName) {
         LOGGER.info("GET " + BASE_PATH + "/{}", groupId, memberName);
         return groupService.searchForMember(groupId, memberName);
     }
 
 
     private void logClientError(HttpStatus status, String message, Exception e) {
-        LOGGER.warn("{} {}: {}: {}",
-            status.value(), message, e.getClass().getSimpleName(), e.getMessage());
+        LOGGER.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
     }
 }
