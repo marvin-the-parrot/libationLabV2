@@ -68,7 +68,15 @@ public class GroupValidator {
     private List<String> getValidationErrors(GroupDetailDto group) {
         List<String> validationErrors = new LinkedList<>();
 
-        // todo: check for validation errors (eg. name too long)
+        if (group.getName() == null || group.getName().isEmpty()) {
+            validationErrors.add("Group name must not be empty");
+        }
+        if (group.getName().length() > 255) { // todo: check if this is the correct length
+            validationErrors.add("Group name must not be longer than 255 characters");
+        }
+
+        // todo: validate remaining data
+
 
         return validationErrors;
     }
