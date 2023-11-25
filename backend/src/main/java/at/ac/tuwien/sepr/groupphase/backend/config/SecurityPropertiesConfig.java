@@ -6,106 +6,103 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Security properties config.
- *
  */
 @Configuration
 public class SecurityPropertiesConfig {
 
-  @Bean
-  @ConfigurationProperties(prefix = "security.auth")
-  protected Auth auth() {
-    return new Auth();
-  }
-
-  @Bean
-  @ConfigurationProperties(prefix = "security.jwt")
-  protected Jwt jwt() {
-    return new Jwt();
-  }
-
-  /**
-  * Auth.
-  *
-  */
-  public static class Auth {
-    private String header;
-    private String prefix;
-    private String loginUri;
-
-    public String getHeader() {
-      return header;
+    @Bean
+    @ConfigurationProperties(prefix = "security.auth")
+    protected Auth auth() {
+        return new Auth();
     }
 
-    public void setHeader(String header) {
-      this.header = header;
+    @Bean
+    @ConfigurationProperties(prefix = "security.jwt")
+    protected Jwt jwt() {
+        return new Jwt();
     }
 
-    public String getPrefix() {
-      return prefix;
+    /**
+     * Auth.
+     */
+    public static class Auth {
+        private String header;
+        private String prefix;
+        private String loginUri;
+
+        public String getHeader() {
+            return header;
+        }
+
+        public void setHeader(String header) {
+            this.header = header;
+        }
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        public void setPrefix(String prefix) {
+            this.prefix = prefix;
+        }
+
+        public String getLoginUri() {
+            return loginUri;
+        }
+
+        public void setLoginUri(String loginUri) {
+            this.loginUri = loginUri;
+        }
     }
 
-    public void setPrefix(String prefix) {
-      this.prefix = prefix;
-    }
+    /**
+     * Jwt.
+     */
+    public static class Jwt {
+        private String secret;
+        private String type;
+        private String issuer;
+        private String audience;
+        private Long expirationTime;
 
-    public String getLoginUri() {
-      return loginUri;
-    }
+        public String getSecret() {
+            return secret;
+        }
 
-    public void setLoginUri(String loginUri) {
-      this.loginUri = loginUri;
-    }
-  }
+        public void setSecret(String secret) {
+            this.secret = secret;
+        }
 
-  /**
-  * Jwt.
-  *
-  */
-  public static class Jwt {
-    private String secret;
-    private String type;
-    private String issuer;
-    private String audience;
-    private Long expirationTime;
+        public String getType() {
+            return type;
+        }
 
-    public String getSecret() {
-      return secret;
-    }
+        public void setType(String type) {
+            this.type = type;
+        }
 
-    public void setSecret(String secret) {
-      this.secret = secret;
-    }
+        public String getIssuer() {
+            return issuer;
+        }
 
-    public String getType() {
-      return type;
-    }
+        public void setIssuer(String issuer) {
+            this.issuer = issuer;
+        }
 
-    public void setType(String type) {
-      this.type = type;
-    }
+        public String getAudience() {
+            return audience;
+        }
 
-    public String getIssuer() {
-      return issuer;
-    }
+        public void setAudience(String audience) {
+            this.audience = audience;
+        }
 
-    public void setIssuer(String issuer) {
-      this.issuer = issuer;
-    }
+        public Long getExpirationTime() {
+            return expirationTime;
+        }
 
-    public String getAudience() {
-      return audience;
+        public void setExpirationTime(Long expirationTime) {
+            this.expirationTime = expirationTime;
+        }
     }
-
-    public void setAudience(String audience) {
-      this.audience = audience;
-    }
-
-    public Long getExpirationTime() {
-      return expirationTime;
-    }
-
-    public void setExpirationTime(Long expirationTime) {
-      this.expirationTime = expirationTime;
-    }
-  }
 }

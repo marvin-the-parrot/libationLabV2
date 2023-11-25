@@ -12,8 +12,10 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.MemberRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.validators.GroupValidator;
+
 import java.lang.invoke.MethodHandles;
 import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,98 +29,96 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class GroupServiceImpl implements GroupService {
 
-  private static final Logger LOGGER
-      = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger LOGGER
+        = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  @Autowired
-  private GroupRepository groupRepository;
+    @Autowired
+    private GroupRepository groupRepository;
 
-  @Autowired
-  private MemberRepository memberRepository;
+    @Autowired
+    private MemberRepository memberRepository;
 
-  @Autowired
-  private UserGroupRepository userGroupRepository;
+    @Autowired
+    private UserGroupRepository userGroupRepository;
 
-  private final GroupValidator validator;
+    private final GroupValidator validator;
 
-  public GroupServiceImpl(GroupRepository groupRepository, GroupValidator validator) {
-    this.groupRepository = groupRepository;
-    this.validator = validator;
-  }
-
-  @Override
-  public ApplicationGroup findOne(Long id) {
-    LOGGER.debug("Find group with id {}", id);
-    Optional<ApplicationGroup> group = groupRepository.findById(id);
-    if (group.isPresent()) {
-      return group.get();
-    } else {
-      throw new NotFoundException(String.format("Could not find group with id %s", id));
+    public GroupServiceImpl(GroupRepository groupRepository, GroupValidator validator) {
+        this.groupRepository = groupRepository;
+        this.validator = validator;
     }
-  }
 
-
-  @Override
-  public void deleteGroup(Long groupId, Long hostId) {
-    LOGGER.debug("Delete group by host with group id {}", groupId, hostId);
-    Optional<UserGroup> host = memberRepository.findById(hostId);
-    if (isHostExists(host)) {
-      groupRepository.deleteById(groupId);
-    } else {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    @Override
+    public ApplicationGroup findOne(Long id) {
+        LOGGER.debug("Find group with id {}", id);
+        Optional<ApplicationGroup> group = groupRepository.findById(id);
+        if (group.isPresent()) {
+            return group.get();
+        } else {
+            throw new NotFoundException(String.format("Could not find group with id %s", id));
+        }
     }
-  }
 
-  @SuppressWarnings("unlikely-arg-type")
-  @Override
-  public void deleteMember(Long groupId, Long hostId, Long memberId) {
-    LOGGER.debug("Delete group member by host with group and member id {}",
-        groupId, hostId, memberId);
-    ApplicationGroup group = groupRepository.findById(groupId).orElse(null);
-    Optional<UserGroup> host = memberRepository.findById(hostId);
-    if (!isHostExists(host)) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    @Override
+    public void deleteGroup(Long groupId, Long hostId) {
+        LOGGER.debug("Delete group by host with group id {}", groupId, hostId);
+        Optional<UserGroup> host = memberRepository.findById(hostId);
+        if (isHostExists(host)) {
+            groupRepository.deleteById(groupId);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
-    if (group != null) {
-      UserGroup userToRemove = group.getMembers().stream()
-          .filter(user -> user.getUser().getId().equals(memberId))
-          .findFirst()
-          .orElse(null);
 
-      if (userToRemove != null) {
-        group.getMembers().remove(userToRemove.getUser());
-        groupRepository.save(group);
-      }
+    @SuppressWarnings("unlikely-arg-type")
+    @Override
+    public void deleteMember(Long groupId, Long hostId, Long memberId) {
+        LOGGER.debug("Delete group member by host with group and member id {}",
+            groupId, hostId, memberId);
+        ApplicationGroup group = groupRepository.findById(groupId).orElse(null);
+        Optional<UserGroup> host = memberRepository.findById(hostId);
+        if (!isHostExists(host)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        if (group != null) {
+            UserGroup userToRemove = group.getMembers().stream()
+                .filter(user -> user.getUser().getId().equals(memberId))
+                .findFirst()
+                .orElse(null);
+
+            if (userToRemove != null) {
+                group.getMembers().remove(userToRemove.getUser());
+                groupRepository.save(group);
+            }
+        }
+        userGroupRepository.deleteByUserIdAndGroupId(memberId, groupId);
     }
-    userGroupRepository.deleteByUserIdAndGroupId(memberId, groupId);
-  }
 
-  @Override
-  public Optional<ApplicationUser> searchForMember(Long groupId, String memberName) {
-    LOGGER.debug("Search for member in group, by member name and group id {}", groupId, memberName);
-    return groupRepository.searchForMembers(groupId, memberName);
-  }
+    @Override
+    public Optional<ApplicationUser> searchForMember(Long groupId, String memberName) {
+        LOGGER.debug("Search for member in group, by member name and group id {}", groupId, memberName);
+        return groupRepository.searchForMembers(groupId, memberName);
+    }
 
-  @Override
-  public GroupDetailDto create(GroupDetailDto toCreate) 
-      throws ValidationException, ConflictException {
-    LOGGER.trace("create({})", toCreate);
-    validator.validateForCreate(toCreate);
-    // todo save group in database
-    return null; // todo return created group
-  }
+    @Override
+    public GroupDetailDto create(GroupDetailDto toCreate)
+        throws ValidationException, ConflictException {
+        LOGGER.trace("create({})", toCreate);
+        validator.validateForCreate(toCreate);
+        // todo save group in database
+        return null; // todo return created group
+    }
 
-  @Override
-  public GroupDetailDto update(GroupDetailDto toUpdate) 
-      throws NotFoundException, ValidationException, ConflictException {
-    LOGGER.trace("update({})", toUpdate);
-    validator.validateForUpdate(toUpdate);
-    // todo update group in database
-    return null; // todo return updated group
-  }
+    @Override
+    public GroupDetailDto update(GroupDetailDto toUpdate)
+        throws NotFoundException, ValidationException, ConflictException {
+        LOGGER.trace("update({})", toUpdate);
+        validator.validateForUpdate(toUpdate);
+        // todo update group in database
+        return null; // todo return updated group
+    }
 
-
-  private boolean isHostExists(Optional<UserGroup> host) {
-    return !host.isEmpty() || host.get().isHost();
-  }
+    private boolean isHostExists(Optional<UserGroup> host) {
+        return !host.isEmpty() || host.get().isHost();
+    }
 }

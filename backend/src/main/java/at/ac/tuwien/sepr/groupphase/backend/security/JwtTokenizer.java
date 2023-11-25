@@ -15,30 +15,30 @@ import java.util.List;
 @Component
 public class JwtTokenizer {
 
-  private final SecurityProperties securityProperties;
+    private final SecurityProperties securityProperties;
 
-  public JwtTokenizer(SecurityProperties securityProperties) {
-    this.securityProperties = securityProperties;
-  }
+    public JwtTokenizer(SecurityProperties securityProperties) {
+        this.securityProperties = securityProperties;
+    }
 
-  /**
-   * Get auth token.
-   *
-   * @param user id
-   * @param roles of use
-   * @return token
-   */
-  public String getAuthToken(String user, List<String> roles) {
-    byte[] signingKey = securityProperties.getJwtSecret().getBytes();
-    String token = Jwts.builder()
-        .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
-        .setHeaderParam("typ", securityProperties.getJwtType())
-        .setIssuer(securityProperties.getJwtIssuer())
-        .setAudience(securityProperties.getJwtAudience())
-        .setSubject(user)
-        .setExpiration(new Date(System.currentTimeMillis() + securityProperties.getJwtExpirationTime()))
-        .claim("rol", roles)
-        .compact();
-    return securityProperties.getAuthTokenPrefix() + token;
-  }
+    /**
+     * Get auth token.
+     *
+     * @param user  id
+     * @param roles of use
+     * @return token
+     */
+    public String getAuthToken(String user, List<String> roles) {
+        byte[] signingKey = securityProperties.getJwtSecret().getBytes();
+        String token = Jwts.builder()
+            .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
+            .setHeaderParam("typ", securityProperties.getJwtType())
+            .setIssuer(securityProperties.getJwtIssuer())
+            .setAudience(securityProperties.getJwtAudience())
+            .setSubject(user)
+            .setExpiration(new Date(System.currentTimeMillis() + securityProperties.getJwtExpirationTime()))
+            .claim("rol", roles)
+            .compact();
+        return securityProperties.getAuthTokenPrefix() + token;
+    }
 }

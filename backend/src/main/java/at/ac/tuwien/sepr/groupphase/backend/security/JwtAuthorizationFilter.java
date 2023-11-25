@@ -9,9 +9,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -30,72 +32,72 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
-  private static final Logger LOGGER = 
-      LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  private final SecurityProperties securityProperties;
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private final SecurityProperties securityProperties;
 
-  public JwtAuthorizationFilter(SecurityProperties securityProperties) {
-    this.securityProperties = securityProperties;
-  }
-
-  /**
-  * Filter intrnal.
-  *
-  * @param request http
-  * @param response http
-  * @param chain filter
-  */
-  @Override
-  protected void doFilterInternal(HttpServletRequest request, 
-      HttpServletResponse response, FilterChain chain)
-      throws IOException, ServletException {
-    try {
-      UsernamePasswordAuthenticationToken authToken = getAuthToken(request);
-      if (authToken != null) {
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-      }
-    } catch (IllegalArgumentException | JwtException e) {
-      LOGGER.debug("Invalid authorization attempt: {}", e.getMessage());
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      response.getWriter().write("Invalid authorization header or token");
-      return;
-    }
-    chain.doFilter(request, response);
-  }
-
-  private UsernamePasswordAuthenticationToken getAuthToken(HttpServletRequest request)
-      throws JwtException, IllegalArgumentException {
-    String token = request.getHeader(securityProperties.getAuthHeader());
-    if (token == null || token.isEmpty()) {
-      return null;
+    public JwtAuthorizationFilter(SecurityProperties securityProperties) {
+        this.securityProperties = securityProperties;
     }
 
-    if (!token.startsWith(securityProperties.getAuthTokenPrefix())) {
-      throw new IllegalArgumentException("Authorization header is malformed or missing");
+    /**
+     * Filter intrnal.
+     *
+     * @param request  http
+     * @param response http
+     * @param chain    filter
+     */
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response, FilterChain chain)
+        throws IOException, ServletException {
+        try {
+            UsernamePasswordAuthenticationToken authToken = getAuthToken(request);
+            if (authToken != null) {
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        } catch (IllegalArgumentException | JwtException e) {
+            LOGGER.debug("Invalid authorization attempt: {}", e.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Invalid authorization header or token");
+            return;
+        }
+        chain.doFilter(request, response);
     }
 
-    byte[] signingKey = securityProperties.getJwtSecret().getBytes();
+    private UsernamePasswordAuthenticationToken getAuthToken(HttpServletRequest request)
+        throws JwtException, IllegalArgumentException {
+        String token = request.getHeader(securityProperties.getAuthHeader());
+        if (token == null || token.isEmpty()) {
+            return null;
+        }
 
-    if (!token.startsWith("Bearer ")) {
-      throw new IllegalArgumentException("Token must start with 'Bearer'");
+        if (!token.startsWith(securityProperties.getAuthTokenPrefix())) {
+            throw new IllegalArgumentException("Authorization header is malformed or missing");
+        }
+
+        byte[] signingKey = securityProperties.getJwtSecret().getBytes();
+
+        if (!token.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Token must start with 'Bearer'");
+        }
+        Claims claims = Jwts.parser().verifyWith(Keys.hmacShaKeyFor(signingKey)).build()
+            .parseSignedClaims(token.replace(securityProperties.getAuthTokenPrefix(), ""))
+            .getPayload();
+
+        String username = claims.getSubject();
+
+        List<SimpleGrantedAuthority> authorities = ((List<?>) claims
+            .get("rol")).stream()
+            .map(authority -> new SimpleGrantedAuthority((String) authority))
+            .toList();
+
+        if (username == null || username.isEmpty()) {
+            throw new IllegalArgumentException("Token contains no user");
+        }
+
+        MDC.put("u", username);
+
+        return new UsernamePasswordAuthenticationToken(username, null, authorities);
     }
-    Claims claims = Jwts.parser().verifyWith(Keys.hmacShaKeyFor(signingKey)).build()
-        .parseSignedClaims(token.replace(securityProperties.getAuthTokenPrefix(), ""))
-        .getPayload();
-
-    String username = claims.getSubject();
-
-    List<SimpleGrantedAuthority> authorities = ((List<?>) claims
-        .get("rol")).stream()
-        .map(authority -> new SimpleGrantedAuthority((String) authority))
-        .toList();
-
-    if (username == null || username.isEmpty()) {
-      throw new IllegalArgumentException("Token contains no user");
-    }
-
-    MDC.put("u", username);
-
-    return new UsernamePasswordAuthenticationToken(username, null, authorities);
-  }
 }

@@ -10,5 +10,5 @@ import org.mapstruct.Mapper;
 @Mapper
 public interface GroupMapper {
 
-  GroupDetailDto groupToGroupDetailDto(ApplicationGroup applicationGroup);
+    GroupDetailDto groupToGroupDetailDto(ApplicationGroup applicationGroup);
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * Repository of Member entity.
- */ 
+ */
 @Repository
 public interface MemberRepository extends JpaRepository<UserGroup, Long> {
 

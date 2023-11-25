@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredients;
+
 import java.util.Optional;
 
 /**
@@ -8,12 +9,12 @@ import java.util.Optional;
  */
 public interface IngredientsService {
 
-  /**
-  * Searching for ingredients.
-  *
-  * @param ingredientsName name of ingredients
-  * @return ingredients with searched name
-  */
-  public Optional<Ingredients> searchIngredients(String ingredientsName);
+    /**
+     * Searching for ingredients.
+     *
+     * @param ingredientsName name of ingredients
+     * @return ingredients with searched name
+     */
+    public Optional<Ingredients> searchIngredients(String ingredientsName);
 
 }
