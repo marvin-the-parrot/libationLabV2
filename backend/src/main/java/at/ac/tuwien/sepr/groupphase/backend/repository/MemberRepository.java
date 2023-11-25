@@ -4,6 +4,9 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Repository of Member entity.
+ */ 
 @Repository
 public interface MemberRepository extends JpaRepository<UserGroup, Long> {
 

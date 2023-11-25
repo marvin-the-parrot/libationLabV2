@@ -13,32 +13,47 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Security config.
+ *
+ */
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 @Configuration
 public class SecurityConfig {
 
-    private final JwtAuthorizationFilter jwtAuthorizationFilter;
+  private final JwtAuthorizationFilter jwtAuthorizationFilter;
 
-    @Autowired
-    public SecurityConfig(JwtAuthorizationFilter jwtAuthorizationFilter) {
-        this.jwtAuthorizationFilter = jwtAuthorizationFilter;
-    }
+  @Autowired
+  public SecurityConfig(JwtAuthorizationFilter jwtAuthorizationFilter) {
+    this.jwtAuthorizationFilter = jwtAuthorizationFilter;
+  }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable);
-        http.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
-    }
+  /**
+   * Filter Chain.
+   *
+   * @param http security
+   * @return http build
+   * @throws Exception exception
+   */
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http.csrf(AbstractHttpConfigurer::disable);
+    http.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+    return http.build();
+  }
 
-    @Configuration
-    public static class CorsConfig implements WebMvcConfigurer {
-        @Override
-        public void addCorsMappings(CorsRegistry registry) {
-            registry.addMapping("/**")
-                .allowedOriginPatterns("http://localhost:4200", "https://*.apps.student.inso-w.at")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD");
-        }
+  /**
+  * Cors Config.
+  *
+  */
+  @Configuration
+  public static class CorsConfig implements WebMvcConfigurer {
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+      registry.addMapping("/**")
+          .allowedOriginPatterns("http://localhost:4200", "https://*.apps.student.inso-w.at")
+          .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD");
     }
+  }
 }

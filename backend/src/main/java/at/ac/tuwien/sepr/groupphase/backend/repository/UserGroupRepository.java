@@ -14,8 +14,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserGroupRepository extends JpaRepository<UserGroup, UserGroupKey> {
 
-    @Modifying
-    @Query("DELETE FROM UserGroup ug WHERE ug.id.user.id = :userId AND ug.id.group.id = :groupId")
-    void deleteByUserIdAndGroupId(@Param("userId") Long userId, @Param("groupId") Long groupId);
+  @Modifying
+  @Query("DELETE FROM UserGroup ug WHERE ug.id.user.id = :userId AND ug.id.group.id = :groupId")
+  void deleteByUserIdAndGroupId(@Param("userId") Long userId, @Param("groupId") Long groupId);
 
 }

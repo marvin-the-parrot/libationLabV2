@@ -36,6 +36,5 @@ public class IngredientsEndpoint {
     LOGGER.info("GET " + BASE_PATH + "searchIngredients/{}", ingredientsName);
     return ingredientsService.searchIngredients(ingredientsName);
   }
-
     
 }

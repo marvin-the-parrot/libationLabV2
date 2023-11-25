@@ -10,7 +10,7 @@ import java.util.List;
  * Contains a list of all conflict checks that failed when validating the piece of data in question.
  */
 public class ConflictException extends ErrorListException {
-    public ConflictException(String messageSummary, List<String> errors) {
-        super("Conflicts", messageSummary, errors);
-    }
+  public ConflictException(String messageSummary, List<String> errors) {
+    super("Conflicts", messageSummary, errors);
+  }
 }

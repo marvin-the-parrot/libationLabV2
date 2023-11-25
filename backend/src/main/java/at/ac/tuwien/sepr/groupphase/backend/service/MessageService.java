@@ -1,33 +1,35 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
 import at.ac.tuwien.sepr.groupphase.backend.entity.Message;
-
 import java.util.List;
 
+/**
+ * Service for Message Entity.
+ */
 public interface MessageService {
 
-    /**
-     * Find all message entries ordered by published at date (descending).
-     *
-     * @return ordered list of al message entries
-     */
-    List<Message> findAll();
+  /**
+  * Find all message entries ordered by published at date (descending).
+  *
+  * @return ordered list of al message entries
+  */
+  List<Message> findAll();
 
 
-    /**
-     * Find a single message entry by id.
-     *
-     * @param id the id of the message entry
-     * @return the message entry
-     */
-    Message findOne(Long id);
+  /**
+  * Find a single message entry by id.
+  *
+  * @param id the id of the message entry
+  * @return the message entry
+  */
+  Message findOne(Long id);
 
-    /**
-     * Publish a single message entry.
-     *
-     * @param message to publish
-     * @return published message entry
-     */
-    Message publishMessage(Message message);
+  /**
+  * Publish a single message entry.
+  *
+  * @param message to publish
+  * @return published message entry
+  */
+  Message publishMessage(Message message);
 
 }

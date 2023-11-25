@@ -4,8 +4,11 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import org.mapstruct.Mapper;
 
+/**
+ * Group mapper.
+ */
 @Mapper
 public interface GroupMapper {
 
-    GroupDetailDto groupToGroupDetailDto(ApplicationGroup applicationGroup);
+  GroupDetailDto groupToGroupDetailDto(ApplicationGroup applicationGroup);
 }
