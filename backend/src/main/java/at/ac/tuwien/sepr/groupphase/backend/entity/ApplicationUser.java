@@ -9,7 +9,6 @@ import jakarta.persistence.OneToMany;
 
 import java.util.Set;
 
-//TODO: replace this class with a correct ApplicationUser Entity implementation
 
 /**
  * Entity of table ApplicationUser.
@@ -32,6 +31,9 @@ public class ApplicationUser {
 
     @OneToMany(mappedBy = "applicationUser")
     private Set<UserGroup> userGroups;
+
+    @OneToMany(mappedBy = "applicationUser")
+    private Set<ApplicationMessage> applicationMessages;
 
     private Boolean admin;
 
@@ -91,6 +93,14 @@ public class ApplicationUser {
         this.password = password;
     }
 
+    public Set<ApplicationMessage> getApplicationMessages() {
+        return applicationMessages;
+    }
+
+    public void setApplicationMessages(Set<ApplicationMessage> applicationMessages) {
+        this.applicationMessages = applicationMessages;
+    }
+
     public Boolean getAdmin() {
         return admin;
     }
@@ -99,4 +109,48 @@ public class ApplicationUser {
         this.admin = admin;
     }
 
+    public static final class ApplicationUserBuilder {
+
+        private Long id;
+        private String name;
+        private String email;
+        private String password;
+
+        private ApplicationUserBuilder() {
+        }
+
+        public static ApplicationUser.ApplicationUserBuilder applicationUser() {
+            return new ApplicationUser.ApplicationUserBuilder();
+        }
+
+        public ApplicationUser.ApplicationUserBuilder withId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public ApplicationUser.ApplicationUserBuilder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public ApplicationUser.ApplicationUserBuilder withEmail(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public ApplicationUser.ApplicationUserBuilder withPassword(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public ApplicationUser build() {
+            ApplicationUser applicationUser = new ApplicationUser();
+            applicationUser.setId(id);
+            applicationUser.setName(name);
+            applicationUser.setEmail(email);
+            applicationUser.setPassword(password);
+            applicationUser.setAdmin(false);
+            return applicationUser;
+        }
+    }
 }
