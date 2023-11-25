@@ -1,104 +1,41 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
+public class MessageDetailDto {
 
-/**
- * Dto to send message detail data to the frontend.
- */
-public class MessageDetailDto extends SimpleMessageDto {
+    private Long id;
+    private String groupName;
+    private boolean isRead;
+    private String sentAt;
 
-    private String text;
-
-    public String getText() {
-        return text;
+    public Long getId() {
+        return id;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof MessageDetailDto that)) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-        return Objects.equals(text, that.text);
+    public String getGroupName() {
+        return groupName;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), text);
+    public void setGroupName(String groupId) {
+        this.groupName = groupId;
     }
 
-    @Override
-    public String toString() {
-        return "DetailedMessageDto{"
-            + "text='" + text + '\''
-            + '}';
+    public boolean isRead() {
+        return isRead;
     }
 
-    /**
-     * DetailedMessageDtoBuilder.
-     */
-    public static final class DetailedMessageDtoBuilder {
-        private Long id;
-        private LocalDateTime publishedAt;
-        private String text;
-        private String title;
-        private String summary;
+    public void setRead(boolean read) {
+        isRead = read;
+    }
 
-        private DetailedMessageDtoBuilder() {
-        }
+    public String getSentAt() {
+        return sentAt;
+    }
 
-        public static DetailedMessageDtoBuilder detailedMessageDto() {
-            return new DetailedMessageDtoBuilder();
-        }
-
-        public DetailedMessageDtoBuilder withId(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public DetailedMessageDtoBuilder withPublishedAt(LocalDateTime publishedAt) {
-            this.publishedAt = publishedAt;
-            return this;
-        }
-
-        public DetailedMessageDtoBuilder withText(String text) {
-            this.text = text;
-            return this;
-        }
-
-        public DetailedMessageDtoBuilder withTitle(String title) {
-            this.title = title;
-            return this;
-        }
-
-        public DetailedMessageDtoBuilder withSummary(String summary) {
-            this.summary = summary;
-            return this;
-        }
-
-        /**
-         * Message detail build.
-         *
-         * @return builded message detail dto
-         */
-        public MessageDetailDto build() {
-            MessageDetailDto messageDetailDto = new MessageDetailDto();
-            messageDetailDto.setId(id);
-            messageDetailDto.setPublishedAt(publishedAt);
-            messageDetailDto.setText(text);
-            messageDetailDto.setTitle(title);
-            messageDetailDto.setSummary(summary);
-            return messageDetailDto;
-        }
+    public void setSentAt(String sentAt) {
+        this.sentAt = sentAt;
     }
 }

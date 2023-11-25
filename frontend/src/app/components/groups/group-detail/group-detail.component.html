@@ -1,21 +1,24 @@
-
 <div class="grid-container">
   <div class="grid-item-1">
     <h3>Members</h3>
-    <div class="col-lg-6 mb-2">
-      <app-autocomplete
-        name="memberSelection"
-        textInputClass="form-control"
-        [suggestions]="memberSuggestions"
-        [formatModel]="formatMember"
-        valueNeedsToMatchSuggestion="true"
-        [(ngModel)]="dummyMemberSelectionModel"
-        (ngModelChange)="addMember($event)"
-      >
-      </app-autocomplete>
+    <div class="row">
+      <div class="add-member col-lg-10 mb-2">
+        <app-autocomplete
+          name="memberSelection"
+          textInputClass="form-control"
+          [suggestions]="memberSuggestions"
+          [formatModel]="formatMember"
+          valueNeedsToMatchSuggestion="true"
+          [(ngModel)]="dummyMemberSelectionModel"
+        >
+        </app-autocomplete>
+      </div>
+      <div class="add-member col-lg-2 mb-2">
+        <button class="btn btn-primary" (click)="addMember(this.user)">+</button>
+      </div>
     </div>
     <ul>
-      <!--li *ngFor="let member of group.members">{{member.name}}</li-->
+      <li *ngFor="let member of group.members">{{member.name}}</li>
     </ul>
   </div>
   <div class="grid-item-2">

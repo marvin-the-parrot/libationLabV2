@@ -1,14 +1,12 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
-import at.ac.tuwien.sepr.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
 import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.MessageService;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,27 +27,17 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public List<Message> findAll() {
+    public List<ApplicationMessage> findAll() {
         LOGGER.debug("Find all messages");
-        return messageRepository.findAllByOrderByPublishedAtDesc();
+        return messageRepository.findAllByOrderBySentAtDesc();
     }
 
     @Override
-    public Message findOne(Long id) {
-        LOGGER.debug("Find message with id {}", id);
-        Optional<Message> message = messageRepository.findById(id);
-        if (message.isPresent()) {
-            return message.get();
-        } else {
-            throw new NotFoundException(String.format("Could not find message with id %s", id));
-        }
-    }
-
-    @Override
-    public Message publishMessage(Message message) {
-        LOGGER.debug("Publish new message {}", message);
-        message.setPublishedAt(LocalDateTime.now());
-        return messageRepository.save(message);
+    public ApplicationMessage publishMessage(ApplicationMessage applicationMessage) {
+        LOGGER.debug("Publish new message {}", applicationMessage);
+        applicationMessage.setRead(false);
+        applicationMessage.setSentAt(LocalDateTime.now());
+        return messageRepository.save(applicationMessage);
     }
 
 }

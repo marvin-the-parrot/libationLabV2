@@ -1,7 +1,11 @@
-export class Message {
+export interface MessageDetailDto {
   id: number;
-  title: string;
-  summary: string;
-  text: string;
-  publishedAt: string;
+  groupName: string;
+  isRead: boolean;
+  sentAt: string;
+}
+
+export interface MessageCreateDto {
+  userId: number;
+  groupId: number;
 }

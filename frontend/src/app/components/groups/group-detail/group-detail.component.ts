@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {Group} from "../../../dtos/group";
 import {GroupsService} from "../../../services/groups.service";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute} from "@angular/router";
 import {Observable} from "rxjs";
 import {UserListDto} from "../../../dtos/user";
 import {NgModel} from "@angular/forms";
@@ -22,13 +22,14 @@ export class GroupDetailComponent {
     members: [{name: 'Sep', id: 4}, {name: 'Jan', id: 5}, {name: 'Peter', id: 6}, {name: 'Susanne', id: 7}],
   }
 
+  user: UserListDto;
+
   dummyMemberSelectionModel: unknown; // Just needed for the autocomplete
 
   constructor(
     private service: GroupsService,
     private userService: UserService,
-    private route: ActivatedRoute,
-    private router: Router,
+    private route: ActivatedRoute
   ) {
   }
 
@@ -48,8 +49,8 @@ export class GroupDetailComponent {
   memberSuggestions = (input: string) : Observable<UserListDto[]> =>
     this.userService.search({name: input, limit: 5});
 
-
   public formatMember(member: UserListDto | null): string {
+    this.user = member;
     return !member
       ? ""
       : `${member.name}`
@@ -65,6 +66,13 @@ export class GroupDetailComponent {
     if (user == null)
       return;
 
+    this.service
+  }
+
+  /*public addMember(user: UserListDto | null) {
+    if (user == null)
+      return;
+
     setTimeout(() => {
       for (let i = 0; i < this.group.members.length; i++) {
         if (this.group.members[i]?.id === user.id) {
@@ -75,7 +83,7 @@ export class GroupDetailComponent {
       }
       this.group.members.push(user);
     })
-  }
+  }*/
 
   removeMember(index: number) {
     this.group.members.splice(index, 1);
