@@ -50,7 +50,6 @@ export class CreateAccountComponent implements OnInit {
   create(createAccount: CreateAccount) {
     this.userService.create(createAccount).subscribe({
       next: () => {
-        console.log('Successfully logged in user: ' + createAccount.email);
         this.router.navigate(['/login']);
       },
       error: error => {

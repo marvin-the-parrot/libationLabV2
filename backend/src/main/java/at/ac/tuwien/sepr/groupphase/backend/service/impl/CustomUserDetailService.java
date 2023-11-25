@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
@@ -58,7 +59,8 @@ public class CustomUserDetailService implements UserService {
     @Override
     public ApplicationUser findApplicationUserByEmail(String email) {
         LOGGER.debug("Find application user by email");
-        ApplicationUser applicationUser = userRepository.findUserByEmail(email);
+
+        ApplicationUser applicationUser = userRepository.findByEmail(email);
         if (applicationUser != null) {
             return applicationUser;
         }
@@ -81,5 +83,17 @@ public class CustomUserDetailService implements UserService {
             return jwtTokenizer.getAuthToken(userDetails.getUsername(), roles);
         }
         throw new BadCredentialsException("Username or password is incorrect or account is locked");
+    }
+
+    @Override
+    public void register(UserCreateDto userCreateDto) {
+        LOGGER.debug("Register new user");
+        ApplicationUser applicationUser = new ApplicationUser(
+            userCreateDto.getName(),
+            userCreateDto.getEmail(),
+            passwordEncoder.encode(userCreateDto.getPassword())
+        );
+        userRepository.save(applicationUser);
+        userRepository.findAll();
     }
 }

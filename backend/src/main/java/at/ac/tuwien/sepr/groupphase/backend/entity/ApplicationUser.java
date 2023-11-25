@@ -35,10 +35,10 @@ public class ApplicationUser {
     public ApplicationUser() {
     }
 
-    public ApplicationUser(String email, String password, Boolean admin) {
+    public ApplicationUser(String name, String email, String password) {
+        this.name = name;
         this.email = email;
         this.password = password;
-        this.admin = admin;
     }
 
     public Long getId() {
