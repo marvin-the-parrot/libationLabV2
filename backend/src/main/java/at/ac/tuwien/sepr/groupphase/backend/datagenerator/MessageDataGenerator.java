@@ -42,7 +42,7 @@ public class MessageDataGenerator {
             for (int i = 0; i < NUMBER_OF_MESSAGES_TO_GENERATE; i++) {
                 ApplicationMessage message = ApplicationMessage.ApplicationMessageBuilder.message()
                     .withId((long) i)
-                    .withApplicationUser(userRepository.findByEmail("user1@email.com"))
+                    .withApplicationUser(userRepository.findById(1))
                     .withGroupId((long) i)
                     .withIsRead(false)
                     .withSentAt(LocalDateTime.now())

@@ -30,22 +30,21 @@ public class ApplicationUserDataGenerator {
     }
 
     @PostConstruct
-    public ApplicationUser generateUser() {
-        LOGGER.debug("generating {} user entries", NUMBER_OF_USERS_TO_GENERATE);
-        ApplicationUser returnUser = null;
-        for (int i = 0; i < NUMBER_OF_USERS_TO_GENERATE; i++) {
-            ApplicationUser applicationUser = ApplicationUser.ApplicationUserBuilder.applicationUser()
-                .withId((long) i)
-                .withName("User" + i)
-                .withEmail("user" + i + "@email.com")
-                .withPassword(passwordEncoder.encode("password"))
-                .build();
-            if (i == 0) {
-                returnUser = applicationUser;
+    public void generateUser() {
+        if (userRepository.findAll().size() > 0) {
+            LOGGER.debug("message already generated");
+        } else {
+            LOGGER.debug("generating {} user entries", NUMBER_OF_USERS_TO_GENERATE);
+            for (int i = 0; i < NUMBER_OF_USERS_TO_GENERATE; i++) {
+                ApplicationUser applicationUser = ApplicationUser.ApplicationUserBuilder.applicationUser()
+                    .withId((long) i)
+                    .withName("User" + i)
+                    .withEmail("user" + i + "@email.com")
+                    .withPassword(passwordEncoder.encode("password"))
+                    .build();
+                userRepository.save(applicationUser);
             }
-            userRepository.save(applicationUser);
         }
-        return returnUser;
     }
 
 }

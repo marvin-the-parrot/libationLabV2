@@ -52,6 +52,7 @@ public class MessageEndpoint {
         security = @SecurityRequirement(name = "apiKey"))
     public List<MessageDetailDto> findAll() {
         LOGGER.info("GET /api/v1/messages");
+
         return messageMapper.messageToDetailedMessageDto(messageService.findAll());
     }
 
