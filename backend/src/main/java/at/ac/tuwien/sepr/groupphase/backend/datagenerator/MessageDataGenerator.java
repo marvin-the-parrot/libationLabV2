@@ -1,8 +1,10 @@
 package at.ac.tuwien.sepr.groupphase.backend.datagenerator;
 
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
 import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
 
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDateTime;
 
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
@@ -37,17 +39,17 @@ public class MessageDataGenerator {
         } else {
             LOGGER.debug("generating {} message entries", NUMBER_OF_MESSAGES_TO_GENERATE);
 
-            /*for (int i = 0; i < NUMBER_OF_MESSAGES_TO_GENERATE; i++) {
+            for (int i = 0; i < NUMBER_OF_MESSAGES_TO_GENERATE; i++) {
                 ApplicationMessage message = ApplicationMessage.ApplicationMessageBuilder.message()
                     .withId((long) i)
-                    .withApplicationUser(userRepository.findById(0L))
+                    .withApplicationUser(userRepository.findByEmail("user1@email.com"))
                     .withGroupId((long) i)
                     .withIsRead(false)
                     .withSentAt(LocalDateTime.now())
                     .build();
                 LOGGER.debug("saving message {}", message);
                 messageRepository.save(message);
-            }*/
+            }
         }
     }
 
