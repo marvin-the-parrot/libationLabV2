@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
 
-@Profile("generateDataUser")
+@Profile("generateData")
 @Component
 public class ApplicationUserDataGenerator {
 
@@ -24,7 +24,6 @@ public class ApplicationUserDataGenerator {
 
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
     public ApplicationUserDataGenerator(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;

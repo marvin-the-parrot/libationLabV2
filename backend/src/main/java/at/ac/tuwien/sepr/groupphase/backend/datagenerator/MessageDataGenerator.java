@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 /**
  * Message Data Generator.
  */
-@Profile("generateDataMessage")
+@Profile("generateData")
 @Component
 public class MessageDataGenerator {
 
