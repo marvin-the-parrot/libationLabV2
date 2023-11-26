@@ -8,6 +8,7 @@ import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
@@ -20,9 +21,11 @@ public class UserDataGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserDataGenerator(UserRepository userRepository) {
+    public UserDataGenerator(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostConstruct
@@ -33,9 +36,9 @@ public class UserDataGenerator {
             LOGGER.debug("users deleted");
         }
 
-        userRepository.save(new ApplicationUser("User1", "user@email.com", "password"));
-        userRepository.save(new ApplicationUser("User2", "user2@email.com", "password"));
-        userRepository.save(new ApplicationUser("User3", "user3@email.com", "password"));
+        userRepository.save(new ApplicationUser("User1", "user@email.com", passwordEncoder.encode("password")));
+        userRepository.save(new ApplicationUser("User2", "user2@email.com", passwordEncoder.encode("password")));
+        userRepository.save(new ApplicationUser("User3", "user3@email.com", passwordEncoder.encode("password")));
 
     }
 
