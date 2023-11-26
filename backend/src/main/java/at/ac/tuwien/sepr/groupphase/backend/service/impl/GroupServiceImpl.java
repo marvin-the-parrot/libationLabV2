@@ -3,6 +3,7 @@ package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 import java.lang.invoke.MethodHandles;
 import java.util.Optional;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
@@ -101,7 +101,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public GroupDetailDto create(GroupDetailDto toCreate)
+    public GroupOverviewDto create(GroupOverviewDto toCreate)
         throws ValidationException, ConflictException {
         LOGGER.trace("create({})", toCreate);
         validator.validateForCreate(toCreate);
@@ -110,7 +110,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public GroupDetailDto update(GroupDetailDto toUpdate)
+    public GroupOverviewDto update(GroupOverviewDto toUpdate)
         throws NotFoundException, ValidationException, ConflictException {
         LOGGER.trace("update({})", toUpdate);
         validator.validateForUpdate(toUpdate);

@@ -4,7 +4,6 @@ import {NgbModal, NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
 import {UntypedFormBuilder} from '@angular/forms';
 import {AuthService} from '../../services/auth.service';
 import {MessageDetailDto} from "../../dtos/message";
-import {forEach} from "lodash";
 
 @Component({
   selector: 'app-message',
@@ -19,8 +18,6 @@ export class MessageComponent implements OnInit {
   submitted = false;
 
   private messages: MessageDetailDto[];
-  private title: string;
-  private text: string;
 
   constructor(private messageService: MessageService,
               private ngbPaginationConfig: NgbPaginationConfig,
@@ -31,7 +28,6 @@ export class MessageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.setTitleAndText();
     this.loadMessage();
   }
 
@@ -50,12 +46,8 @@ export class MessageComponent implements OnInit {
     return this.messages;
   }
 
-  getTitle(): string {
-    return this.title;
-  }
-
-  getText(): string {
-    return this.text;
+  getText(message: MessageDetailDto): string {
+    return "You were invited to drink with " + message.group.name;
   }
 
   /**
@@ -76,13 +68,6 @@ export class MessageComponent implements OnInit {
       error: error => {
         this.defaultServiceErrorHandling(error);
       }
-    });
-  }
-
-  private setTitleAndText() {
-    forEach(this.messages, (message: MessageDetailDto) => {
-      this.title = message.groupName;
-      this.text = "You were invited to drink with " + message.groupName;
     });
   }
 

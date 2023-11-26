@@ -16,6 +16,8 @@ public interface MessageService {
      */
     List<ApplicationMessage> findAll();
 
+    ApplicationMessage findById(Long id);
+
     /**
      * Publish a single message entry.
      *

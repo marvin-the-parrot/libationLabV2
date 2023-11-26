@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupDetailDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
@@ -57,7 +57,7 @@ public interface GroupService {
      * @throws ConflictException   if the data given for the group
      *                             is in conflict the data currently in the system
      */
-    GroupDetailDto create(GroupDetailDto toCreate) throws ValidationException, ConflictException;
+    GroupOverviewDto create(GroupOverviewDto toCreate) throws ValidationException, ConflictException;
 
     /**
      * Updates the group with given ID with the data given in {@code toUpdate}.
@@ -71,6 +71,6 @@ public interface GroupService {
      * @throws ConflictException   if the data given for the group
      *                             is in conflict the data currently in the system
      */
-    GroupDetailDto update(GroupDetailDto toUpdate)
+    GroupOverviewDto update(GroupOverviewDto toUpdate)
         throws NotFoundException, ValidationException, ConflictException;
 }

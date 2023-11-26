@@ -59,12 +59,12 @@ public class ApplicationMessage {
         this.groupId = groupId;
     }
 
-    public boolean isRead() {
+    public boolean getIsRead() {
         return isRead;
     }
 
-    public void setRead(boolean read) {
-        isRead = read;
+    public void setIsRead(boolean isRead) {
+        this.isRead = isRead;
     }
 
     public LocalDateTime getSentAt() {
@@ -147,7 +147,7 @@ public class ApplicationMessage {
             applicationMessage.setId(id);
             applicationMessage.setApplicationUser(applicationUser);
             applicationMessage.setGroupId(groupId);
-            applicationMessage.setRead(isRead);
+            applicationMessage.setIsRead(isRead);
             applicationMessage.setSentAt(sentAt);
             return applicationMessage;
         }

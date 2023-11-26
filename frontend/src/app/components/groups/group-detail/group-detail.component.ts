@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {Group} from "../../../dtos/group";
+import {GroupOverview} from "../../../dtos/group-overview";
 import {GroupsService} from "../../../services/groups.service";
 import {ActivatedRoute} from "@angular/router";
 import {Observable} from "rxjs";
@@ -14,7 +14,7 @@ import {UserService} from "../../../services/user.service";
 })
 export class GroupDetailComponent {
 
-  group: Group = {
+  group: GroupOverview = {
     id: 1,
     name: 'Cocktail Party',
     host: {name: 'Mr X', id: 1},
@@ -36,7 +36,7 @@ export class GroupDetailComponent {
   ngOnInit(): void {
     const groupId = this.route.snapshot.params['id'];
     this.service.getById(groupId).subscribe(
-      (group: Group) => {
+      (group: GroupOverview) => {
         this.group = group;
       },
       error => {

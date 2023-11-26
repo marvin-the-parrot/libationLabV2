@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupDetailDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
@@ -54,9 +54,9 @@ public class GroupEndpoint {
     @GetMapping(value = "/{id}")
     @Operation(summary = "Get detailed information about a specific group",
         security = @SecurityRequirement(name = "apiKey"))
-    public GroupDetailDto find(@PathVariable Long id) {
+    public GroupOverviewDto find(@PathVariable Long id) {
         LOGGER.info("GET /api/v1/groups/{}", id);
-        return groupMapper.groupToGroupDetailDto(groupService.findOne(id));
+        return groupMapper.grouptToGroupOverviewDto(groupService.findOne(id));
     }
 
     /**
@@ -71,7 +71,7 @@ public class GroupEndpoint {
     @PostMapping()
     @Operation(security = @SecurityRequirement(name = "apiKey"))
     @ResponseStatus(HttpStatus.CREATED)
-    public GroupDetailDto create(@RequestBody GroupDetailDto toCreate)
+    public GroupOverviewDto create(@RequestBody GroupOverviewDto toCreate)
         throws ValidationException, ConflictException {
         LOGGER.info("POST " + BASE_PATH + "/{}", toCreate);
         LOGGER.debug("Body of request:\n{}", toCreate);
@@ -89,7 +89,7 @@ public class GroupEndpoint {
      */
     @Secured("ROLE_ADMIN")
     @PutMapping("{id}")
-    public GroupDetailDto update(@PathVariable long id, @RequestBody GroupDetailDto toUpdate)
+    public GroupOverviewDto update(@PathVariable long id, @RequestBody GroupOverviewDto toUpdate)
         throws ValidationException, ConflictException {
         LOGGER.info("PUT " + BASE_PATH + "/{}", toUpdate);
         LOGGER.debug("Body of request:\n{}", toUpdate);

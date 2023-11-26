@@ -3,7 +3,7 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 public class MessageDetailDto {
 
     private Long id;
-    private String groupName;
+    private GroupDetailDto group;
     private boolean isRead;
     private String sentAt;
 
@@ -15,20 +15,20 @@ public class MessageDetailDto {
         this.id = id;
     }
 
-    public String getGroupName() {
-        return groupName;
+    public GroupDetailDto getGroup() {
+        return group;
     }
 
-    public void setGroupName(String groupId) {
-        this.groupName = groupId;
+    public void setGroup(GroupDetailDto group) {
+        this.group = group;
     }
 
-    public boolean isRead() {
+    public boolean getIsRead() {
         return isRead;
     }
 
-    public void setRead(boolean read) {
-        isRead = read;
+    public void setIsRead(boolean isRead) {
+        this.isRead = isRead;
     }
 
     public String getSentAt() {

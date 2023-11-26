@@ -35,13 +35,21 @@ public class SimpleMessageService implements MessageService {
     @Override
     public List<ApplicationMessage> findAll() {
         LOGGER.debug("Find all messages");
+
         return messageRepository.findAllByOrderBySentAtDesc();
+    }
+
+    @Override
+    public ApplicationMessage findById(Long id) {
+        LOGGER.debug("Find message by id {}", id);
+
+        return messageRepository.findById(id).orElseThrow();
     }
 
     @Override
     public ApplicationMessage publishMessage(ApplicationMessage applicationMessage) {
         LOGGER.debug("Publish new message {}", applicationMessage);
-        applicationMessage.setRead(false);
+        applicationMessage.setIsRead(false);
         applicationMessage.setSentAt(LocalDateTime.now());
         return messageRepository.save(applicationMessage);
     }

@@ -3,7 +3,7 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 /**
  * Dto to send group detail data to the frontend.
  */
-public class GroupDetailDto {
+public class GroupOverviewDto {
 
     private Long id;
     private String name;
@@ -114,14 +114,14 @@ public class GroupDetailDto {
          *
          * @return GroupDetailDtoBuilder
          */
-        public GroupDetailDto build() {
-            GroupDetailDto groupDetailDto = new GroupDetailDto();
-            groupDetailDto.setId(id);
-            groupDetailDto.setName(name);
-            groupDetailDto.setHost(isHost);
-            groupDetailDto.setCocktail(cocktail);
-            groupDetailDto.setMembersId(membersId);
-            return groupDetailDto;
+        public GroupOverviewDto build() {
+            GroupOverviewDto groupOverviewDto = new GroupOverviewDto();
+            groupOverviewDto.setId(id);
+            groupOverviewDto.setName(name);
+            groupOverviewDto.setHost(isHost);
+            groupOverviewDto.setCocktail(cocktail);
+            groupOverviewDto.setMembersId(membersId);
+            return groupOverviewDto;
         }
     }
 }

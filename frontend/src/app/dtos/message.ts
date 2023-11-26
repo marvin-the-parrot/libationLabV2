@@ -1,6 +1,8 @@
+import {GroupDetailDto} from "./group";
+
 export interface MessageDetailDto {
   id: number;
-  groupName: string;
+  group: GroupDetailDto;
   isRead: boolean;
   sentAt: string;
 }

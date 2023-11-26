@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Group} from "../../../dtos/group";
+import {GroupOverview} from "../../../dtos/group-overview";
 import {GroupsService} from "../../../services/groups.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {NgForm, NgModel} from "@angular/forms";
@@ -21,7 +21,7 @@ export class GroupCreateEditComponent implements OnInit {
 
   mode: GroupCreateEditMode = GroupCreateEditMode.create;
 
-  group: Group = {
+  group: GroupOverview = {
     id: 0,
     name: '',
     host: null,
@@ -34,8 +34,7 @@ export class GroupCreateEditComponent implements OnInit {
   constructor(
     private service: GroupsService,
     private userService: UserService,
-    private router: Router,
-    private route: ActivatedRoute,
+    private router: Router
   ) {
   }
 
@@ -45,7 +44,7 @@ export class GroupCreateEditComponent implements OnInit {
   public get heading(): string {
     switch (this.mode) {
       case GroupCreateEditMode.create:
-        return 'Create Group';
+        return 'Create GroupOverview';
       case GroupCreateEditMode.edit:
         return `Edit: ${this.group.name}`;
       default:
@@ -68,7 +67,7 @@ export class GroupCreateEditComponent implements OnInit {
   public onSubmit(form: NgForm) {
     console.log("is form valid?", form.valid, this.group);
     if (form.valid) {
-      let observable: Observable<Group>;
+      let observable: Observable<GroupOverview>;
 
       switch (this.mode) {
         case GroupCreateEditMode.create:
