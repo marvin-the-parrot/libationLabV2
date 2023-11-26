@@ -4,10 +4,10 @@
 
 
 .purple-rectangle {
-  height: 100vh; /* 100% of the viewport height */
-  width: calc(33.33vw - 25px); /* 1/3 of the viewport width */
-  background-color: #6200EE; /* Your desired purple color */
-  position: relative; /* Establish positioning context */
+  height: 100vh;
+  width: calc(33.33vw - 25px);
+  background-color: #6200EE;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -16,21 +16,21 @@
 
 .logo {
   position: absolute;
-  top: max(1vw, 10px); /* Adjust the top position as needed */
-  left: max(1vw, 10px); /* Adjust the left position as needed */
-  width: 20%; /* Adjust the width of the logo as a percentage */
-  height: auto; /* Maintain aspect ratio */
-  max-width: 200px; /* Set a maximum width if needed */
-  min-width: 80px; /* Set a minimum width to prevent excessive shrinking */
-  border-radius: 50%; /* Applies rounded shape to the image */
+  top: max(1vw, 10px);
+  left: max(1vw, 10px);
+  width: 20%;
+  height: auto;
+  max-width: 200px;
+  min-width: 80px;
+  border-radius: 50%;
 }
 
 .centered-text {
   text-align: left;
-  color: white; /* Text color */
+  color: white;
 
-  font-size: max(1.1vw, 14px); /* Adjust font size as a percentage of viewport width */
-  margin: 3vw 3vw; /* Add margin as needed */
+  font-size: max(1.1vw, 14px);
+  margin: 3vw 3vw;
 }
 
 .content-wrapper {
@@ -38,7 +38,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 25px; /* Padding for the content area */
+  padding: 0 25px;
 }
 
 .header-login {
@@ -46,12 +46,12 @@
   background-color: #ECECEC;
   font-size: 45px;
   font-weight: bold;
-  border: none; /* Remove the border */
+  border: none;
 }
 
 .card {
   background-color: #ECECEC;
-  border: none; /* Remove the border */
+  border: none;
   align-items: center;
 }
 
@@ -74,17 +74,17 @@
 }
 
 .btn-purple-width {
-  width: 400px; /* Adjust the width as needed */
-  height: 50px; /* Adjust the height as needed */
+  width: 400px;
+  height: 50px;
   background-color: #6200EE;
-  color: white; /* Text color */
+  color: white;
   font-size: 20px;
-  border: none; /* Remove border */
-  border-radius: 25px; /* Apply border-radius for rounded ends */
+  border: none;
+  border-radius: 25px;
 }
 
 .custom-input-field {
-  width: 400px; /* Adjust the width as needed */
-  height: 50px; /* Adjust the height as needed */
+  width: 400px;
+  height: 50px;
 }
 
