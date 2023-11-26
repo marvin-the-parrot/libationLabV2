@@ -1,0 +1,22 @@
+.custom-navbar {
+  background-color: #6200EE;
+}
+
+.custom-navbar .navbar-logo {
+  margin-left: 20px; /* Add left padding */
+  margin-right: 40px;
+
+}
+
+.rounded-circle {
+  overflow: hidden; /* Hide the overflow for maintaining circle */
+}
+
+.larger-logo {
+  height: 70px; /* Set the desired height for the logo */
+  width: auto; /* Allow the width to adjust proportionally */
+}
+
+.custom-nav .nav-link {
+  margin-right: 24px;
+}

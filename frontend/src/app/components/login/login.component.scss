@@ -1,1 +1,90 @@
-d
+.login-wrapper {
+  display: flex;
+}
+
+
+.purple-rectangle {
+  height: 100vh; /* 100% of the viewport height */
+  width: calc(33.33vw - 25px); /* 1/3 of the viewport width */
+  background-color: #6200EE; /* Your desired purple color */
+  position: relative; /* Establish positioning context */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  position: absolute;
+  top: max(1vw, 10px); /* Adjust the top position as needed */
+  left: max(1vw, 10px); /* Adjust the left position as needed */
+  width: 20%; /* Adjust the width of the logo as a percentage */
+  height: auto; /* Maintain aspect ratio */
+  max-width: 200px; /* Set a maximum width if needed */
+  min-width: 80px; /* Set a minimum width to prevent excessive shrinking */
+  border-radius: 50%; /* Applies rounded shape to the image */
+}
+
+.centered-text {
+  text-align: left;
+  color: white; /* Text color */
+
+  font-size: max(1.1vw, 14px); /* Adjust font size as a percentage of viewport width */
+  margin: 3vw 3vw; /* Add margin as needed */
+}
+
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 25px; /* Padding for the content area */
+}
+
+.header-login {
+  text-align: center;
+  background-color: #ECECEC;
+  font-size: 45px;
+  font-weight: bold;
+  border: none; /* Remove the border */
+}
+
+.card {
+  background-color: #ECECEC;
+  border: none; /* Remove the border */
+  align-items: center;
+}
+
+.username-field {
+  margin-bottom: 10px;
+}
+
+.password-field {
+  margin-bottom: 0px;
+}
+
+
+.custom-text-warning {
+  color: #6200EE;
+}
+
+.register-text {
+  color: #6200EE;
+  padding: 6px 0;
+}
+
+.btn-purple-width {
+  width: 400px; /* Adjust the width as needed */
+  height: 50px; /* Adjust the height as needed */
+  background-color: #6200EE;
+  color: white; /* Text color */
+  font-size: 20px;
+  border: none; /* Remove border */
+  border-radius: 25px; /* Apply border-radius for rounded ends */
+}
+
+.custom-input-field {
+  width: 400px; /* Adjust the width as needed */
+  height: 50px; /* Adjust the height as needed */
+}
+

@@ -5,64 +5,81 @@
   </button>
 </div>
 
-<div class="pt-5">
-  <div class="row">
-    <div class="col-md-6 mx-auto">
-      <span class="anchor" id="formLogin"></span>
 
-      <div class="card rounded-0">
-        <div class="card-header">
-          <h3 class="mb-0">Create Account</h3>
-        </div>
+<div class="register-wrapper">
+  <div class="purple-rectangle">
+    <img src="assets/images/logo.png" class="logo" alt="Logo">
+    <div class="centered-text">
+      <p>This is a placeholder for an description or quot.
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        Sed ut tellus ac velit feugiat blandit. Nulla facilisi.
+        Phasellus id condimentum elit. Integer quis massa sed ex tincidunt sollicitudin.
+        Vestibulum a nunc ut justo lobortis tristique a id ex.
+        Proin ultrices odio id eros dapibus, eget suscipit metus commodo.
+        Mauris vel lacinia arcu. </p>
+    </div>
+  </div>
 
-        <div class="card-body">
-          <form class="form" [formGroup]="createAccountForm" (ngSubmit)="createUser()">
+  <div class="pt-0 content-wrapper">
+    <div class="row">
+      <div class="col-md-12 mx-auto">
+        <span class="anchor" id="formLogin"></span>
 
-            <div class="form-group">
-              <label for="inputUsername">Username</label>
-              <input type="text" name="username" formControlName="username" class="form-control" id="inputUsername"
-                     aria-describedby="usernameHelp" placeholder="Enter username">
-              <div *ngIf="submitted && createAccountForm.controls.username.errors" class="error">
-                <small class="form-text text-warning" *ngIf="createAccountForm.controls.username.errors.required">Your username is
-                  required!
-                </small>
+        <div class="card rounded-0">
+          <div class="card-header header-login">
+            <p class="mb-0">Create New Account</p>
+          </div>
+
+          <div class="card-body">
+            <form class="form" [formGroup]="createAccountForm" (ngSubmit)="createUser()">
+
+              <div class="form-group username-field">
+                <input type="text" name="username" formControlName="username" class="form-control custom-input-field" id="inputUsername"
+                       aria-describedby="usernameHelp" placeholder="Enter username">
+                <div *ngIf="submitted && createAccountForm.controls.username.errors" class="error">
+                  <small class="form-text custom-text-warning" *ngIf="createAccountForm.controls.username.errors.required">Your username is
+                    required!
+                  </small>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" name="email" formControlName="email" class="form-control" id="email"
-                     placeholder="Your Email">
-              <div *ngIf="submitted && createAccountForm.controls.email.errors" class="error">
-                <small class="form-text text-warning" *ngIf="createAccountForm.controls.email.errors.required">Your Email
-                  is
-                  required!
-                </small>
+              <div class="form-group email-field">
+                <input type="email" name="email" formControlName="email" class="form-control custom-input-field" id="email"
+                       placeholder="Your Email">
+                <div *ngIf="submitted && createAccountForm.controls.email.errors" class="error">
+                  <small class="form-text custom-text-warning" *ngIf="createAccountForm.controls.email.errors.required">Your Email
+                    is
+                    required!
+                  </small>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group">
-              <label for="password">Password</label>
-              <input type="password" name="password" formControlName="password" class="form-control" id="password"
-                     placeholder="Password">
-              <div *ngIf="submitted && createAccountForm.controls.password.errors" class="error">
-                <small class="form-text text-warning" *ngIf="createAccountForm.controls.password.errors.required">Your password
-                  is
-                  required!
-                </small>
-                <small class="form-text text-warning" *ngIf="createAccountForm.controls.password.errors.minlength">Your password
-                  must be at least 8 characters long!
-                </small>
+              <div class="form-group password-field">
+                <input type="password" name="password" formControlName="password" class="form-control custom-input-field" id="password"
+                       placeholder="Password">
+                <div *ngIf="submitted && createAccountForm.controls.password.errors" class="error">
+                  <small class="form-text custom-text-warning" *ngIf="createAccountForm.controls.password.errors.required">Your password
+                    is
+                    required!
+                  </small>
+                  <small class="form-text custom-text-warning" *ngIf="createAccountForm.controls.password.errors.minlength">Your password
+                    must be at least 8 characters long!
+                  </small>
+                </div>
               </div>
-            </div>
 
-            <button type="button" (click)="createUser()" class="btn btn-success float-right">Create Account</button>
+              <button type="button" (click)="createUser()" class="btn btn-success btn-purple-width">Create Account</button>
+              <div>
+                <a routerLink="/login" class="btn btn-link signIn-text">Already have an account? Sign in</a>
+              </div>
 
-          </form>
+            </form>
+          </div>
+
         </div>
 
       </div>
-
     </div>
   </div>
 </div>
+```
