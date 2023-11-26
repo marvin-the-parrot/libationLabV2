@@ -18,6 +18,8 @@ import { GroupCreateEditComponent } from './components/groups/group-create-edit/
 import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
 import { GroupDetailComponent } from './components/groups/group-detail/group-detail.component';
 import { CreateAccountComponent } from './components/create-account/create-account.component';
+import {ForgotPasswordComponent} from "./components/forgot-password/forgot-password.component";
+import {ResetPasswordComponent} from "./components/reset-password/reset-password.component";
 
 @NgModule({
   declarations: [
@@ -33,6 +35,8 @@ import { CreateAccountComponent } from './components/create-account/create-accou
     AutocompleteComponent,
     GroupDetailComponent,
     CreateAccountComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent,
   ],
   imports: [
     BrowserModule,

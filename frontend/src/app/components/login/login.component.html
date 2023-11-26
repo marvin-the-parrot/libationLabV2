@@ -37,7 +37,7 @@
               <div class="form-group username-field">
 
                 <input type="text" name="username" formControlName="username" class="form-control custom-input-field" id="inputUsername"
-                       aria-describedby="usernameHelp" placeholder="Enter username">
+                       aria-describedby="usernameHelp" placeholder="Username">
                 <div *ngIf="submitted && loginForm.controls.username.errors" class="error">
                   <small class="form-text custom-text-warning" *ngIf="loginForm.controls.username.errors.required">Your username is
                     required!
@@ -61,7 +61,7 @@
               </div>
 
               <div>
-                <a routerLink="/" class="btn btn-link register-text">Forgot Password?</a>
+                <a routerLink="/forgot-password" class="btn btn-link register-text">Forgot Password?</a>
               </div>
 
               <button type="button" (click)="loginUser()" class="btn btn-success btn-purple-width">Login</button>
