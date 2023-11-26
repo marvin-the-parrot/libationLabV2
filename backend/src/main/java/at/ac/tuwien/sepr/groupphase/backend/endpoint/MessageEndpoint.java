@@ -84,7 +84,7 @@ public class MessageEndpoint {
     public MessageDetailDto create(@Valid @RequestBody MessageCreateDto messageDto) {
         LOGGER.info("POST /api/v1/messages body: {}", messageDto);
         //return messageMapper.messageToDetailedMessageDto(
-            //messageService.publishMessage(messageMapper.messageCreateDtoToMessage(messageDto)));
+        //messageService.publishMessage(messageMapper.messageCreateDtoToMessage(messageDto)));
         return null;
     }
 }
