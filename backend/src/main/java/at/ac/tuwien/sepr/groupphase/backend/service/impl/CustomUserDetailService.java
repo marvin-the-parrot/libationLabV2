@@ -7,6 +7,7 @@ import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.security.JwtTokenizer;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -86,7 +89,7 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public void register(UserCreateDto userCreateDto) {
+    public void register(UserCreateDto userCreateDto) throws ConstraintViolationException {
         LOGGER.debug("Register new user");
         ApplicationUser applicationUser = new ApplicationUser(
             userCreateDto.getName(),
@@ -94,6 +97,5 @@ public class CustomUserDetailService implements UserService {
             passwordEncoder.encode(userCreateDto.getPassword())
         );
         userRepository.save(applicationUser);
-        userRepository.findAll();
     }
 }

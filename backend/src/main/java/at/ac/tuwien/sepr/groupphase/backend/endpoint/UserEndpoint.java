@@ -6,6 +6,7 @@ import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.invoke.MethodHandles;
 
@@ -38,7 +40,18 @@ public class UserEndpoint {
     @ResponseStatus(HttpStatus.CREATED)
     public void createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
         LOGGER.info("POST /api/v1/user body: {}", userCreateDto);
-        userService.register(userCreateDto);
+        try {
+            userService.register(userCreateDto);
+        } catch (ConstraintViolationException e) {
+            logClientError(HttpStatus.BAD_REQUEST, "Failed to create user since the email is already in use", e);
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        } catch (Exception e) {
+            logClientError(HttpStatus.BAD_REQUEST, "Failed to create user", e);
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+            throw new ResponseStatusException(status, e.getMessage(), e);
+
+        }
 
     }
 

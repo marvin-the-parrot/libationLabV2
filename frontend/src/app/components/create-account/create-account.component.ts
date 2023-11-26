@@ -1,8 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
-import {AuthService} from '../../services/auth.service';
-import {AuthRequest} from '../../dtos/auth-request';
 import {CreateAccount} from "../../dtos/create-account";
 import {UserService} from "../../services/user.service";
 
@@ -53,7 +51,7 @@ export class CreateAccountComponent implements OnInit {
         this.router.navigate(['/login']);
       },
       error: error => {
-        console.log('Could not log in due to:');
+        console.log('Could not create account due to:');
         console.log(error);
         this.error = true;
         if (typeof error.error === 'object') {
