@@ -1,5 +1,16 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
+import java.lang.invoke.MethodHandles;
+import java.util.Optional;
+
+import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
@@ -8,20 +19,9 @@ import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
-import at.ac.tuwien.sepr.groupphase.backend.repository.MemberRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.validators.GroupValidator;
-
-import java.lang.invoke.MethodHandles;
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Group service implementation.
@@ -33,10 +33,10 @@ public class GroupServiceImpl implements GroupService {
         = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
-    private GroupRepository groupRepository;
+    private final GroupRepository groupRepository;
 
     @Autowired
-    private MemberRepository memberRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private UserGroupRepository userGroupRepository;
@@ -62,7 +62,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public void deleteGroup(Long groupId, Long hostId) {
         LOGGER.debug("Delete group by host with group id {}", groupId, hostId);
-        Optional<UserGroup> host = memberRepository.findById(hostId);
+        Optional<ApplicationUser> host = userRepository.findById(hostId);
         if (isHostExists(host)) {
             groupRepository.deleteById(groupId);
         } else {
@@ -76,7 +76,7 @@ public class GroupServiceImpl implements GroupService {
         LOGGER.debug("Delete group member by host with group and member id {}",
             groupId, hostId, memberId);
         ApplicationGroup group = groupRepository.findById(groupId).orElse(null);
-        Optional<UserGroup> host = memberRepository.findById(hostId);
+        Optional<ApplicationUser> host = userRepository.findById(hostId);
         if (!isHostExists(host)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -118,7 +118,7 @@ public class GroupServiceImpl implements GroupService {
         return null; // todo return updated group
     }
 
-    private boolean isHostExists(Optional<UserGroup> host) {
-        return !host.isEmpty() || host.get().isHost();
+    private boolean isHostExists(Optional<ApplicationUser> host) {
+        return !host.isEmpty() && host.get().getAdmin();
     }
 }

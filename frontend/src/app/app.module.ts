@@ -17,6 +17,7 @@ import { GroupThumbComponent } from './components/groups/group-thumb/group-thumb
 import { GroupCreateEditComponent } from './components/groups/group-create-edit/group-create-edit.component';
 import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
 import { GroupDetailComponent } from './components/groups/group-detail/group-detail.component';
+import { CreateAccountComponent } from './components/create-account/create-account.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { GroupDetailComponent } from './components/groups/group-detail/group-det
     GroupCreateEditComponent,
     AutocompleteComponent,
     GroupDetailComponent,
+    CreateAccountComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.datagenerator;
 
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
 
 import java.lang.invoke.MethodHandles;
@@ -10,6 +11,7 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -42,7 +44,7 @@ public class MessageDataGenerator {
             for (int i = 0; i < NUMBER_OF_MESSAGES_TO_GENERATE; i++) {
                 ApplicationMessage message = ApplicationMessage.ApplicationMessageBuilder.message()
                     .withId((long) i)
-                    .withApplicationUser(userRepository.findById(1))
+                    .withApplicationUser(userRepository.findByEmail("user1@email.com"))
                     .withGroupId((long) i)
                     .withIsRead(false)
                     .withSentAt(LocalDateTime.now())

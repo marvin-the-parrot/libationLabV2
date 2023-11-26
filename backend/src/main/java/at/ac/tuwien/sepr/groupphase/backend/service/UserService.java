@@ -1,7 +1,10 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PasswordResetDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -40,4 +43,18 @@ public interface UserService extends UserDetailsService {
      * @throws org.springframework.security.authentication.BadCredentialsException if credentials are bad
      */
     String login(UserLoginDto userLoginDto);
+
+    /**
+     * Register a new user.
+     *
+     * @param userCreateDto create credentials
+     */
+    void register(UserCreateDto userCreateDto) throws ConstraintViolationException;
+
+    /**
+     * Reset the password of a user.
+     *
+     * @param passwordResetDto reset credentials
+     */
+    void resetPassword(PasswordResetDto passwordResetDto);
 }
