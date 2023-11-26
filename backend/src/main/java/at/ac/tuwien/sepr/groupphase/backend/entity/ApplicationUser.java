@@ -1,19 +1,16 @@
 package at.ac.tuwien.sepr.groupphase.backend.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Column;
+
 
 import java.util.Set;
 
 //TODO: replace this class with a correct ApplicationUser Entity implementation
-
-/**
- * Entity of table ApplicationUser.
- */
 @Entity
 public class ApplicationUser {
 
@@ -24,7 +21,7 @@ public class ApplicationUser {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -38,14 +35,8 @@ public class ApplicationUser {
     public ApplicationUser() {
     }
 
-    /**
-     * Application user constructor.
-     *
-     * @param email    of user
-     * @param password of user
-     * @param admin    is user
-     */
-    public ApplicationUser(String email, String password, Boolean admin) {
+    public ApplicationUser(String name, String email, String password) {
+        this.name = name;
         this.email = email;
         this.password = password;
         this.admin = admin;
