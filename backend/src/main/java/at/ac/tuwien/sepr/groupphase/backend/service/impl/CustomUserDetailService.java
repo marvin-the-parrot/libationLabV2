@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PasswordResetDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
@@ -93,5 +94,18 @@ public class CustomUserDetailService implements UserService {
             passwordEncoder.encode(userCreateDto.getPassword())
         );
         userRepository.save(applicationUser);
+    }
+
+    @Override
+    public void resetPassword(PasswordResetDto passwordResetDto) {
+        LOGGER.debug("Reset password");
+        ApplicationUser applicationUser = userRepository.findByEmail(passwordResetDto.getEmail());
+        //TODO: check token
+        if (applicationUser != null) {
+            applicationUser.setPassword(passwordEncoder.encode(passwordResetDto.getPassword()));
+            userRepository.save(applicationUser);
+        } else {
+            throw new NotFoundException(String.format("Could not find the user with the email address %s", passwordResetDto.getEmail()));
+        }
     }
 }

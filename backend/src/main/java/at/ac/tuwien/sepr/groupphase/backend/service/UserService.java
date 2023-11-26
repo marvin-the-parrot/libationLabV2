@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PasswordResetDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
@@ -47,4 +48,10 @@ public interface UserService extends UserDetailsService {
      */
     void register(UserCreateDto userCreateDto) throws ConstraintViolationException;
 
+    /**
+     * Reset the password of a user.
+     *
+     * @param passwordResetDto reset credentials
+     */
+    void resetPassword(PasswordResetDto passwordResetDto);
 }
