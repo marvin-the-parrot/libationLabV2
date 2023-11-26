@@ -1,9 +1,9 @@
-import {ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild, ViewChildren} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, TemplateRef} from '@angular/core';
 import {MessageService} from '../../services/message.service';
-import {Message} from '../../dtos/message';
 import {NgbModal, NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
-import {UntypedFormBuilder, NgForm} from '@angular/forms';
+import {UntypedFormBuilder} from '@angular/forms';
 import {AuthService} from '../../services/auth.service';
+import {MessageDetailDto} from "../../dtos/message";
 
 @Component({
   selector: 'app-message',
@@ -17,9 +17,7 @@ export class MessageComponent implements OnInit {
   // After first submission attempt, form validation will start
   submitted = false;
 
-  currentMessage: Message;
-
-  private message: Message[];
+  private messages: MessageDetailDto[];
 
   constructor(private messageService: MessageService,
               private ngbPaginationConfig: NgbPaginationConfig,
@@ -41,39 +39,15 @@ export class MessageComponent implements OnInit {
   }
 
   openAddModal(messageAddModal: TemplateRef<any>) {
-    this.currentMessage = new Message();
     this.modalService.open(messageAddModal, {ariaLabelledBy: 'modal-basic-title'});
   }
 
-  openExistingMessageModal(id: number, messageAddModal: TemplateRef<any>) {
-    this.messageService.getMessageById(id).subscribe({
-      next: res => {
-        this.currentMessage = res;
-        this.modalService.open(messageAddModal, {ariaLabelledBy: 'modal-basic-title'});
-      },
-      error: err => {
-        this.defaultServiceErrorHandling(err);
-      }
-    });
+  getMessage(): MessageDetailDto[] {
+    return this.messages;
   }
 
-  /**
-   * Starts form validation and builds a message dto for sending a creation request if the form is valid.
-   * If the procedure was successful, the form will be cleared.
-   */
-  addMessage(form) {
-    this.submitted = true;
-
-
-    if (form.valid) {
-      this.currentMessage.publishedAt = new Date().toISOString();
-      this.createMessage(this.currentMessage);
-      this.clearForm();
-    }
-  }
-
-  getMessage(): Message[] {
-    return this.message;
+  getText(message: MessageDetailDto): string {
+    return "You were invited to drink with " + message.group.name;
   }
 
   /**
@@ -84,36 +58,18 @@ export class MessageComponent implements OnInit {
   }
 
   /**
-   * Sends message creation request
-   *
-   * @param message the message which should be created
-   */
-  private createMessage(message: Message) {
-    this.messageService.createMessage(message).subscribe({
-        next: () => {
-          this.loadMessage();
-        },
-        error: error => {
-          this.defaultServiceErrorHandling(error);
-        }
-      }
-    );
-  }
-
-  /**
    * Loads the specified page of message from the backend
    */
   private loadMessage() {
     this.messageService.getMessage().subscribe({
-      next: (message: Message[]) => {
-        this.message = message;
+      next: (messages: MessageDetailDto[]) => {
+        this.messages = messages;
       },
       error: error => {
         this.defaultServiceErrorHandling(error);
       }
     });
   }
-
 
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
@@ -123,11 +79,6 @@ export class MessageComponent implements OnInit {
     } else {
       this.errorMessage = error.error;
     }
-  }
-
-  private clearForm() {
-    this.currentMessage = new Message();
-    this.submitted = false;
   }
 
 }

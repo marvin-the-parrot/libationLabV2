@@ -1,15 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
-/**
- * Dto to send group detail data to the frontend.
- */
 public class GroupDetailDto {
-
     private Long id;
     private String name;
-    private boolean isHost;
-    private String cocktail;
-    private Long membersId;
 
     public Long getId() {
         return id;
@@ -25,103 +18,5 @@ public class GroupDetailDto {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public boolean isHost() {
-        return isHost;
-    }
-
-    public void setHost(boolean host) {
-        isHost = host;
-    }
-
-    public String getCocktail() {
-        return cocktail;
-    }
-
-    public void setCocktail(String cocktail) {
-        this.cocktail = cocktail;
-    }
-
-    public Long getMembersId() {
-        return membersId;
-    }
-
-    public void setMembersId(Long membersId) {
-        this.membersId = membersId;
-    }
-
-    @Override
-    public String toString() {
-        return "Message{"
-            + "id=" + id
-            + ", name=" + name
-            + ", host='" + isHost + '\''
-            + ", cocktails='" + cocktail + '\''
-            + ", members='" + membersId + '\''
-            + '}';
-    }
-
-    /**
-     * Group detail dto builder.
-     */
-    public static final class GroupDetailDtoBuilder {
-        private Long id;
-        private String name;
-        private boolean isHost;
-        private String cocktail;
-        private Long membersId;
-
-        public GroupDetailDtoBuilder() {
-        }
-
-        /**
-         * Group detail dto builder.
-         *
-         * @return GroupDetailDtoBuilder
-         */
-        public static GroupDetailDtoBuilder groupDetailDto() {
-            return new GroupDetailDtoBuilder();
-        }
-
-        public GroupDetailDtoBuilder withId(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public GroupDetailDtoBuilder withName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public GroupDetailDtoBuilder withIsHost(boolean isHost) {
-            this.isHost = isHost;
-            return this;
-        }
-
-        public GroupDetailDtoBuilder withCocktail(String cocktail) {
-            this.cocktail = cocktail;
-            return this;
-        }
-
-        public GroupDetailDtoBuilder withMembersId(Long membersId) {
-            this.membersId = membersId;
-            return this;
-        }
-
-        /**
-         * Group detail dto builder.
-         *
-         * @return GroupDetailDtoBuilder
-         */
-        public GroupDetailDto build() {
-            GroupDetailDto groupDetailDto = new GroupDetailDto();
-            groupDetailDto.setId(id);
-            groupDetailDto.setName(name);
-            groupDetailDto.setHost(isHost);
-            groupDetailDto.setCocktail(cocktail);
-            groupDetailDto.setMembersId(membersId);
-            return groupDetailDto;
-        }
     }
 }

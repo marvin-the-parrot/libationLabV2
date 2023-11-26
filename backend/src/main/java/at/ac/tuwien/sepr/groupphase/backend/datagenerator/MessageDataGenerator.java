@@ -1,14 +1,17 @@
 package at.ac.tuwien.sepr.groupphase.backend.datagenerator;
 
-import at.ac.tuwien.sepr.groupphase.backend.entity.Message;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
-import jakarta.annotation.PostConstruct;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 
+import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -22,14 +25,13 @@ public class MessageDataGenerator {
     private static final Logger LOGGER =
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final int NUMBER_OF_MESSAGES_TO_GENERATE = 5;
-    private static final String TEST_NEWS_TITLE = "Title";
-    private static final String TEST_NEWS_SUMMARY = "Summary of the message";
-    private static final String TEST_NEWS_TEXT = "This is the text of the message";
 
     private final MessageRepository messageRepository;
+    private final UserRepository userRepository;
 
-    public MessageDataGenerator(MessageRepository messageRepository) {
+    public MessageDataGenerator(MessageRepository messageRepository, UserRepository userRepository) {
         this.messageRepository = messageRepository;
+        this.userRepository = userRepository;
     }
 
     @PostConstruct
@@ -38,12 +40,14 @@ public class MessageDataGenerator {
             LOGGER.debug("message already generated");
         } else {
             LOGGER.debug("generating {} message entries", NUMBER_OF_MESSAGES_TO_GENERATE);
+
             for (int i = 0; i < NUMBER_OF_MESSAGES_TO_GENERATE; i++) {
-                Message message = Message.MessageBuilder.message()
-                    .withTitle(TEST_NEWS_TITLE + " " + i)
-                    .withSummary(TEST_NEWS_SUMMARY + " " + i)
-                    .withText(TEST_NEWS_TEXT + " " + i)
-                    .withPublishedAt(LocalDateTime.now().minusMonths(i))
+                ApplicationMessage message = ApplicationMessage.ApplicationMessageBuilder.message()
+                    .withId((long) i)
+                    .withApplicationUser(userRepository.findByEmail("user1@email.com"))
+                    .withGroupId((long) 1)
+                    .withIsRead(false)
+                    .withSentAt(LocalDateTime.now())
                     .build();
                 LOGGER.debug("saving message {}", message);
                 messageRepository.save(message);

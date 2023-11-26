@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {Group} from "../../../dtos/group";
+import {GroupOverview} from "../../../dtos/group-overview";
 
 @Component({
   selector: 'app-group-thumb',
@@ -9,5 +9,5 @@ import {Group} from "../../../dtos/group";
 export class GroupThumbComponent {
 
   // get the group to display from the parent component
-  @Input() group: Group;
+  @Input() group: GroupOverview;
 }

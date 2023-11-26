@@ -8,65 +8,6 @@
 
 <div class="mt-4 container">
 
-  <div class="row p-2 mb-4">
-    <button *ngIf="isAdmin()" type="button" class="btn btn-secondary btn-sm mr-4" (click)="openAddModal(messageAddModal)">Add message</button>
-
-    <ng-template #messageAddModal let-modal>
-      <div class="modal-header">
-        <h5 class="modal-title">Message</h5>
-        <button type="button" class="close" (click)="modal.dismiss('X')" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form (ngSubmit)="addMessage(messageForm)" #messageForm="ngForm">
-
-          <div class="form-group">
-            <label for="inputTitle">Title</label>
-            <input type="text" name="title" class="form-control" id="inputTitle" required
-                   aria-describedby="titleHelp" placeholder="Enter title" [(ngModel)]="currentMessage.title" [readOnly]="currentMessage.id">
-            <div *ngIf="submitted && messageForm.controls.title.errors" class="error">
-              <small class="form-text text-warning" *ngIf="messageForm.controls.title.errors.required">Your title
-                is
-                required!
-              </small>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="inputSummary">Summary</label>
-            <textarea rows="3" name="summary" class="form-control" id="inputSummary" required
-                      aria-describedby="summaryHelp" placeholder="Enter summary" [(ngModel)]="currentMessage.summary" [readOnly]="currentMessage.id"></textarea>
-            <div *ngIf="submitted && messageForm.controls.summary.errors" class="error">
-              <small class="form-text text-warning" *ngIf="messageForm.controls.summary.errors.required">Your
-                summary is
-                required!
-              </small>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="inputText">Text</label>
-            <textarea rows="6" name="text" class="form-control" id="inputText" required
-                      aria-describedby="textHelp" placeholder="Enter text" [(ngModel)]="currentMessage.text" [readOnly]="currentMessage.id"></textarea>
-            <div *ngIf="submitted && messageForm.controls.text.errors" class="error">
-              <small class="form-text text-warning" *ngIf="messageForm.controls.text.errors.required">Your text is
-                required!
-              </small>
-            </div>
-          </div>
-
-          <button type="button" (click)="addMessage(messageForm)" id="add-msg" class="btn btn-success float-right" *ngIf="!currentMessage.id">Add message</button>
-
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="close-modal-btn" (click)="modal.dismiss('close')">Close</button>
-      </div>
-    </ng-template>
-  </div>
-
-
   <div class="row">
 
     <div class="card p-5">
@@ -77,17 +18,17 @@
         <div class="card-deck">
 
           <div class="card-body">
-            <h5 class="card-title col-xl-2 col-lg-2 p-1">{{message.title}}</h5>
-            <h6 class="card-subtitle mb-2 text-muted col-xl-2 col-lg-2 p-1">{{message.publishedAt | date}}</h6>
-            <div class="card-text col-xl-6 col-lg-6 p-1">{{message.summary}}</div>
+            <h5 class="card-title col-xl-2 col-lg-2 p-1">{{message.group.name}}</h5>
+            <h6 class="card-subtitle mb-2 text-muted col-xl-2 col-lg-2 p-1">{{message.sentAt | date}}</h6>
+            <div class="card-text col-xl-6 col-lg-6 p-1">{{getText(message)}}</div>
             <div class="card-buttons col-xl-2 col-lg-2 p-1">
               <div class="btn-group">
                 <a class="btn btn-info btn-sm responsive-info-button"
-                   aria-label="Accept Group Invation">
+                   aria-label="Accept GroupOverview Invation">
                   <i class="bi bi-info-lg">accept</i>
                 </a>
                 <a class="btn btn-danger btn-sm responsive-danger-button"
-                   aria-label="Decline Group Invitaion">
+                   aria-label="Decline GroupOverview Invitaion">
                   <i class="bi bi-trash">decline</i>
                 </a>
               </div>
@@ -100,14 +41,14 @@
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title">{{message.title}}</h5>
+                  <h5 class="modal-title">{{message.group.name}}</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
                 <div class="modal-body">
-                  <p class="lead"><span class="font-italic">{{message.publishedAt | date}}</span> {{message.summary}}</p>
-                  <p class="mt-2"> {{message.text}} </p>
+                  <p class="lead"><span class="font-italic">{{message.sentAt | date}}</span> {{getText(message)}}</p>
+                  <p class="mt-2"> {{getText(message)}} </p>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

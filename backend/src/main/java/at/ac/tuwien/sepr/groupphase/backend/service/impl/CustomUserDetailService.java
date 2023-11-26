@@ -8,11 +8,11 @@ import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.security.JwtTokenizer;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
-import org.hibernate.exception.ConstraintViolationException;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +24,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.lang.invoke.MethodHandles;
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * User service implementation.
@@ -64,7 +59,11 @@ public class CustomUserDetailService implements UserService {
             ApplicationUser applicationUser = findApplicationUserByEmail(email);
 
             List<GrantedAuthority> grantedAuthorities;
-            grantedAuthorities = AuthorityUtils.createAuthorityList("ROLE_USER");
+            if (applicationUser.getAdmin()) {
+                grantedAuthorities = AuthorityUtils.createAuthorityList("ROLE_ADMIN", "ROLE_USER");
+            } else {
+                grantedAuthorities = AuthorityUtils.createAuthorityList("ROLE_USER");
+            }
 
             return new User(applicationUser.getEmail(), applicationUser.getPassword(),
                 grantedAuthorities);
@@ -76,7 +75,6 @@ public class CustomUserDetailService implements UserService {
     @Override
     public ApplicationUser findApplicationUserByEmail(String email) {
         LOGGER.debug("Find application user by email");
-
         ApplicationUser applicationUser = userRepository.findByEmail(email);
         if (applicationUser != null) {
             return applicationUser;
@@ -126,4 +124,5 @@ public class CustomUserDetailService implements UserService {
             throw new NotFoundException(String.format("Could not find the user with the email address %s", passwordResetDto.getEmail()));
         }
     }
+
 }

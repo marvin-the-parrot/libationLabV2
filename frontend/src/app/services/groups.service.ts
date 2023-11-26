@@ -1,6 +1,6 @@
 import {HttpClient} from "@angular/common/http";
 import {Globals} from "../global/globals";
-import {Group} from "../dtos/group";
+import {GroupOverview} from "../dtos/group-overview";
 import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
 
@@ -20,8 +20,8 @@ export class GroupsService {
    * @param group the data for the group that should be created
    * @return an Observable for the created group
    */
-  create(group: Group): Observable<Group> {
-    return this.httpClient.post<Group>(
+  create(group: GroupOverview): Observable<GroupOverview> {
+    return this.httpClient.post<GroupOverview>(
       this.baseUri,
       group
     );
@@ -34,20 +34,20 @@ export class GroupsService {
    * @param group the data for the group that should be updated
    * @return an Observable for the updated group
    */
-  update(group: Group): Observable<Group> {
-    return this.httpClient.put<Group>(
+  update(group: GroupOverview): Observable<GroupOverview> {
+    return this.httpClient.put<GroupOverview>(
       this.baseUri + '/' + group.id,
       group
     );
   }
 
   /**
-   * Gets a Group by its id.
+   * Gets a GroupOverview by its id.
    *
    * @param id the id of the group
    */
-  getById(id: number): Observable<Group> {
-    return this.httpClient.get<Group>(`${this.baseUri}/${id}`);
+  getById(id: number): Observable<GroupOverview> {
+    return this.httpClient.get<GroupOverview>(`${this.baseUri}/${id}`);
   }
 
   /**
@@ -56,29 +56,29 @@ export class GroupsService {
    * @param groupId the id of the group
    * @param name the name of member
    */
-  getByName(groupId: number, name: string): Observable<Group> {
-    return this.httpClient.get<Group>(`${this.baseUri}/${groupId}/${name}`);
+  getByName(groupId: number, name: string): Observable<GroupOverview> {
+    return this.httpClient.get<GroupOverview>(`${this.baseUri}/${groupId}/${name}`);
   }
 
   /**
-   * Delete a Group by its id.
+   * Delete a GroupOverview by its id.
    *
    * @param groupId the id of the group
    * @param hostId the id of host
    */
   deleteById(groupId: number, hostId: number): void {
-    this.httpClient.delete<Group>(`${this.baseUri}/${groupId}/${hostId}`);
+    this.httpClient.delete<GroupOverview>(`${this.baseUri}/${groupId}/${hostId}`);
   }
 
   /**
-   * Delete a member of Group by its id.
+   * Delete a member of GroupOverview by its id.
    *
    * @param id the id of the group
    * @param memberId the id of member to delete
    * @param hostId the id of host
    */
   deleteByMemberByIdAndGroupId(groupId: number, memberId: number, hostId: number): void {
-    this.httpClient.delete<Group>(`${this.baseUri}/${groupId}/${memberId}/${hostId}`);
+    this.httpClient.delete<GroupOverview>(`${this.baseUri}/${groupId}/${memberId}/${hostId}`);
   }
 
 }
