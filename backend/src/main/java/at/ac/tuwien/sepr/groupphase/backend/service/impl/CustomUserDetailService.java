@@ -47,11 +47,7 @@ public class CustomUserDetailService implements UserService {
             ApplicationUser applicationUser = findApplicationUserByEmail(email);
 
             List<GrantedAuthority> grantedAuthorities;
-            if (applicationUser.getAdmin()) {
-                grantedAuthorities = AuthorityUtils.createAuthorityList("ROLE_ADMIN", "ROLE_USER");
-            } else {
-                grantedAuthorities = AuthorityUtils.createAuthorityList("ROLE_USER");
-            }
+            grantedAuthorities = AuthorityUtils.createAuthorityList("ROLE_USER");
 
             return new User(applicationUser.getEmail(), applicationUser.getPassword(), grantedAuthorities);
         } catch (NotFoundException e) {
