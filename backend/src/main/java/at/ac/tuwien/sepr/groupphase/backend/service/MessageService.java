@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
 
 import java.util.List;
@@ -29,9 +30,9 @@ public interface MessageService {
     /**
      * Save a single message entry.
      *
-     * @param applicationMessage to publish
+     * @param message to publish
      * @return saved message entry
      */
-    ApplicationMessage save(ApplicationMessage applicationMessage);
+    ApplicationMessage save(MessageCreateDto message);
 
 }

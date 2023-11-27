@@ -20,7 +20,7 @@ public interface MessageMapper {
 
     //List<MessageDetailDto> messageToDetailedMessageDto(List<ApplicationMessage> message);
 
-    ApplicationMessage messageCreateDtoToMessage(MessageCreateDto messageCreateDto);
+    //ApplicationMessage messageCreateDtoToMessage(MessageCreateDto messageCreateDto, Long groupId, );
 
     @Mapping(source = "message.id", target = "id")
     @Mapping(source = "group", target = "group")

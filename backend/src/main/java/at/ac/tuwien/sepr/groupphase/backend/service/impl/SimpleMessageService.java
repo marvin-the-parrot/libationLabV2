@@ -1,9 +1,11 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.MessageService;
 
 import java.lang.invoke.MethodHandles;
@@ -26,7 +28,7 @@ public class SimpleMessageService implements MessageService {
     private final MessageRepository messageRepository;
 
     @Autowired
-    private GroupRepository groupRepository;
+    private UserRepository userRepository;
 
     public SimpleMessageService(MessageRepository messageRepository) {
         this.messageRepository = messageRepository;
@@ -47,8 +49,11 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public ApplicationMessage save(ApplicationMessage applicationMessage) {
-        LOGGER.debug("Publish new message {}", applicationMessage);
+    public ApplicationMessage save(MessageCreateDto message) {
+        LOGGER.debug("Publish new message {}", message);
+        ApplicationMessage applicationMessage = new ApplicationMessage();
+        applicationMessage.setApplicationUser(userRepository.findById(message.getUserId()).orElseThrow());
+        applicationMessage.setGroupId(message.getGroupId());
         applicationMessage.setIsRead(false);
         applicationMessage.setSentAt(LocalDateTime.now());
         return messageRepository.save(applicationMessage);

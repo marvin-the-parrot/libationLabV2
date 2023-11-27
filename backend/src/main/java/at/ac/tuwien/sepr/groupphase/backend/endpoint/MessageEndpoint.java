@@ -74,17 +74,17 @@ public class MessageEndpoint {
     /**
      * Create message endpoint.
      *
-     * @param messageDto - dto
+     * @param message - messageCreateDto
      * @return published message
      */
     @Secured("ROLE_USER")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @Operation(summary = "Publish a new message", security = @SecurityRequirement(name = "apiKey"))
-    public MessageDetailDto create(@Valid @RequestBody MessageCreateDto messageDto) {
-        LOGGER.info("POST /api/v1/messages body: {}", messageDto);
+    public MessageDetailDto create(@Valid @RequestBody MessageCreateDto message) {
+        LOGGER.info("POST /api/v1/messages body: {}", message);
         //return messageMapper.from(
         //messageService.save(messageMapper.messageCreateDtoToMessage(messageDto)), groupMapper.groupToGroupDetailDto(groupService.findOne(messageDto.getGroupId())));
-        return null;
+        return messageMapper.from(messageService.save(message), groupMapper.groupToGroupDetailDto(groupService.findOne((message.getGroupId()))));
     }
 }
