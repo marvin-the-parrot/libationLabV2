@@ -8,7 +8,9 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PasswordResetDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ResetToken;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.repository.ResetTokenRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.security.JwtTokenizer;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
@@ -49,6 +51,7 @@ public class CustomUserDetailService implements UserService {
     private static final Logger LOGGER =
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final UserRepository userRepository;
+    private final ResetTokenRepository resetTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenizer jwtTokenizer;
 
@@ -57,15 +60,17 @@ public class CustomUserDetailService implements UserService {
     /**
      * Customer user detail service.
      *
-     * @param userRepository  - for persistence call
-     * @param passwordEncoder - of use password
-     * @param jwtTokenizer    - token
-     * @param userMapper      - mapper
+     * @param userRepository       - for persistence call
+     * @param resetTokenRepository
+     * @param passwordEncoder      - of use password
+     * @param jwtTokenizer         - token
+     * @param userMapper           - mapper
      */
     @Autowired
     public CustomUserDetailService(UserRepository userRepository,
-                                   PasswordEncoder passwordEncoder, JwtTokenizer jwtTokenizer, UserMapper userMapper) {
+                                   ResetTokenRepository resetTokenRepository, PasswordEncoder passwordEncoder, JwtTokenizer jwtTokenizer, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.resetTokenRepository = resetTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenizer = jwtTokenizer;
         this.userMapper = userMapper;
@@ -171,6 +176,8 @@ public class CustomUserDetailService implements UserService {
         // Recipient's email address
         String recipientEmail = email;
 
+        long userId = userRepository.findByEmail(recipientEmail).getId();
+
         // Setup properties for the SMTP server
         Properties properties = new Properties();
         properties.put("mail.smtp.host", "smtp.gmail.com");
@@ -199,7 +206,7 @@ public class CustomUserDetailService implements UserService {
             message.setSubject("Reset your password");
 
             // Set the content of the email message
-            message.setText("Here is your link to reset your password: " + ResetPasswordLinkGenerator.generateResetLink(generateToken()));
+            message.setText("Here is your link to reset your password: " + ResetPasswordLinkGenerator.generateResetLink(generateToken(userId)));
 
             // Send the email
             Transport.send(message);
@@ -211,11 +218,18 @@ public class CustomUserDetailService implements UserService {
         }
     }
 
-    private static String generateToken() {
+    private String generateToken(long userId) {
         SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[32]; // Change the byte size as needed
         random.nextBytes(bytes);
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+        ResetToken resetToken = ResetToken.ResetTokenBuilder.resetToken()
+            .withUserId(userId)
+            .withToken(Base64.getUrlEncoder().withoutPadding().encodeToString(bytes))
+            .build();
+        resetTokenRepository.save(resetToken);
+        LOGGER.warn(resetTokenRepository.findAll().toString());
+
+        return resetToken.getToken();
     }
 
     private class ResetPasswordLinkGenerator {

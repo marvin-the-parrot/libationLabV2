@@ -4,6 +4,7 @@ import {Injectable} from "@angular/core";
 import {UserListDto, UserSearch} from "../dtos/user";
 import {CreateAccount} from "../dtos/create-account";
 import {Observable} from "rxjs";
+import {ResetPasswordDto} from "../dtos/resetPassword";
 
 @Injectable({
   providedIn: 'root'
@@ -52,5 +53,14 @@ export class UserService {
    */
   forgotPassword(email: string): Observable<any> {
     return this.httpClient.post<any>(this.baseUri + '/forgot-password', { email });
+  }
+
+  /**
+   * send a reset password request
+   * @param resetPasswordDTO the DTO with the new password and the token
+   * @return an Observable for the send request
+   */
+  sendResetPasswordRequest(resetPasswordDTO: ResetPasswordDto): Observable<any> {
+    return this.httpClient.post<any>(this.baseUri + '/reset-password', {resetPasswordDTO});
   }
 }

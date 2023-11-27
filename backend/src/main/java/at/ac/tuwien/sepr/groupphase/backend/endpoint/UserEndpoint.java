@@ -87,4 +87,12 @@ public class UserEndpoint {
         LOGGER.info("POST /api/v1/user body: {}", email);
         userService.forgotPassword(email);
     }
+
+    @PutMapping("/reset-password")
+    @PermitAll
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void resetPassword(@RequestBody PasswordResetDto passwordResetDto) {
+        LOGGER.info("POST /api/v1/user body: {}", passwordResetDto);
+        userService.resetPassword(passwordResetDto);
+    }
 }
