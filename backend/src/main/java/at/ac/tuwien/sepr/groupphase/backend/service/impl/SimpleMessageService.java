@@ -40,18 +40,18 @@ public class SimpleMessageService implements MessageService {
     @Override
     public List<ApplicationMessage> findAll() {
         LOGGER.debug("Find all messages");
-
-        return messageRepository.findAllByOrderBySentAtDesc();
+        return messageRepository.findAllByOrderByIsReadAscSentAtDesc();
     }
 
     @Override
     public ApplicationMessage save(MessageCreateDto message) {
         LOGGER.debug("Publish new message {}", message);
-        ApplicationMessage applicationMessage = new ApplicationMessage();
-        applicationMessage.setApplicationUser(userRepository.findById(message.getUserId()).orElseThrow());
-        applicationMessage.setGroupId(message.getGroupId());
-        applicationMessage.setIsRead(false);
-        applicationMessage.setSentAt(LocalDateTime.now());
+        ApplicationMessage applicationMessage = ApplicationMessage.ApplicationMessageBuilder.message()
+            .withApplicationUser(userRepository.findByEmail("user1@email.com"))
+            .withGroupId(message.getGroupId())
+            .withIsRead(false)
+            .withSentAt(LocalDateTime.now())
+            .build();
         return messageRepository.save(applicationMessage);
     }
 
