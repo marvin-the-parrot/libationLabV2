@@ -1,10 +1,14 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.MessageMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.service.MessageService;
 import at.ac.tuwien.sepr.groupphase.backend.service.impl.GroupServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,12 +24,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Message Endpoint.
@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api/v1/messages")
 public class MessageEndpoint {
 
+    static final String BASE_PATH = "/api/v1/groups";
     private static final Logger LOGGER =
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final MessageService messageService;
@@ -84,5 +85,36 @@ public class MessageEndpoint {
         //return messageMapper.from(
         //messageService.save(messageMapper.messageCreateDtoToMessage(messageDto)), groupMapper.groupToGroupDetailDto(groupService.findOne(messageDto.getGroupId())));
         return messageMapper.from(messageService.save(message), groupMapper.groupToGroupDetailDto(groupService.findOne((message.getGroupId()))));
+    }
+
+    /**
+     * Update an existing message entry.
+     *
+     * @param id       the id of the message
+     * @param toUpdate the message entry to update
+     * @return the updated message entry
+     * @throws ValidationException if the data is not valid
+     * @throws ConflictException   if the data conflicts with existing data
+     */
+    @Secured("ROLE_USER")
+    @PutMapping("{id}")
+    @Operation(summary = "Update Message", security = @SecurityRequirement(name = "apiKey"))
+    public MessageDetailDto update(@PathVariable long id, @RequestBody MessageDetailDto toUpdate)
+        throws ValidationException, ConflictException {
+        LOGGER.info("PUT " + BASE_PATH + "/{}", toUpdate);
+        LOGGER.debug("Body of request:\n{}", toUpdate);
+        toUpdate.setId(id);
+        try {
+            return messageMapper.from(messageService.update(toUpdate), groupMapper.groupToGroupDetailDto(groupService.findOne((toUpdate.getGroup().getId()))));
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Group to update not found", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+    private void logClientError(HttpStatus status, String message, Exception e) {
+        LOGGER.warn("{} {}: {}: {}", status.value(), message,
+            e.getClass().getSimpleName(), e.getMessage());
     }
 }

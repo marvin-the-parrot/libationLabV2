@@ -19,7 +19,7 @@
 
         <div class="card-deck">
 
-          <div class="card-body">
+          <div class="card-body" [ngStyle]="{'opacity':message.isRead === false ? '1' : '0.4'}">
             <h5 class="card-title col-xl-2 col-lg-2 p-1">{{message.group.name}}</h5>
             <h6 class="card-subtitle mb-2 text-muted col-xl-2 col-lg-2 p-1">{{message.sentAt | date}}</h6>
             <div class="card-text col-xl-6 col-lg-6 p-1">{{getText(message)}}</div>
@@ -27,11 +27,11 @@
               <div class="btn-group">
                 <a class="btn btn-info btn-sm responsive-info-button"
                    aria-label="Accept GroupOverview Invation">
-                  <i class="bi bi-info-lg">accept</i>
+                  <i class="bi bi-info-lg" (click)="acceptInvitation(message)">accept</i>
                 </a>
                 <a class="btn btn-danger btn-sm responsive-danger-button"
                    aria-label="Decline GroupOverview Invitaion">
-                  <i class="bi bi-trash">decline</i>
+                  <i class="bi bi-trash" (click)="declineInvitation(message)">decline</i>
                 </a>
               </div>
             </div>

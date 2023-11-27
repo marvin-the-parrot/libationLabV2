@@ -3,6 +3,9 @@ package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
@@ -42,13 +45,6 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public ApplicationMessage findById(Long id) {
-        LOGGER.debug("Find message by id {}", id);
-
-        return messageRepository.findById(id).orElseThrow();
-    }
-
-    @Override
     public ApplicationMessage save(MessageCreateDto message) {
         LOGGER.debug("Publish new message {}", message);
         ApplicationMessage applicationMessage = new ApplicationMessage();
@@ -57,6 +53,14 @@ public class SimpleMessageService implements MessageService {
         applicationMessage.setIsRead(false);
         applicationMessage.setSentAt(LocalDateTime.now());
         return messageRepository.save(applicationMessage);
+    }
+
+    @Override
+    public ApplicationMessage update(MessageDetailDto toUpdate) throws NotFoundException, ValidationException, ConflictException {
+        LOGGER.debug("Update message {}", toUpdate);
+        ApplicationMessage myMessage = messageRepository.findById(toUpdate.getId()).orElseThrow();
+        myMessage.setIsRead(true);
+        return messageRepository.save(myMessage);
     }
 
 }

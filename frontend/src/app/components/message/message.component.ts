@@ -31,23 +31,28 @@ export class MessageComponent implements OnInit {
     this.loadMessage();
   }
 
-  /**
-   * Returns true if the authenticated user is an admin
-   */
-  isAdmin(): boolean {
-    return this.authService.getUserRole() === 'ADMIN';
-  }
-
-  openAddModal(messageAddModal: TemplateRef<any>) {
-    this.modalService.open(messageAddModal, {ariaLabelledBy: 'modal-basic-title'});
-  }
-
   getMessage(): MessageDetailDto[] {
     return this.messages;
   }
 
   getText(message: MessageDetailDto): string {
     return "You were invited to drink with " + message.group.name;
+  }
+
+  acceptInvitation(message: MessageDetailDto) {
+
+  }
+
+  declineInvitation(message: MessageDetailDto) {
+    message.isRead = true;
+    return this.messageService.update(message).subscribe({
+      next: () => {
+        this.loadMessage();
+      },
+      error: error => {
+        this.defaultServiceErrorHandling(error);
+      }
+    });
   }
 
   /**
