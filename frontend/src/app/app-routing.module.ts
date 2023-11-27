@@ -11,11 +11,15 @@ import {
 } from "./components/groups/group-create-edit/group-create-edit.component";
 import {GroupDetailComponent} from "./components/groups/group-detail/group-detail.component";
 import {CreateAccountComponent} from "./components/create-account/create-account.component";
+import {ForgotPasswordComponent} from "./components/forgot-password/forgot-password.component";
+import {ResetPasswordComponent} from "./components/reset-password/reset-password.component";
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'login', component: LoginComponent},
   {path: 'register', component: CreateAccountComponent},
+  {path: 'forgot-password', component: ForgotPasswordComponent},
+  {path: 'reset-password', component: ResetPasswordComponent},
   {path: 'message', canActivate: mapToCanActivate([AuthGuard]), component: MessageComponent},
   {
     path: 'groups', children: [
