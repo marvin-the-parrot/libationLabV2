@@ -2,21 +2,25 @@
 
 <div class="grid-container">
   <div class="grid-item-1">
-    <h3>Members</h3>
+    <div>
+      <h3>Members</h3>
+    </div>
     <div class="row">
-      <div class="add-member col-lg-10 mb-2">
-        <app-autocomplete
-          name="memberSelection"
-          textInputClass="form-control"
-          [suggestions]="memberSuggestions"
-          [formatModel]="formatMember"
-          valueNeedsToMatchSuggestion="true"
-          [(ngModel)]="dummyMemberSelectionModel"
-        >
-        </app-autocomplete>
-      </div>
-      <div class="add-member col-lg-2 mb-2">
-        <button class="btn btn-primary" (click)="createMessage(this.user.id)">+</button>
+      <div class="d-flex input-container">
+        <div>
+          <app-autocomplete
+            name="memberSelection"
+            textInputClass="form-control"
+            [suggestions]="memberSuggestions"
+            [formatModel]="formatMember"
+            valueNeedsToMatchSuggestion="true"
+            [(ngModel)]="dummyMemberSelectionModel"
+          >
+          </app-autocomplete>
+        </div>
+        <div class="add-member col-lg-2 mb-2">
+          <button class="btn btn-primary" (click)="createMessage(this.user.id)">+</button>
+        </div>
       </div>
     </div>
     <ul>
@@ -24,9 +28,13 @@
     </ul>
   </div>
   <div class="grid-item-2">
-    <h3>Menu</h3>
+    <div>
+      <h3>Menu</h3>
+    </div>
   </div>
   <div class="grid-item-3">
-    <h3>Ingredients</h3>
+    <div>
+      <h3>Ingredients</h3>
+    </div>
   </div>
 </div>
