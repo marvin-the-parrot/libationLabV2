@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
@@ -24,7 +23,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
@@ -84,7 +91,7 @@ public class MessageEndpoint {
         LOGGER.info("POST /api/v1/messages body: {}", message);
         //return messageMapper.from(
         //messageService.save(messageMapper.messageCreateDtoToMessage(messageDto)), groupMapper.groupToGroupDetailDto(groupService.findOne(messageDto.getGroupId())));
-        return messageMapper.from(messageService.save(message), groupMapper.groupToGroupDetailDto(groupService.findOne((message.getGroupId()))));
+        return messageMapper.from(messageService.create(message), groupMapper.groupToGroupDetailDto(groupService.findOne((message.getGroupId()))));
     }
 
     /**
@@ -109,6 +116,26 @@ public class MessageEndpoint {
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Group to update not found", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Deleting message entry by id.
+     *
+     * @param messageId the id of the host
+     */
+    @DeleteMapping("/{messageId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(security = @SecurityRequirement(name = "apiKey"))
+    public void delete(@PathVariable Long messageId)
+        throws ValidationException, ConflictException {
+        LOGGER.info("DELETE " + BASE_PATH + "/{}", messageId);
+        try {
+            messageService.delete(messageId);
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Group to delete not found", e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }

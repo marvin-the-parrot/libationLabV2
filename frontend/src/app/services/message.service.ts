@@ -3,7 +3,6 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Globals} from '../global/globals';
 import {MessageCreate, MessageDetailDto} from "../dtos/message";
-import {GroupOverview} from "../dtos/group-overview";
 
 @Injectable({
   providedIn: 'root'
@@ -43,5 +42,14 @@ export class MessageService {
       this.messageBaseUri + '/' + message.id,
       message
     );
+  }
+
+  /**
+   * Delete a Message by its id.
+   *
+   * @param messagId the id of the group
+   */
+  deleteById(messagId: number): Observable<MessageDetailDto> {
+    return this.httpClient.delete<MessageDetailDto>(`${this.messageBaseUri}/${messagId}`);
   }
 }

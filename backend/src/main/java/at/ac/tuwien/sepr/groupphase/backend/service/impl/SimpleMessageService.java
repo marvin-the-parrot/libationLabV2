@@ -44,7 +44,7 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public ApplicationMessage save(MessageCreateDto message) {
+    public ApplicationMessage create(MessageCreateDto message) {
         LOGGER.debug("Publish new message {}", message);
         ApplicationMessage applicationMessage = ApplicationMessage.ApplicationMessageBuilder.message()
             .withApplicationUser(userRepository.findByEmail("user1@email.com"))
@@ -61,6 +61,12 @@ public class SimpleMessageService implements MessageService {
         ApplicationMessage myMessage = messageRepository.findById(toUpdate.getId()).orElseThrow();
         myMessage.setIsRead(true);
         return messageRepository.save(myMessage);
+    }
+
+    @Override
+    public void delete(Long messageId) {
+        LOGGER.debug("Delete message with id {}", messageId);
+        messageRepository.deleteById(messageId);
     }
 
 }

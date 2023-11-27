@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
@@ -28,7 +27,7 @@ public interface MessageService {
      * @param message to publish
      * @return saved message entry
      */
-    ApplicationMessage save(MessageCreateDto message);
+    ApplicationMessage create(MessageCreateDto message);
 
     /**
      * Updates the message with given ID with the data given in {@code toUpdate}.
@@ -44,4 +43,11 @@ public interface MessageService {
      */
     ApplicationMessage update(MessageDetailDto toUpdate)
         throws NotFoundException, ValidationException, ConflictException;
+
+    /**
+     * Deleting message entry by id.
+     *
+     * @param messageId the id of the message
+     */
+    void delete(Long messageId);
 }
