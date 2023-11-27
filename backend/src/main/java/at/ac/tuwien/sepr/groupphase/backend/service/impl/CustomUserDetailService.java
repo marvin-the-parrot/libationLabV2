@@ -67,11 +67,7 @@ public class CustomUserDetailService implements UserService {
             ApplicationUser applicationUser = findApplicationUserByEmail(email);
 
             List<GrantedAuthority> grantedAuthorities;
-            if (applicationUser.getAdmin()) {
-                grantedAuthorities = AuthorityUtils.createAuthorityList("ROLE_ADMIN", "ROLE_USER");
-            } else {
-                grantedAuthorities = AuthorityUtils.createAuthorityList("ROLE_USER");
-            }
+            grantedAuthorities = AuthorityUtils.createAuthorityList("ROLE_USER");
 
             return new User(applicationUser.getEmail(), applicationUser.getPassword(),
                 grantedAuthorities);
@@ -118,6 +114,8 @@ public class CustomUserDetailService implements UserService {
             passwordEncoder.encode(userCreateDto.getPassword())
         );
         userRepository.save(applicationUser);
+        userRepository.flush();
+
     }
 
     @Override
@@ -128,6 +126,7 @@ public class CustomUserDetailService implements UserService {
         if (applicationUser != null) {
             applicationUser.setPassword(passwordEncoder.encode(passwordResetDto.getPassword()));
             userRepository.save(applicationUser);
+            userRepository.flush();
         } else {
             throw new NotFoundException(String.format("Could not find the user with the email address %s", passwordResetDto.getEmail()));
         }
