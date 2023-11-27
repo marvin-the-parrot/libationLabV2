@@ -19,13 +19,17 @@
           </app-autocomplete>
         </div>
         <div class="add-member col-lg-2 mb-2">
-          <button class="btn btn-primary" (click)="createMessage(this.user.id)">+</button>
+          <button class="btn btn-primary rounded-button" (click)="createMessage(this.user.id)">+</button>
         </div>
       </div>
     </div>
-    <ul>
-      <li *ngFor="let member of group.members">{{member.name}}</li>
-    </ul>
+    <div class="members-list">
+      <div *ngFor="let member of group.members" class="member-item">
+          <div class="list-name">{{ member.name }}</div>
+          <div class="list-action"><button class="btn btn-light" >...</button></div>
+      </div>
+
+    </div>
   </div>
   <div class="grid-item-2">
     <div>

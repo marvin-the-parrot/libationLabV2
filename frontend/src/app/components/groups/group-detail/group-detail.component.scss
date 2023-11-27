@@ -70,10 +70,29 @@ text-align: left;
   flex: 1; /* Allow the input field to expand within the container */
 }
 
-.btn {
+.rounded-button {
   background-color: #007bff;
   border-radius: 0 60px 60px 0;
   color: #fff;
   border: none;
   cursor: pointer;
+}
+
+.members-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Adjust the gap between member items */
+}
+
+.member-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  padding: 5px;
+}
+
+.list-name{
+  font-weight: bold;
+  font-size: large;
 }
