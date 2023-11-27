@@ -15,6 +15,7 @@ import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.Properties;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -28,6 +29,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 /**
  * User service implementation.
@@ -136,6 +141,65 @@ public class CustomUserDetailService implements UserService {
     public List<UserListDto> search(UserSearchDto searchParams) {
         LOGGER.trace("search({})", searchParams);
         return userMapper.userToUserListDto(userRepository.findByName(searchParams.getName()));
+    }
+
+    @Override
+    public void forgotPassword(String email) {
+        LOGGER.debug("Forgot password");
+        ApplicationUser applicationUser = userRepository.findByEmail(email);
+        if (applicationUser != null) {
+            sendEmail(applicationUser.getEmail());
+        } else {
+            throw new NotFoundException(String.format("Could not find the user with the email address %s", email));
+        }
+    }
+
+    private void sendEmail(String email) {
+        // Sender's email address and password
+        final String senderEmail = "your_email@gmail.com";
+        final String senderPassword = "your_password";
+
+        // Recipient's email address
+        String recipientEmail = "recipient_email@example.com";
+
+        // Setup properties for the SMTP server
+        Properties properties = new Properties();
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.port", "587");
+
+        // Create a Session object with authentication
+        Session session = Session.getInstance(properties, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(senderEmail, senderPassword);
+            }
+        });
+
+        try {
+            // Create a MimeMessage object
+            Message message = new MimeMessage(session);
+
+            // Set From: header field of the header
+            message.setFrom(new InternetAddress(senderEmail));
+
+            // Set To: header field of the header
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
+
+            // Set Subject: header field
+            message.setSubject("JavaMail API Test");
+
+            // Set the content of the email message
+            message.setText("This is a test email sent using JavaMail API.");
+
+            // Send the email
+            Transport.send(message);
+
+            System.out.println("Email sent successfully!");
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 
 }

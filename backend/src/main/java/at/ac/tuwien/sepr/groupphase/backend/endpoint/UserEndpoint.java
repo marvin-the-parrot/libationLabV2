@@ -79,4 +79,12 @@ public class UserEndpoint {
     private void logClientError(HttpStatus status, String message, Exception e) {
         LOGGER.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
     }
+
+    @PostMapping("/forgotPassword")
+    @PermitAll
+    @ResponseStatus(HttpStatus.CREATED)
+    public void forgotPassword(@RequestBody String email) {
+        LOGGER.info("POST /api/v1/user body: {}", email);
+        userService.forgotPassword(email);
+    }
 }

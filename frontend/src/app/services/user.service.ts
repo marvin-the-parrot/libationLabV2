@@ -44,4 +44,13 @@ export class UserService {
     console.log("creating user")
     return this.httpClient.post<UserListDto>(this.baseUri, user);
   }
+
+  /**
+   * delete a user
+   * @param email the email of the user who wants to reset his password
+   * @return an Observable for the send email
+   */
+  forgotPassword(email: string): Observable<any> {
+    return this.httpClient.post<any>(this.baseUri + '/forgot-password', { email });
+  }
 }

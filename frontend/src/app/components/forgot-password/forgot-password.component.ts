@@ -1,4 +1,5 @@
 import {Component} from "@angular/core";
+import {UserService} from "../../services/user.service";
 
 @Component({
     selector: 'app-forgot-password',
@@ -7,8 +8,29 @@ import {Component} from "@angular/core";
   })
 export class ForgotPasswordComponent {
 
-  constructor() {
+  email: string = '';
+
+  constructor(private service: UserService) {
   }
+
+  onSubmit() {
+    this.forgotPassword(this.email);
+  }
+
+  forgotPassword(email: string) {
+    this.service.forgotPassword(email).subscribe({
+      next: () => {
+        console.log("Email sent");
+        // Additional logic if needed
+      },
+      error: error => {
+        console.log("Could not send email due to:");
+        console.log(error);
+        // Additional error handling logic
+      }
+    });
+  }
+
   ngOnInit() {
   }
 }

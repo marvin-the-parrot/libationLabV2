@@ -71,4 +71,12 @@ public interface UserService extends UserDetailsService {
      *  @return a stream of users matching the parameters
      */
     List<UserListDto> search(UserSearchDto searchParams);
+
+
+    /**
+     * Send an email to the user with a link to reset his password.
+     *
+     *  @param email the email address of the user who forgot his password
+     */
+    void forgotPassword(String email);
 }
