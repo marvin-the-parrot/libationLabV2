@@ -80,7 +80,7 @@ public class UserEndpoint {
         LOGGER.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
     }
 
-    @PostMapping("/forgotPassword")
+    @PostMapping("/forgot-password")
     @PermitAll
     @ResponseStatus(HttpStatus.CREATED)
     public void forgotPassword(@RequestBody String email) {

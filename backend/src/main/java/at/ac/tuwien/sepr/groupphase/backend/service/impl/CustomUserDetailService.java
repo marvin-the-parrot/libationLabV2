@@ -30,7 +30,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.*;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -156,25 +160,31 @@ public class CustomUserDetailService implements UserService {
 
     private void sendEmail(String email) {
         // Sender's email address and password
-        final String senderEmail = "your_email@gmail.com";
-        final String senderPassword = "your_password";
+        final String senderEmail = "dionysuslibationlab@gmail.com";
+
+        //DONT DELTE THIS!!!
+        final String senderPassword = "mvry hsuu mjvm mxrz ";
+        //DONT DELTE THIS!!!
 
         // Recipient's email address
-        String recipientEmail = "recipient_email@example.com";
+        String recipientEmail = email;
 
         // Setup properties for the SMTP server
         Properties properties = new Properties();
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true");
         properties.put("mail.smtp.host", "smtp.gmail.com");
-        properties.put("mail.smtp.port", "587");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        properties.put("mail.smtp.socketFactory.port", "465");
 
         // Create a Session object with authentication
-        Session session = Session.getInstance(properties, new Authenticator() {
+        Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(senderEmail, senderPassword);
             }
         });
+        System.out.println(senderEmail);
+        System.out.println(senderPassword);
+        LOGGER.warn("Session created " + session.toString());
 
         try {
             // Create a MimeMessage object
@@ -190,7 +200,7 @@ public class CustomUserDetailService implements UserService {
             message.setSubject("JavaMail API Test");
 
             // Set the content of the email message
-            message.setText("This is a test email sent using JavaMail API.");
+            message.setText("Here is your link to reset your password:");
 
             // Send the email
             Transport.send(message);
