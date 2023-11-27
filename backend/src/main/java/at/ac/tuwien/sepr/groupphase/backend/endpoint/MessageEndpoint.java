@@ -1,11 +1,9 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.MessageMapper;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
 import at.ac.tuwien.sepr.groupphase.backend.service.MessageService;
 import at.ac.tuwien.sepr.groupphase.backend.service.impl.GroupServiceImpl;
@@ -66,7 +64,7 @@ public class MessageEndpoint {
         List<MessageDetailDto> returnMessages = new ArrayList<>();
         for (ApplicationMessage message : messages) {
             LOGGER.info("Message: {}", message);
-            returnMessages.add(messageMapper.from(message, groupMapper.groupToGroupDetailDto(groupService.findOne((long) 1))));
+            returnMessages.add(messageMapper.from(message, groupMapper.groupToGroupDetailDto(groupService.findOne(message.getGroupId()))));
         }
         return returnMessages;
     }
