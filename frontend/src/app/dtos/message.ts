@@ -7,7 +7,9 @@ export interface MessageDetailDto {
   sentAt: string;
 }
 
-export interface MessageCreateDto {
-  userId: number;
-  groupId: number;
+export class MessageCreate {
+  constructor(
+    public userId: number,
+    public groupId: number
+  ) {}
 }

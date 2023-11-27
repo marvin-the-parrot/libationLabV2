@@ -19,8 +19,4 @@ public interface MessageRepository extends JpaRepository<ApplicationMessage, Lon
      * @return ordered list of al message entries
      */
     List<ApplicationMessage> findAllByOrderBySentAtDesc();
-
-    /*@Modifying
-    @Query("SELECT m FROM ApplicationMessage m WHERE m.applicationUser.id = :userId ORDER BY m.sentAt DESC")
-    void findAllByOrderBySentAtDesc(@Param("userId") Long userId);*/
 }

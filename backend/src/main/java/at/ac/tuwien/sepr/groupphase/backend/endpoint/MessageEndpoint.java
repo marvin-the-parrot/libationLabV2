@@ -83,8 +83,8 @@ public class MessageEndpoint {
     @Operation(summary = "Publish a new message", security = @SecurityRequirement(name = "apiKey"))
     public MessageDetailDto create(@Valid @RequestBody MessageCreateDto messageDto) {
         LOGGER.info("POST /api/v1/messages body: {}", messageDto);
-        //return messageMapper.messageToDetailedMessageDto(
-        //messageService.publishMessage(messageMapper.messageCreateDtoToMessage(messageDto)));
+        //return messageMapper.from(
+        //messageService.save(messageMapper.messageCreateDtoToMessage(messageDto)), groupMapper.groupToGroupDetailDto(groupService.findOne(messageDto.getGroupId())));
         return null;
     }
 }

@@ -47,7 +47,7 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public ApplicationMessage publishMessage(ApplicationMessage applicationMessage) {
+    public ApplicationMessage save(ApplicationMessage applicationMessage) {
         LOGGER.debug("Publish new message {}", applicationMessage);
         applicationMessage.setIsRead(false);
         applicationMessage.setSentAt(LocalDateTime.now());

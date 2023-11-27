@@ -18,12 +18,20 @@ public interface MessageService {
 
     ApplicationMessage findById(Long id);
 
-    /**
+    /*
      * Publish a single message entry.
      *
      * @param applicationMessage to publish
      * @return published message entry
      */
-    ApplicationMessage publishMessage(ApplicationMessage applicationMessage);
+    //ApplicationMessage publishMessage(ApplicationMessage applicationMessage);
+
+    /**
+     * Save a single message entry.
+     *
+     * @param applicationMessage to publish
+     * @return saved message entry
+     */
+    ApplicationMessage save(ApplicationMessage applicationMessage);
 
 }

@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {GroupOverview} from "../../../dtos/group-overview";
 import {GroupsService} from "../../../services/groups.service";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {Observable} from "rxjs";
 import {UserListDto} from "../../../dtos/user";
 import {NgModel} from "@angular/forms";
 import {UserService} from "../../../services/user.service";
+import {MessageCreate} from "../../../dtos/message";
+import {MessageService} from "../../../services/message.service";
 
 @Component({
   selector: 'app-group-detail',
@@ -21,21 +23,29 @@ export class GroupDetailComponent {
     cocktails: ['Mochito', 'Mai Tai', 'White Russian'],
     members: [{name: 'Sep', id: 4}, {name: 'Jan', id: 5}, {name: 'Peter', id: 6}, {name: 'Susanne', id: 7}],
   }
-
-  user: UserListDto;
+  user: UserListDto = {
+    id: 1,
+    name: 'User1',
+  }
 
   dummyMemberSelectionModel: unknown; // Just needed for the autocomplete
+  submitted = false;
+  // Error flag
+  error = false;
+  errorMessage = '';
 
   constructor(
-    private service: GroupsService,
+    private groupsService: GroupsService,
     private userService: UserService,
-    private route: ActivatedRoute
+    private messageService: MessageService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {
   }
 
   ngOnInit(): void {
     const groupId = this.route.snapshot.params['id'];
-    this.service.getById(groupId).subscribe(
+    this.groupsService.getById(groupId).subscribe(
       (group: GroupOverview) => {
         this.group = group;
       },
@@ -46,7 +56,7 @@ export class GroupDetailComponent {
     );
   }
 
-  memberSuggestions = (input: string) : Observable<UserListDto[]> =>
+  memberSuggestions = (input: string): Observable<UserListDto[]> =>
     this.userService.search({name: input, limit: 5});
 
   public formatMember(member: UserListDto | null): string {
@@ -62,30 +72,36 @@ export class GroupDetailComponent {
     }
   }
 
-  public addMember(user: UserListDto | null) {
-    if (user == null)
-      return;
-
-    this.service
+  /**
+   * Create Message
+   */
+  createMessage(userId: number) {
+    const groupId = this.route.snapshot.params['id'];
+    this.submitted = true;
+    const createMessage: MessageCreate = new MessageCreate(userId, groupId);
+    this.create(createMessage);
   }
 
-  /*public addMember(user: UserListDto | null) {
-    if (user == null)
-      return;
-
-    setTimeout(() => {
-      for (let i = 0; i < this.group.members.length; i++) {
-        if (this.group.members[i]?.id === user.id) {
-          // todo: show error message: duplicate member
-          this.dummyMemberSelectionModel = null;
-          return;
+  /**
+   * Send Creat data to the backend if it was successfully, the user will be forwarded
+   *
+   * @param messageCreate create account data from the form
+   */
+  create(messageCreate: MessageCreate) {
+    this.messageService.createMessage(messageCreate).subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: error => {
+        console.log('Could not create account due to:');
+        console.log(error);
+        this.error = true;
+        if (typeof error.error === 'object') {
+          this.errorMessage = error.error.error;
+        } else {
+          this.errorMessage = error.error;
         }
       }
-      this.group.members.push(user);
-    })
-  }*/
-
-  removeMember(index: number) {
-    this.group.members.splice(index, 1);
+    });
   }
 }

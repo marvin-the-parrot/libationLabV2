@@ -1,13 +1,14 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PasswordResetDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.*;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Service for ApplicationUser Entity.
@@ -57,4 +58,13 @@ public interface UserService extends UserDetailsService {
      * @param passwordResetDto reset credentials
      */
     void resetPassword(PasswordResetDto passwordResetDto);
+
+    /**
+     * Retrieve all stored users, that match the given parameters.
+     * The parameters may include a limit on the amount of results to return.
+     *
+     *  @param searchParams parameters to search users by
+     *  @return a stream of users matching the parameters
+     */
+    List<UserListDto> search(UserSearchDto searchParams);
 }

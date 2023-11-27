@@ -16,9 +16,9 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface MessageMapper {
 
-    MessageDetailDto messageToDetailedMessageDto(ApplicationMessage message);
+    //MessageDetailDto messageToDetailedMessageDto(ApplicationMessage message);
 
-    List<MessageDetailDto> messageToDetailedMessageDto(List<ApplicationMessage> message);
+    //List<MessageDetailDto> messageToDetailedMessageDto(List<ApplicationMessage> message);
 
     ApplicationMessage messageCreateDtoToMessage(MessageCreateDto messageCreateDto);
 

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Globals} from '../global/globals';
-import {MessageCreateDto, MessageDetailDto} from "../dtos/message";
+import {MessageCreate, MessageDetailDto} from "../dtos/message";
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +26,7 @@ export class MessageService {
    *
    * @param message to persist
    */
-  createMessage(message: MessageCreateDto): Observable<MessageDetailDto> {
+  createMessage(message: MessageCreate): Observable<MessageDetailDto> {
     console.log('Create message for user ' + message.userId);
     return this.httpClient.post<MessageDetailDto>(this.messageBaseUri, message);
   }

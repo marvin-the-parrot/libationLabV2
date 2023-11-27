@@ -1,8 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PasswordResetDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.*;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
@@ -37,19 +36,23 @@ public class CustomUserDetailService implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenizer jwtTokenizer;
 
+    private final UserMapper userMapper;
+
     /**
      * Customer user detail service.
      *
      * @param userRepository  - for persistence call
      * @param passwordEncoder - of use password
      * @param jwtTokenizer    - token
+     * @param userMapper
      */
     @Autowired
     public CustomUserDetailService(UserRepository userRepository,
-                                   PasswordEncoder passwordEncoder, JwtTokenizer jwtTokenizer) {
+                                   PasswordEncoder passwordEncoder, JwtTokenizer jwtTokenizer, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenizer = jwtTokenizer;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -123,6 +126,12 @@ public class CustomUserDetailService implements UserService {
         } else {
             throw new NotFoundException(String.format("Could not find the user with the email address %s", passwordResetDto.getEmail()));
         }
+    }
+
+    @Override
+    public List<UserListDto> search(UserSearchDto searchParams) {
+        LOGGER.trace("search({})", searchParams);
+        return userMapper.userToUserListDto(userRepository.findByName(searchParams.getName()));
     }
 
 }
