@@ -14,6 +14,8 @@ import at.ac.tuwien.sepr.groupphase.backend.security.JwtTokenizer;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 
 import java.lang.invoke.MethodHandles;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.List;
 import java.util.Properties;
 
@@ -182,9 +184,6 @@ public class CustomUserDetailService implements UserService {
                 return new PasswordAuthentication(senderEmail, senderPassword);
             }
         });
-        System.out.println(senderEmail);
-        System.out.println(senderPassword);
-        LOGGER.warn("Session created " + session.toString());
 
         try {
             // Create a MimeMessage object
@@ -197,18 +196,33 @@ public class CustomUserDetailService implements UserService {
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
 
             // Set Subject: header field
-            message.setSubject("JavaMail API Test");
+            message.setSubject("Reset your password");
 
             // Set the content of the email message
-            message.setText("Here is your link to reset your password:");
+            message.setText("Here is your link to reset your password: " + ResetPasswordLinkGenerator.generateResetLink(generateToken()));
 
             // Send the email
             Transport.send(message);
 
-            System.out.println("Email sent successfully!");
+            LOGGER.info("Sent email successfully");
 
         } catch (MessagingException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static String generateToken() {
+        SecureRandom random = new SecureRandom();
+        byte[] bytes = new byte[32]; // Change the byte size as needed
+        random.nextBytes(bytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+    }
+
+    private class ResetPasswordLinkGenerator {
+
+        // Generate a reset password link with a token parameter
+        public static String generateResetLink(String token) {
+            return "http://localhost:4200/#/reset-password?token=" + token;
         }
     }
 
