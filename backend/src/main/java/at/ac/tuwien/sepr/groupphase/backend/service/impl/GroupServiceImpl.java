@@ -4,6 +4,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.Optional;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
+import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroupKey;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -93,7 +94,7 @@ public class GroupServiceImpl implements GroupService {
                 groupRepository.save(group);
             }
         }
-        userGroupRepository.deleteByUserIdAndGroupId(memberId, groupId);
+        userGroupRepository.deleteById(new UserGroupKey(memberId, groupId));
     }
 
     @Override
