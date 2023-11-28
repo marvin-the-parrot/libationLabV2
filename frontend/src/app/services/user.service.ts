@@ -41,7 +41,7 @@ export class UserService {
    * @return an Observable for the created user
    */
   create(user: CreateAccount): Observable<UserListDto> {
-    console.log("creating user")
+    console.log("creating user");
     return this.httpClient.post<UserListDto>(this.baseUri, user);
   }
 
