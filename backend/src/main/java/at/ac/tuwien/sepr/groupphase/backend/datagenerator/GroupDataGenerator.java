@@ -56,11 +56,12 @@ public class GroupDataGenerator {
 
 
             //TODO with UserGroup reference for join table
-            UserGroup userGroup = new UserGroup();
-            userGroup.setId(new UserGroupKey(user, groupTest));
-            userGroup.setUser(user);
-            userGroup.setGroups(groupTest);
-            userGroup.setHost(true);
+            UserGroup userGroup = UserGroup.UserGroupBuilder.userGroup()
+                .withUserGroupKey(new UserGroupKey(user, groupTest))
+                .withUser(user)
+                .withGroup(groupTest)
+                .withIsHost(true)
+                .build();
 
             userGroupRepository.save(userGroup);
 
