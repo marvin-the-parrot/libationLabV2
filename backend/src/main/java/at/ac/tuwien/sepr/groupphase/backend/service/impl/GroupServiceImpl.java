@@ -108,6 +108,7 @@ public class GroupServiceImpl implements GroupService {
         throws ValidationException, ConflictException {
         LOGGER.trace("create({})", toCreate);
         validator.validateForCreate(toCreate);
+        // test
         // todo save group in database
         return null; // todo return created group
     }
