@@ -3,6 +3,7 @@ package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 import java.lang.invoke.MethodHandles;
 import java.util.Optional;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroupKey;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
@@ -104,17 +105,24 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public GroupOverviewDto create(GroupOverviewDto toCreate)
-        throws ValidationException, ConflictException {
+    public GroupCreateDto create(GroupCreateDto toCreate) throws ValidationException, ConflictException {
         LOGGER.trace("create({})", toCreate);
+        // validate group:
         validator.validateForCreate(toCreate);
-        // test
-        // todo save group in database
-        return null; // todo return created group
+
+        // todo: save members in database
+        // todo: save host in database
+        // build group entity and save it:
+        ApplicationGroup group = ApplicationGroup.GroupBuilder.group()
+            .withName(toCreate.getName())
+            .build();
+        LOGGER.debug("saving group {}", group);
+        ApplicationGroup saved = groupRepository.save(group);
+        return new GroupCreateDto(saved.getId(), saved.getName(), null, null, null);
     }
 
     @Override
-    public GroupOverviewDto update(GroupOverviewDto toUpdate)
+    public GroupCreateDto update(GroupCreateDto toUpdate)
         throws NotFoundException, ValidationException, ConflictException {
         LOGGER.trace("update({})", toUpdate);
         validator.validateForUpdate(toUpdate);
