@@ -1,25 +1,15 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.server.ResponseStatusException;
-
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
-import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
-import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
-import at.ac.tuwien.sepr.groupphase.backend.service.impl.GroupServiceImpl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.jupiter.api.BeforeEach;
+import java.util.UUID;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -40,6 +30,7 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 @SpringBootTest
 @EnableWebMvc
 @WebAppConfiguration
+@TestInstance(Lifecycle.PER_CLASS)
 public class GroupEndpointTest {
 
 	  @Autowired
@@ -59,7 +50,7 @@ public class GroupEndpointTest {
 		
 	  private ApplicationUser applicationUser;
 
-	  @BeforeEach
+	  @BeforeAll
 	  public void setup() {
 	    this.mockMvc = MockMvcBuilders.webAppContextSetup(webAppContext).build();
 		applicationGroup = new ApplicationGroup();
@@ -68,11 +59,11 @@ public class GroupEndpointTest {
 		applicationUser = new ApplicationUser();
 		applicationUser.setAdmin(true);
 		applicationUser.setId(999L);
-		applicationUser.setEmail("new@user.at");
+		applicationUser.setEmail(UUID.randomUUID().toString()+"@gmail.com");
 		applicationUser.setName("New user");
 		applicationUser.setPassword("Password");
 		groupRepository.save(applicationGroup);
-		userRepository.save(applicationUser);	
+		userRepository.save(applicationUser);		
 	  }
 
 	  @Test
