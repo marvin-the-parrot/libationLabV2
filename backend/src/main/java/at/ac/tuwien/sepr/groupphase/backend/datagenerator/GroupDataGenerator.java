@@ -54,15 +54,17 @@ public class GroupDataGenerator {
                 groupRepository.save(group);
             }
 
-
-
-            //TODO with UserGroup reference for join table
-
             // <userId, groupId>
-            Map<Long,Long> userGroupMap = new HashMap<Long,Long>();
+            Map<Long, Long> userGroupMap = new HashMap<Long, Long>();
             userGroupMap.put((long) 1, (long) 1);
-            userGroupMap.put((long) 2, (long) 2);
-            userGroupMap.put((long) 3, (long) 3);
+            userGroupMap.put((long) 2, (long) 1);
+            userGroupMap.put((long) 3, (long) 1);
+            userGroupMap.put((long) 4, (long) 2);
+            userGroupMap.put((long) 5, (long) 2);
+            userGroupMap.put((long) 6, (long) 2);
+            userGroupMap.put((long) 7, (long) 2);
+            userGroupMap.put((long) 8, (long) 3);
+            userGroupMap.put((long) 9, (long) 3);
 
             for (int i = 1; i <= userGroupMap.size(); i++) {
                 ApplicationUser user = userRepository.findById((long) i).orElse(null);
