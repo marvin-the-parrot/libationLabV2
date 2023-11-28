@@ -114,6 +114,11 @@
             <artifactId>javax.mail-api</artifactId>
             <version>1.6.2</version> <!-- Use the latest version -->
         </dependency>
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
+        </dependency>
 
     </dependencies>
 

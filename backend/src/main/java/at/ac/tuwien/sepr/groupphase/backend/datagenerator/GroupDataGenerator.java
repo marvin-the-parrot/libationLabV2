@@ -1,7 +1,12 @@
 package at.ac.tuwien.sepr.groupphase.backend.datagenerator;
 
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
+import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroupKey;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +27,17 @@ public class GroupDataGenerator {
     private static final int NUMBER_OF_GROUPS_TO_GENERATE = 5;
 
     private final GroupRepository groupRepository;
+    private final UserRepository userRepository;
+    private final UserGroupRepository userGroupRepository;
 
-    public GroupDataGenerator(GroupRepository groupRepository) {
+    public GroupDataGenerator(GroupRepository groupRepository, UserRepository userRepository, UserGroupRepository userGroupRepository) {
         this.groupRepository = groupRepository;
+        this.userRepository = userRepository;
+        this.userGroupRepository = userGroupRepository;
     }
 
     @PostConstruct
-    private void generateMessage() {
+    private void generateGroup() {
         if (groupRepository.findAll().size() > 0) {
             LOGGER.debug("group already generated");
         } else {
@@ -42,6 +51,20 @@ public class GroupDataGenerator {
                 LOGGER.debug("saving group {}", group);
                 groupRepository.save(group);
             }
+            ApplicationGroup groupTest = groupRepository.findById((long) 1).orElse(null);
+            ApplicationUser user = userRepository.findById((long) 1).orElse(null);
+
+
+            //TODO with UserGroup reference for join table
+            UserGroup userGroup = new UserGroup();
+            userGroup.setId(new UserGroupKey(user, groupTest));
+            userGroup.setUser(user);
+            userGroup.setGroups(groupTest);
+            userGroup.setHost(true);
+
+            userGroupRepository.save(userGroup);
+
+            userGroup.getUser();
         }
     }
 }

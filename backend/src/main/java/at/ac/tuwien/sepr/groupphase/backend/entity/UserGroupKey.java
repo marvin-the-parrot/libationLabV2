@@ -1,9 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.entity;
 
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 
@@ -19,5 +16,14 @@ public class UserGroupKey implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
-    private ApplicationUser group;
+    private ApplicationGroup group;
+
+    public UserGroupKey(ApplicationUser user, ApplicationGroup group) {
+        this.user = user;
+        this.group = group;
+    }
+
+    public UserGroupKey() {
+
+    }
 }

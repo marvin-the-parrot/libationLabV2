@@ -41,7 +41,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping(value = "/api/v1/messages")
 public class MessageEndpoint {
 
-    static final String BASE_PATH = "/api/v1/groups";
+    static final String BASE_PATH = "/api/v1/messages";
     private static final Logger LOGGER =
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final MessageService messageService;
@@ -67,6 +67,7 @@ public class MessageEndpoint {
     @Operation(summary = "Get list of messages without details",
         security = @SecurityRequirement(name = "apiKey"))
     public List<MessageDetailDto> findAll() {
+        //TODO: decode token and get user email for find SecurityContextHolder.getContext().getAuthentication().getName()
         LOGGER.info("GET /api/v1/messages");
         List<ApplicationMessage> messages = messageService.findAll();
         List<MessageDetailDto> returnMessages = new ArrayList<>();
