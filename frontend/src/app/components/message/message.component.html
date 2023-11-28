@@ -19,21 +19,28 @@
 
         <div class="card-deck">
 
-          <div class="card-body">
+          <div class="card-body" [ngStyle]="{'opacity':message.isRead === false ? '1' : '0.4'}">
             <h5 class="card-title col-xl-2 col-lg-2 p-1">{{message.group.name}}</h5>
             <h6 class="card-subtitle mb-2 text-muted col-xl-2 col-lg-2 p-1">{{message.sentAt | date}}</h6>
             <div class="card-text col-xl-6 col-lg-6 p-1">{{getText(message)}}</div>
             <div class="card-buttons col-xl-2 col-lg-2 p-1">
-              <div class="btn-group">
-                <a class="btn btn-info btn-sm responsive-info-button"
-                   aria-label="Accept GroupOverview Invation">
-                  <i class="bi bi-info-lg">accept</i>
+              <div class="btn-group" *ngIf="message.isRead === false">
+                <a class="btn btn-check btn-sm responsive-info-button"
+                   aria-label="Accept GroupOverview Invation"
+                   (click)="acceptInvitation(message)">
+                  <i class="bi bi-check-lg"></i>
                 </a>
-                <a class="btn btn-danger btn-sm responsive-danger-button"
-                   aria-label="Decline GroupOverview Invitaion">
-                  <i class="bi bi-trash">decline</i>
+                <a class="btn btn-danger btn-sm responsive-warning-button"
+                   aria-label="Decline GroupOverview Invitaion"
+                   (click)="declineInvitation(message)">
+                  <i class="bi bi-x-lg"></i>
                 </a>
               </div>
+              <a class="btn btn-trash btn-sm responsive-danger-button"
+                 aria-label="Trash GroupOverview Invitaion" *ngIf="message.isRead === true"
+                 (click)="deleteMessage(message)">
+                <i class="bi bi-trash"></i>
+              </a>
             </div>
           </div>
 

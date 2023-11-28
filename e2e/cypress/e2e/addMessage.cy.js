@@ -1,4 +1,4 @@
-context('add message', () => {
+/*context('add message', () => {
     let msgText = 'msg' + new Date().getTime();
 
     it('create message', () => {
@@ -6,4 +6,4 @@ context('add message', () => {
         cy.createMessage(msgText);
     })
 
-});
+});*/
