@@ -21,14 +21,14 @@ public class UserGroup {
     @EmbeddedId
     UserGroupKey id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("user_id")
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne
+    @MapsId("userId")
+    @JoinColumn(name = "user_id")
     private ApplicationUser applicationUser;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("group_id")
-    @JoinColumn(name = "group_id", nullable = false)
+    @ManyToOne
+    @MapsId("groupId")
+    @JoinColumn(name = "group_id")
     private ApplicationGroup applicationGroup;
 
     @Column(name = "is_host")

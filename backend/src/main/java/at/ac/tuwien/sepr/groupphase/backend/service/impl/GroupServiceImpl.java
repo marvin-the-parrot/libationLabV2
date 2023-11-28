@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,7 @@ public class GroupServiceImpl implements GroupService {
         this.validator = validator;
     }
 
+    @Transactional
     @Override
     public ApplicationGroup findOne(Long id) {
         LOGGER.debug("Find group with id {}", id);

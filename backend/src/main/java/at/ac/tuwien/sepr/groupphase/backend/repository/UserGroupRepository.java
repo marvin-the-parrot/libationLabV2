@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.repository;
 
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroupKey;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,5 +18,9 @@ public interface UserGroupRepository extends JpaRepository<UserGroup, UserGroupK
     @Modifying
     @Query("DELETE FROM UserGroup ug WHERE ug.id.user.id = :userId AND ug.id.group.id = :groupId")
     void deleteByUserIdAndGroupId(@Param("userId") Long userId, @Param("groupId") Long groupId);
+
+    //find all users belonging to a group
+    @Query("SELECT ug.id.user.id FROM UserGroup ug WHERE ug.id.group.id = :groupId")
+    Long[] findAllUsersByGroupId(@Param("groupId") Long groupId);
 
 }

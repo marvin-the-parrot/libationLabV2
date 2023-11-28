@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Group Data Generator.
@@ -51,21 +53,32 @@ public class GroupDataGenerator {
                 LOGGER.debug("saving group {}", group);
                 groupRepository.save(group);
             }
-            ApplicationGroup groupTest = groupRepository.findById((long) 1).orElse(null);
-            ApplicationUser user = userRepository.findById((long) 1).orElse(null);
+
 
 
             //TODO with UserGroup reference for join table
-            UserGroup userGroup = UserGroup.UserGroupBuilder.userGroup()
-                .withUserGroupKey(new UserGroupKey(user, groupTest))
-                .withUser(user)
-                .withGroup(groupTest)
-                .withIsHost(true)
-                .build();
 
-            userGroupRepository.save(userGroup);
+            // <userId, groupId>
+            Map<Long,Long> userGroupMap = new HashMap<Long,Long>();
+            userGroupMap.put((long) 1, (long) 1);
+            userGroupMap.put((long) 2, (long) 2);
+            userGroupMap.put((long) 3, (long) 3);
 
-            userGroup.getUser();
+            for (int i = 1; i <= userGroupMap.size(); i++) {
+                ApplicationUser user = userRepository.findById((long) i).orElse(null);
+                ApplicationGroup groupTest = groupRepository.findById(userGroupMap.get((long) i)).orElse(null);
+
+                UserGroup userGroup = UserGroup.UserGroupBuilder.userGroup()
+                    .withUserGroupKey(new UserGroupKey(user.getId(), groupTest.getId()))
+                    .withUser(user)
+                    .withGroup(groupTest)
+                    .withIsHost(true)
+                    .build();
+                LOGGER.debug("saving userGroup {}", userGroup);
+                userGroupRepository.save(userGroup);
+            }
+            System.out.println("test");
+
         }
     }
 }
