@@ -60,7 +60,10 @@ export class UserService {
    * @param resetPasswordDTO the DTO with the new password and the token
    * @return an Observable for the send request
    */
-  sendResetPasswordRequest(resetPasswordDTO: ResetPasswordDto): Observable<any> {
-    return this.httpClient.post<any>(this.baseUri + '/reset-password', {resetPasswordDTO});
+  resetPassword(resetPasswordDTO: ResetPasswordDto): Observable<ResetPasswordDto> {
+    console.log("sending reset password request");
+    console.log(resetPasswordDTO.password);
+    console.log(resetPasswordDTO.token);
+    return this.httpClient.put<ResetPasswordDto>(this.baseUri + '/reset-password', resetPasswordDTO);
   }
 }

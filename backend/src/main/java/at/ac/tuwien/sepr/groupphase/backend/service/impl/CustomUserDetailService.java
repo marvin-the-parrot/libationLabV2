@@ -1,11 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PasswordResetDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.*;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ResetToken;
@@ -36,7 +32,6 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -136,16 +131,23 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public void resetPassword(PasswordResetDto passwordResetDto) {
+    public void resetPassword(ResetPasswordDto resetPasswordDto) {
         LOGGER.debug("Reset password");
-        ApplicationUser applicationUser = userRepository.findByEmail(passwordResetDto.getEmail());
-        //TODO: check token
+
+        ResetToken resetToken = resetTokenRepository.findByToken(resetPasswordDto.getToken());
+        //TODO: make validator
+        if (resetToken == null) {
+            throw new NotFoundException(String.format("Could not find the token %s", resetPasswordDto.getToken()));
+        }
+
+        ApplicationUser applicationUser = userRepository.findById(resetToken.getUserId()).orElse(null);
+
         if (applicationUser != null) {
-            applicationUser.setPassword(passwordEncoder.encode(passwordResetDto.getPassword()));
+            applicationUser.setPassword(passwordEncoder.encode(resetPasswordDto.getPassword()));
             userRepository.save(applicationUser);
             userRepository.flush();
         } else {
-            throw new NotFoundException(String.format("Could not find the user with the email address %s", passwordResetDto.getEmail()));
+            throw new NotFoundException(String.format("Could not find the user with the ID %s", resetToken.getUserId()));
         }
     }
 
@@ -156,7 +158,7 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public void forgotPassword(String email) {
+    public void forgotPassword(String email) throws NotFoundException{
         LOGGER.debug("Forgot password");
         ApplicationUser applicationUser = userRepository.findByEmail(email);
         if (applicationUser != null) {

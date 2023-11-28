@@ -20,6 +20,8 @@ import { GroupDetailComponent } from './components/groups/group-detail/group-det
 import { CreateAccountComponent } from './components/create-account/create-account.component';
 import {ForgotPasswordComponent} from "./components/forgot-password/forgot-password.component";
 import {ResetPasswordComponent} from "./components/reset-password/reset-password.component";
+import {ToastrModule} from "ngx-toastr";
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -45,6 +47,8 @@ import {ResetPasswordComponent} from "./components/reset-password/reset-password
     HttpClientModule,
     NgbModule,
     FormsModule,
+    ToastrModule.forRoot(),
+    BrowserAnimationsModule,
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

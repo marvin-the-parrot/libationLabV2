@@ -1,6 +1,7 @@
 import {Component} from "@angular/core";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {UserService} from "../../services/user.service";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-reset-password',
@@ -13,7 +14,12 @@ export class ResetPasswordComponent {
   repeatNewPassword: string = '';
   token: string = '';
 
-  constructor(private route: ActivatedRoute, private service: UserService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private service: UserService,
+    private notification: ToastrService,
+    private router: Router,
+  ) {}
 
 
 
@@ -26,18 +32,31 @@ export class ResetPasswordComponent {
 
   resetPassword() {
     // Check if the passwords match and perform encoding
+    console.log(this.token);
     if (this.newPassword === this.repeatNewPassword) {
       // Create a DTO with password and token
+      console.log("resetting password")
       const resetPasswordDTO = {
-        newPassword: this.newPassword,
+        password: this.newPassword,
         token: this.token
       };
 
       // Send the DTO to the backend
-      this.service.sendResetPasswordRequest(resetPasswordDTO);
+      this.service.resetPassword(resetPasswordDTO).subscribe({
+        next: () => {
+          // Additional logic if needed
+          this.notification.success('Password reset successful');
+          this.router.navigate(['/login']);
+        },
+        error: error => {
+          // Additional error handling logic
+          this.notification.error('Password reset failed: ' + error.error.message);
+          this.router.navigate(['/login']);
+        }
+      });
     } else {
       // Handle password mismatch error
-      console.error('Passwords do not match');
+      this.notification.error('Passwords do not match');
     }
   }
 }
