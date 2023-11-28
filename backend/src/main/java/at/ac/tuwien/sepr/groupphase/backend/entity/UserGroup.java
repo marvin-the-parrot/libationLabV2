@@ -32,6 +32,14 @@ public class UserGroup {
     @Column(name = "is_host")
     private boolean isHost;
 
+    public UserGroupKey getId() {
+        return id;
+    }
+
+    public void setId(UserGroupKey id) {
+        this.id = id;
+    }
+
     public ApplicationUser getUser() {
         return applicationUser;
     }

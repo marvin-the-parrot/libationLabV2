@@ -1,8 +1,5 @@
-import {ChangeDetectorRef, Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MessageService} from '../../services/message.service';
-import {NgbModal, NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
-import {UntypedFormBuilder} from '@angular/forms';
-import {AuthService} from '../../services/auth.service';
 import {MessageDetailDto} from "../../dtos/message";
 
 @Component({
@@ -19,27 +16,11 @@ export class MessageComponent implements OnInit {
 
   private messages: MessageDetailDto[];
 
-  constructor(private messageService: MessageService,
-              private ngbPaginationConfig: NgbPaginationConfig,
-              private formBuilder: UntypedFormBuilder,
-              private cd: ChangeDetectorRef,
-              private authService: AuthService,
-              private modalService: NgbModal) {
+  constructor(private messageService: MessageService) {
   }
 
   ngOnInit() {
     this.loadMessage();
-  }
-
-  /**
-   * Returns true if the authenticated user is an admin
-   */
-  isAdmin(): boolean {
-    return this.authService.getUserRole() === 'ADMIN';
-  }
-
-  openAddModal(messageAddModal: TemplateRef<any>) {
-    this.modalService.open(messageAddModal, {ariaLabelledBy: 'modal-basic-title'});
   }
 
   getMessage(): MessageDetailDto[] {
@@ -48,6 +29,33 @@ export class MessageComponent implements OnInit {
 
   getText(message: MessageDetailDto): string {
     return "You were invited to drink with " + message.group.name;
+  }
+
+  acceptInvitation(message: MessageDetailDto) {
+
+  }
+
+  declineInvitation(message: MessageDetailDto) {
+    message.isRead = true;
+    return this.messageService.update(message).subscribe({
+      next: () => {
+        this.loadMessage();
+      },
+      error: error => {
+        this.defaultServiceErrorHandling(error);
+      }
+    });
+  }
+
+  deleteMessage(message: MessageDetailDto) {
+    return this.messageService.deleteById(message.id).subscribe({
+      next: () => {
+        this.loadMessage();
+      },
+      error: error => {
+        this.defaultServiceErrorHandling(error);
+      }
+    });
   }
 
   /**

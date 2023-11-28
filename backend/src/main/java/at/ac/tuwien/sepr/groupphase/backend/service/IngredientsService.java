@@ -1,8 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
-import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredients;
+import java.util.List;
 
-import java.util.Optional;
+import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredients;
 
 /**
  * Service for Ingredients Entity.
@@ -15,6 +15,6 @@ public interface IngredientsService {
      * @param ingredientsName name of ingredients
      * @return ingredients with searched name
      */
-    public Optional<Ingredients> searchIngredients(String ingredientsName);
+    public List<Ingredients> searchIngredients(String ingredientsName);
 
 }

@@ -18,6 +18,10 @@ export class AuthInterceptor implements HttpInterceptor {
       return next.handle(req);
     }
 
+    if (req.url === this.globals.backendUri + '/users' && req.method === 'POST') {
+      return next.handle(req);
+    }
+
     const authReq = req.clone({
       headers: req.headers.set('Authorization', 'Bearer ' + this.authService.getToken())
     });

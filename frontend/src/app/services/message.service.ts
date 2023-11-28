@@ -30,4 +30,26 @@ export class MessageService {
     console.log('Create message for user ' + message.userId);
     return this.httpClient.post<MessageDetailDto>(this.messageBaseUri, message);
   }
+
+  /**
+   * Update an existing message in the system.
+   *
+   * @param message the data for the group that should be updated
+   * @return an Observable for the updated group
+   */
+  update(message: MessageDetailDto): Observable<MessageDetailDto> {
+    return this.httpClient.put<MessageDetailDto>(
+      this.messageBaseUri + '/' + message.id,
+      message
+    );
+  }
+
+  /**
+   * Delete a Message by its id.
+   *
+   * @param messagId the id of the group
+   */
+  deleteById(messagId: number): Observable<MessageDetailDto> {
+    return this.httpClient.delete<MessageDetailDto>(`${this.messageBaseUri}/${messagId}`);
+  }
 }

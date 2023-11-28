@@ -90,7 +90,7 @@ export class GroupDetailComponent {
   create(messageCreate: MessageCreate) {
     this.messageService.createMessage(messageCreate).subscribe({
       next: () => {
-        this.router.navigate(['/login']);
+
       },
       error: error => {
         console.log('Could not create account due to:');

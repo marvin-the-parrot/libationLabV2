@@ -19,5 +19,14 @@ public class UserGroupKey implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
-    private ApplicationUser group;
+    private ApplicationGroup group;
+
+    public UserGroupKey(ApplicationUser user, ApplicationGroup group) {
+        this.user = user;
+        this.group = group;
+    }
+
+    public UserGroupKey() {
+
+    }
 }
