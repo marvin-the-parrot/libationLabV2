@@ -67,7 +67,6 @@ public class MessageEndpoint {
     @Operation(summary = "Get list of messages without details",
         security = @SecurityRequirement(name = "apiKey"))
     public List<MessageDetailDto> findAll() {
-        //TODO: decode token and get user email for find SecurityContextHolder.getContext().getAuthentication().getName()
         LOGGER.info("GET /api/v1/messages");
         List<ApplicationMessage> messages = messageService.findAll();
         List<MessageDetailDto> returnMessages = new ArrayList<>();
@@ -90,8 +89,6 @@ public class MessageEndpoint {
     @Operation(summary = "Publish a new message", security = @SecurityRequirement(name = "apiKey"))
     public MessageDetailDto create(@Valid @RequestBody MessageCreateDto message) {
         LOGGER.info("POST /api/v1/messages body: {}", message);
-        //return messageMapper.from(
-        //messageService.save(messageMapper.messageCreateDtoToMessage(messageDto)), groupMapper.groupToGroupDetailDto(groupService.findOne(messageDto.getGroupId())));
         return messageMapper.from(messageService.create(message), groupMapper.groupToGroupDetailDto(groupService.findOne((message.getGroupId()))));
     }
 
