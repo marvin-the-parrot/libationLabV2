@@ -51,8 +51,13 @@ public class GroupDataGenerator {
                 LOGGER.debug("saving group {}", group);
                 groupRepository.save(group);
             }
-            ApplicationGroup groupTest = groupRepository.findById((long) 1).orElse(null);
-            ApplicationUser user = userRepository.findById((long) 1).orElse(null);
+
+            ApplicationGroup groupTest = ApplicationGroup.GroupBuilder.group()
+                .withId((long) 8)
+                .withName("Group" + 8)
+                .build();
+            groupRepository.save(groupTest);
+            ApplicationUser user = userRepository.findByEmail("user2@email.com");
 
 
             //TODO with UserGroup reference for join table

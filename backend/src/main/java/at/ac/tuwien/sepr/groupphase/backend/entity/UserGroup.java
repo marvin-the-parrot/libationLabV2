@@ -22,12 +22,12 @@ public class UserGroup {
     UserGroupKey id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("user_id")
+    @MapsId("user")
     @JoinColumn(name = "user_id", nullable = false)
     private ApplicationUser applicationUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("group_id")
+    @MapsId("group")
     @JoinColumn(name = "group_id", nullable = false)
     private ApplicationGroup applicationGroup;
 
