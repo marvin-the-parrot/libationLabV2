@@ -20,7 +20,7 @@ public class GroupRepositoryTest {
 	@Test
 	public void deleteById_deleteGroupByExistingId_expectedFalse() {
 		ApplicationGroup newGroup = new ApplicationGroup();
-		newGroup.setId(999L);
+		newGroup.setId(99999L);
 		newGroup.setName("newGroup");
 		groupRepository.save(newGroup);
 		int expected = groupRepository.findAll().size();

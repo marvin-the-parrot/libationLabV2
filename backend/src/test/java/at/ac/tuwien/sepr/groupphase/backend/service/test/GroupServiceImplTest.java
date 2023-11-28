@@ -35,12 +35,12 @@ public class GroupServiceImplTest {
 	@BeforeEach
 	public void setUp() {
 		applicationGroup = new ApplicationGroup();
-		applicationGroup.setId(999L);
+		applicationGroup.setId(9999L);
 		applicationGroup.setName("newGroup");
 		applicationUser = new ApplicationUser();
 		applicationUser.setAdmin(true);
-		applicationUser.setId(999L);
-		applicationUser.setEmail("new@user.at");
+		applicationUser.setId(9999L);
+		applicationUser.setEmail("newOne@user.at");
 		applicationUser.setName("New user");
 		applicationUser.setPassword("Password");
 		groupRepository.save(applicationGroup);
