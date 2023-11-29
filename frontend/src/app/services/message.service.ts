@@ -28,7 +28,7 @@ export class MessageService {
    */
   createMessage(message: MessageCreate): Observable<MessageDetailDto> {
     console.log('Create message for user ' + message.userId);
-    return this.httpClient.post<MessageDetailDto>(this.messageBaseUri, message);
+    return this.httpClient.post<MessageDetailDto>(this.messageBaseUri + '/create', message);
   }
 
   /**

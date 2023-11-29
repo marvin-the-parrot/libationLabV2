@@ -42,7 +42,7 @@
           [suggestions]="memberSuggestions"
           [formatModel]="formatMember"
           valueNeedsToMatchSuggestion="true"
-          [(ngModel)]="dummyMemberSelectionModel"
+          [(ngModel)]="user"
           (ngModelChange)="addMember($event)"
         >
         </app-autocomplete>

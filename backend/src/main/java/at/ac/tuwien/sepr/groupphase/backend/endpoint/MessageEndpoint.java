@@ -86,9 +86,9 @@ public class MessageEndpoint {
      * @param message - messageCreateDto
      * @return published message
      */
-    @Secured("ROLE_USER")
+    //@Secured("ROLE_USER")
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
+    @PostMapping("/create")
     @Operation(summary = "Publish a new message", security = @SecurityRequirement(name = "apiKey"))
     public MessageDetailDto create(@Valid @RequestBody MessageCreateDto message) {
         LOGGER.info("POST /api/v1/messages body: {}", message);
@@ -103,7 +103,7 @@ public class MessageEndpoint {
     @Secured("ROLE_USER")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/accept")
-    @Operation(summary = "Publish a new message", security = @SecurityRequirement(name = "apiKey"))
+    @Operation(summary = "Accept a group invation", security = @SecurityRequirement(name = "apiKey"))
     public void create(@Valid @RequestBody MessageDetailDto message) throws ValidationException, ConflictException {
         LOGGER.info("POST /api/v1/messages body: {}", message);
         messageService.update(message);

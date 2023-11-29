@@ -100,6 +100,16 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
+    public ApplicationUser findApplicationUserById(Long userId) {
+        LOGGER.debug("Find application user by id");
+        ApplicationUser applicationUser = userRepository.findById(userId).orElseThrow();
+        if (applicationUser != null) {
+            return applicationUser;
+        }
+        throw new NotFoundException("Could not find the user %s");
+    }
+
+    @Override
     public String login(UserLoginDto userLoginDto) {
         UserDetails userDetails = loadUserByUsername(userLoginDto.getEmail());
         if (userDetails != null
@@ -147,7 +157,7 @@ public class CustomUserDetailService implements UserService {
     @Override
     public List<UserListDto> search(UserSearchDto searchParams) {
         LOGGER.trace("search({})", searchParams);
-        return userMapper.userToUserListDto(userRepository.findByName(searchParams.getName()));
+        return userMapper.userToUserListDto(userRepository.findFirst5ByNameContaining(searchParams.getName()));
     }
 
     @Override

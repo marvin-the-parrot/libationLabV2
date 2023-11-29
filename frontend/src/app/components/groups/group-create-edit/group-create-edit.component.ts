@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {GroupOverview} from "../../../dtos/group-overview";
 import {GroupsService} from "../../../services/groups.service";
-import {ActivatedRoute, Router} from "@angular/router";
+import {Router} from "@angular/router";
 import {NgForm, NgModel} from "@angular/forms";
-import {Observable} from "rxjs";
+import {Observable, of} from "rxjs";
 import {UserListDto} from "../../../dtos/user";
 import {UserService} from "../../../services/user.service";
 
@@ -28,6 +28,11 @@ export class GroupCreateEditComponent implements OnInit {
     cocktails: [],
     members: [],
   }
+
+  user: UserListDto = {
+    id: null,
+    name: ''
+  };
 
   dummyMemberSelectionModel: unknown; // Just needed for the autocomplete
 
@@ -95,14 +100,12 @@ export class GroupCreateEditComponent implements OnInit {
     }
   }
 
-  memberSuggestions = (input: string) : Observable<UserListDto[]> =>
-    this.userService.search({name: input, limit: 5});
-
+  memberSuggestions = (input: string): Observable<UserListDto[]> => (input === '')
+    ? of([])
+    : this.userService.search(input);
 
   public formatMember(member: UserListDto | null): string {
-    return !member
-      ? ""
-      : `${member.name}`
+    return member?.name ?? '';
   }
 
   public dynamicCssClassesForInput(input: NgModel): any {

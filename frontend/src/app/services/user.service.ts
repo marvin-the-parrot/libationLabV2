@@ -1,7 +1,7 @@
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {Globals} from "../global/globals";
 import {Injectable} from "@angular/core";
-import {UserListDto, UserSearch} from "../dtos/user";
+import {UserListDto} from "../dtos/user";
 import {CreateAccount} from "../dtos/create-account";
 import {Observable} from "rxjs";
 
@@ -18,21 +18,13 @@ export class UserService {
   /**
    * Search for users in the system.
    *
-   * @param searchParams the search parameters: username and limit
+   * @param name the search parameters: username and limit
    * @return an Observable for the list of users
    */
-  search(searchParams: UserSearch): Observable<UserListDto[]> {
-    if (searchParams.name === '') {
-      delete searchParams.name;
-    }
+  public search(name: string): Observable<UserListDto[]> {
     let params = new HttpParams();
-    if (searchParams.name) {
-      params = params.append('name', searchParams.name);
-    }
-    if (searchParams.limit) {
-      params = params.append('limit', searchParams.limit);
-    }
-    return this.httpClient.get<UserListDto[]>(this.baseUri, {params});
+    params = params.append("name", name);
+    return this.httpClient.get<UserListDto[]>(this.baseUri, { params });
   }
 
   /**

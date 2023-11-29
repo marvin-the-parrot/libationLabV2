@@ -50,7 +50,7 @@ public class SimpleMessageService implements MessageService {
     public ApplicationMessage create(MessageCreateDto message) {
         LOGGER.debug("Publish new message {}", message);
         ApplicationMessage applicationMessage = ApplicationMessage.ApplicationMessageBuilder.message()
-            .withApplicationUser(userService.findApplicationUserByEmail("user1@email.com"))
+            .withApplicationUser(userService.findApplicationUserById(message.getUserId()))
             .withGroupId(message.getGroupId())
             .withIsRead(false)
             .withSentAt(LocalDateTime.now())
