@@ -27,5 +27,5 @@ public interface UserRepository extends JpaRepository<ApplicationUser, Long> {
      * @param username of user
      * @return List of ApplicationUser found by username
      */
-    List<ApplicationUser> findFirst5ByNameContaining(String username);
+    List<ApplicationUser> findFirst5ByNameIgnoreCaseContaining(String username);
 }
