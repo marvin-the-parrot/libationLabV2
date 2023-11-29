@@ -1,6 +1,11 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.*;
+
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.ResetPasswordDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserEmailDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
@@ -86,10 +91,10 @@ public class UserEndpoint {
     @PutMapping("/reset-password")
     @PermitAll
     @ResponseStatus(HttpStatus.CREATED)
-    public void resetPassword(@RequestBody ResetPasswordDto resetPasswordDTO) {
-        LOGGER.info("PUT /api/v1/user body: {}", resetPasswordDTO);
+    public void resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
+        LOGGER.info("PUT /api/v1/user body: {}", resetPasswordDto);
         try {
-            userService.resetPassword(resetPasswordDTO);
+            userService.resetPassword(resetPasswordDto);
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Failed to reset password", e);

@@ -30,14 +30,14 @@ export class ForgotPasswordComponent {
       next: () => {
         console.log("Email sent");
         // Additional logic if needed
-        this.notification.success('Email sent to: ' + email);
+        this.notification.success('Email sent to: \n' + email);
         this.router.navigate(['/login']);
       },
       error: error => {
         console.log("Could not send email due to:");
         console.log(error);
         // Additional error handling logic
-        this.notification.error('Could not send email due to: ' + error.error.message);
+        this.notification.error('Could not send email due to: \n' + error.error.detail);
       }
     });
   }

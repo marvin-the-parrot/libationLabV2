@@ -1,7 +1,12 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.*;
+
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.ResetPasswordDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ResetToken;
@@ -57,7 +62,7 @@ public class CustomUserDetailService implements UserService {
      * Customer user detail service.
      *
      * @param userRepository       - for persistence call
-     * @param resetTokenRepository
+     * @param resetTokenRepository - ?
      * @param passwordEncoder      - of use password
      * @param jwtTokenizer         - token
      * @param userMapper           - mapper
@@ -135,9 +140,9 @@ public class CustomUserDetailService implements UserService {
         LOGGER.debug("Reset password");
 
         ResetToken resetToken = resetTokenRepository.findByToken(resetPasswordDto.getToken());
-        //TODO: make validator
+
         if (resetToken == null) {
-            throw new NotFoundException(String.format("Could not find the token %s", resetPasswordDto.getToken()));
+            throw new NotFoundException(String.format("The Token is not valid", resetPasswordDto.getToken()));
         }
 
         ApplicationUser applicationUser = userRepository.findById(resetToken.getUserId()).orElse(null);
@@ -146,8 +151,9 @@ public class CustomUserDetailService implements UserService {
             applicationUser.setPassword(passwordEncoder.encode(resetPasswordDto.getPassword()));
             userRepository.save(applicationUser);
             userRepository.flush();
+            resetTokenRepository.deleteById(resetToken.getId());
         } else {
-            throw new NotFoundException(String.format("Could not find the user with the ID %s", resetToken.getUserId()));
+            throw new NotFoundException(String.format("Could not find the user for this Token", resetToken.getUserId()));
         }
     }
 
@@ -158,7 +164,7 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public void forgotPassword(String email) throws NotFoundException{
+    public void forgotPassword(String email) throws NotFoundException {
         LOGGER.debug("Forgot password");
         ApplicationUser applicationUser = userRepository.findByEmail(email);
         if (applicationUser != null) {
