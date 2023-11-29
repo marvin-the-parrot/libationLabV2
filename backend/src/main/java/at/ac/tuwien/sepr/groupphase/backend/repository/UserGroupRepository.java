@@ -14,5 +14,5 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroupKey;
 @Repository
 public interface UserGroupRepository extends JpaRepository<UserGroup, UserGroupKey> {
 
-	List<UserGroup> findByApplicationGroup_Id(Long groupId);
+    List<UserGroup> findByApplicationGroup_Id(Long groupId);
 }
