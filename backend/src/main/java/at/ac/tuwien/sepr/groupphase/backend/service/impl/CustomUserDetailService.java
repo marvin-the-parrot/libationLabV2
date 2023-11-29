@@ -157,7 +157,7 @@ public class CustomUserDetailService implements UserService {
     @Override
     public List<UserListDto> search(UserSearchDto searchParams) {
         LOGGER.trace("search({})", searchParams);
-        return userMapper.userToUserListDto(userRepository.findFirst5ByNameContaining(searchParams.getName()));
+        return userMapper.userToUserListDto(userRepository.findFirst5ByNameIgnoreCaseContaining(searchParams.getName()));
     }
 
     @Override
