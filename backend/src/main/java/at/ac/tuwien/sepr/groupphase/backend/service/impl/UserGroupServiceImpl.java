@@ -45,7 +45,6 @@ public class UserGroupServiceImpl implements UserGroupService {
             .withIsHost(true)
             .build();
         LOGGER.debug("saving userGroup {}", userGroup);
-        userGroupRepository.save(userGroup);;
-        LOGGER.debug("saving userGroup {}", userGroup);
+        userGroupRepository.save(userGroup);
     }
 }
