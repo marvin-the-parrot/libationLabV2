@@ -84,7 +84,7 @@ public class GroupServiceImpl implements GroupService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         if (group != null) {
-            UserGroup userToRemove = group.getMembers().stream()
+            UserGroup userToRemove = userGroupRepository.findByApplicationGroup_Id(group.getId()).stream()
                 .filter(user -> user.getUser().getId().equals(memberId))
                 .findFirst()
                 .orElse(null);
