@@ -22,5 +22,5 @@ public interface MessageRepository extends JpaRepository<ApplicationMessage, Lon
      *
      * @return ordered list of al message entries
      */
-    List<ApplicationMessage> findAllByOrderByIsReadAscSentAtDesc();
+    List<ApplicationMessage> findAllByApplicationUserOrderByIsReadAscSentAtDesc(ApplicationUser user);
 }

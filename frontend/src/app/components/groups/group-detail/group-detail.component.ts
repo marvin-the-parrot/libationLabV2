@@ -1,13 +1,13 @@
 import {Component} from '@angular/core';
 import {GroupOverview} from "../../../dtos/group-overview";
 import {GroupsService} from "../../../services/groups.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {Observable} from "rxjs";
+import {ActivatedRoute} from "@angular/router";
+import {Observable, of} from "rxjs";
 import {UserListDto} from "../../../dtos/user";
-import {NgModel} from "@angular/forms";
 import {UserService} from "../../../services/user.service";
 import {MessageCreate} from "../../../dtos/message";
 import {MessageService} from "../../../services/message.service";
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-group-detail',
@@ -21,12 +21,13 @@ export class GroupDetailComponent {
     name: 'Cocktail Party',
     host: {name: 'Mr X', id: 1},
     cocktails: ['Mochito', 'Mai Tai', 'White Russian'],
-    members: [{name: 'Sep', id: 4}, {name: 'Jan', id: 5}, {name: 'Peter', id: 6}, {name: 'Susanne', id: 7}],
+    members:[],
   }
+
   user: UserListDto = {
-    id: 1,
-    name: 'User1',
-  }
+    id: null,
+    name: ''
+  };
 
   dummyMemberSelectionModel: unknown; // Just needed for the autocomplete
   submitted = false;
@@ -38,8 +39,8 @@ export class GroupDetailComponent {
     private groupsService: GroupsService,
     private userService: UserService,
     private messageService: MessageService,
-    private route: ActivatedRoute,
-    private router: Router
+    private notification: ToastrService,
+    private route: ActivatedRoute
   ) {
   }
 
@@ -54,22 +55,23 @@ export class GroupDetailComponent {
         // Handle error appropriately (e.g., show a message to the user)
       }
     );
+    this.groupsService.getMembersOfGroup(groupId).subscribe(
+      (members: UserListDto[]) => {
+        this.group.members = members;
+      },
+      error => {
+        console.error('Error fetching group details for editing', error);
+        this.notification.error(`Error in searching memebers of "${this.group.name}".`);
+      }
+    );
   }
 
-  memberSuggestions = (input: string): Observable<UserListDto[]> =>
-    this.userService.search({name: input, limit: 5});
+  memberSuggestions = (input: string): Observable<UserListDto[]> => (input === '')
+    ? of([])
+    : this.userService.search(input);
 
   public formatMember(member: UserListDto | null): string {
-    this.user = member;
-    return !member
-      ? ""
-      : `${member.name}`
-  }
-
-  public dynamicCssClassesForInput(input: NgModel): any {
-    return {
-      'is-invalid': !input.valid && !input.pristine,
-    }
+    return member?.name ?? '';
   }
 
   /**
