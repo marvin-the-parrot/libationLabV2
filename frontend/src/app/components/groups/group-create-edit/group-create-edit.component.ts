@@ -3,9 +3,11 @@ import {GroupOverview} from "../../../dtos/group-overview";
 import {GroupsService} from "../../../services/groups.service";
 import {Router} from "@angular/router";
 import {NgForm, NgModel} from "@angular/forms";
+import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from "rxjs";
 import {UserListDto} from "../../../dtos/user";
 import {UserService} from "../../../services/user.service";
+import { DialogService } from 'src/app/services/dialog.service';
 
 export enum GroupCreateEditMode {
   create,
@@ -39,6 +41,8 @@ export class GroupCreateEditComponent implements OnInit {
   constructor(
     private service: GroupsService,
     private userService: UserService,
+    private dialogService: DialogService,
+    private notification: ToastrService,
     private router: Router
   ) {
   }
@@ -68,6 +72,26 @@ export class GroupCreateEditComponent implements OnInit {
     }
   }
 
+  get modeIsCreate(): boolean {
+    return this.mode === GroupCreateEditMode.create;
+  }
+
+  public onDelete(): void {
+    this.dialogService.openDeleteConfirmation().subscribe((result) => {
+      if (result) {
+        const observable = this.service.deleteById(this.group.id, 1 /** PLACE HOLDER**/);
+        observable.subscribe({
+          next: data => {
+            this.notification.success(`Successfully deleted Group "${this.group.name}".`);
+            this.router.navigate(['/groups']);
+          },
+          error: error => {
+            console.error('Error deleting group', error);
+          }
+        }); 
+      }
+    });
+  }
 
   public onSubmit(form: NgForm) {
     console.log("is form valid?", form.valid, this.group);

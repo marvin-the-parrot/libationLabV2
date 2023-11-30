@@ -66,8 +66,18 @@ export class GroupsService {
    * @param groupId the id of the group
    * @param hostId the id of host
    */
-  deleteById(groupId: number, hostId: number): void {
-    this.httpClient.delete<GroupOverview>(`${this.baseUri}/${groupId}/${hostId}`);
+  deleteById(groupId: number, hostId: number): Observable<void> {
+    return new Observable<void>((observer) => {
+      this.httpClient.delete<GroupOverview>(`${this.baseUri}/${groupId}/${hostId}`).subscribe(
+        () => {
+          observer.complete();
+        },
+        (error) => {
+          console.error('Error deleting:', error);
+          observer.error(error);
+        }
+      );
+    });
   }
 
   /**
