@@ -38,6 +38,7 @@ export class MessageComponent implements OnInit {
         this.loadMessage();
       },
       error: error => {
+        console.log('Could not accept messages due to:');
         this.defaultServiceErrorHandling(error);
       }
     });
@@ -50,6 +51,7 @@ export class MessageComponent implements OnInit {
         this.loadMessage();
       },
       error: error => {
+        console.log('Could not decline messages due to:');
         this.defaultServiceErrorHandling(error);
       }
     });
@@ -61,16 +63,10 @@ export class MessageComponent implements OnInit {
         this.loadMessage();
       },
       error: error => {
+        console.log('Could not delete messages due to:');
         this.defaultServiceErrorHandling(error);
       }
     });
-  }
-
-  /**
-   * Error flag will be deactivated, which clears the error message
-   */
-  vanishError() {
-    this.error = false;
   }
 
   /**
@@ -82,6 +78,7 @@ export class MessageComponent implements OnInit {
         this.messages = messages;
       },
       error: error => {
+        console.log('Could not load messages due to:');
         this.defaultServiceErrorHandling(error);
       }
     });
@@ -95,6 +92,13 @@ export class MessageComponent implements OnInit {
     } else {
       this.errorMessage = error.error;
     }
+  }
+
+  /**
+   * Error flag will be deactivated, which clears the error message
+   */
+  vanishError() {
+    this.error = false;
   }
 
 }

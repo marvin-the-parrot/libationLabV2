@@ -47,10 +47,10 @@ public class SimpleMessageService implements MessageService {
         LOGGER.debug("Find all messages");
         ApplicationUser user = userService.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         List<ApplicationMessage> messages = messageRepository.findAllByApplicationUserOrderByIsReadAscSentAtDesc(user);
-        if (messages.isEmpty()) {
+        /*if (messages.isEmpty()) {
             throw new NotFoundException(String.format("Could not find messages of user with email address %s",
                 user.getEmail()));
-        }
+        }*/
         return messages;
     }
 
