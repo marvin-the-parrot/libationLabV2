@@ -89,7 +89,7 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public ApplicationUser findApplicationUserByEmail(String email) {
+    public ApplicationUser findApplicationUserByEmail(String email) throws NotFoundException {
         LOGGER.debug("Find application user by email");
         ApplicationUser applicationUser = userRepository.findByEmail(email);
         if (applicationUser != null) {
@@ -100,13 +100,13 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public ApplicationUser findApplicationUserById(Long userId) {
+    public ApplicationUser findApplicationUserById(Long userId) throws NotFoundException {
         LOGGER.debug("Find application user by id");
         ApplicationUser applicationUser = userRepository.findById(userId).orElseThrow();
         if (applicationUser != null) {
             return applicationUser;
         }
-        throw new NotFoundException("Could not find the user %s");
+        throw new NotFoundException(String.format("Could not find the user with name %s", applicationUser.getName()));
     }
 
     @Override

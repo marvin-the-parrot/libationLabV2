@@ -6,6 +6,7 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
+import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface MessageService {
      *
      * @return ordered list of al message entries
      */
-    List<ApplicationMessage> findAll();
+    List<ApplicationMessage> findAll() throws NotFoundException;
 
     /**
      * Save a single message entry.
@@ -27,7 +28,7 @@ public interface MessageService {
      * @param message to publish
      * @return saved message entry
      */
-    ApplicationMessage create(MessageCreateDto message);
+    ApplicationMessage create(MessageCreateDto message) throws ConstraintViolationException, ValidationException;
 
     /**
      * Updates the message with given ID with the data given in {@code toUpdate}.
@@ -49,5 +50,5 @@ public interface MessageService {
      *
      * @param messageId the id of the message
      */
-    void delete(Long messageId);
+    void delete(Long messageId) throws NotFoundException;
 }

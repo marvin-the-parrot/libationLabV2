@@ -50,7 +50,6 @@ public class GroupServiceImpl implements GroupService {
         this.validator = validator;
     }
 
-    @Transactional
     @Override
     public ApplicationGroup findOne(Long id) {
         LOGGER.debug("Find group with id {}", id);
@@ -58,7 +57,7 @@ public class GroupServiceImpl implements GroupService {
         if (group.isPresent()) {
             return group.get();
         } else {
-            throw new NotFoundException(String.format("Could not find group with id %s", id));
+            throw new NotFoundException("Could not find group");
         }
     }
 
