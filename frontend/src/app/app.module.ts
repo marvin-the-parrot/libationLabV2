@@ -22,6 +22,9 @@ import {ForgotPasswordComponent} from "./components/forgot-password/forgot-passw
 import {ResetPasswordComponent} from "./components/reset-password/reset-password.component";
 import {ToastrModule} from "ngx-toastr";
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { DeleteConfirmationComponent } from './delete-confirmation/delete-confirmation.component';
+import { MatDialogModule } from '@angular/material/dialog';
+
 
 @NgModule({
   declarations: [
@@ -39,6 +42,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     CreateAccountComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
+    DeleteConfirmationComponent,
   ],
   imports: [
     BrowserModule,
@@ -49,6 +53,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     FormsModule,
     ToastrModule.forRoot(),
     BrowserAnimationsModule,
+    MatDialogModule,
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]
