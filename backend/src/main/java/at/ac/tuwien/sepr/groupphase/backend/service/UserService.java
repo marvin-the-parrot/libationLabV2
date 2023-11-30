@@ -1,18 +1,19 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
+
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.ResetPasswordDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PasswordResetDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * Service for ApplicationUser Entity.
@@ -67,9 +68,9 @@ public interface UserService extends UserDetailsService {
     /**
      * Reset the password of a user.
      *
-     * @param passwordResetDto reset credentials
+     * @param resetPasswordDto reset credentials
      */
-    void resetPassword(PasswordResetDto passwordResetDto);
+    void resetPassword(ResetPasswordDto resetPasswordDto);
 
     /**
      * Retrieve all stored users, that match the given parameters.
@@ -86,5 +87,5 @@ public interface UserService extends UserDetailsService {
      *
      *  @param email the email address of the user who forgot his password
      */
-    void forgotPassword(String email);
+    void forgotPassword(String email) throws NotFoundException;
 }
