@@ -79,7 +79,7 @@ export class GroupCreateEditComponent implements OnInit {
   public onDelete(): void {
     this.dialogService.openDeleteConfirmation().subscribe((result) => {
       if (result) {
-        const observable = this.service.deleteById(this.group.id, 1 /** PLACE HOLDER**/);
+        const observable = this.service.deleteById(this.group.id, 1 /** PLACE HOLDER**/); //TODO - logged used id
         observable.subscribe({
           next: data => {
             this.notification.success(`Successfully deleted Group "${this.group.name}".`);
@@ -87,6 +87,7 @@ export class GroupCreateEditComponent implements OnInit {
           },
           error: error => {
             console.error('Error deleting group', error);
+            this.notification.error(`Error deleting group "${this.group.name}".`);
           }
         }); 
       }

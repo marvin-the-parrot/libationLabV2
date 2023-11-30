@@ -3,6 +3,7 @@ import {Globals} from "../global/globals";
 import {GroupOverview} from "../dtos/group-overview";
 import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
+import { UserListDto } from "../dtos/user";
 
 @Injectable({
   providedIn: 'root'
@@ -56,8 +57,8 @@ export class GroupsService {
    * @param groupId the id of the group
    * @param name the name of member
    */
-  getByName(groupId: number, name: string): Observable<GroupOverview> {
-    return this.httpClient.get<GroupOverview>(`${this.baseUri}/${groupId}/${name}`);
+  getMembersOfGroup(groupId: number): Observable<UserListDto[]> {
+    return this.httpClient.get<UserListDto[]>(`${this.baseUri}/${groupId}`);
   }
 
   /**

@@ -7,6 +7,7 @@ import {UserListDto} from "../../../dtos/user";
 import {UserService} from "../../../services/user.service";
 import {MessageCreate} from "../../../dtos/message";
 import {MessageService} from "../../../services/message.service";
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-group-detail',
@@ -20,7 +21,7 @@ export class GroupDetailComponent {
     name: 'Cocktail Party',
     host: {name: 'Mr X', id: 1},
     cocktails: ['Mochito', 'Mai Tai', 'White Russian'],
-    members: [{name: 'Sep', id: 4}, {name: 'Jan', id: 5}, {name: 'Peter', id: 6}, {name: 'Susanne', id: 7}],
+    members:[],
   }
 
   user: UserListDto = {
@@ -38,6 +39,7 @@ export class GroupDetailComponent {
     private groupsService: GroupsService,
     private userService: UserService,
     private messageService: MessageService,
+    private notification: ToastrService,
     private route: ActivatedRoute
   ) {
   }
@@ -51,6 +53,15 @@ export class GroupDetailComponent {
       error => {
         console.error('Error fetching group details for editing', error);
         // Handle error appropriately (e.g., show a message to the user)
+      }
+    );
+    this.groupsService.getMembersOfGroup(groupId).subscribe(
+      (members: UserListDto[]) => {
+        this.group.members = members;
+      },
+      error => {
+        console.error('Error fetching group details for editing', error);
+        this.notification.error(`Error in searching memebers of "${this.group.name}".`);
       }
     );
   }
