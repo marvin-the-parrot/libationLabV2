@@ -1,9 +1,16 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
-public class ResetPasswordDto {
+public class PasswordResetDto {
+
+    private String email;
 
     private String password;
+
     private String token;
+
+    public String getEmail() {
+        return email;
+    }
 
     public String getPassword() {
         return password;
@@ -11,13 +18,5 @@ public class ResetPasswordDto {
 
     public String getToken() {
         return token;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 }

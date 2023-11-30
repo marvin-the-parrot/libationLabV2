@@ -3,7 +3,6 @@ import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {AuthService} from '../../services/auth.service';
 import {AuthRequest} from '../../dtos/auth-request';
-import {ToastrService} from "ngx-toastr";
 
 
 @Component({
@@ -16,13 +15,11 @@ export class LoginComponent implements OnInit {
   loginForm: UntypedFormGroup;
   // After first submission attempt, form validation will start
   submitted = false;
+  // Error flag
+  error = false;
+  errorMessage = '';
 
-  constructor(
-    private formBuilder: UntypedFormBuilder,
-    private authService: AuthService,
-    private router: Router,
-    private notification: ToastrService
-    ) {
+  constructor(private formBuilder: UntypedFormBuilder, private authService: AuthService, private router: Router) {
     this.loginForm = this.formBuilder.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(8)]]
@@ -52,15 +49,26 @@ export class LoginComponent implements OnInit {
     this.authService.loginUser(authRequest).subscribe({
       next: () => {
         console.log('Successfully logged in user: ' + authRequest.email);
-        this.notification.success('Successfully logged in user: \n' + authRequest.email);
         this.router.navigate(['/message']);
       },
       error: error => {
         console.log('Could not log in due to:');
         console.log(error);
-        this.notification.error('Could not log in due to: \n' + error.error.detail);
+        this.error = true;
+        if (typeof error.error === 'object') {
+          this.errorMessage = error.error.error;
+        } else {
+          this.errorMessage = error.error;
+        }
       }
     });
+  }
+
+  /**
+   * Error flag will be deactivated, which clears the error message
+   */
+  vanishError() {
+    this.error = false;
   }
 
   ngOnInit() {

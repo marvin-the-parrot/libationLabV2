@@ -20,11 +20,6 @@ import { GroupDetailComponent } from './components/groups/group-detail/group-det
 import { CreateAccountComponent } from './components/create-account/create-account.component';
 import {ForgotPasswordComponent} from "./components/forgot-password/forgot-password.component";
 import {ResetPasswordComponent} from "./components/reset-password/reset-password.component";
-import {ToastrModule} from "ngx-toastr";
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { DeleteConfirmationComponent } from './delete-confirmation/delete-confirmation.component';
-import { MatDialogModule } from '@angular/material/dialog';
-
 
 @NgModule({
   declarations: [
@@ -42,7 +37,6 @@ import { MatDialogModule } from '@angular/material/dialog';
     CreateAccountComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
-    DeleteConfirmationComponent,
   ],
   imports: [
     BrowserModule,
@@ -51,9 +45,6 @@ import { MatDialogModule } from '@angular/material/dialog';
     HttpClientModule,
     NgbModule,
     FormsModule,
-    ToastrModule.forRoot(),
-    BrowserAnimationsModule,
-    MatDialogModule,
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

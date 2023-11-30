@@ -113,26 +113,26 @@ public class ApplicationUser {
         private ApplicationUserBuilder() {
         }
 
-        public static ApplicationUserBuilder applicationUser() {
-            return new ApplicationUserBuilder();
+        public static ApplicationUser.ApplicationUserBuilder applicationUser() {
+            return new ApplicationUser.ApplicationUserBuilder();
         }
 
-        public ApplicationUserBuilder withId(Long id) {
+        public ApplicationUser.ApplicationUserBuilder withId(Long id) {
             this.id = id;
             return this;
         }
 
-        public ApplicationUserBuilder withName(String name) {
+        public ApplicationUser.ApplicationUserBuilder withName(String name) {
             this.name = name;
             return this;
         }
 
-        public ApplicationUserBuilder withEmail(String email) {
+        public ApplicationUser.ApplicationUserBuilder withEmail(String email) {
             this.email = email;
             return this;
         }
 
-        public ApplicationUserBuilder withPassword(String password) {
+        public ApplicationUser.ApplicationUserBuilder withPassword(String password) {
             this.password = password;
             return this;
         }

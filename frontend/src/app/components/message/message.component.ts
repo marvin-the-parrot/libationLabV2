@@ -32,15 +32,7 @@ export class MessageComponent implements OnInit {
   }
 
   acceptInvitation(message: MessageDetailDto) {
-    message.isRead = true;
-    return this.messageService.acceptGroupInvitation(message).subscribe({
-      next: () => {
-        this.loadMessage();
-      },
-      error: error => {
-        this.defaultServiceErrorHandling(error);
-      }
-    });
+
   }
 
   declineInvitation(message: MessageDetailDto) {

@@ -3,7 +3,6 @@ import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {CreateAccount} from "../../dtos/create-account";
 import {UserService} from "../../services/user.service";
-import {ToastrService} from 'ngx-toastr';
 
 
 @Component({
@@ -20,12 +19,7 @@ export class CreateAccountComponent implements OnInit {
   error = false;
   errorMessage = '';
 
-  constructor(
-    private formBuilder: UntypedFormBuilder,
-    private userService: UserService,
-    private router: Router,
-    private notification: ToastrService
-  ) {
+  constructor(private formBuilder: UntypedFormBuilder, private userService: UserService, private router: Router) {
     this.createAccountForm = this.formBuilder.group({
       username: ['', [Validators.required]],
       email: ['', [Validators.required]],
@@ -54,14 +48,17 @@ export class CreateAccountComponent implements OnInit {
   create(createAccount: CreateAccount) {
     this.userService.create(createAccount).subscribe({
       next: () => {
-        this.notification.success('Account successfully created');
         this.router.navigate(['/login']);
       },
       error: error => {
         console.log('Could not create account due to:');
         console.log(error);
-        this.notification.error('Could not create account due to: ' + error.error.detail);
         this.error = true;
+        if (typeof error.error === 'object') {
+          this.errorMessage = error.error.error;
+        } else {
+          this.errorMessage = error.error;
+        }
       }
     });
   }

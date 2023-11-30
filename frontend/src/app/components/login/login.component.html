@@ -1,3 +1,12 @@
+
+
+<div *ngIf="error" class="alert alert-warning alert-dismissible fade show" role="alert">
+  <strong>Authentication problems!</strong> {{ errorMessage }}
+  <button type="button" (click)="vanishError()" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
 <div class="login-wrapper">
   <div class="purple-rectangle">
     <img src="assets/images/logo.png" class="logo" alt="Logo">
@@ -28,7 +37,7 @@
               <div class="form-group username-field">
 
                 <input type="text" name="username" formControlName="username" class="form-control custom-input-field" id="inputUsername"
-                       aria-describedby="usernameHelp" placeholder="Email">
+                       aria-describedby="usernameHelp" placeholder="Username">
                 <div *ngIf="submitted && loginForm.controls.username.errors" class="error">
                   <small class="form-text custom-text-warning" *ngIf="loginForm.controls.username.errors.required">Your username is
                     required!

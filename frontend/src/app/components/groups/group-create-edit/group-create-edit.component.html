@@ -42,7 +42,7 @@
           [suggestions]="memberSuggestions"
           [formatModel]="formatMember"
           valueNeedsToMatchSuggestion="true"
-          [(ngModel)]="user"
+          [(ngModel)]="dummyMemberSelectionModel"
           (ngModelChange)="addMember($event)"
         >
         </app-autocomplete>
@@ -70,21 +70,13 @@
     </div>
   </div>
 
-  <div class="mt-4 d-flex justify-content-between">
-      <button type="button"
-      class="btn btn-danger"
-      *ngIf="!modeIsCreate"
-      (click)="onDelete()"
-      >
-      Delete
-    </button>
+  <div class="mt-4 d-flex flex-row">
     <button type="submit"
-      class="btn btn-primary"
-      [disabled]="!form.valid">
-      {{submitButtonText}}
-    </button>
+            class="btn btn-primary"
+            [disabled]="!form.valid">{{submitButtonText}}</button>
   </div>
 
   <!-- todo: add cancel button -->
+  <!-- todo: add delete button -->
 
 </form>

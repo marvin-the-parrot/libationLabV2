@@ -23,4 +23,5 @@ public interface GroupRepository extends
         + "WHERE ug.applicationGroup.id = :groupId AND ug.applicationGroup.name LIKE %:partialName%")
     Optional<ApplicationUser> searchForMembers(@Param("groupId") Long groupId,
                                                @Param("partialName") String memberName);
+
 }

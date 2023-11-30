@@ -3,7 +3,6 @@ import {Globals} from "../global/globals";
 import {GroupOverview} from "../dtos/group-overview";
 import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
-import { UserListDto } from "../dtos/user";
 
 @Injectable({
   providedIn: 'root'
@@ -57,8 +56,8 @@ export class GroupsService {
    * @param groupId the id of the group
    * @param name the name of member
    */
-  getMembersOfGroup(groupId: number): Observable<UserListDto[]> {
-    return this.httpClient.get<UserListDto[]>(`${this.baseUri}/${groupId}`);
+  getByName(groupId: number, name: string): Observable<GroupOverview> {
+    return this.httpClient.get<GroupOverview>(`${this.baseUri}/${groupId}/${name}`);
   }
 
   /**
@@ -67,18 +66,8 @@ export class GroupsService {
    * @param groupId the id of the group
    * @param hostId the id of host
    */
-  deleteById(groupId: number, hostId: number): Observable<void> {
-    return new Observable<void>((observer) => {
-      this.httpClient.delete<GroupOverview>(`${this.baseUri}/${groupId}/${hostId}`).subscribe(
-        () => {
-          observer.complete();
-        },
-        (error) => {
-          console.error('Error deleting:', error);
-          observer.error(error);
-        }
-      );
-    });
+  deleteById(groupId: number, hostId: number): void {
+    this.httpClient.delete<GroupOverview>(`${this.baseUri}/${groupId}/${hostId}`);
   }
 
   /**
