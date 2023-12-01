@@ -1,10 +1,13 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PasswordResetDto;
+
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.ResetPasswordDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserEmailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import jakarta.annotation.security.PermitAll;
@@ -20,7 +23,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -68,14 +70,6 @@ public class UserEndpoint {
         }
     }
 
-    @PutMapping("/{id}/reset")
-    @PermitAll
-    @ResponseStatus(HttpStatus.CREATED)
-    public void resetPassword(@Valid @RequestBody PasswordResetDto passwordResetDto, @PathVariable String id) {
-        LOGGER.info("POST /api/v1/user body: {}", passwordResetDto);
-        userService.resetPassword(passwordResetDto);
-    }
-
     private void logClientError(HttpStatus status, String message, Exception e) {
         LOGGER.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
     }
@@ -83,8 +77,28 @@ public class UserEndpoint {
     @PostMapping("/forgot-password")
     @PermitAll
     @ResponseStatus(HttpStatus.CREATED)
-    public void forgotPassword(@RequestBody String email) {
+    public void forgotPassword(@RequestBody UserEmailDto email) {
         LOGGER.info("POST /api/v1/user body: {}", email);
-        userService.forgotPassword(email);
+        try {
+            userService.forgotPassword(email.getEmail());
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Failed to send email", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+    @PutMapping("/reset-password")
+    @PermitAll
+    @ResponseStatus(HttpStatus.CREATED)
+    public void resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
+        LOGGER.info("PUT /api/v1/user body: {}", resetPasswordDto);
+        try {
+            userService.resetPassword(resetPasswordDto);
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Failed to reset password", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
     }
 }
