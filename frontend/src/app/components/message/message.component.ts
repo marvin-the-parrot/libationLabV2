@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {MessageService} from '../../services/message.service';
 import {MessageDetailDto} from "../../dtos/message";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-message',
@@ -16,7 +17,10 @@ export class MessageComponent implements OnInit {
 
   private messages: MessageDetailDto[];
 
-  constructor(private messageService: MessageService) {
+  constructor(
+    private messageService: MessageService,
+    private notification: ToastrService
+  ) {
   }
 
   ngOnInit() {
@@ -38,6 +42,7 @@ export class MessageComponent implements OnInit {
         this.loadMessage();
       },
       error: error => {
+        console.log('Could not accept messages due to:');
         this.defaultServiceErrorHandling(error);
       }
     });
@@ -50,6 +55,7 @@ export class MessageComponent implements OnInit {
         this.loadMessage();
       },
       error: error => {
+        console.log('Could not decline messages due to:');
         this.defaultServiceErrorHandling(error);
       }
     });
@@ -61,16 +67,10 @@ export class MessageComponent implements OnInit {
         this.loadMessage();
       },
       error: error => {
+        console.log('Could not delete messages due to:');
         this.defaultServiceErrorHandling(error);
       }
     });
-  }
-
-  /**
-   * Error flag will be deactivated, which clears the error message
-   */
-  vanishError() {
-    this.error = false;
   }
 
   /**
@@ -82,6 +82,7 @@ export class MessageComponent implements OnInit {
         this.messages = messages;
       },
       error: error => {
+        console.log('Could not load messages due to:');
         this.defaultServiceErrorHandling(error);
       }
     });
@@ -90,11 +91,14 @@ export class MessageComponent implements OnInit {
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
-    if (typeof error.error === 'object') {
-      this.errorMessage = error.error.error;
-    } else {
-      this.errorMessage = error.error;
-    }
+    this.notification.error(error.error.detail);
+  }
+
+  /**
+   * Error flag will be deactivated, which clears the error message
+   */
+  vanishError() {
+    this.error = false;
   }
 
 }

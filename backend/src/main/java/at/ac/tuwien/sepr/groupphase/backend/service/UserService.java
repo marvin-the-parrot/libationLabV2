@@ -8,6 +8,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -40,7 +41,7 @@ public interface UserService extends UserDetailsService {
      * @param email the email address
      * @return a application user
      */
-    ApplicationUser findApplicationUserByEmail(String email);
+    ApplicationUser findApplicationUserByEmail(String email) throws NotFoundException;
 
     /**
      * Find an application user based on the id.
@@ -48,7 +49,7 @@ public interface UserService extends UserDetailsService {
      * @param userId the id of the user
      * @return a application user
      */
-    ApplicationUser findApplicationUserById(Long userId);
+    ApplicationUser findApplicationUserById(Long userId) throws NotFoundException;
 
     /**
      * Log in a user.

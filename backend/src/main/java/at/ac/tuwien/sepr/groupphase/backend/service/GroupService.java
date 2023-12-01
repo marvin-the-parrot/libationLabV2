@@ -20,7 +20,7 @@ public interface GroupService {
      * @param id the id of the group entry
      * @return the group entry
      */
-    ApplicationGroup findOne(Long id);
+    ApplicationGroup findOne(Long id) throws NotFoundException;
 
     /**
      * Deleting group entry by id, only possible by host.
