@@ -46,12 +46,12 @@ public class SimpleMessageService implements MessageService {
     public List<ApplicationMessage> findAll() throws NotFoundException {
         LOGGER.debug("Find all messages");
         ApplicationUser user = userService.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        List<ApplicationMessage> messages = messageRepository.findAllByApplicationUserOrderByIsReadAscSentAtDesc(user);
-        /*if (messages.isEmpty()) {
+        /*List<ApplicationMessage> messages = messageRepository.findAllByApplicationUserOrderByIsReadAscSentAtDesc(user);
+        if (messages.isEmpty()) {
             throw new NotFoundException(String.format("Could not find messages of user with email address %s",
                 user.getEmail()));
         }*/
-        return messages;
+        return messageRepository.findAllByApplicationUserOrderByIsReadAscSentAtDesc(user);
     }
 
     @Override

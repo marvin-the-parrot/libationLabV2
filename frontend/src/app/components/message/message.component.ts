@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {MessageService} from '../../services/message.service';
 import {MessageDetailDto} from "../../dtos/message";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-message',
@@ -16,7 +17,10 @@ export class MessageComponent implements OnInit {
 
   private messages: MessageDetailDto[];
 
-  constructor(private messageService: MessageService) {
+  constructor(
+    private messageService: MessageService,
+    private notification: ToastrService
+  ) {
   }
 
   ngOnInit() {
@@ -87,11 +91,7 @@ export class MessageComponent implements OnInit {
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
-    if (typeof error.error === 'object') {
-      this.errorMessage = error.error.error;
-    } else {
-      this.errorMessage = error.error;
-    }
+    this.notification.error(error.error.detail);
   }
 
   /**
