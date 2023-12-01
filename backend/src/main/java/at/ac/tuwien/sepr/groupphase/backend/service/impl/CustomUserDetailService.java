@@ -7,6 +7,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ResetToken;
@@ -182,6 +183,19 @@ public class CustomUserDetailService implements UserService {
         } else {
             throw new NotFoundException(String.format("Could not find the user with the email address %s", email));
         }
+    }
+
+
+    @Override
+    public UsernameDto getUsernameByEmail(String email) {
+        LOGGER.debug("Get username by email");
+        ApplicationUser applicationUser = userRepository.findByEmail(email);
+        if (applicationUser != null) {
+            UsernameDto username = new UsernameDto();
+            username.setUsername(applicationUser.getName());
+            return username;
+        }
+        throw new NotFoundException(String.format("Could not find the user with the email address %s", email));
     }
 
     private void sendEmail(String email) {

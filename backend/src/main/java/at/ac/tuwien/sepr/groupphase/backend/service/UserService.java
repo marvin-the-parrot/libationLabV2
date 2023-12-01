@@ -6,6 +6,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -88,4 +89,11 @@ public interface UserService extends UserDetailsService {
      *  @param email the email address of the user who forgot his password
      */
     void forgotPassword(String email) throws NotFoundException;
+
+    /**
+     * Get Username by email.
+     *
+     * @param email the email address of the user
+     */
+    UsernameDto getUsernameByEmail(String email);
 }

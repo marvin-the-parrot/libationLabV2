@@ -4,13 +4,4 @@
   <h1 class="display-4">Welcome to the SE PR group phase!</h1>
   <hr class="my-4">
   <a *ngIf="!authService.isLoggedIn()" class="btn btn-primary btn-lg" routerLink="/login" role="button">Login</a>
-  <div *ngIf="authService.isLoggedIn()">
-    <p>Check out the latest message from the SE PR group phase.</p>
-    <p class="lead">
-      <a class="btn btn-primary btn-lg" routerLink="/message" role="button">Message</a>
-    </p>
-  </div>
-
-  <!-- todo: this is only temporary to view the groups site. Later groups should be navigated to after login. -->
-  <a class="btn btn-secondary btn-lg" routerLink="/groups" role="button">Go to groups</a>
 </div>

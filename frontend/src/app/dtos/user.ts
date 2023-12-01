@@ -8,3 +8,7 @@ export interface UserSearch {
   name?: string;
   limit?: number;
 }
+
+export interface UsernameDto {
+  username: string
+}

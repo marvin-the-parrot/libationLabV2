@@ -4,6 +4,7 @@ import {Router} from '@angular/router';
 import {AuthService} from '../../services/auth.service';
 import {AuthRequest} from '../../dtos/auth-request';
 import {ToastrService} from "ngx-toastr";
+import {UserService} from "../../services/user.service";
 
 
 @Component({
@@ -20,6 +21,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private formBuilder: UntypedFormBuilder,
     private authService: AuthService,
+    private userService: UserService,
     private router: Router,
     private notification: ToastrService
     ) {
@@ -53,7 +55,8 @@ export class LoginComponent implements OnInit {
       next: () => {
         console.log('Successfully logged in user: ' + authRequest.email);
         this.notification.success('Successfully logged in user: \n' + authRequest.email);
-        this.router.navigate(['/message']);
+        this.setUsernameLocalStorage();
+        this.router.navigate(['/groups']);
       },
       error: error => {
         console.log('Could not log in due to:');
@@ -64,6 +67,22 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  /**
+   * Get Username from backend and return it
+   */
+  setUsernameLocalStorage() {
+    this.userService.getUsername().subscribe({
+      next: data => {
+        console.log(data);
+        localStorage.setItem('username', data.username);
+        console.log(localStorage.getItem('username'));
+      },
+      error: error => {
+        console.log(error);
+      }
+    });
   }
 
 }

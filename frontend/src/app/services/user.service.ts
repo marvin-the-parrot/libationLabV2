@@ -1,7 +1,7 @@
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {Globals} from "../global/globals";
 import {Injectable} from "@angular/core";
-import {UserListDto} from "../dtos/user";
+import {UserListDto, UsernameDto} from "../dtos/user";
 import {CreateAccount} from "../dtos/create-account";
 import {Observable} from "rxjs";
 import {ResetPasswordDto} from "../dtos/resetPassword";
@@ -53,9 +53,12 @@ export class UserService {
    * @return an Observable for the send request
    */
   resetPassword(resetPasswordDTO: ResetPasswordDto): Observable<ResetPasswordDto> {
-    console.log("sending reset password request");
-    console.log(resetPasswordDTO.password);
-    console.log(resetPasswordDTO.token);
     return this.httpClient.put<ResetPasswordDto>(this.baseUri + '/reset-password', resetPasswordDTO);
   }
+
+
+  getUsername(): Observable<UsernameDto> {
+    return this.httpClient.get<UsernameDto>(this.baseUri + '/username');
+  }
+
 }
