@@ -4,6 +4,7 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import jakarta.transaction.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,4 +24,9 @@ public interface GroupRepository extends
         + "WHERE ug.applicationGroup.id = :groupId AND ug.applicationGroup.name LIKE %:partialName%")
     Optional<ApplicationUser> searchForMembers(@Param("groupId") Long groupId,
                                                @Param("partialName") String memberName);
+
+    @Query("SELECT ug.applicationGroup FROM UserGroup ug "
+        + "WHERE ug.applicationUser.id = :userId")
+    Optional<ApplicationGroup[]> getGroupsOfUser(@Param("userId") Long userId);
+
 }

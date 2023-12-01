@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+
 /**
  * Dto to send group detail data to the frontend.
  */
@@ -7,9 +9,8 @@ public class GroupOverviewDto {
 
     private Long id;
     private String name;
-    private boolean isHost;
-    private String cocktail;
-    private Long membersId;
+    private String cocktails;
+    private UserListGroupDto[] members;
 
     public Long getId() {
         return id;
@@ -27,28 +28,20 @@ public class GroupOverviewDto {
         this.name = name;
     }
 
-    public boolean isHost() {
-        return isHost;
-    }
-
-    public void setHost(boolean host) {
-        isHost = host;
-    }
-
     public String getCocktail() {
-        return cocktail;
+        return cocktails;
     }
 
     public void setCocktail(String cocktail) {
-        this.cocktail = cocktail;
+        this.cocktails = cocktail;
     }
 
-    public Long getMembersId() {
-        return membersId;
+    public UserListGroupDto[] getMembers() {
+        return members;
     }
 
-    public void setMembersId(Long membersId) {
-        this.membersId = membersId;
+    public void setMembers(UserListGroupDto[] members) {
+        this.members = members;
     }
 
     @Override
@@ -56,9 +49,8 @@ public class GroupOverviewDto {
         return "Message{"
             + "id=" + id
             + ", name=" + name
-            + ", host='" + isHost + '\''
-            + ", cocktails='" + cocktail + '\''
-            + ", members='" + membersId + '\''
+            + ", cocktails='" + cocktails + '\''
+            + ", members='" + members + '\''
             + '}';
     }
 
@@ -69,8 +61,8 @@ public class GroupOverviewDto {
         private Long id;
         private String name;
         private boolean isHost;
-        private String cocktail;
-        private Long membersId;
+        private String cocktails;
+        private UserListGroupDto[] members;
 
         public GroupDetailDtoBuilder() {
         }
@@ -100,14 +92,18 @@ public class GroupOverviewDto {
         }
 
         public GroupDetailDtoBuilder withCocktail(String cocktail) {
-            this.cocktail = cocktail;
+            this.cocktails = cocktail;
             return this;
         }
 
-        public GroupDetailDtoBuilder withMembersId(Long membersId) {
-            this.membersId = membersId;
+        public GroupDetailDtoBuilder withMembers(ApplicationUser[] members) {
+            UserListGroupDto[] userListDto = new UserListGroupDto[members.length];
+            for (int i = 0; i < members.length; i++) {
+                userListDto[i] = new UserListGroupDto(members[i].getId(), members[i].getName(), false);
+            }
             return this;
         }
+
 
         /**
          * Group detail dto builder.
@@ -118,9 +114,8 @@ public class GroupOverviewDto {
             GroupOverviewDto groupOverviewDto = new GroupOverviewDto();
             groupOverviewDto.setId(id);
             groupOverviewDto.setName(name);
-            groupOverviewDto.setHost(isHost);
-            groupOverviewDto.setCocktail(cocktail);
-            groupOverviewDto.setMembersId(membersId);
+            groupOverviewDto.setCocktail(cocktails);
+            groupOverviewDto.setMembers(members);
             return groupOverviewDto;
         }
     }

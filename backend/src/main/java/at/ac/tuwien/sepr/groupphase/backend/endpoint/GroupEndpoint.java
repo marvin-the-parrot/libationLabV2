@@ -1,23 +1,32 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
+import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,11 +52,43 @@ public class GroupEndpoint {
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final GroupService groupService;
     private final GroupMapper groupMapper;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
     @Autowired
-    public GroupEndpoint(GroupService groupService, GroupMapper groupMapper) {
+    public GroupEndpoint(GroupService groupService, GroupMapper groupMapper, UserService userService,
+                         UserMapper userMapper) {
         this.groupService = groupService;
         this.groupMapper = groupMapper;
+        this.userService = userService;
+        this.userMapper = userMapper;
+    }
+
+    /**
+     * Get a list of groups that this viewer is part of.
+     *
+     * @return list of groups
+     */
+    @Secured("ROLE_USER")
+    @GetMapping()
+    @Transactional
+    @Operation(summary = "Get a list of groups that this viewer is part of",
+        security = @SecurityRequirement(name = "apiKey"))
+    public GroupOverviewDto[] findGroupsByUser() {
+        LOGGER.info("GET /api/v1/groups");
+        List<UserGroup> userGroupMatchings = groupService.findGroupsByUser(SecurityContextHolder.getContext().getAuthentication().getName());
+        List<GroupOverviewDto> groupOverviewDtos = new ArrayList<>();
+        for (UserGroup group : userGroupMatchings) {
+            GroupOverviewDto groupOverviewDto;
+
+            groupOverviewDto = groupMapper.grouptToGroupOverviewDto(group.getGroups());
+            List<ApplicationUser> users = userService.findUsersByGroup(group.getGroups());
+            List<UserListGroupDto> userListGroupDtos = userMapper.userToUserListGroupDto(users);
+            groupOverviewDto.setMembers(userListGroupDtos.toArray(new UserListGroupDto[0]));
+            groupOverviewDtos.add(groupOverviewDto);
+        }
+
+        return groupOverviewDtos.toArray(new GroupOverviewDto[0]);
     }
 
     @Secured("ROLE_USER")

@@ -5,7 +5,7 @@ import {Router} from "@angular/router";
 import {NgForm, NgModel} from "@angular/forms";
 import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from "rxjs";
-import {UserListDto} from "../../../dtos/user";
+import {UserListDto, UserListGroupDto} from "../../../dtos/user";
 import {UserService} from "../../../services/user.service";
 import { DialogService } from 'src/app/services/dialog.service';
 
@@ -26,7 +26,6 @@ export class GroupCreateEditComponent implements OnInit {
   group: GroupOverview = {
     id: 0,
     name: '',
-    host: null,
     cocktails: [],
     members: [],
   }
@@ -138,7 +137,7 @@ export class GroupCreateEditComponent implements OnInit {
     }
   }
 
-  public addMember(user: UserListDto | null) {
+  public addMember(user: UserListGroupDto | null) {
     if (user == null)
       return;
 

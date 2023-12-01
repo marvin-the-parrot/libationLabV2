@@ -19,4 +19,6 @@ public class UserListDto {
     public void setName(String name) {
         this.name = name;
     }
+
+
 }

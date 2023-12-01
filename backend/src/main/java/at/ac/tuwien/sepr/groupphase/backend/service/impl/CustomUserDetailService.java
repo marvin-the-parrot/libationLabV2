@@ -9,16 +9,20 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ResetToken;
+import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.ResetTokenRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.security.JwtTokenizer;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 
 import java.lang.invoke.MethodHandles;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Properties;
@@ -54,6 +58,7 @@ public class CustomUserDetailService implements UserService {
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final UserRepository userRepository;
     private final ResetTokenRepository resetTokenRepository;
+    private final UserGroupRepository userGroupRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenizer jwtTokenizer;
 
@@ -64,14 +69,18 @@ public class CustomUserDetailService implements UserService {
      *
      * @param userRepository       - for persistence call
      * @param resetTokenRepository - ?
-     * @param passwordEncoder      - of use password
-     * @param jwtTokenizer         - token
-     * @param userMapper           - mapper
+     * @param userGroupRepository - for persistence call
+     * @param passwordEncoder     - of use password
+     * @param jwtTokenizer        - token
+     * @param userMapper          - mapper
      */
     @Autowired
     public CustomUserDetailService(UserRepository userRepository,
                                    ResetTokenRepository resetTokenRepository, PasswordEncoder passwordEncoder, JwtTokenizer jwtTokenizer, UserMapper userMapper) {
+                                   UserGroupRepository userGroupRepository, PasswordEncoder passwordEncoder,
+                                   JwtTokenizer jwtTokenizer, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userGroupRepository = userGroupRepository;
         this.resetTokenRepository = resetTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenizer = jwtTokenizer;
@@ -117,6 +126,7 @@ public class CustomUserDetailService implements UserService {
 
     @Override
     public String login(UserLoginDto userLoginDto) {
+        LOGGER.debug("Login user");
         UserDetails userDetails = loadUserByUsername(userLoginDto.getEmail());
         if (userDetails != null
             && userDetails.isAccountNonExpired()
@@ -196,6 +206,17 @@ public class CustomUserDetailService implements UserService {
             return username;
         }
         throw new NotFoundException(String.format("Could not find the user with the email address %s", email));
+    }
+
+    @Override
+    public List<ApplicationUser> findUsersByGroup(ApplicationGroup group) {
+        LOGGER.debug("Find users by group");
+        List<UserGroup> userGroup = userGroupRepository.findAllByApplicationGroup(group);
+        List<ApplicationUser> applicationUsers = new ArrayList<>();
+        for (UserGroup userGroup1 : userGroup) {
+            applicationUsers.add(userRepository.findApplicationUsersByUserGroups(userGroup1));
+        }
+        return applicationUsers;
     }
 
     private void sendEmail(String email) {

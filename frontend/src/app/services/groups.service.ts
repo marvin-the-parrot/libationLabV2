@@ -91,4 +91,7 @@ export class GroupsService {
     this.httpClient.delete<GroupOverview>(`${this.baseUri}/${groupId}/${memberId}/${hostId}`);
   }
 
+  getAllByUser() {
+    return this.httpClient.get<GroupOverview[]>(`${this.baseUri}`);
+  }
 }
