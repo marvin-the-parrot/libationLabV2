@@ -72,19 +72,13 @@ public class MessageEndpoint {
         security = @SecurityRequirement(name = "apiKey"))
     public List<MessageDetailDto> findAll() {
         LOGGER.info("GET /api/v1/messages");
-        try {
-            List<ApplicationMessage> messages = messageService.findAll();
-            List<MessageDetailDto> returnMessages = new ArrayList<>();
-            for (ApplicationMessage message : messages) {
-                LOGGER.info("Message: {}", message);
-                returnMessages.add(messageMapper.from(message, groupMapper.groupToGroupDetailDto(groupService.findOne(message.getGroupId()))));
-            }
-            return returnMessages;
-        } catch (NotFoundException e) {
-            logClientError(HttpStatus.NOT_FOUND, "Failed to find messages since ", e);
-            HttpStatus status = HttpStatus.NOT_FOUND;
-            throw new ResponseStatusException(status, e.getMessage(), e);
+        List<ApplicationMessage> messages = messageService.findAll();
+        List<MessageDetailDto> returnMessages = new ArrayList<>();
+        for (ApplicationMessage message : messages) {
+            LOGGER.info("Message: {}", message);
+            returnMessages.add(messageMapper.from(message, groupMapper.groupToGroupDetailDto(groupService.findOne(message.getGroupId()))));
         }
+        return returnMessages;
     }
 
     /**
