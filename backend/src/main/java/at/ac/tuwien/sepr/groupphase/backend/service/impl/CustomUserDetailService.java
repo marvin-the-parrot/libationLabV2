@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 
-
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.ResetPasswordDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
@@ -63,15 +62,18 @@ public class CustomUserDetailService implements UserService {
     private final JwtTokenizer jwtTokenizer;
 
     private final UserMapper userMapper;
+
     /**
      * Customer user detail service.
-     *  @param userGroupRepository - for persistence call
+     *
+     * @param userGroupRepository  - for persistence call
      * @param userRepository       - for persistence call
      * @param resetTokenRepository - ?
-     * @param passwordEncoder     - of use password
-     * @param jwtTokenizer        - token
-     * @param userMapper          - mapper
+     * @param passwordEncoder      - of use password
+     * @param jwtTokenizer         - token
+     * @param userMapper           - mapper
      */
+
     @Autowired
     public CustomUserDetailService(UserRepository userRepository, ResetTokenRepository resetTokenRepository,
                                    UserGroupRepository userGroupRepository, PasswordEncoder passwordEncoder,
