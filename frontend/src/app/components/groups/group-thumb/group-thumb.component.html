@@ -1,21 +1,22 @@
 <!-- thumbs for every group -->
 <a *ngIf="group !== null" [routerLink]="[group.id, 'detail']">
   <div class="grid-item">
+    <span class="badge badge-warning"> You are Guest </span>
     <h3>{{group.name}}</h3>
-    <p>The host is {{group.host.name}}</p>
     <h5>Selected Cocktails:</h5>
     <ul>
       <li *ngFor="let cocktail of group.cocktails">{{cocktail}}</li>
     </ul>
-    <span>
-        <p>Members: {{group.members.length}}</p>
-      </span>
+    <div class="d-flex justify-content-between align-items-end">
+      <button class="badge custom-button">Leave</button>
+      <span class="d-flex align-items-center">Members: <span class="badge-round">{{group.members.length}}</span></span>
+    </div>
   </div>
 </a>
 <!-- create new group -->
 <a *ngIf="group === null" routerLink="create">
-  <div class="grid-item">
-    <h3>Create new group:</h3>
-    <span class="material-icons">add</span>
+  <div class="grid-item d-flex align-items-center justify-content-center flex-column">
+    <h3>Create new group</h3>
+    <div class="material-icons">add</div>
   </div>
 </a>

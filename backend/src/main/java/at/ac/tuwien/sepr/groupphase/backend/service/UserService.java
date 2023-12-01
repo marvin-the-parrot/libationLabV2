@@ -5,6 +5,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PasswordResetDto;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * Service for ApplicationUser Entity.
@@ -75,8 +75,8 @@ public interface UserService extends UserDetailsService {
      * Retrieve all stored users, that match the given parameters.
      * The parameters may include a limit on the amount of results to return.
      *
-     *  @param searchParams parameters to search users by
-     *  @return a stream of users matching the parameters
+     * @param searchParams parameters to search users by
+     * @return a stream of users matching the parameters
      */
     List<UserListDto> search(UserSearchDto searchParams);
 
@@ -84,7 +84,15 @@ public interface UserService extends UserDetailsService {
     /**
      * Send an email to the user with a link to reset his password.
      *
-     *  @param email the email address of the user who forgot his password
+     * @param email the email address of the user who forgot his password
      */
     void forgotPassword(String email);
+
+    /**
+     * Find all users of a group.
+     *
+     * @param group the group that we want to find the users for
+     * @return a list of groups
+     */
+    List<ApplicationUser> findUsersByGroup(ApplicationGroup group);
 }

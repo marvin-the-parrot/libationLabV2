@@ -3,10 +3,12 @@ package at.ac.tuwien.sepr.groupphase.backend.service;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -73,4 +75,12 @@ public interface GroupService {
      */
     GroupOverviewDto update(GroupOverviewDto toUpdate)
         throws NotFoundException, ValidationException, ConflictException;
+
+    /**
+     * Find all group entries for this user.
+     *
+     * @param email the email of the user, used as an identifier
+     * @return all group entries for this user
+     */
+    List<UserGroup> findGroupsByUser(String email);
 }

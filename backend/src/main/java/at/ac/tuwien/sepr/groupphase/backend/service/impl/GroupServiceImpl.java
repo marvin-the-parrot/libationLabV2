@@ -1,11 +1,13 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 import java.lang.invoke.MethodHandles;
+import java.util.List;
 import java.util.Optional;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroupKey;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
+import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,7 @@ public class GroupServiceImpl implements GroupService {
     private static final Logger LOGGER
         = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    private final UserService userService;
     @Autowired
     private final GroupRepository groupRepository;
 
@@ -45,7 +48,8 @@ public class GroupServiceImpl implements GroupService {
 
     private final GroupValidator validator;
 
-    public GroupServiceImpl(GroupRepository groupRepository, GroupValidator validator) {
+    public GroupServiceImpl(UserService userService, GroupRepository groupRepository, GroupValidator validator) {
+        this.userService = userService;
         this.groupRepository = groupRepository;
         this.validator = validator;
     }
@@ -119,6 +123,15 @@ public class GroupServiceImpl implements GroupService {
         validator.validateForUpdate(toUpdate);
         // todo update group in database
         return null; // todo return updated group
+    }
+
+    @Override
+    @Transactional
+    public List<UserGroup> findGroupsByUser(String email) {
+        LOGGER.trace("findGroupsByUser({})", email);
+        // find groups in database
+        List<UserGroup> groups = userGroupRepository.findAllByApplicationUser(userRepository.findByEmail(email));
+        return groups;
     }
 
     private boolean isHostExists(Optional<ApplicationUser> host) {

@@ -15,9 +15,9 @@ import java.io.Serializable;
 public class UserGroupKey implements Serializable {
 
     @Column(name = "user_id")
-    private Long user;
+    public Long user;
 
-    @Column (name = "group_id")
+    @Column(name = "group_id")
     private Long group;
 
     public UserGroupKey(Long user, Long group) {

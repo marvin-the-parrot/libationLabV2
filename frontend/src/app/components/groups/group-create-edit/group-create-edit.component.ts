@@ -4,7 +4,7 @@ import {GroupsService} from "../../../services/groups.service";
 import {Router} from "@angular/router";
 import {NgForm, NgModel} from "@angular/forms";
 import {Observable, of} from "rxjs";
-import {UserListDto} from "../../../dtos/user";
+import {UserListDto, UserListGroupDto} from "../../../dtos/user";
 import {UserService} from "../../../services/user.service";
 
 export enum GroupCreateEditMode {
@@ -24,7 +24,6 @@ export class GroupCreateEditComponent implements OnInit {
   group: GroupOverview = {
     id: 0,
     name: '',
-    host: null,
     cocktails: [],
     members: [],
   }
@@ -114,7 +113,7 @@ export class GroupCreateEditComponent implements OnInit {
     }
   }
 
-  public addMember(user: UserListDto | null) {
+  public addMember(user: UserListGroupDto | null) {
     if (user == null)
       return;
 
