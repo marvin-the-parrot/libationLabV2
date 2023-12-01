@@ -63,29 +63,27 @@ public class CustomUserDetailService implements UserService {
     private final JwtTokenizer jwtTokenizer;
 
     private final UserMapper userMapper;
-
     /**
      * Customer user detail service.
-     *
+     *  @param userGroupRepository - for persistence call
      * @param userRepository       - for persistence call
      * @param resetTokenRepository - ?
-     * @param userGroupRepository - for persistence call
      * @param passwordEncoder     - of use password
      * @param jwtTokenizer        - token
      * @param userMapper          - mapper
      */
     @Autowired
-    public CustomUserDetailService(UserRepository userRepository,
-                                   ResetTokenRepository resetTokenRepository, PasswordEncoder passwordEncoder, JwtTokenizer jwtTokenizer, UserMapper userMapper) {
+    public CustomUserDetailService(UserRepository userRepository, ResetTokenRepository resetTokenRepository,
                                    UserGroupRepository userGroupRepository, PasswordEncoder passwordEncoder,
                                    JwtTokenizer jwtTokenizer, UserMapper userMapper) {
         this.userRepository = userRepository;
-        this.userGroupRepository = userGroupRepository;
         this.resetTokenRepository = resetTokenRepository;
+        this.userGroupRepository = userGroupRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenizer = jwtTokenizer;
         this.userMapper = userMapper;
     }
+
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
