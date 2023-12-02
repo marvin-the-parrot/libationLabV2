@@ -1,12 +1,12 @@
 <!-- thumbs for every group -->
 <a *ngIf="group !== null" [routerLink]="[group.id, 'detail']">
   <div class="grid-item">
-    <span *ngIf="group.host.name == username" class="badge"> You are Host </span>
-    <span *ngIf="group.host.name != username" class="badge"> You are Member </span>
+    <span *ngIf="group.host.name === username" class="badge"> You are Host </span>
+    <span *ngIf="group.host.name !== username" class="badge"> You are Member </span>
     <div class="p-2">
       <h3 class="m-0">{{group.name}}</h3>
-      <span *ngIf="group.host.name == username" class="card-subtitle"> You are the host</span>
-      <span *ngIf="group.host.name != username" class="card-subtitle"> The host is: {{group.host.name}}</span>
+      <span *ngIf="group.host.name === username" class="card-subtitle"> You are the host</span>
+      <span *ngIf="group.host.name !== username" class="card-subtitle"> The host is: {{group.host.name}}</span>
     </div>
     <div class="p-2">
       <h5>Selected Cocktails:</h5>
