@@ -24,6 +24,7 @@ import {ToastrModule} from "ngx-toastr";
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { DeleteConfirmationComponent } from './delete-confirmation/delete-confirmation.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { OptionDialogComponent } from './option-dialog/option-dialog.component';
 
 
 @NgModule({
@@ -43,6 +44,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     ForgotPasswordComponent,
     ResetPasswordComponent,
     DeleteConfirmationComponent,
+    OptionDialogComponent,
   ],
   imports: [
     BrowserModule,
