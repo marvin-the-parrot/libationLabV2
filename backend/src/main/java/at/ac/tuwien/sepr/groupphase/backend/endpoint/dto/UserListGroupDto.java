@@ -13,6 +13,10 @@ public class UserListGroupDto {
     private String name;
     private boolean isHost;
 
+    public UserListGroupDto() {
+
+    }
+
     public Long getId() {
         return id;
     }

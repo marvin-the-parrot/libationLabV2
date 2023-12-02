@@ -21,10 +21,13 @@ export class GroupDetailComponent {
   group: GroupOverview = {
     id: 1,
     name: 'Cocktail Party',
-    cocktails: ['Mochito', 'Mai Tai', 'White Russian'],
-    members:[{name: 'Sep', id: 4, isHost: true}, {name: 'Jan', id: 5, isHost: false}],
+    cocktails: ['Mojito', 'Mai Tai', 'White Russian'],
+    members: [{name: 'Sep', id: 4, isHost:false}, {name: 'Jan', id: 5,isHost:false}, {name: 'Peter', id: 6,isHost:false}, {name: 'Susanne', id: 7,isHost:false}],
   }
 
+  username: string = localStorage.getItem('username');
+
+  // for autocomplete
   user: UserListDto = {
     id: null,
     name: ''
@@ -61,7 +64,7 @@ export class GroupDetailComponent {
       }
     );
     this.groupsService.getMembersOfGroup(groupId).subscribe(
-      (members: UserListGroupDto[]) => { 
+      (members: UserListGroupDto[]) => {
         this.group.members = members;
       },
       error => {
@@ -104,7 +107,7 @@ export class GroupDetailComponent {
                 console.error('Error deleting group', error);
                 this.notification.error(`Error deleting group "${this.group.name}".`);
               }
-            }); 
+            });
           }
         });
       }

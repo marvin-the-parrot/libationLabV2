@@ -3,6 +3,7 @@ import {AuthService} from "../../services/auth.service";
 import {GroupOverview} from "../../dtos/group-overview";
 import {GroupsService} from "../../services/groups.service";
 import {MessageDetailDto} from "../../dtos/message";
+import {UserListGroupDto} from "../../dtos/user";
 
 @Component({
   selector: 'app-groups',
@@ -13,7 +14,7 @@ export class GroupsComponent implements OnInit {
 
   // todo: replace with real data
   groups: GroupOverview[] = null;
-
+  username: string = localStorage.getItem('username');
 
   constructor(
     public authService: AuthService,

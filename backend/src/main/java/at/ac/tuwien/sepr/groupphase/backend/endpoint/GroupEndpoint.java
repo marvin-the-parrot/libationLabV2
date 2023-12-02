@@ -80,11 +80,16 @@ public class GroupEndpoint {
         List<GroupOverviewDto> groupOverviewDtos = new ArrayList<>();
         for (UserGroup group : userGroupMatchings) {
             GroupOverviewDto groupOverviewDto;
-
             groupOverviewDto = groupMapper.grouptToGroupOverviewDto(group.getGroups());
-            List<ApplicationUser> users = userService.findUsersByGroup(group.getGroups());
-            List<UserListGroupDto> userListGroupDtos = userMapper.userToUserListGroupDto(users);
-            groupOverviewDto.setMembers(userListGroupDtos.toArray(new UserListGroupDto[0]));
+            List<UserListGroupDto> users = userService.findUsersByGroup(group.getGroups());
+            groupOverviewDto.setMembers(users.toArray(new UserListGroupDto[0]));
+
+            //set host
+            for (UserListGroupDto user : users) {
+                if (user.isHost()) {
+                    groupOverviewDto.setHost(user);
+                }
+            }
             groupOverviewDtos.add(groupOverviewDto);
         }
 
@@ -93,11 +98,24 @@ public class GroupEndpoint {
 
     @Secured("ROLE_USER")
     @GetMapping(value = "/{id}")
+    @Transactional
     @Operation(summary = "Get detailed information about a specific group",
         security = @SecurityRequirement(name = "apiKey"))
     public GroupOverviewDto find(@PathVariable Long id) {
         LOGGER.info("GET /api/v1/groups/{}", id);
-        return groupMapper.grouptToGroupOverviewDto(groupService.findOne(id));
+        ApplicationGroup group = groupService.findOne(id);
+        List<UserListGroupDto> users = userService.findUsersByGroup(group);
+        GroupOverviewDto groupOverviewDto = groupMapper.grouptToGroupOverviewDto(group);
+        groupOverviewDto.setMembers(users.toArray(new UserListGroupDto[0]));
+
+        //set host
+        for (UserListGroupDto user : users) {
+            if (user.isHost()) {
+                groupOverviewDto.setHost(user);
+            }
+        }
+
+        return groupOverviewDto;
     }
 
     /**
