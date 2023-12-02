@@ -98,11 +98,24 @@ public class GroupEndpoint {
 
     @Secured("ROLE_USER")
     @GetMapping(value = "/{id}")
+    @Transactional
     @Operation(summary = "Get detailed information about a specific group",
         security = @SecurityRequirement(name = "apiKey"))
     public GroupOverviewDto find(@PathVariable Long id) {
         LOGGER.info("GET /api/v1/groups/{}", id);
-        return groupMapper.grouptToGroupOverviewDto(groupService.findOne(id));
+        ApplicationGroup group = groupService.findOne(id);
+        List<UserListGroupDto> users = userService.findUsersByGroup(group);
+        GroupOverviewDto groupOverviewDto = groupMapper.grouptToGroupOverviewDto(group);
+        groupOverviewDto.setMembers(users.toArray(new UserListGroupDto[0]));
+
+        //set host
+        for (UserListGroupDto user : users) {
+            if (user.isHost()) {
+                groupOverviewDto.setHost(user);
+            }
+        }
+
+        return groupOverviewDto;
     }
 
     /**

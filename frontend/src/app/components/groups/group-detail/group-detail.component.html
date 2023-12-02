@@ -19,21 +19,24 @@
           </app-autocomplete>
         </div>
         <div class="add-member col-lg-2 mb-2">
-          <button class="btn btn-primary rounded-button" (click)="createMessage(this.user.id)">+</button>
+          <button class="btn rounded-button" (click)="createMessage(this.user.id)">+</button>
         </div>
       </div>
     </div>
     <div class="members-list">
+      <p class="user-count">{{group.members.length}} Users in Group</p>
       <div *ngFor="let member of group.members" class="member-item">
-          <div class="list-name">{{ member.name }}</div>
-          <div class="list-action"><button class="btn btn-light" >...</button></div>
+          <div class="list-name">{{ member.name }} <span *ngIf="member.name==username"> (You)</span></div>
+        <div *ngIf="group.host.name == member.name" class="list-action">👑</div>
+        <div *ngIf="member.name != username && group.host.name == username" class="list-action"><button class="btn btn-light" >...</button></div>
       </div>
 
     </div>
   </div>
   <div class="grid-item-2">
-    <div>
-      <h3>Menu</h3>
+    <div class="d-flex flex-column justify-content-center">
+      <h3 class="m-0">Menu</h3>
+      <div>{{group.name}}</div>
     </div>
   </div>
   <div class="grid-item-3">

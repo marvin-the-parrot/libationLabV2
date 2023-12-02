@@ -1,8 +1,7 @@
 .grid-container > div > div:first-child {
   background-color: #AC6AFE;
   width: 100%;
-  margin: 0;
-  padding: 0;
+  padding: 0.5em 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -81,7 +80,7 @@ text-align: left;
 .members-list {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Adjust the gap between member items */
+  margin: 0 1em;
 }
 
 .member-item {
@@ -89,7 +88,17 @@ text-align: left;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #ccc;
-  padding: 5px;
+  padding: 0.2em;
+  min-height: 2.5em;
+}
+.member-item:first-of-type {
+  border-top: 1px solid #ccc;
+}
+
+.user-count{
+  opacity: 0.5;
+  margin: 0
+
 }
 
 .list-name{
