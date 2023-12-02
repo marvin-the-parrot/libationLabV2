@@ -2,16 +2,20 @@
 .grid-item {
   grid-column: 1;
   grid-row: 1;
-  box-shadow: 4px 4px 8px 0 rgba(0,0,0,0.2);
-  transition: 0.3s;
-  border-radius: 15px; /* 5px rounded corners */
-  background-color: #ffffff;
-  padding: 1em;
-  margin: 0 2em;
 }
 
-.grid-item:hover {
-  box-shadow: 4px 8px 16px 0 rgba(0,0,0,0.2);
+.add-group-icon {
+  margin-top: 0.25em;
+  height: 1em;
+  width: 1em;
+  display: flex;
+  font-size: 4em;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  color: black;
+  border: none;
+  background-color: #dcc1fe;
 }
 
 .grid-item > ul {

@@ -58,31 +58,42 @@ public class GroupDataGenerator {
 
             List<Long> users = new ArrayList<>();
             List<Long> groups = new ArrayList<>();
+            List<Boolean> hosts = new ArrayList<>();
+
             users.add(1L);
+            hosts.add(true);
             groups.add(1L);
 
             users.add(1L);
+            hosts.add(false);
             groups.add(2L);
 
             users.add(3L);
+            hosts.add(false);
             groups.add(1L);
 
             users.add(4L);
+            hosts.add(false);
             groups.add(1L);
 
             users.add(5L);
+            hosts.add(true);
             groups.add(2L);
 
             users.add(6L);
+            hosts.add(false);
             groups.add(2L);
 
             users.add(7L);
+            hosts.add(true);
             groups.add(3L);
 
             users.add(8L);
+            hosts.add(false);
             groups.add(3L);
 
             users.add(9L);
+            hosts.add(false);
             groups.add(3L);
 
             for (int i = 0; i < users.size(); i++) {
@@ -93,7 +104,7 @@ public class GroupDataGenerator {
                     .withUserGroupKey(new UserGroupKey(user.getId(), groupTest.getId()))
                     .withUser(user)
                     .withGroup(groupTest)
-                    .withIsHost(true)
+                    .withIsHost(hosts.get(i))
                     .build();
                 LOGGER.debug("saving userGroup {}", userGroup);
                 userGroupRepository.save(userGroup);

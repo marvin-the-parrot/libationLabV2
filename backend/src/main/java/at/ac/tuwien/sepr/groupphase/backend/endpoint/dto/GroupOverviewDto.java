@@ -10,6 +10,16 @@ public class GroupOverviewDto {
     private Long id;
     private String name;
     private String cocktails;
+    private UserListGroupDto host;
+
+    public UserListGroupDto getHost() {
+        return host;
+    }
+
+    public void setHost(UserListGroupDto host) {
+        this.host = host;
+    }
+
     private UserListGroupDto[] members;
 
     public Long getId() {

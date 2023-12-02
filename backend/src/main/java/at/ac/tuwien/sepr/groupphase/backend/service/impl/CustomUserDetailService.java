@@ -4,6 +4,7 @@ package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.ResetPasswordDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
@@ -209,14 +210,19 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public List<ApplicationUser> findUsersByGroup(ApplicationGroup group) {
+    public List<UserListGroupDto> findUsersByGroup(ApplicationGroup group) {
         LOGGER.debug("Find users by group");
         List<UserGroup> userGroup = userGroupRepository.findAllByApplicationGroup(group);
-        List<ApplicationUser> applicationUsers = new ArrayList<>();
+        List<UserListGroupDto> users = new ArrayList<>();
         for (UserGroup userGroup1 : userGroup) {
-            applicationUsers.add(userRepository.findApplicationUsersByUserGroups(userGroup1));
+            ApplicationUser userData = (userRepository.findApplicationUsersByUserGroups(userGroup1));
+            UserListGroupDto user = new UserListGroupDto();
+            user.setId(userData.getId());
+            user.setName(userData.getName());
+            user.setHost(userGroup1.isHost());
+            users.add(user);
         }
-        return applicationUsers;
+        return users;
     }
 
     private void sendEmail(String email) {

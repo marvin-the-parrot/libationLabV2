@@ -4,6 +4,7 @@ export class GroupOverview {
   id: number;
   name: string;
   cocktails?: string[];
+  host?: UserListDto;
   members: UserListGroupDto[];
 
   constructor(id: number, name: string, cocktails: string[], members: UserListGroupDto[]) {
