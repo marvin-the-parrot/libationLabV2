@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.validators;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
@@ -30,7 +31,7 @@ public class GroupValidator {
      * @throws ConflictException   if the create data given for the group
      *                             is in conflict the data currently in the system (group member does not exist, …)
      */
-    public void validateForCreate(GroupOverviewDto toCreate)
+    public void validateForCreate(GroupCreateDto toCreate)
         throws ValidationException, ConflictException {
         LOGGER.trace("validateForCreate({})", toCreate);
 
@@ -53,7 +54,7 @@ public class GroupValidator {
      * @throws ConflictException   if the update data given for the group
      *                             is in conflict the data currently in the system (group member does not exist, …)
      */
-    public void validateForUpdate(GroupOverviewDto toUpdate)
+    public void validateForUpdate(GroupCreateDto toUpdate)
         throws ValidationException, ConflictException {
         LOGGER.trace("validateForUpdate({})", toUpdate);
 
@@ -72,7 +73,7 @@ public class GroupValidator {
      * @param group the group to validate
      * @return a list of validation errors (empty if no errors)
      */
-    private List<String> getValidationErrors(GroupOverviewDto group) {
+    private List<String> getValidationErrors(GroupCreateDto group) {
         List<String> validationErrors = new LinkedList<>();
 
         if (group.getName() == null || group.getName().isEmpty()) {
