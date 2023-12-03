@@ -96,8 +96,7 @@ export class GroupCreateEditComponent implements OnInit {
   public onDelete(): void {
     this.dialogService.openDeleteConfirmation().subscribe((result) => {
       if (result) {
-        const observable = this.service.deleteById(this.group.id, 1 /** PLACE HOLDER**/); //TODO - logged used id
-        observable.subscribe({
+        this.service.deleteGroup(this.group.id).subscribe({
           next: data => {
             this.notification.success(`Successfully deleted Group "${this.group.name}".`);
             this.router.navigate(['/groups']);

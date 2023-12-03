@@ -28,7 +28,7 @@
       <div *ngFor="let member of group.members" class="member-item">
           <div class="list-name">{{ member.name }} <span *ngIf="member.name===username"> (You)</span></div>
         <div *ngIf="group.host.name === member.name" class="list-action">👑</div>
-        <div *ngIf="member.name !== username && group.host.name === username" class="list-action"><button class="btn btn-light" (click)="onDelete(member.id)">...</button></div>
+        <div *ngIf="member.name !== username && group.host.name === username" class="list-action"><button class="btn btn-light" (click)="openMemberOptions(member)">...</button></div>
       </div>
 
     </div>

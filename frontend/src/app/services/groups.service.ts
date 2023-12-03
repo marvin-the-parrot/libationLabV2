@@ -65,42 +65,19 @@ export class GroupsService {
    * Delete a GroupOverview by its id.
    *
    * @param groupId the id of the group
-   * @param hostId the id of host
    */
-  deleteById(groupId: number, hostId: number): Observable<void> {
-    return new Observable<void>((observer) => {
-      this.httpClient.delete<GroupOverview>(`${this.baseUri}/${groupId}/${hostId}`).subscribe(
-        () => {
-          observer.complete();
-        },
-        (error) => {
-          console.error('Error deleting:', error);
-          observer.error(error);
-        }
-      );
-    });
+  deleteGroup(groupId: number): Observable<GroupOverview> {
+    return this.httpClient.delete<GroupOverview>(`${this.baseUri}/${groupId}`);
   }
 
   /**
    * Delete a member of GroupOverview by its id.
    *
-   * @param id the id of the group
+   * @param groupId the id of the group
    * @param memberId the id of member to delete
-   * @param hostId the id of host
    */
-  deleteByMemberByIdAndGroupId(groupId: number, memberId: number, hostId: number): Observable<void> {
-    return new Observable<void>((observer) => {
-      this.httpClient.delete<GroupOverview>(`${this.baseUri}/${groupId}/${memberId}/${hostId}`)
-      .subscribe(
-        () => {
-          observer.complete();
-        },
-        (error) => {
-          console.error('Error deleting:', error);
-          observer.error(error);
-        }
-      );
-    });
+  removeMemberFromGroup(groupId: number, memberId: number): Observable<GroupOverview> {
+    return this.httpClient.delete<GroupOverview>(this.baseUri + '/' + groupId + '/' + memberId);
   }
 
   getAllByUser() {
