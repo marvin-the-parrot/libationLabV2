@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
@@ -29,18 +28,18 @@ public interface GroupService {
      * Deleting group entry by id, only possible by host.
      *
      * @param groupId the id of the group
-     * @param hostId  the id of the host
+     * @param currentUserMail the mail of the user that sends the request
      */
-    void deleteGroup(Long groupId, Long hostId);
+    void deleteGroup(Long groupId, String currentUserMail) throws ValidationException;
 
     /**
      * Deleting member user in group, only possible by host.
      *
      * @param groupId  the id of the group
-     * @param hostId   the id of the host
-     * @param memberId the id of member to be deleted
+     * @param userId the id of member to be deleted
+     * @param currentUserMail the email of the user that sends the request
      */
-    void deleteMember(Long groupId, Long hostId, Long memberId);
+    void deleteMember(Long groupId, Long userId, String currentUserMail) throws ValidationException;
 
     /**
      * Searching for member of group.

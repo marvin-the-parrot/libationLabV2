@@ -84,22 +84,27 @@ export class GroupDetailComponent {
     this.create(createMessage);
   }
 
-  public onDelete(memberId: number): void {
-    this.dialogService.openOptionDialog().subscribe((option) => {
-      if (option) {
-        this.dialogService.openDeleteConfirmation().subscribe((result) => {
-          if (result) {
-            const observable = this.service.deleteByMemberByIdAndGroupId(this.group.id, memberId , 1/** PLACE HOLDER**/); //TODO - logged used id
-            observable.subscribe({
-              next: data => {
-                this.notification.success(`Successfully deleted Group "${this.group.name}".`);
-                this.router.navigate(['/groups']);
-              },
-              error: error => {
-                console.error('Error deleting group', error);
-                this.notification.error(`Error deleting group "${this.group.name}".`);
-              }
-            });
+  public openMemberOptions(member: UserListDto): void {
+    this.dialogService.openOptionDialog().subscribe((deleteOption) => {
+      if (deleteOption) {
+        this.removeMemberFromGroup(member);
+      } else {
+        console.log("Make host");
+      }
+    });
+  }
+
+  private removeMemberFromGroup(member: UserListDto) {
+    this.dialogService.openDeleteConfirmation().subscribe((result) => {
+      if (result) {
+        this.service.removeMemberFromGroup(this.group.id, member.id).subscribe({
+          next: data => {
+            this.notification.success(`Successfully removed '${member.name}' from Group '${this.group.name}'.`);
+            this.router.navigate(['/groups']); // todo: wouldn't it be better to stay on the detail page?
+          },
+          error: error => {
+            console.error(`Error removing member '${member.name}' from group.`, error);
+            this.notification.error(`Error removing member '${member.name}' from group.`); // todo: show error message from backend
           }
         });
       }
