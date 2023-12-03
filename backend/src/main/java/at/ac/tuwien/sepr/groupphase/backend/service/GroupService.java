@@ -1,15 +1,14 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
+import java.util.List;
+
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Service for ApplicationGroup Entity.
@@ -45,9 +44,8 @@ public interface GroupService {
      * Searching for member of group.
      *
      * @param groupId    the id of the group
-     * @param memberName the id of the member of group
      */
-    Optional<ApplicationUser> searchForMember(Long groupId, String memberName);
+    List<UserListDto> searchForMember(Long groupId);
 
     /**
      * Creates a new group with the data given in {@code toCreate}.

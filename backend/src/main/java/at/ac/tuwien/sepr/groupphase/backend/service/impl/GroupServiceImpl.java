@@ -1,6 +1,17 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
+import java.lang.invoke.MethodHandles;
+import java.util.List;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
@@ -15,14 +26,6 @@ import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import at.ac.tuwien.sepr.groupphase.backend.service.validators.GroupValidator;
 import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.lang.invoke.MethodHandles;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Group service implementation.
@@ -41,6 +44,8 @@ public class GroupServiceImpl implements GroupService {
     private UserRepository userRepository;
     @Autowired
     private UserGroupRepository userGroupRepository;
+    @Autowired
+    private  UserMapper userMapper;
 
     public GroupServiceImpl(UserService userService, GroupRepository groupRepository, GroupValidator validator) {
         this.userService = userService;
@@ -130,9 +135,9 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Optional<ApplicationUser> searchForMember(Long groupId, String memberName) {
-        LOGGER.debug("Search for member in group, by member name and group id {}", groupId, memberName);
-        return groupRepository.searchForMembers(groupId, memberName);
+    public List<UserListDto> searchForMember(Long groupId) {
+        LOGGER.debug("Search for member in group, by member name and group id {}", groupId);
+        return userMapper.userToUserListDto(userGroupRepository.findUsersByGroupId(groupId));
     }
 
     @Override
