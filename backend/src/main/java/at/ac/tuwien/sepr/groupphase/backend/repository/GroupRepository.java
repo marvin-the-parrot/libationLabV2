@@ -1,10 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.repository;
 
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import jakarta.transaction.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,11 +17,6 @@ import org.springframework.stereotype.Repository;
 @Transactional
 public interface GroupRepository extends
     JpaRepository<ApplicationGroup, Long> {
-
-    @Query("SELECT ug.applicationUser FROM UserGroup ug "
-        + "WHERE ug.applicationGroup.id = :groupId AND ug.applicationGroup.name LIKE %:partialName%")
-    Optional<ApplicationUser> searchForMembers(@Param("groupId") Long groupId,
-                                               @Param("partialName") String memberName);
 
     @Query("SELECT ug.applicationGroup FROM UserGroup ug "
         + "WHERE ug.applicationUser.id = :userId")
