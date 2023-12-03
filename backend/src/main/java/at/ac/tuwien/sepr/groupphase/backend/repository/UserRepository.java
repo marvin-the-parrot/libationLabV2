@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -22,6 +21,14 @@ public interface UserRepository extends JpaRepository<ApplicationUser, Long> {
      * @return ApplicationUser found by email
      */
     ApplicationUser findByEmail(String email);
+
+    /**
+     * Find user by name.
+     *
+     * @param name of user
+     * @return ApplicationUser found by name
+     */
+    ApplicationUser findByName(String name);
 
     /**
      * Find users by username.

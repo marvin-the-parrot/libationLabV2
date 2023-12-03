@@ -18,9 +18,7 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
@@ -62,34 +60,73 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public void deleteGroup(Long groupId, Long hostId) {
-        LOGGER.debug("Delete group by host with group id {}", groupId, hostId);
-        Optional<ApplicationUser> host = userRepository.findById(hostId);
-        if (isHostExists(host)) {
-            groupRepository.deleteById(groupId);
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    public void deleteGroup(Long groupId, String currentUserMail) throws ValidationException {
+        LOGGER.debug("Delete group ({})", groupId);
+
+        ApplicationUser currentUser = userRepository.findByEmail(currentUserMail);
+        if (currentUser == null) {
+            throw new NotFoundException("Could not find current user");
         }
+
+        ApplicationGroup group = groupRepository.findById(groupId).orElse(null);
+        if (group == null) {
+            throw new NotFoundException("Could not find group");
+        }
+
+        UserGroup userGroup = userGroupRepository.findById(new UserGroupKey(currentUser.getId(), groupId)).orElse(null);
+        if (userGroup == null || !userGroup.isHost()) {
+            throw new ValidationException("You are not allowed to delete this group", List.of("You are not the host of this group"));
+        }
+
+        // delete all user groups
+        List<UserGroup> userGroups = userGroupRepository.findAllByApplicationGroup(group);
+        userGroupRepository.deleteAll(userGroups);
+        // delete group
+        groupRepository.delete(group);
     }
 
-    @SuppressWarnings("unlikely-arg-type")
     @Override
-    public void deleteMember(Long groupId, Long hostId, Long memberId) {
-        LOGGER.debug("Delete group member by host with group and member id {}", groupId, hostId, memberId);
-        ApplicationGroup group = groupRepository.findById(groupId).orElse(null);
-        Optional<ApplicationUser> host = userRepository.findById(hostId);
-        if (!isHostExists(host)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        if (group != null) {
-            UserGroup userToRemove = group.getMembers().stream().filter(user -> user.getUser().getId().equals(memberId)).findFirst().orElse(null);
+    public void deleteMember(Long groupId, Long userId, String currentUserMail) throws ValidationException {
+        LOGGER.debug("Remove member from group({}, {})", groupId, userId);
 
-            if (userToRemove != null) {
-                group.getMembers().remove(userToRemove.getUser());
-                groupRepository.save(group);
+        // check if user exists
+        Optional<ApplicationUser> userToRemove = userRepository.findById(userId);
+        if (userToRemove.isEmpty()) {
+            throw new NotFoundException("Could not find user");
+        }
+
+        // check if the user to remove is the current user or if the current user is the host of the group
+        if (!userToRemove.get().getEmail().equals(currentUserMail)) {
+            ApplicationUser currentUser = userRepository.findByEmail(currentUserMail);
+            if (currentUser == null) {
+                throw new NotFoundException("Could not find current user");
+            }
+            UserGroup userGroup = userGroupRepository.findById(new UserGroupKey(currentUser.getId(), groupId)).orElse(null);
+            if (userGroup == null || !userGroup.isHost()) {
+                throw new ValidationException("You are not allowed to remove this user from the group", List.of());
             }
         }
-        userGroupRepository.deleteById(new UserGroupKey(memberId, groupId));
+
+        // get the group
+        ApplicationGroup group = groupRepository.findById(groupId).orElse(null);
+        if (group == null) {
+            throw new NotFoundException("Could not find group");
+        }
+
+        // get the user group and check if the user is in the group
+        UserGroup toRemove = userGroupRepository.findById(new UserGroupKey(userId, groupId)).orElse(null);
+        if (toRemove == null) {
+            throw new NotFoundException("Could not find user in group");
+        }
+        // remove the user from the group
+        userGroupRepository.delete(toRemove);
+
+
+        // var groupMembers = group.getMembers();
+        // groupMembers.removeIf(member -> member.getUser().getId().equals(userId));
+        // group.setMembers(groupMembers);
+        // groupRepository.save(group);
+
     }
 
     @Override
@@ -140,9 +177,5 @@ public class GroupServiceImpl implements GroupService {
         // find groups in database
         List<UserGroup> groups = userGroupRepository.findAllByApplicationUser(userRepository.findByEmail(email));
         return groups;
-    }
-
-    private boolean isHostExists(Optional<ApplicationUser> host) {
-        return !host.isEmpty() && host.get().getAdmin();
     }
 }

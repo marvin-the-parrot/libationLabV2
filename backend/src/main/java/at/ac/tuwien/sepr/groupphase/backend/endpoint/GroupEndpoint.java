@@ -164,20 +164,18 @@ public class GroupEndpoint {
     }
 
     /**
-     * Deleting group entry by id, only possible by host.
+     * Delete group
      *
-     * @param id     the id of the group
-     * @param userId the id of the host
+     * @param id the id of the group
      */
-    @Secured("ROLE_ADMIN")
-    @DeleteMapping("{id}/{userId}")
+    @Secured("ROLE_USER")
+    @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(security = @SecurityRequirement(name = "apiKey"))
-    public void delete(@PathVariable Long id, @PathVariable Long userId)
-        throws ValidationException, ConflictException {
-        LOGGER.info("DELETE " + BASE_PATH + "/{}", id, userId);
+    public void delete(@PathVariable Long id) throws ValidationException, ConflictException {
+        LOGGER.info("DELETE " + BASE_PATH + "/{}", id);
         try {
-            groupService.deleteGroup(id, userId);
+            groupService.deleteGroup(id, SecurityContextHolder.getContext().getAuthentication().getName());
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Group to delete not found", e);
@@ -186,24 +184,22 @@ public class GroupEndpoint {
     }
 
     /**
-     * Deleting member user in group, only possible by host.
+     * Removes a member from a group. This action can only be performed by the member itself or the host.
      *
      * @param groupId  the id of the group
-     * @param hostId   the id of the host
-     * @param memberId the id of member to be deleted
+     * @param userId the id of member to be deleted
      */
-    @Secured("ROLE_ADMIN")
-    @DeleteMapping("{groupId}/{memberId}/{hostId}")
+    @Secured("ROLE_USER")
+    @DeleteMapping("{groupId}/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(security = @SecurityRequirement(name = "apiKey"))
-    public void deleteMemberOfGroup(@PathVariable Long groupId, @PathVariable Long memberId,
-                                    @PathVariable Long hostId) {
-        LOGGER.info("DELETE " + BASE_PATH + "/{}", groupId, memberId, hostId);
+    public void removeMemberFromGroup(@PathVariable Long groupId, @PathVariable Long userId) throws ValidationException {
+        LOGGER.info("DELETE " + BASE_PATH + "/{}/{}", groupId, userId);
         try {
-            groupService.deleteMember(groupId, hostId, memberId);
+            groupService.deleteMember(groupId, userId, SecurityContextHolder.getContext().getAuthentication().getName());
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
-            logClientError(status, "Group to delete not found", e);
+            logClientError(status, "Group member to delete not found", e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
