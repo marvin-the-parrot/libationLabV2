@@ -62,7 +62,11 @@ export class LoginComponent implements OnInit {
       error: error => {
         console.log('Could not log in due to:');
         console.log(error);
-        this.notification.error('Could not log in due to: \n' + error.error.detail);
+        if (error.status==401) {
+          this.notification.error('Unrecognised combination of username and password');
+        }else{
+          this.notification.error('Error during Log in:');
+        }
       }
     });
   }
