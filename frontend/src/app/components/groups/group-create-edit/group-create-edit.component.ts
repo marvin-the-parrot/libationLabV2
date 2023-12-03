@@ -30,9 +30,10 @@ export class GroupCreateEditComponent implements OnInit {
     members: [],
   }
 
-  user: UserListDto = {
+  user: UserListGroupDto = {
     id: null,
-    name: ''
+    name: '',
+    isHost: false
   };
 
   dummyMemberSelectionModel: unknown; // Just needed for the autocomplete
@@ -47,12 +48,29 @@ export class GroupCreateEditComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    // add the user that creates the group first and make him the host
+    var user = JSON.parse(localStorage.getItem('user'));
+    if (user == null) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    var host: UserListGroupDto = {
+      id: user.id,
+      name: user.name,
+      isHost: true
+    }
+
+    this.group.members.push(host);
+    this.group.host = host;
+
   }
 
   public get heading(): string {
     switch (this.mode) {
       case GroupCreateEditMode.create:
-        return 'Create GroupOverview';
+        return 'Create Group';
       case GroupCreateEditMode.edit:
         return `Edit: ${this.group.name}`;
       default:
@@ -88,7 +106,7 @@ export class GroupCreateEditComponent implements OnInit {
             console.error('Error deleting group', error);
             this.notification.error(`Error deleting group "${this.group.name}".`);
           }
-        }); 
+        });
       }
     });
   }
@@ -139,7 +157,8 @@ export class GroupCreateEditComponent implements OnInit {
   }
 
   public addMember(user: UserListGroupDto | null) {
-    if (user == null)
+
+    if (user == null || user.id == null)
       return;
 
     setTimeout(() => {
@@ -151,6 +170,7 @@ export class GroupCreateEditComponent implements OnInit {
         }
       }
       this.group.members.push(user);
+      this.user = null;
     })
   }
 

@@ -15,7 +15,7 @@
           <input type="text"
                  id="groupName"
                  name="groupName"
-                 placeholder="GroupOverview name"
+                 placeholder="Group name"
                  class="form-control"
                  [class]="dynamicCssClassesForInput(groupNameModel)"
                  [(ngModel)]="group.name"
@@ -35,7 +35,7 @@
   <div>
     <h2>Members</h2>
     <div class="row">
-      <div class="col-lg-6 mb-2">
+      <div class="col-lg-6 mb-2" id="addMemberForm">
         <app-autocomplete
           name="memberSelection"
           textInputClass="form-control"
@@ -56,11 +56,16 @@
             <td>{{formatMember(member)}}</td>
             <td class="min-width">
               <!-- Make button just hidden, when no participant is present, to keep layout correct -->
-              <button type="button"
+              <button *ngIf="!member.isHost" type="button"
                       class="btn btn-light ms-2"
                       (click)="removeMember(i)"
                       [style.visibility]="member ? 'visible' : 'hidden'">
                 <i class="bi-trash"></i>
+              </button>
+              <button *ngIf="member.isHost" type="button"
+                      class="btn ms-2 btn-primary"
+                      disabled>
+                <i *ngIf="member.isHost" class="bi bi-house"></i>
               </button>
             </td>
           </tr>
@@ -71,16 +76,16 @@
   </div>
 
   <div class="mt-4 d-flex justify-content-between">
-      <button type="button"
-      class="btn btn-danger"
-      *ngIf="!modeIsCreate"
-      (click)="onDelete()"
-      >
+    <button type="button"
+            class="btn btn-danger"
+            *ngIf="!modeIsCreate"
+            (click)="onDelete()"
+    >
       Delete
     </button>
     <button type="submit"
-      class="btn btn-primary"
-      [disabled]="!form.valid">
+            class="btn btn-primary"
+            [disabled]="!form.valid">
       {{submitButtonText}}
     </button>
   </div>

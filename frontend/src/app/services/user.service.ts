@@ -61,4 +61,7 @@ export class UserService {
     return this.httpClient.get<UsernameDto>(this.baseUri + '/username');
   }
 
+  getUser(): Observable<UserListDto> {
+    return this.httpClient.get<UserListDto>(this.baseUri + '/user');
+  }
 }

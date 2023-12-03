@@ -56,6 +56,7 @@ export class LoginComponent implements OnInit {
         console.log('Successfully logged in user: ' + authRequest.email);
         this.notification.success('Successfully logged in user: \n' + authRequest.email);
         this.setUsernameLocalStorage();
+        this.setUserLocalStorage();
         this.router.navigate(['/groups']);
       },
       error: error => {
@@ -72,12 +73,29 @@ export class LoginComponent implements OnInit {
   /**
    * Get Username from backend and return it
    */
+  // todo: remove this method (as there is one that saves username and user id in the local storage)
   setUsernameLocalStorage() {
     this.userService.getUsername().subscribe({
       next: data => {
         console.log(data);
         localStorage.setItem('username', data.username);
         console.log(localStorage.getItem('username'));
+      },
+      error: error => {
+        console.log(error);
+      }
+    });
+  }
+
+  /**
+   * Get User from backend and return it
+   */
+  setUserLocalStorage() {
+    this.userService.getUser().subscribe({
+      next: data => {
+        console.log(data);
+        localStorage.setItem('user', JSON.stringify(data));
+        console.log(localStorage.getItem('user'));
       },
       error: error => {
         console.log(error);
