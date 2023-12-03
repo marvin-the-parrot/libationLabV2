@@ -15,12 +15,6 @@ import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-
-import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +34,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 /**
  * Group endpoint controller.
  */
@@ -49,16 +48,14 @@ public class GroupEndpoint {
 
     static final String BASE_PATH = "/api/v1/groups";
 
-    private static final Logger LOGGER =
-        LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final GroupService groupService;
     private final GroupMapper groupMapper;
     private final UserService userService;
     private final UserMapper userMapper;
 
     @Autowired
-    public GroupEndpoint(GroupService groupService, GroupMapper groupMapper, UserService userService,
-                         UserMapper userMapper) {
+    public GroupEndpoint(GroupService groupService, GroupMapper groupMapper, UserService userService, UserMapper userMapper) {
         this.groupService = groupService;
         this.groupMapper = groupMapper;
         this.userService = userService;
@@ -73,8 +70,7 @@ public class GroupEndpoint {
     @Secured("ROLE_USER")
     @GetMapping()
     @Transactional
-    @Operation(summary = "Get a list of groups that this viewer is part of",
-        security = @SecurityRequirement(name = "apiKey"))
+    @Operation(summary = "Get a list of groups that this viewer is part of", security = @SecurityRequirement(name = "apiKey"))
     public GroupOverviewDto[] findGroupsByUser() {
         LOGGER.info("GET /api/v1/groups");
         List<UserGroup> userGroupMatchings = groupService.findGroupsByUser(SecurityContextHolder.getContext().getAuthentication().getName());
@@ -100,8 +96,7 @@ public class GroupEndpoint {
     @Secured("ROLE_USER")
     @GetMapping(value = "/{id}")
     @Transactional
-    @Operation(summary = "Get detailed information about a specific group",
-        security = @SecurityRequirement(name = "apiKey"))
+    @Operation(summary = "Get detailed information about a specific group", security = @SecurityRequirement(name = "apiKey"))
     public GroupOverviewDto find(@PathVariable Long id) {
         LOGGER.info("GET /api/v1/groups/{}", id);
         ApplicationGroup group = groupService.findOne(id);
@@ -148,8 +143,7 @@ public class GroupEndpoint {
      */
     @Secured("ROLE_ADMIN")
     @PutMapping("{id}")
-    public GroupCreateDto update(@PathVariable long id, @RequestBody GroupCreateDto toUpdate)
-        throws ValidationException, ConflictException {
+    public GroupCreateDto update(@PathVariable long id, @RequestBody GroupCreateDto toUpdate) throws ValidationException, ConflictException {
         LOGGER.info("PUT " + BASE_PATH + "/{}", toUpdate);
         LOGGER.debug("Body of request:\n{}", toUpdate);
 
@@ -164,7 +158,7 @@ public class GroupEndpoint {
     }
 
     /**
-     * Delete group
+     * Delete group.
      *
      * @param id the id of the group
      */
@@ -186,8 +180,8 @@ public class GroupEndpoint {
     /**
      * Removes a member from a group. This action can only be performed by the member itself or the host.
      *
-     * @param groupId  the id of the group
-     * @param userId the id of member to be deleted
+     * @param groupId the id of the group
+     * @param userId  the id of member to be deleted
      */
     @Secured("ROLE_USER")
     @DeleteMapping("{groupId}/{userId}")
@@ -214,15 +208,13 @@ public class GroupEndpoint {
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "searchGroupMember/{groupId}/{memberName}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Optional<ApplicationUser> searchGroupMember(@PathVariable Long groupId,
-                                                       @PathVariable String memberName) {
+    public Optional<ApplicationUser> searchGroupMember(@PathVariable Long groupId, @PathVariable String memberName) {
         LOGGER.info("GET " + BASE_PATH + "searchGroupMember/{}", groupId, memberName);
         return groupService.searchForMember(groupId, memberName);
     }
 
     private void logClientError(HttpStatus status, String message, Exception e) {
-        LOGGER.warn("{} {}: {}: {}", status.value(), message,
-            e.getClass().getSimpleName(), e.getMessage());
+        LOGGER.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
     }
 
 }
