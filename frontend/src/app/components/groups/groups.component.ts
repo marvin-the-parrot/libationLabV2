@@ -12,7 +12,6 @@ import {UserListGroupDto} from "../../dtos/user";
 })
 export class GroupsComponent implements OnInit {
 
-  // todo: replace with real data
   groups: GroupOverview[] = null;
   username: string = localStorage.getItem('username');
 

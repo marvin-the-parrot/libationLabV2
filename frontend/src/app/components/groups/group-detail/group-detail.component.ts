@@ -63,15 +63,7 @@ export class GroupDetailComponent {
         // Handle error appropriately (e.g., show a message to the user)
       }
     );
-    this.groupsService.getMembersOfGroup(groupId).subscribe(
-      (members: UserListGroupDto[]) => {
-        this.group.members = members;
-      },
-      error => {
-        console.error('Error fetching group details for editing', error);
-        this.notification.error(`Error in searching memebers of "${this.group.name}".`);
-      }
-    );
+
   }
 
   memberSuggestions = (input: string): Observable<UserListDto[]> => (input === '')
