@@ -45,15 +45,27 @@
   border: none;
 }
 
-.custom-button {
+.custom-button-del {
   height: 3em;
   background-color: #F81919;
   opacity: 0.72;
 
 }
 
-.custom-button:hover {
+.custom-button-del:hover {
   background-color: #F81919;
+  opacity: 1;
+}
+
+.custom-button-edit {
+  height: 3em;
+  background-color: #0043ee;
+  opacity: 0.72;
+
+}
+
+.custom-button-edit:hover {
+  background-color: #0043ee;
   opacity: 1;
 }
 
