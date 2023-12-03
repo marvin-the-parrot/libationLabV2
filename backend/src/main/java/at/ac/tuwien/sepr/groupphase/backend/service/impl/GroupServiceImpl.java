@@ -1,14 +1,19 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
-import java.lang.invoke.MethodHandles;
-import java.util.List;
-import java.util.Optional;
-
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroupKey;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
+import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
+import at.ac.tuwien.sepr.groupphase.backend.service.validators.GroupValidator;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,16 +22,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
-import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
-import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
-import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
-import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
-import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
-import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
-import at.ac.tuwien.sepr.groupphase.backend.service.validators.GroupValidator;
+import java.lang.invoke.MethodHandles;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Group service implementation.
@@ -40,14 +38,11 @@ public class GroupServiceImpl implements GroupService {
     private final UserService userService;
     @Autowired
     private final GroupRepository groupRepository;
-
+    private final GroupValidator validator;
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private UserGroupRepository userGroupRepository;
-
-    private final GroupValidator validator;
 
     public GroupServiceImpl(UserService userService, GroupRepository groupRepository, GroupValidator validator) {
         this.userService = userService;
@@ -80,18 +75,14 @@ public class GroupServiceImpl implements GroupService {
     @SuppressWarnings("unlikely-arg-type")
     @Override
     public void deleteMember(Long groupId, Long hostId, Long memberId) {
-        LOGGER.debug("Delete group member by host with group and member id {}",
-            groupId, hostId, memberId);
+        LOGGER.debug("Delete group member by host with group and member id {}", groupId, hostId, memberId);
         ApplicationGroup group = groupRepository.findById(groupId).orElse(null);
         Optional<ApplicationUser> host = userRepository.findById(hostId);
         if (!isHostExists(host)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         if (group != null) {
-            UserGroup userToRemove = group.getMembers().stream()
-                .filter(user -> user.getUser().getId().equals(memberId))
-                .findFirst()
-                .orElse(null);
+            UserGroup userToRemove = group.getMembers().stream().filter(user -> user.getUser().getId().equals(memberId)).findFirst().orElse(null);
 
             if (userToRemove != null) {
                 group.getMembers().remove(userToRemove.getUser());
@@ -113,20 +104,29 @@ public class GroupServiceImpl implements GroupService {
         // validate group:
         validator.validateForCreate(toCreate);
 
-        // todo: save members in database
-        // todo: save host in database
         // build group entity and save it:
-        ApplicationGroup group = ApplicationGroup.GroupBuilder.group()
-            .withName(toCreate.getName())
-            .build();
+        ApplicationGroup group = ApplicationGroup.GroupBuilder.group().withName(toCreate.getName()).build();
         LOGGER.debug("saving group {}", group);
         ApplicationGroup saved = groupRepository.save(group);
-        return new GroupCreateDto(saved.getId(), saved.getName(), null, null, null);
+
+        // save members in database:
+        for (var member : toCreate.getMembers()) {
+            boolean isHost = member.getId().equals(toCreate.getHost().getId()); // save host in database
+
+            UserGroup newMember = UserGroup.UserGroupBuilder.userGroup()
+                .withUserGroupKey(new UserGroupKey(member.getId(), saved.getId()))
+                .withUser(userRepository.findById(member.getId()).orElse(null))
+                .withGroup(groupRepository.findById(saved.getId()).orElse(null))
+                .withIsHost(isHost).build();
+
+            userGroupRepository.save(newMember);
+        }
+
+        return new GroupCreateDto(saved.getId(), saved.getName(), toCreate.getHost(), toCreate.getCocktails(), toCreate.getMembers()); // todo: return created group
     }
 
     @Override
-    public GroupCreateDto update(GroupCreateDto toUpdate)
-        throws NotFoundException, ValidationException, ConflictException {
+    public GroupCreateDto update(GroupCreateDto toUpdate) throws NotFoundException, ValidationException, ConflictException {
         LOGGER.trace("update({})", toUpdate);
         validator.validateForUpdate(toUpdate);
         // todo update group in database

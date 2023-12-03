@@ -100,6 +100,13 @@ public interface UserService extends UserDetailsService {
     UsernameDto getUsernameByEmail(String email);
 
     /**
+     * Get Username and id by email.
+     *
+     * @param email the email address of the user
+     */
+    UserListDto getUserByEmail(String email);
+
+    /**
      * Find all users of a group.
      *
      * @param group the group that we want to find the users for

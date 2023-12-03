@@ -210,6 +210,19 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
+    public UserListDto getUserByEmail(String email) {
+        LOGGER.debug("Get user by email");
+        ApplicationUser applicationUser = userRepository.findByEmail(email);
+        if (applicationUser != null) {
+            UserListDto user = new UserListDto();
+            user.setId(applicationUser.getId());
+            user.setName(applicationUser.getName());
+            return user;
+        }
+        throw new NotFoundException(String.format("Could not find the user with the email address %s", email));
+    }
+
+    @Override
     public List<UserListGroupDto> findUsersByGroup(ApplicationGroup group) {
         LOGGER.debug("Find users by group");
         List<UserGroup> userGroup = userGroupRepository.findAllByApplicationGroup(group);

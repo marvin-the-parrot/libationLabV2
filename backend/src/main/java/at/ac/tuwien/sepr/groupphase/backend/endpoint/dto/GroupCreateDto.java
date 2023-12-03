@@ -8,6 +8,9 @@ public class GroupCreateDto {
     private String[] cocktails;
     private UserListDto[] members;
 
+    public GroupCreateDto() {
+    }
+
     public GroupCreateDto(long id, String name, UserListDto host, String[] cocktails, UserListDto[] members) {
         this.id = id;
         this.name = name;
@@ -18,6 +21,22 @@ public class GroupCreateDto {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setHost(UserListDto host) {
+        this.host = host;
+    }
+
+    public void setCocktails(String[] cocktails) {
+        this.cocktails = cocktails;
+    }
+
+    public void setMembers(UserListDto[] members) {
+        this.members = members;
     }
 
     public long getId() {

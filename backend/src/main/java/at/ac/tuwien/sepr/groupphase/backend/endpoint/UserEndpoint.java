@@ -117,4 +117,18 @@ public class UserEndpoint {
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
+
+    @GetMapping("/user")
+    @PermitAll
+    @ResponseStatus(HttpStatus.OK)
+    public UserListDto getUser() {
+        LOGGER.info("GET /api/v1/user/user");
+        try {
+            return userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Failed to get user", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
 }

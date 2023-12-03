@@ -127,12 +127,11 @@ public class GroupEndpoint {
      * @throws ValidationException if the data is not valid
      * @throws ConflictException   if the data conflicts with existing data
      */
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_USER")
     @PostMapping()
     @Operation(security = @SecurityRequirement(name = "apiKey"))
     @ResponseStatus(HttpStatus.CREATED)
-    public GroupCreateDto create(@RequestBody GroupCreateDto toCreate)
-        throws ValidationException, ConflictException {
+    public GroupCreateDto create(@RequestBody GroupCreateDto toCreate) throws ValidationException, ConflictException {
         LOGGER.info("POST " + BASE_PATH + "/{}", toCreate);
         LOGGER.debug("Body of request:\n{}", toCreate);
         return groupService.create(toCreate);
