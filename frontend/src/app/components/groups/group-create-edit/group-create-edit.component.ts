@@ -9,6 +9,7 @@ import {UserListDto, UserListGroupDto} from "../../../dtos/user";
 import {UserService} from "../../../services/user.service";
 import {DialogService} from 'src/app/services/dialog.service';
 import {ConfirmationDialogMode} from "../../../confirmation-dialog/confirmation-dialog.component";
+import {ErrorFormatterService} from "../../../services/error-formatter.service";
 
 export enum GroupCreateEditMode {
   create,
@@ -44,7 +45,8 @@ export class GroupCreateEditComponent implements OnInit {
     private userService: UserService,
     private dialogService: DialogService,
     private notification: ToastrService,
-    private router: Router
+    private router: Router,
+    private errorFormatter: ErrorFormatterService,
   ) {
   }
 
@@ -129,15 +131,18 @@ export class GroupCreateEditComponent implements OnInit {
       }
 
       observable.subscribe({
-          next: data => {
-            // todo: show success message
-            this.router.navigate(["/groups"]);
-          },
+        next: data => {
+          this.router.navigate(["/groups"]);
+          this.notification.success(`Successfully ${this.modeIsCreate ? 'created' : 'updated'} Group "${this.group.name}".`);
+        },
         error: error => {
-            console.error("Error creating/editing group", error);
-            // todo: show error message
+          console.error("Error creating/editing group", error);
+          this.notification.error(this.errorFormatter.format(error), `Error ${this.modeIsCreate ? 'creating' : 'updating'} group "${this.group.name}".`, {
+            enableHtml: true,
+            timeOut: 10000,
+          });
         }
-        });
+      });
 
     }
   }
@@ -165,6 +170,7 @@ export class GroupCreateEditComponent implements OnInit {
       for (let i = 0; i < this.group.members.length; i++) {
         if (this.group.members[i]?.id === user.id) {
           // todo: show error message: duplicate member
+          this.notification.error(`User "${user.name}" is already a member of this group.`);
           this.dummyMemberSelectionModel = null;
           return;
         }
