@@ -175,6 +175,8 @@ public class GroupServiceImpl implements GroupService {
         return null; // todo return updated group
     }
 
+
+
     @Override
     @Transactional
     public List<UserGroup> findGroupsByUser(String email) {
@@ -182,5 +184,40 @@ public class GroupServiceImpl implements GroupService {
         // find groups in database
         List<UserGroup> groups = userGroupRepository.findAllByApplicationUser(userRepository.findByEmail(email));
         return groups;
+    }
+
+    @Override
+    public void makeMemberHost(Long groupId, Long userId, String currentUserMail) throws ValidationException {
+        LOGGER.trace("makeMemberHost({}, {}, {})", groupId, userId, currentUserMail);
+
+        // check if group exists
+        ApplicationGroup group = groupRepository.findById(groupId).orElse(null);
+        if (group == null) {
+            throw new NotFoundException("Could not find group");
+        }
+
+        // check if current user is host of the group
+        ApplicationUser currentUser = userRepository.findByEmail(currentUserMail);
+        if (currentUser == null) {
+            throw new NotFoundException("Could not find current user");
+        }
+        UserGroup currentUserGroup = userGroupRepository.findById(new UserGroupKey(currentUser.getId(), groupId)).orElse(null);
+        if (currentUserGroup == null || !currentUserGroup.isHost()) {
+            throw new ValidationException("You are not allowed to make this user host", List.of("You are not the host of this group"));
+        }
+
+        // check if user exists and is member of the group
+        UserGroup makeHostUserGroup = userGroupRepository.findById(new UserGroupKey(userId, groupId)).orElse(null);
+        if (makeHostUserGroup == null) {
+            throw new NotFoundException("Could not find user in group");
+        }
+
+        // make user host
+        makeHostUserGroup.setHost(true);
+        userGroupRepository.save(makeHostUserGroup);
+        // make current user member
+        currentUserGroup.setHost(false);
+        userGroupRepository.save(currentUserGroup);
+
     }
 }
