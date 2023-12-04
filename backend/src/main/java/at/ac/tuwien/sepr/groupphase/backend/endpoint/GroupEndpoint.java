@@ -157,6 +157,22 @@ public class GroupEndpoint {
         }
     }
 
+    @Secured("ROLE_USER")
+    @PutMapping("{groupId}/{userId}")
+    @Operation(security = @SecurityRequirement(name = "apiKey"))
+    @ResponseStatus(HttpStatus.OK)
+    public void makeMemberHost(@PathVariable Long groupId, @PathVariable Long userId) throws ValidationException {
+        LOGGER.info("PUT " + BASE_PATH + "/{}/{}", groupId, userId);
+        try {
+            groupService.makeMemberHost(groupId, userId, SecurityContextHolder.getContext().getAuthentication().getName());
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Group member to make host not found", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+
     /**
      * Delete group.
      *
@@ -211,7 +227,7 @@ public class GroupEndpoint {
         LOGGER.info("GET " + BASE_PATH + "searchGroupMember/{}", groupId);
         return groupService.searchForMember(groupId);
     }
-    
+
     private void logClientError(HttpStatus status, String message, Exception e) {
         LOGGER.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
     }

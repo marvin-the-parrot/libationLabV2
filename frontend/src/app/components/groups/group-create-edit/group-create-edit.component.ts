@@ -7,7 +7,8 @@ import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from "rxjs";
 import {UserListDto, UserListGroupDto} from "../../../dtos/user";
 import {UserService} from "../../../services/user.service";
-import { DialogService } from 'src/app/services/dialog.service';
+import {DialogService} from 'src/app/services/dialog.service';
+import {ConfirmationDialogMode} from "../../../confirmation-dialog/confirmation-dialog.component";
 
 export enum GroupCreateEditMode {
   create,
@@ -94,7 +95,7 @@ export class GroupCreateEditComponent implements OnInit {
   }
 
   public onDelete(): void {
-    this.dialogService.openDeleteConfirmation().subscribe((result) => {
+    this.dialogService.openConfirmationDialog(ConfirmationDialogMode.Delete).subscribe((result) => {
       if (result) {
         this.service.deleteGroup(this.group.id).subscribe({
           next: data => {
