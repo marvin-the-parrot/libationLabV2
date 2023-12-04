@@ -1,14 +1,5 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
-import java.lang.invoke.MethodHandles;
-import java.util.List;
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
@@ -26,6 +17,14 @@ import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import at.ac.tuwien.sepr.groupphase.backend.service.validators.GroupValidator;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.lang.invoke.MethodHandles;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Group service implementation.
@@ -33,8 +32,7 @@ import jakarta.transaction.Transactional;
 @Service
 public class GroupServiceImpl implements GroupService {
 
-    private static final Logger LOGGER
-        = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final UserService userService;
     @Autowired
@@ -45,7 +43,7 @@ public class GroupServiceImpl implements GroupService {
     @Autowired
     private UserGroupRepository userGroupRepository;
     @Autowired
-    private  UserMapper userMapper;
+    private UserMapper userMapper;
 
     public GroupServiceImpl(UserService userService, GroupRepository groupRepository, GroupValidator validator) {
         this.userService = userService;
@@ -144,7 +142,7 @@ public class GroupServiceImpl implements GroupService {
     public GroupCreateDto create(GroupCreateDto toCreate) throws ValidationException, ConflictException {
         LOGGER.trace("create({})", toCreate);
         // validate group:
-        validator.validateForCreate(toCreate);
+        validator.validateForCreate(toCreate, userRepository);
 
         // build group entity and save it:
         ApplicationGroup group = ApplicationGroup.GroupBuilder.group().withName(toCreate.getName()).build();
@@ -155,16 +153,15 @@ public class GroupServiceImpl implements GroupService {
         for (var member : toCreate.getMembers()) {
             boolean isHost = member.getId().equals(toCreate.getHost().getId()); // save host in database
 
-            UserGroup newMember = UserGroup.UserGroupBuilder.userGroup()
-                .withUserGroupKey(new UserGroupKey(member.getId(), saved.getId()))
-                .withUser(userRepository.findById(member.getId()).orElse(null))
-                .withGroup(groupRepository.findById(saved.getId()).orElse(null))
+            UserGroup newMember = UserGroup.UserGroupBuilder.userGroup().withUserGroupKey(new UserGroupKey(member.getId(), saved.getId()))
+                .withUser(userRepository.findById(member.getId()).orElse(null)).withGroup(groupRepository.findById(saved.getId()).orElse(null))
                 .withIsHost(isHost).build();
 
             userGroupRepository.save(newMember);
         }
 
-        return new GroupCreateDto(saved.getId(), saved.getName(), toCreate.getHost(), toCreate.getCocktails(), toCreate.getMembers()); // todo: return created group
+        return new GroupCreateDto(saved.getId(), saved.getName(), toCreate.getHost(), toCreate.getCocktails(),
+            toCreate.getMembers()); // todo: return created group
     }
 
     @Override
@@ -174,7 +171,6 @@ public class GroupServiceImpl implements GroupService {
         // todo update group in database
         return null; // todo return updated group
     }
-
 
 
     @Override
