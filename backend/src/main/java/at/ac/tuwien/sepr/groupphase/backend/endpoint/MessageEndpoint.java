@@ -93,6 +93,9 @@ public class MessageEndpoint {
     @Operation(summary = "Publish a new message", security = @SecurityRequirement(name = "apiKey"))
     public MessageDetailDto create(@Valid @RequestBody MessageCreateDto message) {
         LOGGER.info("POST /api/v1/messages body: {}", message);
+        if (message == null) {
+            return null;
+        }
         try {
             return messageMapper.from(messageService.create(message), groupMapper.groupToGroupDetailDto(groupService.findOne((message.getGroupId()))));
         } catch (ConstraintViolationException e) {

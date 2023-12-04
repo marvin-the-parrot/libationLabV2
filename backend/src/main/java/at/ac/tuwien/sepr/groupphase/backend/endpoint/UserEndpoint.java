@@ -11,6 +11,8 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import org.hibernate.exception.ConstraintViolationException;
@@ -18,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,12 +48,19 @@ public class UserEndpoint {
         this.userService = userService;
     }
 
+    @Secured("ROLE_USER")
     @GetMapping
     @PermitAll
-    public List<UserListDto> search(UserSearchDto searchParams) {
+    public List<UserListDto> search(@Valid UserSearchDto searchParams) {
         LOGGER.info("GET " + BASE_PATH);
         LOGGER.debug("Request Params: {}", searchParams);
-        return userService.search(searchParams);
+        try {
+            return userService.search(searchParams);
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Failed to search users", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
     }
 
     @PostMapping
@@ -123,11 +133,12 @@ public class UserEndpoint {
     @ResponseStatus(HttpStatus.OK)
     public UserListDto getUser() {
         LOGGER.info("GET /api/v1/user/user");
+        String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
         try {
-            return userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+            return userService.getUserByEmail(userMail);
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
-            logClientError(status, "Failed to get user", e);
+            logClientError(status, String.format("Failed to get user with mail %s", userMail), e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }

@@ -3,7 +3,7 @@ import {GroupOverview} from "../../../dtos/group-overview";
 import {GroupsService} from "../../../services/groups.service";
 import {ActivatedRoute} from "@angular/router";
 import {Observable, Subject, of} from "rxjs";
-import {UserListDto, UserListGroupDto} from "../../../dtos/user";
+import {UserListDto} from "../../../dtos/user";
 import {UserService} from "../../../services/user.service";
 import {MessageCreate} from "../../../dtos/message";
 import {MessageService} from "../../../services/message.service";
@@ -68,7 +68,7 @@ export class GroupDetailComponent {
 
   memberSuggestions = (input: string): Observable<UserListDto[]> => (input === '')
     ? of([])
-    : this.userService.search(input);
+    : this.userService.search(input, this.route.snapshot.params['id']);
 
   public formatMember(member: UserListDto | null): string {
     return member?.name ?? '';
@@ -78,6 +78,9 @@ export class GroupDetailComponent {
    * Create Message
    */
   createMessage(userId: number) {
+    if (userId == null) {
+      return;
+    }
     const groupId = this.route.snapshot.params['id'];
     this.submitted = true;
     const createMessage: MessageCreate = new MessageCreate(userId, groupId);

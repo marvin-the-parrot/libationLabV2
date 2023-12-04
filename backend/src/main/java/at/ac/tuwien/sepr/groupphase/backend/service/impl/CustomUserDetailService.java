@@ -19,6 +19,7 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.security.JwtTokenizer;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.lang.invoke.MethodHandles;
 import java.security.SecureRandom;
@@ -182,7 +183,11 @@ public class CustomUserDetailService implements UserService {
     @Override
     public List<UserListDto> search(UserSearchDto searchParams) {
         LOGGER.trace("search({})", searchParams);
-        return userMapper.userToUserListDto(userRepository.findFirst5ByNameIgnoreCaseContaining(searchParams.getName()));
+        if (searchParams.getGroupId() == null) {
+            return searchExistingGroup(searchParams);
+        } else {
+            return searchCreatingGroup(searchParams);
+        }
     }
 
     @Override
@@ -236,6 +241,21 @@ public class CustomUserDetailService implements UserService {
             users.add(user);
         }
         return users;
+    }
+
+    private List<UserListDto> searchExistingGroup(UserSearchDto searchParams) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<ApplicationUser> users = userGroupRepository.findUsersByGroupId(searchParams.getGroupId());
+        List<String> emails = new ArrayList<>();
+        for (ApplicationUser user : users) {
+            emails.add(user.getEmail());
+        }
+        return userMapper.userToUserListDto(userRepository.findFirst5ByEmailNotAndEmailNotInAndNameIgnoreCaseContaining(email, emails, searchParams.getName()));
+    }
+
+    private List<UserListDto> searchCreatingGroup(UserSearchDto searchParams) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userMapper.userToUserListDto(userRepository.findFirst5ByEmailNotAndNameIgnoreCaseContaining(email, searchParams.getName()));
     }
 
     private void sendEmail(String email) {

@@ -3,7 +3,7 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 public class UserSearchDto {
 
     private String name;
-    private Integer limit;
+    private Long groupId;
 
     public String getName() {
         return name;
@@ -13,11 +13,11 @@ public class UserSearchDto {
         this.name = name;
     }
 
-    public Integer getLimit() {
-        return limit;
+    public Long getGroupId() {
+        return groupId;
     }
 
-    public void setLimit(Integer limit) {
-        this.limit = limit;
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 }

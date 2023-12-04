@@ -22,9 +22,9 @@ export class AuthInterceptor implements HttpInterceptor {
       return next.handle(req);
     }
 
-    if (req.url === this.globals.backendUri + '/users' && req.method === 'GET') {
+    /*if (req.url === this.globals.backendUri + '/users' && req.method === 'GET') {
       return next.handle(req);
-    }
+    }*/
 
     if (req.url === this.globals.backendUri + '/messages/create' && req.method === 'POST') {
       return next.handle(req);

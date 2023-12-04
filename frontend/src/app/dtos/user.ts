@@ -4,11 +4,6 @@ export interface UserListDto {
   name: string
 }
 
-export interface UserSearch {
-  name?: string;
-  limit?: number;
-}
-
 export interface UsernameDto {
   username: string
 }

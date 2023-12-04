@@ -143,7 +143,7 @@ export class GroupCreateEditComponent implements OnInit {
 
   memberSuggestions = (input: string): Observable<UserListDto[]> => (input === '')
     ? of([])
-    : this.userService.search(input);
+    : this.userService.search(input, this.group.id);
 
   public formatMember(member: UserListDto | null): string {
     return member?.name ?? '';

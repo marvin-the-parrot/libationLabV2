@@ -31,12 +31,20 @@ public interface UserRepository extends JpaRepository<ApplicationUser, Long> {
     ApplicationUser findByName(String name);
 
     /**
-     * Find users by username.
+     * Find users by username for adding Users to existing Group.
      *
      * @param username of user
      * @return List of ApplicationUser found by username
      */
-    List<ApplicationUser> findFirst5ByNameIgnoreCaseContaining(String username);
+    List<ApplicationUser> findFirst5ByEmailNotAndEmailNotInAndNameIgnoreCaseContaining(String email, List<String> emails, String username);
+
+    /**
+     * Find users by username for adding Users at creating Group.
+     *
+     * @param username of user
+     * @return List of ApplicationUser found by username
+     */
+    List<ApplicationUser> findFirst5ByEmailNotAndNameIgnoreCaseContaining(String email, String username);
 
     ApplicationUser findApplicationUsersByUserGroups(UserGroup userGroups);
 

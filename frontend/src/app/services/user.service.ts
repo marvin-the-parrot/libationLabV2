@@ -20,11 +20,14 @@ export class UserService {
    * Search for users in the system.
    *
    * @param name the search parameters: username and limit
+   * @param id the search parameters: username and limit
    * @return an Observable for the list of users
    */
-  public search(name: string): Observable<UserListDto[]> {
+  public search(name: string, id: number): Observable<UserListDto[]> {
     let params = new HttpParams();
     params = params.append("name", name);
+    params = params.append("groupId", id);
+
     return this.httpClient.get<UserListDto[]>(this.baseUri, { params });
   }
 
