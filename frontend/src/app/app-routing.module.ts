@@ -13,6 +13,7 @@ import {GroupDetailComponent} from "./components/groups/group-detail/group-detai
 import {CreateAccountComponent} from "./components/create-account/create-account.component";
 import {ForgotPasswordComponent} from "./components/forgot-password/forgot-password.component";
 import {ResetPasswordComponent} from "./components/reset-password/reset-password.component";
+import {UserSettingsComponent} from "./components/user-settings/user-settings.component";
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -21,6 +22,7 @@ const routes: Routes = [
   {path: 'forgot-password', component: ForgotPasswordComponent},
   {path: 'reset-password', component: ResetPasswordComponent},
   {path: 'message', canActivate: mapToCanActivate([AuthGuard]), component: MessageComponent},
+  {path: 'settings', component: UserSettingsComponent},
   {
     path: 'groups', children: [
       {path: '', component: GroupsComponent},

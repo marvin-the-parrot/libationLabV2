@@ -25,6 +25,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { DeleteConfirmationComponent } from './delete-confirmation/delete-confirmation.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { OptionDialogComponent } from './option-dialog/option-dialog.component';
+import { GroupEditComponent } from './components/groups/group-edit/group-edit.component';
+import { UserSettingsComponent } from './components/user-settings/user-settings.component';
 
 
 @NgModule({
@@ -45,6 +47,8 @@ import { OptionDialogComponent } from './option-dialog/option-dialog.component';
     ResetPasswordComponent,
     DeleteConfirmationComponent,
     OptionDialogComponent,
+    GroupEditComponent,
+    UserSettingsComponent,
   ],
   imports: [
     BrowserModule,
