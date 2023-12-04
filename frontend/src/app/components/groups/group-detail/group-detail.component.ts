@@ -118,22 +118,23 @@ export class GroupDetailComponent {
   create(messageCreate: MessageCreate) {
     this.messageService.createMessage(messageCreate).subscribe({
       next: () => {
-
+        this.notification.success('Successfully invited ' + this.user.name + ' to ' + this.group.name + '!');
       },
       error: error => {
-        console.log('Could not create account due to:');
-        console.log(error);
-        this.error = true;
-        if (typeof error.error === 'object') {
-          this.errorMessage = error.error.error;
-        } else {
-          this.errorMessage = error.error;
-        }
+        console.log('Could not create message due to:');
+        this.defaultServiceErrorHandling(error);
       }
     });
+  }
+
+  private defaultServiceErrorHandling(error: any) {
+    console.log(error);
+    this.error = true;
+    this.notification.error(error.error.detail);
   }
 }
 function takeUntil(destroy$: any): any {
   throw new Error('Function not implemented.');
 }
+
 
