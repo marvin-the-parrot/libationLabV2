@@ -3,7 +3,6 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 50px;
-  grid-auto-rows: minmax(100px, 300px);
 }
 
 .thumb{
@@ -20,5 +19,8 @@
 
 .thumb-content{
   height: fit-content;
+}
 
+.gallery {
+  background-color: #ECECEC;
 }
