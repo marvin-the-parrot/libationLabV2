@@ -100,7 +100,6 @@ export class GroupDetailComponent {
         this.service.removeMemberFromGroup(this.group.id, member.id).subscribe({
           next: data => {
             this.notification.success(`Successfully removed '${member.name}' from Group '${this.group.name}'.`);
-            this.router.navigate(['/groups']); // todo: wouldn't it be better to stay on the detail page?
           },
           error: error => {
             console.error(`Error removing member '${member.name}' from group.`, error);
