@@ -59,7 +59,28 @@
 }
 
 .input-container{
-text-align: left;
+  text-align: left;
+  position: relative;
+}
+
+.input-container button {
+  border-radius: 0 5px 5px 0;
+  position: absolute;
+  right: 13px;
+  top: 1px;
+  padding-bottom: 0;
+  padding-top: 0;
+  height: 36px;
+  background-color: #AC6AFE;
+}
+
+.input-container button:active {
+  background-color: white;
+  box-shadow: none;
+}
+
+.bi-person-fill-add {
+  font-size: 20px;
 }
 
 .form-control {
