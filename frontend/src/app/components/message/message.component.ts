@@ -39,6 +39,7 @@ export class MessageComponent implements OnInit {
     message.isRead = true;
     return this.messageService.acceptGroupInvitation(message).subscribe({
       next: () => {
+        this.notification.success("You joined " + message.group.name);
         this.loadMessage();
       },
       error: error => {
@@ -52,6 +53,7 @@ export class MessageComponent implements OnInit {
     message.isRead = true;
     return this.messageService.update(message).subscribe({
       next: () => {
+        this.notification.success("You declined the group invitation from " + message.group.name);
         this.loadMessage();
       },
       error: error => {
@@ -64,6 +66,7 @@ export class MessageComponent implements OnInit {
   deleteMessage(message: MessageDetailDto) {
     return this.messageService.deleteById(message.id).subscribe({
       next: () => {
+        this.notification.success("You deleted message from " + message.group.name);
         this.loadMessage();
       },
       error: error => {
