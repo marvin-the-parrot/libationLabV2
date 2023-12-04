@@ -80,6 +80,16 @@ export class GroupsService {
     return this.httpClient.delete<GroupOverview>(this.baseUri + '/' + groupId + '/' + memberId);
   }
 
+  /**
+   * Make a member the host of a group.
+   *
+   * @param groupId the id of the group
+   * @param memberId the id of member to make host
+   */
+  makeMemberHost(groupId: number, memberId: number): Observable<GroupOverview> {
+    return this.httpClient.put<GroupOverview>(this.baseUri + '/' + groupId + '/' + memberId, null);
+  }
+
   getAllByUser() {
     return this.httpClient.get<GroupOverview[]>(`${this.baseUri}`);
   }
