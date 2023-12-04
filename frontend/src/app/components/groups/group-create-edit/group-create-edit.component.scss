@@ -77,7 +77,7 @@
 
 .table-element {
   vertical-align: middle; /* Align elements vertically in the cell */
-  text-align: center; /* Optionally center content horizontally */
+  text-align: end; /* Optionally center content horizontally */
 }
 
 .equal-columns {
@@ -95,13 +95,58 @@
 
 }
 
-/* Additional styles */
 .table-button {
   width: 50%;
+  height: 55px;
+  margin-right: 20px; /* Push the button or crown to the right */
+  align-items: end;
 }
 
 .crown {
-  font-size: 20px; /* Adjust size as needed */
-  /* Additional styling for the crown */
+  font-size: 20px;
+  margin-right: 20px;
+}
+
+.btn:disabled {
+  opacity: 0.2; /* You can adjust the opacity level to change the appearance */
+  cursor: not-allowed;
+}
+
+.delete-button {
+  margin-right: 12px;
+}
+.bi-dash-circle {
+  color: black;
+}
+
+.rounded-button {
+  background-color: #AC6AFE;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  padding-bottom: 0;
+  padding-top: 0;
+  height: 36px;
+}
+.btn.rounded-button:active {
+  background-color: white; /* Set background color to transparent */
+  box-shadow: none;
+}
+
+.wrapper {
+  position: relative;
+}
+
+.wrapper button {
+  border-radius: 0 5px 5px 0;
+  position: absolute;
+  right: 13px;
+  top: 1px;
+
+
+}
+
+.bi-person-fill-add {
+  font-size: 20px;
 }
 

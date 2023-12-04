@@ -10,10 +10,10 @@
     <form #form="ngForm" [class.was-validated]="form.submitted" (ngSubmit)="onSubmit(form)">
 
       <div class="row group-name">
-        <label for="groupName" class="col-form-label text-md-end text-muted col-md-2 col-lg-3">
+        <label for="groupName" class="col-form-label text-md-end text-muted col-md-3 col-lg-3">
           Name
         </label>
-        <div class="col-md-10 col-lg-6">
+        <div class="wrapper col-md-6 col-lg-6">
           <input type="text"
                  id="groupName"
                  name="groupName"
@@ -25,18 +25,20 @@
                  required
                  autofocus
           >
+
           <div class="invalid-feedback">
             <!-- This is shown, when the form validation deems the name input to be invalid -->
-            Name is required
+            Name is required!
           </div>
         </div>
       </div>
 
       <div class="row add-group-member">
-        <label for="memberSelectionInput" class="col-form-label text-md-end text-muted col-md-2 col-lg-3">
+        <label for="memberSelectionInput" class="col-form-label text-md-end text-muted col-md-3 col-lg-3">
           Add Member
         </label>
-        <div class="col-md-10 col-lg-6">
+        <div class="wrapper col-md-6 col-lg-6">
+
           <app-autocomplete
             id="memberSelectionInput"
             name="memberSelection"
@@ -45,15 +47,18 @@
             [formatModel]="formatMember"
             valueNeedsToMatchSuggestion="true"
             [(ngModel)]="user"
-            (ngModelChange)="addMember($event)"
           >
           </app-autocomplete>
+
+          <button type="button" class="btn rounded-button" (click)="addMember(user)">
+            <i class="bi bi-person-fill-add"></i>
+          </button>
         </div>
       </div>
 
       <div class="row">
-        <div class="col-lg-3"></div>
-        <div class="col-lg-6">
+        <div class="col-md-3 col-lg-3"></div>
+        <div class="col-md-6 col-lg-6">
 
           <div class="table-container">
             <p class="entry-count">{{ group.members.length }} User in Group</p>
@@ -67,7 +72,7 @@
                   <td class="table-element table-button">
                     <!-- Make button just hidden, when no participant is present, to keep layout correct -->
                     <button *ngIf="!member.isHost" type="button"
-                            class="btn btn-light"
+                            class="btn btn-light delete-button"
                             (click)="removeMember(i)"
                             [style.visibility]="member ? 'visible' : 'hidden'">
                       <i class="bi bi-dash-circle"></i>
