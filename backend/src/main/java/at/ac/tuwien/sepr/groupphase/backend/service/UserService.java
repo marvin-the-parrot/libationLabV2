@@ -11,6 +11,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -66,7 +67,7 @@ public interface UserService extends UserDetailsService {
      *
      * @param userCreateDto create credentials
      */
-    void register(UserCreateDto userCreateDto) throws ConstraintViolationException;
+    void register(UserCreateDto userCreateDto) throws ConstraintViolationException, ValidationException;
 
     /**
      * Reset the password of a user.

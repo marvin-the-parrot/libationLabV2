@@ -14,11 +14,13 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ResetToken;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.ResetTokenRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.security.JwtTokenizer;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
+import at.ac.tuwien.sepr.groupphase.backend.service.validators.UserValidator;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.lang.invoke.MethodHandles;
@@ -62,29 +64,32 @@ public class CustomUserDetailService implements UserService {
     private final UserGroupRepository userGroupRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenizer jwtTokenizer;
-
+    private final UserValidator validator;
     private final UserMapper userMapper;
 
     /**
      * Customer user detail service.
      *
-     * @param userGroupRepository  - for persistence call
      * @param userRepository       - for persistence call
      * @param resetTokenRepository - ?
+     * @param userGroupRepository  - for persistence call
      * @param passwordEncoder      - of use password
      * @param jwtTokenizer         - token
+     * @param validator            - user validation
      * @param userMapper           - mapper
      */
 
     @Autowired
     public CustomUserDetailService(UserRepository userRepository, ResetTokenRepository resetTokenRepository,
                                    UserGroupRepository userGroupRepository, PasswordEncoder passwordEncoder,
-                                   JwtTokenizer jwtTokenizer, UserMapper userMapper) {
+                                   JwtTokenizer jwtTokenizer, UserValidator validator,
+                                   UserMapper userMapper) {
         this.userRepository = userRepository;
         this.resetTokenRepository = resetTokenRepository;
         this.userGroupRepository = userGroupRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenizer = jwtTokenizer;
+        this.validator = validator;
         this.userMapper = userMapper;
     }
 
@@ -146,8 +151,9 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public void register(UserCreateDto userCreateDto) throws ConstraintViolationException {
+    public void register(UserCreateDto userCreateDto) throws ConstraintViolationException, ValidationException {
         LOGGER.debug("Register new user");
+        validator.validateForCreate(userCreateDto);
         ApplicationUser applicationUser = new ApplicationUser(
             userCreateDto.getName(),
             userCreateDto.getEmail(),
