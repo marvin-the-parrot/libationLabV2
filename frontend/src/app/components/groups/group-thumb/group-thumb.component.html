@@ -16,7 +16,7 @@
       </ul>
     </div>
     <div class="d-flex justify-content-between align-items-end">
-      <button *ngIf="group.host.name !== username" class="badge custom-button-del">Leave</button>
+      <button *ngIf="group.host.name !== username" class="badge custom-button-del" (click)="leaveGroup()">Leave</button>
       <button *ngIf="group.host.name === username" class="badge custom-button-edit">Edit</button>
       <span class="d-flex align-items-center">Members: <span class="badge-round">{{group.members.length}}</span></span>
     </div>
