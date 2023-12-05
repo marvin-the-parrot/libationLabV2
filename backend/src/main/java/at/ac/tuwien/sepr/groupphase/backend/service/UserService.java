@@ -114,4 +114,12 @@ public interface UserService extends UserDetailsService {
      * @return a list of groups
      */
     List<UserListGroupDto> findUsersByGroup(ApplicationGroup group);
+
+    /**
+     * Delete a user by email.
+     *
+     * @param email the email address of the user
+     */
+    void deleteUserByEmail(String email);
+
 }

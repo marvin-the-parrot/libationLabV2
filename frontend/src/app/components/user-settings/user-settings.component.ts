@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {Router} from "@angular/router";
+import {UserService} from "../../services/user.service";
+import {DialogService} from "../../services/dialog.service";
+import {ConfirmationDialogMode} from "../../confirmation-dialog/confirmation-dialog.component";
 
 export enum Modes {
   AccountSettings = 'AccountSettings',
@@ -21,7 +24,9 @@ export class UserSettingsComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private userService: UserService,
+    private router: Router,
+    private dialogService: DialogService,
   ) {
   }
   setMode(mode: string): void {
@@ -34,6 +39,24 @@ export class UserSettingsComponent {
       this.currentMode = Modes.Preferences;
     }
     console.log('Mode changed to: ' + this.currentMode);
+  }
+
+  deleteAccount() {
+    this.dialogService.openConfirmationDialog(ConfirmationDialogMode.DeleteAccount).subscribe((result) => {
+      if (result) {
+        console.log('Deleting account...');
+        this.userService.deleteUser().subscribe({
+          next: () => {
+            console.log('Account deleted');
+          },
+          error: error => {
+            console.log('Could not delete account due to:');
+            console.log(error);
+          }
+        });
+        this.router.navigate(['/login']);
+      }
+    });
   }
 
 

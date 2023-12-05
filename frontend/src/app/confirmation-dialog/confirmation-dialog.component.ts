@@ -4,7 +4,8 @@ import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 export enum ConfirmationDialogMode {
   Delete,
   MakeHost,
-  Leave
+  Leave,
+  DeleteAccount
   // add more modes here if needed
 }
 
@@ -41,6 +42,12 @@ export class ConfirmationDialogComponent {
         this.dialogHeader = "Confirm leave group";
         this.dialogText = "Are you sure you want to leave this group?"
         this.confirmBtnText = 'Leave group';
+        this.backgroundColor = '#f95959';
+        break;
+      case ConfirmationDialogMode.DeleteAccount:
+        this.dialogHeader = "Confirm Delete Account";
+        this.dialogText = "Are you sure you want to delete your Account?"
+        this.confirmBtnText = 'Delete Account';
         this.backgroundColor = '#f95959';
         break;
       default:
