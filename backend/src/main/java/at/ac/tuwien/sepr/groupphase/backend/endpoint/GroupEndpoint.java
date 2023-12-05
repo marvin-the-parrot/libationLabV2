@@ -98,6 +98,7 @@ public class GroupEndpoint {
     @Transactional
     @Operation(summary = "Get detailed information about a specific group", security = @SecurityRequirement(name = "apiKey"))
     public GroupOverviewDto find(@PathVariable Long id) {
+        //TODO "ROLE_USER" in ENUM
         LOGGER.info("GET /api/v1/groups/{}", id);
         ApplicationGroup group = groupService.findOne(id);
         List<UserListGroupDto> users = userService.findUsersByGroup(group);
@@ -128,6 +129,7 @@ public class GroupEndpoint {
     @ResponseStatus(HttpStatus.CREATED)
     public GroupCreateDto create(@RequestBody GroupCreateDto toCreate) throws ValidationException, ConflictException {
         LOGGER.info("POST " + BASE_PATH + "/{}", toCreate);
+        //TODO no apiKey needed for SecurityContext
         LOGGER.debug("Body of request:\n{}", toCreate);
         return groupService.create(toCreate);
     }
