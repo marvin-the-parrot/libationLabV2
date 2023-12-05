@@ -28,7 +28,7 @@ export class MessageService {
    */
   createMessage(message: MessageCreate): Observable<MessageDetailDto> {
     console.log('Create message for user ' + message.userId);
-    return this.httpClient.post<MessageDetailDto>(this.messageBaseUri, message);
+    return this.httpClient.post<MessageDetailDto>(this.messageBaseUri + '/create', message);
   }
 
   /**
@@ -51,5 +51,14 @@ export class MessageService {
    */
   deleteById(messagId: number): Observable<MessageDetailDto> {
     return this.httpClient.delete<MessageDetailDto>(`${this.messageBaseUri}/${messagId}`);
+  }
+
+  /**
+   * Accept a group invitation.
+   *
+   * @param message the message to accept
+   */
+  acceptGroupInvitation(message: MessageDetailDto): Observable<any> {
+    return this.httpClient.post<MessageDetailDto>(this.messageBaseUri + '/accept', message);
   }
 }
