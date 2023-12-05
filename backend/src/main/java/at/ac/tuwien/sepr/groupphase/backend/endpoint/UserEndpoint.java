@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -136,6 +137,21 @@ public class UserEndpoint {
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, String.format("Failed to get user with mail %s", userMail), e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+    @DeleteMapping("/delete")
+    @Secured("ROLE_USER")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteUser() {
+        LOGGER.info("DELETE /api/v1/user/delete");
+        String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
+        try {
+            userService.deleteUserByEmail(userMail);
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, String.format("Failed to delete user with mail %s", userMail), e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }

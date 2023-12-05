@@ -25,7 +25,6 @@ export class ForgotPasswordComponent {
   }
 
   forgotPassword(email: string) {
-    console.log(email);
     this.service.forgotPassword(email).subscribe({
       next: () => {
         console.log("Email sent");

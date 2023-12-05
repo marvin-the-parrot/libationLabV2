@@ -83,4 +83,8 @@ export class UserService {
   getUser(): Observable<UserListDto> {
     return this.httpClient.get<UserListDto>(this.baseUri + '/user');
   }
+
+  deleteUser(): Observable<any> {
+    return this.httpClient.delete<any>(this.baseUri + '/delete');
+  }
 }

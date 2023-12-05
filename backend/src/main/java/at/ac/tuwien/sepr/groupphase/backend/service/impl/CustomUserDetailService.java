@@ -15,6 +15,8 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.ResetToken;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.ResetTokenRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
@@ -60,8 +62,10 @@ public class CustomUserDetailService implements UserService {
     private static final Logger LOGGER =
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final UserRepository userRepository;
+    private final MessageRepository messageRepository;
     private final ResetTokenRepository resetTokenRepository;
     private final UserGroupRepository userGroupRepository;
+    private final GroupRepository groupRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenizer jwtTokenizer;
     private final UserValidator validator;
@@ -83,7 +87,7 @@ public class CustomUserDetailService implements UserService {
     public CustomUserDetailService(UserRepository userRepository, ResetTokenRepository resetTokenRepository,
                                    UserGroupRepository userGroupRepository, PasswordEncoder passwordEncoder,
                                    JwtTokenizer jwtTokenizer, UserValidator validator,
-                                   UserMapper userMapper) {
+                                   UserMapper userMapper, MessageRepository messageRepository, GroupRepository groupRepository) {
         this.userRepository = userRepository;
         this.resetTokenRepository = resetTokenRepository;
         this.userGroupRepository = userGroupRepository;
@@ -91,6 +95,8 @@ public class CustomUserDetailService implements UserService {
         this.jwtTokenizer = jwtTokenizer;
         this.validator = validator;
         this.userMapper = userMapper;
+        this.messageRepository = messageRepository;
+        this.groupRepository = groupRepository;
     }
 
 
@@ -247,6 +253,39 @@ public class CustomUserDetailService implements UserService {
             users.add(user);
         }
         return users;
+    }
+
+    @Override
+    public void deleteUserByEmail(String email) {
+        LOGGER.debug("Delete user by email");
+        ApplicationUser applicationUser = userRepository.findByEmail(email);
+        if (applicationUser != null) {
+            List<UserGroup> userGroups = userGroupRepository.findAllByApplicationUser(applicationUser);
+            for (UserGroup userGroup1 : userGroups) {
+                if (userGroup1.isHost()) {
+
+                    ApplicationGroup group = userGroup1.getGroups();
+                    List<UserGroup> userGroupList = userGroupRepository.findAllByApplicationGroup(group);
+                    //If user is only member of group
+                    if (userGroupList.size() == 1) {
+                        userGroupRepository.delete(userGroup1);
+                        groupRepository.delete(group);
+                    } else {
+                        for (UserGroup userGroup2 : userGroupList) {
+                            if (!userGroup2.isHost()) {
+                                userGroup1.setHost(false);
+                                userGroupRepository.save(userGroup1);
+                                userGroup2.setHost(true);
+                                userGroupRepository.save(userGroup2);
+                            }
+                        }
+                    }
+                }
+            }
+            userRepository.delete(applicationUser);
+        } else {
+            throw new NotFoundException(String.format("Could not find the user with the email address %s", email));
+        }
     }
 
     private List<UserListDto> searchExistingGroup(UserSearchExistingGroupDto searchParams) {
