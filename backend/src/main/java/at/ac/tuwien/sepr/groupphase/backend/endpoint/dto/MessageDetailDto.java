@@ -3,6 +3,7 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 public class MessageDetailDto {
 
     private Long id;
+    private String text;
     private GroupDetailDto group;
     private boolean isRead;
     private String sentAt;
@@ -13,6 +14,14 @@ public class MessageDetailDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public GroupDetailDto getGroup() {

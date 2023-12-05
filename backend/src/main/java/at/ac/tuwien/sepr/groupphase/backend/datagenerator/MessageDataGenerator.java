@@ -45,6 +45,7 @@ public class MessageDataGenerator {
                 ApplicationMessage message = ApplicationMessage.ApplicationMessageBuilder.message()
                     .withId((long) i)
                     .withApplicationUser(userRepository.findByEmail("user1@email.com"))
+                    .withText("You were invited to drink with Group" + i)
                     .withGroupId((long) i)
                     .withIsRead(false)
                     .withSentAt(LocalDateTime.now())

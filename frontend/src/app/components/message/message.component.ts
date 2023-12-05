@@ -31,10 +31,6 @@ export class MessageComponent implements OnInit {
     return this.messages;
   }
 
-  getText(message: MessageDetailDto): string {
-    return "You were invited to drink with " + message.group.name;
-  }
-
   acceptInvitation(message: MessageDetailDto) {
     message.isRead = true;
     return this.messageService.acceptGroupInvitation(message).subscribe({
@@ -95,13 +91,6 @@ export class MessageComponent implements OnInit {
     console.log(error);
     this.error = true;
     this.notification.error(error.error.detail);
-  }
-
-  /**
-   * Error flag will be deactivated, which clears the error message
-   */
-  vanishError() {
-    this.error = false;
   }
 
 }

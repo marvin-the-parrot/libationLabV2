@@ -16,13 +16,8 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface MessageMapper {
 
-    //MessageDetailDto messageToDetailedMessageDto(ApplicationMessage message);
-
-    //List<MessageDetailDto> messageToDetailedMessageDto(List<ApplicationMessage> message);
-
-    //ApplicationMessage messageCreateDtoToMessage(MessageCreateDto messageCreateDto, Long groupId, );
-
     @Mapping(source = "message.id", target = "id")
+    @Mapping(source = "message.text", target = "text")
     @Mapping(source = "group", target = "group")
     @Mapping(source = "message.isRead", target = "isRead")
     @Mapping(source = "message.sentAt", target = "sentAt")

@@ -2,6 +2,7 @@ import {GroupDetailDto} from "./group";
 
 export interface MessageDetailDto {
   id: number;
+  text: string;
   group: GroupDetailDto;
   isRead: boolean;
   sentAt: string;
