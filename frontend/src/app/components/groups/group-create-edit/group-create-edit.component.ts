@@ -141,9 +141,10 @@ export class GroupCreateEditComponent implements OnInit {
     }
   }
 
+  //TODO pass the existing members to the autocomplete
   memberSuggestions = (input: string): Observable<UserListDto[]> => (input === '')
     ? of([])
-    : this.userService.search(input, this.group.id);
+    : this.userService.searchUsersGroupCreating(input, this.group.members);
 
   public formatMember(member: UserListDto | null): string {
     return member?.name ?? '';

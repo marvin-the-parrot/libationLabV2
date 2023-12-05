@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
-public class UserSearchDto {
+public class UserSearchExistingGroupDto {
 
     private String name;
     private Long groupId;
