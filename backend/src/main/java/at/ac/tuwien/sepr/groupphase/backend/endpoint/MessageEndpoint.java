@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCountDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
@@ -59,6 +60,19 @@ public class MessageEndpoint {
         this.groupService = groupService;
         this.groupMapper = groupMapper;
         this.userGroupService = userGroupService;
+    }
+
+    /**
+     * Get number of unread messages endpoint.
+     *
+     * @return number of unread messages
+     */
+    @Secured("ROLE_USER")
+    @GetMapping("/count")
+    @Operation(summary = "Get number of unread messages")
+    public MessageCountDto getUnreadMessageCount() {
+        LOGGER.info("GET /api/v1/messages/count");
+        return messageMapper.countToMessageCountDto(messageService.getUnreadMessageCount());
     }
 
     /**

@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {MessageService} from '../../services/message.service';
 import {MessageDetailDto} from "../../dtos/message";
 import {ToastrService} from "ngx-toastr";
+import {MessageHeaderSharedService} from "../../services/message-header-shared.service";
 
 @Component({
   selector: 'app-message',
@@ -19,7 +20,8 @@ export class MessageComponent implements OnInit {
 
   constructor(
     private messageService: MessageService,
-    private notification: ToastrService
+    private notification: ToastrService,
+    private messageHeaderSharedService: MessageHeaderSharedService
   ) {
   }
 
@@ -28,6 +30,7 @@ export class MessageComponent implements OnInit {
   }
 
   getMessage(): MessageDetailDto[] {
+    console.log(this.messages);
     return this.messages;
   }
 
@@ -85,6 +88,7 @@ export class MessageComponent implements OnInit {
         this.defaultServiceErrorHandling(error);
       }
     });
+    this.messageHeaderSharedService.triggerReload();
   }
 
   private defaultServiceErrorHandling(error: any) {

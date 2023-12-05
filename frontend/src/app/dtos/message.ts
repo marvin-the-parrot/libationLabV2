@@ -8,6 +8,10 @@ export interface MessageDetailDto {
   sentAt: string;
 }
 
+export interface MessageCountDto {
+  count: number;
+}
+
 export class MessageCreate {
   constructor(
     public userId: number,

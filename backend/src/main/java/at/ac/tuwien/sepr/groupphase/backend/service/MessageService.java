@@ -16,6 +16,13 @@ import java.util.List;
 public interface MessageService {
 
     /**
+     * Get all unread messages for the current user.
+     *
+     * @return number of unread messages
+     */
+    long getUnreadMessageCount() throws NotFoundException;
+
+    /**
      * Find all message entries ordered by published at date (descending).
      *
      * @return ordered list of al message entries

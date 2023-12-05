@@ -5,7 +5,12 @@
     <div>
       <h3>Notifications</h3>
     </div>
-    <div class="message-list">
+    <div *ngIf="getMessage().length === 0">
+      <div class="card-body">
+        <h5 class="col-xl-12 col-lg-12 card-title">No Messages</h5>
+      </div>
+    </div>
+    <div class="message-list" *ngIf="getMessage().length > 0">
       <div class="col-xl-12 col-lg-12 border-bottom" *ngFor="let message of getMessage()">
         <div class="card-body"
              [ngStyle]="{'background-color':message.isRead === false ? 'rgba(255, 255, 255, 1)' : 'rgba(200, 200, 200, 0.4)'}">

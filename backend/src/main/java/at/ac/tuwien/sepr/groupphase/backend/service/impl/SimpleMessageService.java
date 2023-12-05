@@ -43,6 +43,13 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
+    public long getUnreadMessageCount() {
+        LOGGER.debug("Count unread messages");
+        ApplicationUser user = userService.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        return messageRepository.countByApplicationUserAndIsRead(user, false);
+    }
+
+    @Override
     public List<ApplicationMessage> findAll() throws NotFoundException {
         LOGGER.debug("Find all messages");
         ApplicationUser user = userService.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
