@@ -1,16 +1,15 @@
-import {UserListDto} from "./user";
+import {UserListDto, UserListGroupDto} from "./user";
 
 export class GroupOverview {
   id: number;
   name: string;
-  host: UserListDto;
   cocktails?: string[];
-  members: UserListDto[];
+  host?: UserListDto;
+  members: UserListGroupDto[];
 
-  constructor(id: number, name: string, host: UserListDto, cocktails: string[], members: UserListDto[]) {
+  constructor(id: number, name: string, cocktails: string[], members: UserListGroupDto[]) {
    this.id = id;
    this.name = name;
-   this.host = host;
    this.cocktails = cocktails;
    this.members = members
   }

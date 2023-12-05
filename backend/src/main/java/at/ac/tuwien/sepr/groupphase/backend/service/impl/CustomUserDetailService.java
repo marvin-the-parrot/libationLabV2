@@ -1,20 +1,31 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.ResetPasswordDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListGroupDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PasswordResetDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ResetToken;
+import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepr.groupphase.backend.repository.ResetTokenRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.security.JwtTokenizer;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
+import at.ac.tuwien.sepr.groupphase.backend.service.validators.UserValidator;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.lang.invoke.MethodHandles;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Properties;
@@ -34,7 +45,6 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -50,27 +60,39 @@ public class CustomUserDetailService implements UserService {
     private static final Logger LOGGER =
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final UserRepository userRepository;
+    private final ResetTokenRepository resetTokenRepository;
+    private final UserGroupRepository userGroupRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenizer jwtTokenizer;
-
+    private final UserValidator validator;
     private final UserMapper userMapper;
 
     /**
      * Customer user detail service.
      *
-     * @param userRepository  - for persistence call
-     * @param passwordEncoder - of use password
-     * @param jwtTokenizer    - token
-     * @param userMapper      - mapper
+     * @param userRepository       - for persistence call
+     * @param resetTokenRepository - ?
+     * @param userGroupRepository  - for persistence call
+     * @param passwordEncoder      - of use password
+     * @param jwtTokenizer         - token
+     * @param validator            - user validation
+     * @param userMapper           - mapper
      */
+
     @Autowired
-    public CustomUserDetailService(UserRepository userRepository,
-                                   PasswordEncoder passwordEncoder, JwtTokenizer jwtTokenizer, UserMapper userMapper) {
+    public CustomUserDetailService(UserRepository userRepository, ResetTokenRepository resetTokenRepository,
+                                   UserGroupRepository userGroupRepository, PasswordEncoder passwordEncoder,
+                                   JwtTokenizer jwtTokenizer, UserValidator validator,
+                                   UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.resetTokenRepository = resetTokenRepository;
+        this.userGroupRepository = userGroupRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenizer = jwtTokenizer;
+        this.validator = validator;
         this.userMapper = userMapper;
     }
+
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -89,7 +111,7 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public ApplicationUser findApplicationUserByEmail(String email) {
+    public ApplicationUser findApplicationUserByEmail(String email) throws NotFoundException {
         LOGGER.debug("Find application user by email");
         ApplicationUser applicationUser = userRepository.findByEmail(email);
         if (applicationUser != null) {
@@ -100,7 +122,18 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
+    public ApplicationUser findApplicationUserById(Long userId) throws NotFoundException {
+        LOGGER.debug("Find application user by id");
+        ApplicationUser applicationUser = userRepository.findById(userId).orElseThrow();
+        if (applicationUser != null) {
+            return applicationUser;
+        }
+        throw new NotFoundException(String.format("Could not find the user with name %s", applicationUser.getName()));
+    }
+
+    @Override
     public String login(UserLoginDto userLoginDto) {
+        LOGGER.debug("Login user");
         UserDetails userDetails = loadUserByUsername(userLoginDto.getEmail());
         if (userDetails != null
             && userDetails.isAccountNonExpired()
@@ -118,8 +151,9 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public void register(UserCreateDto userCreateDto) throws ConstraintViolationException {
+    public void register(UserCreateDto userCreateDto) throws ConstraintViolationException, ValidationException {
         LOGGER.debug("Register new user");
+        validator.validateForCreate(userCreateDto);
         ApplicationUser applicationUser = new ApplicationUser(
             userCreateDto.getName(),
             userCreateDto.getEmail(),
@@ -131,27 +165,39 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public void resetPassword(PasswordResetDto passwordResetDto) {
+    public void resetPassword(ResetPasswordDto resetPasswordDto) {
         LOGGER.debug("Reset password");
-        ApplicationUser applicationUser = userRepository.findByEmail(passwordResetDto.getEmail());
-        //TODO: check token
+
+        ResetToken resetToken = resetTokenRepository.findByToken(resetPasswordDto.getToken());
+
+        if (resetToken == null) {
+            throw new NotFoundException(String.format("The Token is not valid", resetPasswordDto.getToken()));
+        }
+
+        ApplicationUser applicationUser = userRepository.findById(resetToken.getUserId()).orElse(null);
+
         if (applicationUser != null) {
-            applicationUser.setPassword(passwordEncoder.encode(passwordResetDto.getPassword()));
+            applicationUser.setPassword(passwordEncoder.encode(resetPasswordDto.getPassword()));
             userRepository.save(applicationUser);
             userRepository.flush();
+            resetTokenRepository.deleteById(resetToken.getId());
         } else {
-            throw new NotFoundException(String.format("Could not find the user with the email address %s", passwordResetDto.getEmail()));
+            throw new NotFoundException(String.format("Could not find the user for this Token", resetToken.getUserId()));
         }
     }
 
     @Override
     public List<UserListDto> search(UserSearchDto searchParams) {
         LOGGER.trace("search({})", searchParams);
-        return userMapper.userToUserListDto(userRepository.findByName(searchParams.getName()));
+        if (searchParams.getGroupId() == null) {
+            return searchExistingGroup(searchParams);
+        } else {
+            return searchCreatingGroup(searchParams);
+        }
     }
 
     @Override
-    public void forgotPassword(String email) {
+    public void forgotPassword(String email) throws NotFoundException {
         LOGGER.debug("Forgot password");
         ApplicationUser applicationUser = userRepository.findByEmail(email);
         if (applicationUser != null) {
@@ -159,6 +205,63 @@ public class CustomUserDetailService implements UserService {
         } else {
             throw new NotFoundException(String.format("Could not find the user with the email address %s", email));
         }
+    }
+
+
+    @Override
+    public UsernameDto getUsernameByEmail(String email) {
+        LOGGER.debug("Get username by email");
+        ApplicationUser applicationUser = userRepository.findByEmail(email);
+        if (applicationUser != null) {
+            UsernameDto username = new UsernameDto();
+            username.setUsername(applicationUser.getName());
+            return username;
+        }
+        throw new NotFoundException(String.format("Could not find the user with the email address %s", email));
+    }
+
+    @Override
+    public UserListDto getUserByEmail(String email) {
+        LOGGER.debug("Get user by email");
+        ApplicationUser applicationUser = userRepository.findByEmail(email);
+        if (applicationUser != null) {
+            UserListDto user = new UserListDto();
+            user.setId(applicationUser.getId());
+            user.setName(applicationUser.getName());
+            return user;
+        }
+        throw new NotFoundException(String.format("Could not find the user with the email address %s", email));
+    }
+
+    @Override
+    public List<UserListGroupDto> findUsersByGroup(ApplicationGroup group) {
+        LOGGER.debug("Find users by group");
+        List<UserGroup> userGroup = userGroupRepository.findAllByApplicationGroup(group);
+        List<UserListGroupDto> users = new ArrayList<>();
+        for (UserGroup userGroup1 : userGroup) {
+            ApplicationUser userData = (userRepository.findApplicationUsersByUserGroups(userGroup1));
+            UserListGroupDto user = new UserListGroupDto();
+            user.setId(userData.getId());
+            user.setName(userData.getName());
+            user.setHost(userGroup1.isHost());
+            users.add(user);
+        }
+        return users;
+    }
+
+    private List<UserListDto> searchExistingGroup(UserSearchDto searchParams) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<ApplicationUser> users = userGroupRepository.findUsersByGroupId(searchParams.getGroupId());
+        List<String> emails = new ArrayList<>();
+        for (ApplicationUser user : users) {
+            emails.add(user.getEmail());
+        }
+        return userMapper.userToUserListDto(userRepository.findFirst5ByEmailNotAndEmailNotInAndNameIgnoreCaseContaining(email, emails, searchParams.getName()));
+    }
+
+    private List<UserListDto> searchCreatingGroup(UserSearchDto searchParams) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userMapper.userToUserListDto(userRepository.findFirst5ByEmailNotAndNameIgnoreCaseContaining(email, searchParams.getName()));
     }
 
     private void sendEmail(String email) {
@@ -171,6 +274,8 @@ public class CustomUserDetailService implements UserService {
 
         // Recipient's email address
         String recipientEmail = email;
+
+        long userId = userRepository.findByEmail(recipientEmail).getId();
 
         // Setup properties for the SMTP server
         Properties properties = new Properties();
@@ -200,7 +305,7 @@ public class CustomUserDetailService implements UserService {
             message.setSubject("Reset your password");
 
             // Set the content of the email message
-            message.setText("Here is your link to reset your password: " + ResetPasswordLinkGenerator.generateResetLink(generateToken()));
+            message.setText("Here is your link to reset your password: " + ResetPasswordLinkGenerator.generateResetLink(generateToken(userId)));
 
             // Send the email
             Transport.send(message);
@@ -212,11 +317,18 @@ public class CustomUserDetailService implements UserService {
         }
     }
 
-    private static String generateToken() {
+    private String generateToken(long userId) {
         SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[32]; // Change the byte size as needed
         random.nextBytes(bytes);
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+        ResetToken resetToken = ResetToken.ResetTokenBuilder.resetToken()
+            .withUserId(userId)
+            .withToken(Base64.getUrlEncoder().withoutPadding().encodeToString(bytes))
+            .build();
+        resetTokenRepository.save(resetToken);
+        LOGGER.warn(resetTokenRepository.findAll().toString());
+
+        return resetToken.getToken();
     }
 
     private class ResetPasswordLinkGenerator {

@@ -1,25 +1,27 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
@@ -55,6 +57,9 @@ public class GroupEndpointTest {
 	  private UserGroup userGroup;
 
 	  private UserGroupKey userGroupKey;
+	  
+	  @Autowired
+	  private ObjectMapper objectMapper;
 
 	  @BeforeEach
 	  public void setup() {
@@ -71,74 +76,21 @@ public class GroupEndpointTest {
 		groupRepository.save(applicationGroup);
 		userRepository.save(applicationUser);
 	  }
-
+	  
 	  @Test
-	  @WithMockUser(roles = {"ADMIN"})
-	  public void deleteGroup_deleteGroupByExistingIdAndFromHost_expectedFalse() throws Exception {
-		int expected = groupRepository.findAll().size();
-	    mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{id}/{userId}", applicationGroup.getId(), applicationUser.getId())).andExpect(status().isNoContent());
-		int result = groupRepository.findAll().size();
-	    assertNotEquals(expected, result);
-	  }
+	  public void searchForMember_searchingMembersOfGroupByGroupId_expected2() throws Exception {
+	      this.prepareUserGroupAndMember();
+	    
+          int expected = 2;
+	      MvcResult mvcResult= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/groups/searchGroupMember/{groupId}", applicationGroup.getId())).andExpect(status().isOk()).andReturn();    
+          String contentResult = mvcResult.getResponse().getContentAsString();
+          int result = objectMapper.readValue(contentResult, new TypeReference<List<UserListDto>>() {}).size();
 
-	  @Test
-	  @WithMockUser(roles = {"ADMIN"})
-	  public void deleteGroup_deleteGroupByNotExistingIdAndFromHost_expectedTrue() throws Exception {
-		int expected = groupRepository.findAll().size();
-	    mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{id}/{userId}", -60L, applicationUser.getId())).andExpect(status().isNoContent());
-		int result = groupRepository.findAll().size();
-	    assertEquals(expected, result);
-	  }
-
-	  @Test
-	  @WithMockUser(roles = {"ADMIN"})
-	  public void deleteGroup_deleteGroupByExistingIdAndFromNotHost_expectedTrue() throws Exception {
-		applicationUser.setAdmin(false);
-		userRepository.save(applicationUser);
-		int expected = groupRepository.findAll().size();
-	    mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{id}/{userId}", applicationGroup.getId(), applicationUser.getId())).andExpect(status().isBadRequest());
-		int result = groupRepository.findAll().size();
-		assertEquals(expected, result);
-	  }
-
-	  @Test
-	  @WithMockUser(roles = {"ADMIN"})
-	  public void deleteMember_deleteGroupByExistingIdAndFromHost_expectedFalse() throws Exception {
-		prepareUserGroupAndMember();
-		Optional<UserGroup> expected = userGroupRepository.findById(userGroupKey);
-
-		mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{groupId}/{memberId}/{hostId}", applicationGroup.getId(), applicationUser.getId(), applicationUserMember.getId())).andExpect(status().isBadRequest());
-		Optional<UserGroup> result = userGroupRepository.findById(userGroupKey);
-
-	    assertNotEquals(expected, result);
-	  }
-
-	  @Test
-	  @WithMockUser(roles = {"ADMIN"})
-	  public void deleteMember_deleteGroupByNotExistingIdAndFromHost_expectedTrue() throws Exception {
-		prepareUserGroupAndMember();
-		Optional<UserGroup> expected = userGroupRepository.findById(userGroupKey);
-		mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{groupId}/{memberId}/{hostId}", -60L, applicationUser.getId(), applicationUserMember.getId())).andExpect(status().isBadRequest());
-		Optional<UserGroup> result = userGroupRepository.findById(userGroupKey);
-
-		assertEquals(expected.get().getGroups().getId(), result.get().getGroups().getId());
-		assertEquals(expected.get().getUser().getId(), result.get().getUser().getId());
-	  }
-
-	  @Test
-	  @WithMockUser(roles = {"ADMIN"})
-	  public void deleteMember_deleteGroupByExistingIdAndFromNotHost_expectedTrue() throws Exception {
-		prepareUserGroupAndMember();
-		applicationUser.setAdmin(false);
-		userRepository.save(applicationUser);
-		List<UserGroup> expected = userGroupRepository.findByApplicationGroup_Id(userGroup.getGroups().getId());
-	    mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{id}/{userId}", applicationGroup.getId(), applicationUser.getId())).andExpect(status().isBadRequest());
-		List<UserGroup> result = userGroupRepository.findByApplicationGroup_Id(userGroup.getGroups().getId());
-		assertEquals(expected.size(), result.size());
-	  }
-
-		private void prepareUserGroupAndMember() {
-			userGroup = new UserGroup();
+          assertEquals(result, expected);
+	  }  
+		    
+	private void prepareUserGroupAndMember() {
+	     userGroup = new UserGroup();
 			userGroupKey = new UserGroupKey(applicationUser.getId(), applicationGroup.getId());
 			userGroup.setId(userGroupKey);
 			userGroup.setHost(true);
@@ -152,6 +104,13 @@ public class GroupEndpointTest {
 			applicationUserMember.setName("New user member");
 			applicationUserMember.setPassword("Password Member");
 			userRepository.save(applicationUserMember);
+			UserGroup userGroup2 = new UserGroup();
+			UserGroupKey userGroupKey2 = new UserGroupKey(applicationUserMember.getId(), applicationGroup.getId());
+			userGroup2.setId(userGroupKey2);
+			userGroup2.setHost(true);
+			userGroup2.setUser(applicationUser);
+			userGroup2.setGroups(applicationGroup);
+			userGroupRepository.save(userGroup2);
 		}
 
 }

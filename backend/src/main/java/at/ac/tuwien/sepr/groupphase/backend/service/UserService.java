@@ -1,18 +1,23 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
+
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.ResetPasswordDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListGroupDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PasswordResetDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * Service for ApplicationUser Entity.
@@ -38,7 +43,15 @@ public interface UserService extends UserDetailsService {
      * @param email the email address
      * @return a application user
      */
-    ApplicationUser findApplicationUserByEmail(String email);
+    ApplicationUser findApplicationUserByEmail(String email) throws NotFoundException;
+
+    /**
+     * Find an application user based on the id.
+     *
+     * @param userId the id of the user
+     * @return a application user
+     */
+    ApplicationUser findApplicationUserById(Long userId) throws NotFoundException;
 
     /**
      * Log in a user.
@@ -54,21 +67,21 @@ public interface UserService extends UserDetailsService {
      *
      * @param userCreateDto create credentials
      */
-    void register(UserCreateDto userCreateDto) throws ConstraintViolationException;
+    void register(UserCreateDto userCreateDto) throws ConstraintViolationException, ValidationException;
 
     /**
      * Reset the password of a user.
      *
-     * @param passwordResetDto reset credentials
+     * @param resetPasswordDto reset credentials
      */
-    void resetPassword(PasswordResetDto passwordResetDto);
+    void resetPassword(ResetPasswordDto resetPasswordDto);
 
     /**
      * Retrieve all stored users, that match the given parameters.
      * The parameters may include a limit on the amount of results to return.
      *
-     *  @param searchParams parameters to search users by
-     *  @return a stream of users matching the parameters
+     * @param searchParams parameters to search users by
+     * @return a stream of users matching the parameters
      */
     List<UserListDto> search(UserSearchDto searchParams);
 
@@ -76,7 +89,29 @@ public interface UserService extends UserDetailsService {
     /**
      * Send an email to the user with a link to reset his password.
      *
-     *  @param email the email address of the user who forgot his password
+     * @param email the email address of the user who forgot his password
      */
-    void forgotPassword(String email);
+    void forgotPassword(String email) throws NotFoundException;
+
+    /**
+     * Get Username by email.
+     *
+     * @param email the email address of the user
+     */
+    UsernameDto getUsernameByEmail(String email);
+
+    /**
+     * Get Username and id by email.
+     *
+     * @param email the email address of the user
+     */
+    UserListDto getUserByEmail(String email);
+
+    /**
+     * Find all users of a group.
+     *
+     * @param group the group that we want to find the users for
+     * @return a list of groups
+     */
+    List<UserListGroupDto> findUsersByGroup(ApplicationGroup group);
 }

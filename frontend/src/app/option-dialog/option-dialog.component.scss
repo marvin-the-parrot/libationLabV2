@@ -1,0 +1,18 @@
+.options-buttons {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+  }
+  
+  .options-buttons button {
+    margin-right: 8px; 
+    border: none;
+  }
+
+  .orange-text {
+    color: orange;
+  }
+  
+  .red-text {
+    color: red;
+  }

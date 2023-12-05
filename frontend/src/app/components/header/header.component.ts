@@ -14,4 +14,6 @@ export class HeaderComponent implements OnInit {
 
   }
 
+  protected readonly sessionStorage = sessionStorage;
+  protected readonly localStorage = localStorage;
 }

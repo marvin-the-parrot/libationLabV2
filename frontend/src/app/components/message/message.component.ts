@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {MessageService} from '../../services/message.service';
 import {MessageDetailDto} from "../../dtos/message";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-message',
@@ -16,7 +17,10 @@ export class MessageComponent implements OnInit {
 
   private messages: MessageDetailDto[];
 
-  constructor(private messageService: MessageService) {
+  constructor(
+    private messageService: MessageService,
+    private notification: ToastrService
+  ) {
   }
 
   ngOnInit() {
@@ -32,16 +36,28 @@ export class MessageComponent implements OnInit {
   }
 
   acceptInvitation(message: MessageDetailDto) {
-
+    message.isRead = true;
+    return this.messageService.acceptGroupInvitation(message).subscribe({
+      next: () => {
+        this.notification.success("You joined " + message.group.name);
+        this.loadMessage();
+      },
+      error: error => {
+        console.log('Could not accept messages due to:');
+        this.defaultServiceErrorHandling(error);
+      }
+    });
   }
 
   declineInvitation(message: MessageDetailDto) {
     message.isRead = true;
     return this.messageService.update(message).subscribe({
       next: () => {
+        this.notification.success("You declined the group invitation from " + message.group.name);
         this.loadMessage();
       },
       error: error => {
+        console.log('Could not decline messages due to:');
         this.defaultServiceErrorHandling(error);
       }
     });
@@ -50,19 +66,14 @@ export class MessageComponent implements OnInit {
   deleteMessage(message: MessageDetailDto) {
     return this.messageService.deleteById(message.id).subscribe({
       next: () => {
+        this.notification.success("You deleted message from " + message.group.name);
         this.loadMessage();
       },
       error: error => {
+        console.log('Could not delete messages due to:');
         this.defaultServiceErrorHandling(error);
       }
     });
-  }
-
-  /**
-   * Error flag will be deactivated, which clears the error message
-   */
-  vanishError() {
-    this.error = false;
   }
 
   /**
@@ -74,6 +85,7 @@ export class MessageComponent implements OnInit {
         this.messages = messages;
       },
       error: error => {
+        console.log('Could not load messages due to:');
         this.defaultServiceErrorHandling(error);
       }
     });
@@ -82,11 +94,14 @@ export class MessageComponent implements OnInit {
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
-    if (typeof error.error === 'object') {
-      this.errorMessage = error.error.error;
-    } else {
-      this.errorMessage = error.error;
-    }
+    this.notification.error(error.error.detail);
+  }
+
+  /**
+   * Error flag will be deactivated, which clears the error message
+   */
+  vanishError() {
+    this.error = false;
   }
 
 }

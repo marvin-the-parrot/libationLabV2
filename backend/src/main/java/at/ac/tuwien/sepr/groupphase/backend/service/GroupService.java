@@ -1,13 +1,14 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 
-import java.util.Optional;
+import java.util.List;
 
 /**
  * Service for ApplicationGroup Entity.
@@ -20,32 +21,31 @@ public interface GroupService {
      * @param id the id of the group entry
      * @return the group entry
      */
-    ApplicationGroup findOne(Long id);
+    ApplicationGroup findOne(Long id) throws NotFoundException;
 
     /**
      * Deleting group entry by id, only possible by host.
      *
-     * @param groupId the id of the group
-     * @param hostId  the id of the host
+     * @param groupId         the id of the group
+     * @param currentUserMail the mail of the user that sends the request
      */
-    void deleteGroup(Long groupId, Long hostId);
+    void deleteGroup(Long groupId, String currentUserMail) throws ValidationException;
 
     /**
      * Deleting member user in group, only possible by host.
      *
-     * @param groupId  the id of the group
-     * @param hostId   the id of the host
-     * @param memberId the id of member to be deleted
+     * @param groupId         the id of the group
+     * @param userId          the id of member to be deleted
+     * @param currentUserMail the email of the user that sends the request
      */
-    void deleteMember(Long groupId, Long hostId, Long memberId);
+    void deleteMember(Long groupId, Long userId, String currentUserMail) throws ValidationException;
 
     /**
      * Searching for member of group.
      *
-     * @param groupId    the id of the group
-     * @param memberName the id of the member of group
+     * @param groupId the id of the group
      */
-    Optional<ApplicationUser> searchForMember(Long groupId, String memberName);
+    List<UserListDto> searchForMember(Long groupId);
 
     /**
      * Creates a new group with the data given in {@code toCreate}.
@@ -57,7 +57,7 @@ public interface GroupService {
      * @throws ConflictException   if the data given for the group
      *                             is in conflict the data currently in the system
      */
-    GroupOverviewDto create(GroupOverviewDto toCreate) throws ValidationException, ConflictException;
+    GroupCreateDto create(GroupCreateDto toCreate) throws ValidationException, ConflictException;
 
     /**
      * Updates the group with given ID with the data given in {@code toUpdate}.
@@ -71,6 +71,23 @@ public interface GroupService {
      * @throws ConflictException   if the data given for the group
      *                             is in conflict the data currently in the system
      */
-    GroupOverviewDto update(GroupOverviewDto toUpdate)
-        throws NotFoundException, ValidationException, ConflictException;
+    GroupCreateDto update(GroupCreateDto toUpdate) throws NotFoundException, ValidationException, ConflictException;
+
+    /**
+     * Find all group entries for this user.
+     *
+     * @param email the email of the user, used as an identifier
+     * @return all group entries for this user
+     */
+    List<UserGroup> findGroupsByUser(String email);
+
+    /**
+     * Make the user with the given ID host of the group with the given ID.
+     *
+     * @param groupId the ID of the group
+     * @param userId the ID of the user to make host
+     * @param currentUserMail the email of the user that sends the request
+     * @throws ValidationException if the user is not a member of the group or the current user is not the host
+     */
+    void makeMemberHost(Long groupId, Long userId, String currentUserMail) throws ValidationException;
 }

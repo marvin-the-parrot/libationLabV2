@@ -39,11 +39,13 @@ export class AuthService {
   logoutUser() {
     console.log('Logout');
     localStorage.removeItem('authToken');
+    localStorage.clear(); // Clears all data from local storage, adjust as needed
   }
 
   getToken() {
     return localStorage.getItem('authToken');
   }
+
 
   /**
    * Returns the user role based on the current token
@@ -76,5 +78,7 @@ export class AuthService {
     date.setUTCSeconds(decoded.exp);
     return date;
   }
+
+
 
 }

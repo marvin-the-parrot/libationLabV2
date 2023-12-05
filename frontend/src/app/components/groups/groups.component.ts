@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {GroupOverview} from "../../dtos/group-overview";
 import {GroupsService} from "../../services/groups.service";
+import {MessageDetailDto} from "../../dtos/message";
+import {UserListGroupDto} from "../../dtos/user";
 
 @Component({
   selector: 'app-groups',
@@ -10,31 +12,34 @@ import {GroupsService} from "../../services/groups.service";
 })
 export class GroupsComponent implements OnInit {
 
-  // todo: replace with real data
-  groups: GroupOverview[] = [new GroupOverview(1, "Cocktail Party", {
-    name: "Mr X",
-    id: 1
-  }, ["Mochito", "Mai Tai", "White Russian"], [{name: "Sep", id: 4}, {name: "Jan", id: 5}, {
-    name: "Peter",
-    id: 6
-  }, {name: "Susanne", id: 7}]),
-    new GroupOverview(2, "Party People", {name: "Mr Y", id: 2}, ["Mai Tai", "Mai Tai", "White Russian"], [{
-      name: "Jürgen",
-      id: 9
-    }, {name: "Hanz", id: 10}, {name: "Sibille", id: 11}, {name: "Rafael", id: 12}]),
-    new GroupOverview(3, "Friends", {name: "Mrs Z", id: 3}, ["Mochito", "Mai Tai", "White Russian"], [{
-      name: "Jürgen",
-      id: 9
-    }, {name: "Petra", id: 14}, {name: "Mark", id: 13}, {name: "Rafael", id: 12}])];
-
+  groups: GroupOverview[] = null;
+  username: string = localStorage.getItem('username');
 
   constructor(
     public authService: AuthService,
-    public service: GroupsService,
+    public groupService: GroupsService,
   ) {
   }
 
   ngOnInit() {
+    this.fetchGroups();
+  }
+
+  private fetchGroups() {
+    this.groupService.getAllByUser().subscribe({
+      next: (groups: GroupOverview[]) => {
+        for (let group of groups) {
+          if (group.cocktails==null){
+            group.cocktails=["Mojito", "Manhatten", "Old Fashioned", "B52"];
+          }
+        }
+        this.groups = groups;
+      },
+      error: error => {
+        console.error('Error fetching groups', error);
+        // Handle error appropriately (e.g., show a message to the user)
+      }
+  });
   }
 
 }

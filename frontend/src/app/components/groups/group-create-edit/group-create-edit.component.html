@@ -1,82 +1,98 @@
 <app-header></app-header>
 
 
-<h1 class="display-1">{{heading}}</h1>
+<div class="grid-container">
+  <div class="grid-item">
+    <div>
+      <h3>Create New Group</h3>
+    </div>
 
-<form #form="ngForm" [class.was-validated]="form.submitted" (ngSubmit)="onSubmit(form)">
-  <div class="row">
-    <div class="mb-2 col-lg-6">
-      <!-- When nesting rows, always make row > col-* > row. The Bootstrap classes do not work right when an element is both col* and row -->
-      <div class="row">
-        <label for="groupName" class="col-form-label text-md-end text-muted col-md-2 col-lg-4">
+    <form #form="ngForm" [class.was-validated]="form.submitted" (ngSubmit)="onSubmit(form)">
+
+      <div class="row group-name">
+        <label for="groupName" class="col-form-label text-md-end text-muted col-md-3 col-lg-3">
           Name
         </label>
-        <div class="col-md-10 col-lg-8">
+        <div class="wrapper col-md-6 col-lg-6">
           <input type="text"
                  id="groupName"
                  name="groupName"
-                 placeholder="GroupOverview name"
+                 placeholder="Group name"
                  class="form-control"
                  [class]="dynamicCssClassesForInput(groupNameModel)"
                  [(ngModel)]="group.name"
                  #groupNameModel="ngModel"
                  required
+                 autofocus
           >
+
           <div class="invalid-feedback">
             <!-- This is shown, when the form validation deems the name input to be invalid -->
-            Name is required
+            Name is required!
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- select members -->
-  <div>
-    <h2>Members</h2>
-    <div class="row">
-      <div class="col-lg-6 mb-2">
-        <app-autocomplete
-          name="memberSelection"
-          textInputClass="form-control"
-          [suggestions]="memberSuggestions"
-          [formatModel]="formatMember"
-          valueNeedsToMatchSuggestion="true"
-          [(ngModel)]="dummyMemberSelectionModel"
-          (ngModelChange)="addMember($event)"
-        >
-        </app-autocomplete>
+      <div class="row add-group-member">
+        <label for="memberSelectionInput" class="col-form-label text-md-end text-muted col-md-3 col-lg-3">
+          Add Member
+        </label>
+        <div class="wrapper col-md-6 col-lg-6">
+
+          <app-autocomplete
+            id="memberSelectionInput"
+            name="memberSelection"
+            textInputClass="form-control"
+            [suggestions]="memberSuggestions"
+            [formatModel]="formatMember"
+            valueNeedsToMatchSuggestion="true"
+            [(ngModel)]="user"
+          >
+          </app-autocomplete>
+
+          <button type="button" class="btn rounded-button" (click)="addMember(user)">
+            <i class="bi bi-person-fill-add"></i>
+          </button>
+        </div>
       </div>
 
-      <div class="col-lg-6">
-        <table class="table align-baseline">
-          <tbody>
-          <tr *ngFor="let member of group.members; index as i">
-            <td>{{i}}:</td>
-            <td>{{formatMember(member)}}</td>
-            <td class="min-width">
-              <!-- Make button just hidden, when no participant is present, to keep layout correct -->
-              <button type="button"
-                      class="btn btn-light ms-2"
-                      (click)="removeMember(i)"
-                      [style.visibility]="member ? 'visible' : 'hidden'">
-                <i class="bi-trash"></i>
-              </button>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+      <div class="row">
+        <div class="col-md-3 col-lg-3"></div>
+        <div class="col-md-6 col-lg-6">
+
+          <div class="table-container">
+            <p class="entry-count">{{ group.members.length }} User in Group</p>
+
+            <table class="table align-baseline equal-columns">
+              <tbody>
+                <tr class="list-row" *ngFor="let member of group.members; index as i">
+
+
+                  <td class="member-column">{{formatMember(member)}}</td>
+                  <td class="table-element table-button">
+                    <!-- Make button just hidden, when no participant is present, to keep layout correct -->
+                    <button *ngIf="!member.isHost" type="button"
+                            class="btn btn-light delete-button"
+                            (click)="removeMember(i)"
+                            [style.visibility]="member ? 'visible' : 'hidden'">
+                      <i class="bi bi-dash-circle"></i>
+                    </button>
+                    <div *ngIf="group.host.name === member.name" class="crown">👑</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+        <div class="col-lg-3 d-flex align-items-end justify-content-center">
+          <button type="submit"
+                  class="btn btn-primary custom-button"
+                  [disabled]="!form.valid">
+            {{submitButtonText}}
+          </button>
+        </div>
       </div>
-    </div>
+    </form>
   </div>
-
-  <div class="mt-4 d-flex flex-row">
-    <button type="submit"
-            class="btn btn-primary"
-            [disabled]="!form.valid">{{submitButtonText}}</button>
-  </div>
-
-  <!-- todo: add cancel button -->
-  <!-- todo: add delete button -->
-
-</form>
+</div>

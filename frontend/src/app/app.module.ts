@@ -20,6 +20,14 @@ import { GroupDetailComponent } from './components/groups/group-detail/group-det
 import { CreateAccountComponent } from './components/create-account/create-account.component';
 import {ForgotPasswordComponent} from "./components/forgot-password/forgot-password.component";
 import {ResetPasswordComponent} from "./components/reset-password/reset-password.component";
+import {ToastrModule} from "ngx-toastr";
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { OptionDialogComponent } from './option-dialog/option-dialog.component';
+import { GroupEditComponent } from './components/groups/group-edit/group-edit.component';
+import { UserSettingsComponent } from './components/user-settings/user-settings.component';
+
 
 @NgModule({
   declarations: [
@@ -37,6 +45,10 @@ import {ResetPasswordComponent} from "./components/reset-password/reset-password
     CreateAccountComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
+    ConfirmationDialogComponent,
+    OptionDialogComponent,
+    GroupEditComponent,
+    UserSettingsComponent,
   ],
   imports: [
     BrowserModule,
@@ -45,6 +57,9 @@ import {ResetPasswordComponent} from "./components/reset-password/reset-password
     HttpClientModule,
     NgbModule,
     FormsModule,
+    ToastrModule.forRoot(),
+    BrowserAnimationsModule,
+    MatDialogModule,
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

@@ -1,10 +1,40 @@
 <app-header></app-header>
 
-<div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
-  <strong>Error! </strong> {{ errorMessage }}
-  <button type="button" (click)="vanishError()" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
+<div class="grid-container">
+  <div class="grid-item">
+    <div>
+      <h3>Notifications</h3>
+    </div>
+    <div class="message-list">
+      <div class="col-xl-12 col-lg-12 border-bottom" *ngFor="let message of getMessage()">
+        <div class="card-body"
+             [ngStyle]="{'background-color':message.isRead === false ? 'rgba(255, 255, 255, 1)' : 'rgba(200, 200, 200, 0.4)'}">
+          <h5 class="card-title col-xl-2 col-lg-2 p-1">{{message.group.name}}</h5>
+          <h6 class="card-subtitle mb-2 text-muted col-xl-2 col-lg-2 p-1">{{message.sentAt | date}}</h6>
+          <div class="card-text col-xl-6 col-lg-6 p-1">{{getText(message)}}</div>
+          <div class="card-buttons col-xl-2 col-lg-2 p-1">
+            <div class="btn-group" *ngIf="message.isRead === false">
+              <button class="btn btn-info btn-sm responsive-info-button"
+                      aria-label="Accept GroupOverview Invation"
+                      (click)="acceptInvitation(message)">
+                <i class="bi bi-check-lg"></i>
+              </button>
+              <button class="btn btn-danger btn-sm responsive-warning-button"
+                      aria-label="Decline GroupOverview Invitaion"
+                      (click)="declineInvitation(message)">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+            <button class="btn btn-trash btn-sm responsive-danger-button"
+                    aria-label="Trash GroupOverview Invitaion" *ngIf="message.isRead === true"
+                    (click)="deleteMessage(message)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 
@@ -12,67 +42,42 @@
 
   <div class="row">
 
-    <div class="card p-5">
-      <h2>Messages</h2>
+    <!--div class="card p-5">
+      <h2>Notifications</h2>
 
       <div class="col-xl-12 col-lg-12" *ngFor="let message of getMessage()">
 
         <div class="card-deck">
-
-          <div class="card-body" [ngStyle]="{'opacity':message.isRead === false ? '1' : '0.4'}">
+          <div class="card-body" [ngStyle]="{'background-color':message.isRead === false ? 'rgba(255, 255, 255, 1)' : 'rgba(200, 200, 200, 0.4)'}">
             <h5 class="card-title col-xl-2 col-lg-2 p-1">{{message.group.name}}</h5>
             <h6 class="card-subtitle mb-2 text-muted col-xl-2 col-lg-2 p-1">{{message.sentAt | date}}</h6>
             <div class="card-text col-xl-6 col-lg-6 p-1">{{getText(message)}}</div>
             <div class="card-buttons col-xl-2 col-lg-2 p-1">
               <div class="btn-group" *ngIf="message.isRead === false">
-                <a class="btn btn-check btn-sm responsive-info-button"
+                <button class="btn btn-info btn-sm responsive-info-button"
                    aria-label="Accept GroupOverview Invation"
                    (click)="acceptInvitation(message)">
                   <i class="bi bi-check-lg"></i>
-                </a>
-                <a class="btn btn-danger btn-sm responsive-warning-button"
+                </button>
+                <button class="btn btn-danger btn-sm responsive-warning-button"
                    aria-label="Decline GroupOverview Invitaion"
                    (click)="declineInvitation(message)">
                   <i class="bi bi-x-lg"></i>
-                </a>
+                </button>
               </div>
-              <a class="btn btn-trash btn-sm responsive-danger-button"
+              <button class="btn btn-trash btn-sm responsive-danger-button"
                  aria-label="Trash GroupOverview Invitaion" *ngIf="message.isRead === true"
                  (click)="deleteMessage(message)">
                 <i class="bi bi-trash"></i>
-              </a>
+              </button>
             </div>
           </div>
-
-          <div [ngClass]="['modal', 'fade', 'message-modal-'+message.id]" tabindex="-1" role="dialog"
-               aria-labelledby="Message details modal"
-               aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title">{{message.group.name}}</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <p class="lead"><span class="font-italic">{{message.sentAt | date}}</span> {{getText(message)}}</p>
-                  <p class="mt-2"> {{getText(message)}} </p>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
 
       </div>
-    </div>
+    </div-->
 
 
   </div>
-
 </div>
 

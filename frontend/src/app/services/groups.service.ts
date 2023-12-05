@@ -3,6 +3,7 @@ import {Globals} from "../global/globals";
 import {GroupOverview} from "../dtos/group-overview";
 import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
+import { UserListDto } from "../dtos/user";
 
 @Injectable({
   providedIn: 'root'
@@ -56,29 +57,40 @@ export class GroupsService {
    * @param groupId the id of the group
    * @param name the name of member
    */
-  getByName(groupId: number, name: string): Observable<GroupOverview> {
-    return this.httpClient.get<GroupOverview>(`${this.baseUri}/${groupId}/${name}`);
+  getMembersOfGroup(groupId: number): Observable<UserListDto[]> {
+    return this.httpClient.get<UserListDto[]>(`${this.baseUri}/searchGroupMember/${groupId}`);
   }
 
   /**
    * Delete a GroupOverview by its id.
    *
    * @param groupId the id of the group
-   * @param hostId the id of host
    */
-  deleteById(groupId: number, hostId: number): void {
-    this.httpClient.delete<GroupOverview>(`${this.baseUri}/${groupId}/${hostId}`);
+  deleteGroup(groupId: number): Observable<GroupOverview> {
+    return this.httpClient.delete<GroupOverview>(`${this.baseUri}/${groupId}`);
   }
 
   /**
    * Delete a member of GroupOverview by its id.
    *
-   * @param id the id of the group
+   * @param groupId the id of the group
    * @param memberId the id of member to delete
-   * @param hostId the id of host
    */
-  deleteByMemberByIdAndGroupId(groupId: number, memberId: number, hostId: number): void {
-    this.httpClient.delete<GroupOverview>(`${this.baseUri}/${groupId}/${memberId}/${hostId}`);
+  removeMemberFromGroup(groupId: number, memberId: number): Observable<GroupOverview> {
+    return this.httpClient.delete<GroupOverview>(this.baseUri + '/' + groupId + '/' + memberId);
   }
 
+  /**
+   * Make a member the host of a group.
+   *
+   * @param groupId the id of the group
+   * @param memberId the id of member to make host
+   */
+  makeMemberHost(groupId: number, memberId: number): Observable<GroupOverview> {
+    return this.httpClient.put<GroupOverview>(this.baseUri + '/' + groupId + '/' + memberId, null);
+  }
+
+  getAllByUser() {
+    return this.httpClient.get<GroupOverview[]>(`${this.baseUri}`);
+  }
 }

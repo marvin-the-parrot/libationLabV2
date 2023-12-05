@@ -1,11 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import {GroupOverview} from "../../../dtos/group-overview";
 import {GroupsService} from "../../../services/groups.service";
-import {ActivatedRoute, Router} from "@angular/router";
+import {Router} from "@angular/router";
 import {NgForm, NgModel} from "@angular/forms";
-import {Observable} from "rxjs";
-import {UserListDto} from "../../../dtos/user";
+import {ToastrService} from 'ngx-toastr';
+import {Observable, of} from "rxjs";
+import {UserListDto, UserListGroupDto} from "../../../dtos/user";
 import {UserService} from "../../../services/user.service";
+import {DialogService} from 'src/app/services/dialog.service';
+import {ConfirmationDialogMode} from "../../../confirmation-dialog/confirmation-dialog.component";
+import {ErrorFormatterService} from "../../../services/error-formatter.service";
 
 export enum GroupCreateEditMode {
   create,
@@ -24,27 +28,52 @@ export class GroupCreateEditComponent implements OnInit {
   group: GroupOverview = {
     id: 0,
     name: '',
-    host: null,
     cocktails: [],
     members: [],
   }
+
+  user: UserListGroupDto = {
+    id: null,
+    name: '',
+    isHost: false
+  };
 
   dummyMemberSelectionModel: unknown; // Just needed for the autocomplete
 
   constructor(
     private service: GroupsService,
     private userService: UserService,
-    private router: Router
+    private dialogService: DialogService,
+    private notification: ToastrService,
+    private router: Router,
+    private errorFormatter: ErrorFormatterService,
   ) {
   }
 
   ngOnInit(): void {
+
+    // add the user that creates the group first and make him the host
+    var user = JSON.parse(localStorage.getItem('user'));
+    if (user == null) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    var host: UserListGroupDto = {
+      id: user.id,
+      name: user.name,
+      isHost: true
+    }
+
+    this.group.members.push(host);
+    this.group.host = host;
+
   }
 
   public get heading(): string {
     switch (this.mode) {
       case GroupCreateEditMode.create:
-        return 'Create GroupOverview';
+        return 'Create Group';
       case GroupCreateEditMode.edit:
         return `Edit: ${this.group.name}`;
       default:
@@ -63,6 +92,26 @@ export class GroupCreateEditComponent implements OnInit {
     }
   }
 
+  get modeIsCreate(): boolean {
+    return this.mode === GroupCreateEditMode.create;
+  }
+
+  public onDelete(): void {
+    this.dialogService.openConfirmationDialog(ConfirmationDialogMode.Delete).subscribe((result) => {
+      if (result) {
+        this.service.deleteGroup(this.group.id).subscribe({
+          next: data => {
+            this.notification.success(`Successfully deleted Group "${this.group.name}".`);
+            this.router.navigate(['/groups']);
+          },
+          error: error => {
+            console.error('Error deleting group', error);
+            this.notification.error(`Error deleting group "${this.group.name}".`);
+          }
+        });
+      }
+    });
+  }
 
   public onSubmit(form: NgForm) {
     console.log("is form valid?", form.valid, this.group);
@@ -82,27 +131,28 @@ export class GroupCreateEditComponent implements OnInit {
       }
 
       observable.subscribe({
-          next: data => {
-            // todo: show success message
-            this.router.navigate(["/groups"]);
-          },
+        next: data => {
+          this.router.navigate(["/groups"]);
+          this.notification.success(`Successfully ${this.modeIsCreate ? 'created' : 'updated'} Group "${this.group.name}".`);
+        },
         error: error => {
-            console.error("Error creating/editing group", error);
-            // todo: show error message
+          console.error("Error creating/editing group", error);
+          this.notification.error(this.errorFormatter.format(error), `Error ${this.modeIsCreate ? 'creating' : 'updating'} group "${this.group.name}".`, {
+            enableHtml: true,
+            timeOut: 10000,
+          });
         }
-        });
+      });
 
     }
   }
 
-  memberSuggestions = (input: string) : Observable<UserListDto[]> =>
-    this.userService.search({name: input, limit: 5});
-
+  memberSuggestions = (input: string): Observable<UserListDto[]> => (input === '')
+    ? of([])
+    : this.userService.search(input, this.group.id);
 
   public formatMember(member: UserListDto | null): string {
-    return !member
-      ? ""
-      : `${member.name}`
+    return member?.name ?? '';
   }
 
   public dynamicCssClassesForInput(input: NgModel): any {
@@ -111,19 +161,22 @@ export class GroupCreateEditComponent implements OnInit {
     }
   }
 
-  public addMember(user: UserListDto | null) {
-    if (user == null)
+  public addMember(user: UserListGroupDto | null) {
+
+    if (user == null || user.id == null)
       return;
 
     setTimeout(() => {
       for (let i = 0; i < this.group.members.length; i++) {
         if (this.group.members[i]?.id === user.id) {
           // todo: show error message: duplicate member
+          this.notification.error(`User "${user.name}" is already a member of this group.`);
           this.dummyMemberSelectionModel = null;
           return;
         }
       }
       this.group.members.push(user);
+      this.user = null;
     })
   }
 

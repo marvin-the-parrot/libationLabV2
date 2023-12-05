@@ -14,7 +14,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,27 +56,55 @@ public class GroupDataGenerator {
                 groupRepository.save(group);
             }
 
-            // <userId, groupId>
-            Map<Long, Long> userGroupMap = new HashMap<Long, Long>();
-            userGroupMap.put((long) 1, (long) 1);
-            userGroupMap.put((long) 2, (long) 1);
-            userGroupMap.put((long) 3, (long) 1);
-            userGroupMap.put((long) 4, (long) 2);
-            userGroupMap.put((long) 5, (long) 2);
-            userGroupMap.put((long) 6, (long) 2);
-            userGroupMap.put((long) 7, (long) 2);
-            userGroupMap.put((long) 8, (long) 3);
-            userGroupMap.put((long) 9, (long) 3);
+            List<Long> users = new ArrayList<>();
+            List<Long> groups = new ArrayList<>();
+            List<Boolean> hosts = new ArrayList<>();
 
-            for (int i = 1; i <= userGroupMap.size(); i++) {
-                ApplicationUser user = userRepository.findById((long) i).orElse(null);
-                ApplicationGroup groupTest = groupRepository.findById(userGroupMap.get((long) i)).orElse(null);
+            users.add(1L);
+            hosts.add(true);
+            groups.add(1L);
+
+            users.add(1L);
+            hosts.add(false);
+            groups.add(2L);
+
+            users.add(3L);
+            hosts.add(false);
+            groups.add(1L);
+
+            users.add(4L);
+            hosts.add(false);
+            groups.add(1L);
+
+            users.add(5L);
+            hosts.add(true);
+            groups.add(2L);
+
+            users.add(6L);
+            hosts.add(false);
+            groups.add(2L);
+
+            users.add(7L);
+            hosts.add(true);
+            groups.add(3L);
+
+            users.add(8L);
+            hosts.add(false);
+            groups.add(3L);
+
+            users.add(9L);
+            hosts.add(false);
+            groups.add(3L);
+
+            for (int i = 0; i < users.size(); i++) {
+                ApplicationUser user = userRepository.findById(users.get(i)).orElse(null);
+                ApplicationGroup groupTest = groupRepository.findById(groups.get(i)).orElse(null);
 
                 UserGroup userGroup = UserGroup.UserGroupBuilder.userGroup()
                     .withUserGroupKey(new UserGroupKey(user.getId(), groupTest.getId()))
                     .withUser(user)
                     .withGroup(groupTest)
-                    .withIsHost(true)
+                    .withIsHost(hosts.get(i))
                     .build();
                 LOGGER.debug("saving userGroup {}", userGroup);
                 userGroupRepository.save(userGroup);
