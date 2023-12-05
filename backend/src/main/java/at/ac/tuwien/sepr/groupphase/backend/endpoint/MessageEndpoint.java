@@ -68,8 +68,7 @@ public class MessageEndpoint {
      */
     @Secured("ROLE_USER")
     @GetMapping
-    @Operation(summary = "Get list of messages without details",
-        security = @SecurityRequirement(name = "apiKey"))
+    @Operation(summary = "Get list of messages without details")
     public List<MessageDetailDto> findAll() {
         LOGGER.info("GET /api/v1/messages");
         List<ApplicationMessage> messages = messageService.findAll();
@@ -90,7 +89,7 @@ public class MessageEndpoint {
     //@Secured("ROLE_USER")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
-    @Operation(summary = "Publish a new message", security = @SecurityRequirement(name = "apiKey"))
+    @Operation(summary = "Publish a new message")
     public MessageDetailDto create(@Valid @RequestBody MessageCreateDto message) {
         LOGGER.info("POST /api/v1/messages body: {}", message);
         if (message == null) {
@@ -121,7 +120,7 @@ public class MessageEndpoint {
     @Secured("ROLE_USER")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/accept")
-    @Operation(summary = "Accept a group invation", security = @SecurityRequirement(name = "apiKey"))
+    @Operation(summary = "Accept a group invation")
     public void acceptGroupInvitation(@Valid @RequestBody MessageDetailDto message) {
         LOGGER.info("POST /api/v1/messages body: {}", message);
         try {
@@ -153,7 +152,7 @@ public class MessageEndpoint {
      */
     @Secured("ROLE_USER")
     @PutMapping("{id}")
-    @Operation(summary = "Update Message", security = @SecurityRequirement(name = "apiKey"))
+    @Operation(summary = "Update Message")
     public MessageDetailDto update(@PathVariable long id, @RequestBody MessageDetailDto toUpdate)
         throws ValidationException, ConflictException {
         LOGGER.info("PUT " + BASE_PATH + "/{}", toUpdate);
@@ -182,7 +181,7 @@ public class MessageEndpoint {
      */
     @DeleteMapping("/{messageId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(security = @SecurityRequirement(name = "apiKey"))
+    @Operation(summary = "Delete Message")
     public void delete(@PathVariable Long messageId) {
         LOGGER.info("DELETE " + BASE_PATH + "/{}", messageId);
         try {

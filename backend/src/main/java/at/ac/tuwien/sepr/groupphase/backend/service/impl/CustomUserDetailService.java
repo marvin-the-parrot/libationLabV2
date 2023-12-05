@@ -260,7 +260,6 @@ public class CustomUserDetailService implements UserService {
     }
 
     private List<UserListDto> searchCreatingGroup(UserSearchExistingGroupDto searchParams) {
-        //TODO: check if user is already in group
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userMapper.userToUserListDto(userRepository.findFirst5ByEmailNotAndNameIgnoreCaseContaining(email, searchParams.getName()));
     }

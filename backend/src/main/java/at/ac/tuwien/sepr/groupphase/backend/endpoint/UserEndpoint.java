@@ -42,13 +42,12 @@ public class UserEndpoint {
     private final UserService userService;
 
     @Autowired
-    public UserEndpoint(GroupService groupService, GroupMapper groupMapper, UserService userService) {
+    public UserEndpoint(UserService userService) {
         this.userService = userService;
     }
 
     @Secured("ROLE_USER")
     @GetMapping
-    @PermitAll
     public List<UserListDto> search(@Valid UserSearchExistingGroupDto searchParams) {
         LOGGER.info("GET " + BASE_PATH);
         LOGGER.debug("Request Params: {}", searchParams);
