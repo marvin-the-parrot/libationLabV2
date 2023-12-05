@@ -59,7 +59,7 @@ export class GroupDetailComponent {
 
   memberSuggestions = (input: string): Observable<UserListDto[]> => (input === '')
     ? of([])
-    : this.userService.search(input, this.route.snapshot.params['id']);
+    : this.userService.searchUsersGroupExisting(input, this.route.snapshot.params['id']);
 
   public formatMember(member: UserListDto | null): string {
     return member?.name ?? '';

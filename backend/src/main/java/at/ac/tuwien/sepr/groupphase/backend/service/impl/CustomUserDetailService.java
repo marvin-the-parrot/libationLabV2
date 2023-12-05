@@ -6,7 +6,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchExistingGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
@@ -187,12 +187,12 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public List<UserListDto> search(UserSearchDto searchParams) {
+    public List<UserListDto> search(UserSearchExistingGroupDto searchParams) {
         LOGGER.trace("search({})", searchParams);
         if (searchParams.getGroupId() == null) {
-            return searchExistingGroup(searchParams);
-        } else {
             return searchCreatingGroup(searchParams);
+        } else {
+            return searchExistingGroup(searchParams);
         }
     }
 
@@ -249,7 +249,7 @@ public class CustomUserDetailService implements UserService {
         return users;
     }
 
-    private List<UserListDto> searchExistingGroup(UserSearchDto searchParams) {
+    private List<UserListDto> searchExistingGroup(UserSearchExistingGroupDto searchParams) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         List<ApplicationUser> users = userGroupRepository.findUsersByGroupId(searchParams.getGroupId());
         List<String> emails = new ArrayList<>();
@@ -259,7 +259,8 @@ public class CustomUserDetailService implements UserService {
         return userMapper.userToUserListDto(userRepository.findFirst5ByEmailNotAndEmailNotInAndNameIgnoreCaseContaining(email, emails, searchParams.getName()));
     }
 
-    private List<UserListDto> searchCreatingGroup(UserSearchDto searchParams) {
+    private List<UserListDto> searchCreatingGroup(UserSearchExistingGroupDto searchParams) {
+        //TODO: check if user is already in group
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userMapper.userToUserListDto(userRepository.findFirst5ByEmailNotAndNameIgnoreCaseContaining(email, searchParams.getName()));
     }

@@ -6,7 +6,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchExistingGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
@@ -83,7 +83,7 @@ public interface UserService extends UserDetailsService {
      * @param searchParams parameters to search users by
      * @return a stream of users matching the parameters
      */
-    List<UserListDto> search(UserSearchDto searchParams);
+    List<UserListDto> search(UserSearchExistingGroupDto searchParams);
 
 
     /**
