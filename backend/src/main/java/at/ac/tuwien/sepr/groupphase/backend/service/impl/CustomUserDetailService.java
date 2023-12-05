@@ -184,9 +184,9 @@ public class CustomUserDetailService implements UserService {
     public List<UserListDto> search(UserSearchExistingGroupDto searchParams) {
         LOGGER.trace("search({})", searchParams);
         if (searchParams.getGroupId() == null) {
-            return searchExistingGroup(searchParams);
-        } else {
             return searchCreatingGroup(searchParams);
+        } else {
+            return searchExistingGroup(searchParams);
         }
     }
 
