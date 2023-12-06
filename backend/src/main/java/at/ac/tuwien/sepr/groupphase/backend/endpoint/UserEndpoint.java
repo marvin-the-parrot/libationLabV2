@@ -5,6 +5,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.ResetPasswordDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserEmailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLocalStorageDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchExistingGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
@@ -112,24 +113,10 @@ public class UserEndpoint {
         }
     }
 
-    @GetMapping("/username")
-    @PermitAll
-    @ResponseStatus(HttpStatus.OK)
-    public UsernameDto getUsername() {
-        LOGGER.info("GET /api/v1/user/username");
-        try {
-            return userService.getUsernameByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        } catch (NotFoundException e) {
-            HttpStatus status = HttpStatus.NOT_FOUND;
-            logClientError(status, "Failed to get username", e);
-            throw new ResponseStatusException(status, e.getMessage(), e);
-        }
-    }
-
     @GetMapping("/user")
     @PermitAll
     @ResponseStatus(HttpStatus.OK)
-    public UserListDto getUser() {
+    public UserLocalStorageDto getUser() {
         LOGGER.info("GET /api/v1/user/user");
         String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
         try {

@@ -32,8 +32,7 @@ export class HeaderComponent implements OnInit {
     this.loadMessage();
   }
 
-  protected readonly sessionStorage = sessionStorage;
-  protected readonly localStorage = localStorage;
+  protected readonly username = JSON.parse(localStorage.getItem('user')).name;
 
   public getUnreadMessageCount(): number {
     if (this.message == null) {
