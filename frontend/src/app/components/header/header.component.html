@@ -37,6 +37,7 @@
         <a class="nav-link bell-nav-link" *ngIf="authService.isLoggedIn()" routerLink="/message" routerLinkActive="active">
           <i class="bi bi-bell-fill custom-bell"></i>
           <span class="badge-round" *ngIf="getUnreadMessageCount() > 0">{{getUnreadMessageCount()}}</span>
+          <span class="badge-round" *ngIf="getUnreadMessageCount() > 9">+</span>
         </a>
       </li>
       <span class="navbar-text">Hello, {{localStorage.getItem('username')}}</span>

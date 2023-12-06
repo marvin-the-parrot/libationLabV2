@@ -36,6 +36,9 @@ export class HeaderComponent implements OnInit {
   protected readonly localStorage = localStorage;
 
   public getUnreadMessageCount(): number {
+    if (this.message == null) {
+      return 0;
+    }
     return this.message.count;
   }
 

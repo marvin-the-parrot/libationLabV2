@@ -2,12 +2,14 @@ package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
+import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.MessageService;
 
 import java.lang.invoke.MethodHandles;
@@ -33,13 +35,15 @@ public class SimpleMessageService implements MessageService {
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final MessageRepository messageRepository;
     private final UserService userService;
+    private final GroupService groupService;
     private final MessageValidator validator;
 
     @Autowired
-    public SimpleMessageService(MessageRepository messageRepository, UserService userService, MessageValidator validator) {
+    public SimpleMessageService(MessageRepository messageRepository, UserService userService, MessageValidator validator, GroupService groupService) {
         this.messageRepository = messageRepository;
         this.userService = userService;
         this.validator = validator;
+        this.groupService = groupService;
     }
 
     @Override
@@ -60,8 +64,10 @@ public class SimpleMessageService implements MessageService {
     public ApplicationMessage create(MessageCreateDto message) throws ConstraintViolationException, ValidationException {
         LOGGER.debug("Publish new message {}", message);
         validator.validateForCreate(message);
+        ApplicationGroup group = groupService.findOne(message.getGroupId());
         ApplicationMessage applicationMessage = ApplicationMessage.ApplicationMessageBuilder.message()
             .withApplicationUser(userService.findApplicationUserById(message.getUserId()))
+            .withText("You were invited to drink with " + group.getName())
             .withGroupId(message.getGroupId())
             .withIsRead(false)
             .withSentAt(LocalDateTime.now())
