@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredients;
+import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.IngredientsService;
 
@@ -15,11 +15,15 @@ import at.ac.tuwien.sepr.groupphase.backend.service.IngredientsService;
 @Service
 public class IngredientsServiceImpl implements IngredientsService {
 
+    private final IngredientsRepository ingredientsRepository;
+
     @Autowired
-    private IngredientsRepository ingredientsRepository;
+    public IngredientsServiceImpl(IngredientsRepository ingredientsRepository) {
+        this.ingredientsRepository = ingredientsRepository;
+    }
 
     @Override
-    public List<Ingredients> searchIngredients(String ingredientsName) {
+    public List<Ingredient> searchIngredients(String ingredientsName) {
         return ingredientsRepository.searchIngredients(ingredientsName);
     }
 
