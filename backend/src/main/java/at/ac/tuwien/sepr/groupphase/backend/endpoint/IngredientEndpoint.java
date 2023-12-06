@@ -1,10 +1,12 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
 import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
 import java.util.List;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.IngredientMapper;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import jakarta.validation.Valid;
@@ -35,12 +37,10 @@ public class IngredientEndpoint {
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     static final String BASE_PATH = "/api/v1/ingredients";
     private final IngredientService ingredientService;
-    private final IngredientMapper ingredientMapper;
 
     @Autowired
-    public IngredientEndpoint(IngredientService ingredientService, IngredientMapper ingredientMapper) {
+    public IngredientEndpoint(IngredientService ingredientService) {
         this.ingredientService = ingredientService;
-        this.ingredientMapper = ingredientMapper;
     }
 
     @PermitAll
@@ -57,7 +57,7 @@ public class IngredientEndpoint {
     public List<IngredientDto> getAllGroupIngredients(@Valid Long groupId) {
         LOGGER.info("GET " + BASE_PATH + "getAllGroupIngredients/{}", groupId);
         try {
-            return ingredientMapper.ingredientToIngredientDto(ingredientService.getAllGroupIngredients(groupId));
+            return ingredientService.getAllGroupIngredients(groupId);
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Group not found", e);

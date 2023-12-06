@@ -1,16 +1,14 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.IngredientMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
-import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
-import at.ac.tuwien.sepr.groupphase.backend.service.UserGroupService;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,14 +23,14 @@ import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
 public class IngredientServiceImpl implements IngredientService {
 
     private final IngredientsRepository ingredientsRepository;
-    private final GroupService groupService;
     private final UserGroupRepository userGroupRepository;
+    private final IngredientMapper ingredientMapper;
 
     @Autowired
-    public IngredientServiceImpl(IngredientsRepository ingredientsRepository, GroupService groupService, UserGroupRepository userGroupRepository) {
+    public IngredientServiceImpl(IngredientsRepository ingredientsRepository, UserGroupRepository userGroupRepository, IngredientMapper ingredientMapper) {
         this.ingredientsRepository = ingredientsRepository;
-        this.groupService = groupService;
         this.userGroupRepository = userGroupRepository;
+        this.ingredientMapper = ingredientMapper;
     }
 
     @Override
@@ -41,14 +39,19 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    public List<Ingredient> getAllGroupIngredients(Long groupId) throws NotFoundException {
+    public List<IngredientDto> getAllGroupIngredients(Long groupId) throws NotFoundException {
         List<ApplicationUser> applicationUser = userGroupRepository.findUsersByGroupId(groupId);
 
         if (applicationUser == null || applicationUser.isEmpty()) {
             throw new NotFoundException("No users found for group");
         }
 
-        return ingredientsRepository.findAllByApplicationUserIn(applicationUser);
+        List<IngredientDto> ingredientDtos = new ArrayList<>();
+        List<Ingredient> ingredients = ingredientsRepository.findAllByApplicationUserIn(applicationUser);
+        for (Ingredient ingredient : ingredients) {
+            //ingredientDtos.add(ingredientMapper.from(ingredient, applicationUser)));
+        }
+        return ingredientDtos;
     }
 
 }
