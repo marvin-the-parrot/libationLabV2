@@ -6,6 +6,7 @@ import java.util.List;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.IngredientMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
 import jakarta.annotation.security.PermitAll;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Ingredients endpoint controller.
@@ -54,6 +56,17 @@ public class IngredientEndpoint {
     @GetMapping
     public List<IngredientDto> getAllGroupIngredients(@Valid Long groupId) {
         LOGGER.info("GET " + BASE_PATH + "getAllGroupIngredients/{}", groupId);
-        return ingredientMapper.ingredientToIngredientDto(ingredientService.getAllGroupIngredients(groupId));
+        try {
+            return ingredientMapper.ingredientToIngredientDto(ingredientService.getAllGroupIngredients(groupId));
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Group not found", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+    private void logClientError(HttpStatus status, String message, Exception e) {
+        LOGGER.warn("{} {}: {}: {}", status.value(), message,
+            e.getClass().getSimpleName(), e.getMessage());
     }
 }

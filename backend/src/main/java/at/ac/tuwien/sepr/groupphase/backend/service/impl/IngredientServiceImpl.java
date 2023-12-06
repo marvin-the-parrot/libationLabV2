@@ -6,6 +6,7 @@ import java.util.Set;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserGroupService;
@@ -40,8 +41,13 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    public List<Ingredient> getAllGroupIngredients(Long groupId) {
+    public List<Ingredient> getAllGroupIngredients(Long groupId) throws NotFoundException {
         List<ApplicationUser> applicationUser = userGroupRepository.findUsersByGroupId(groupId);
+
+        if (applicationUser == null || applicationUser.isEmpty()) {
+            throw new NotFoundException("No users found for group");
+        }
+
         return ingredientsRepository.findAllByApplicationUserIn(applicationUser);
     }
 
