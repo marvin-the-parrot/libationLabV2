@@ -5,6 +5,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.ResetPasswordDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListGroupDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLocalStorageDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchExistingGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
@@ -213,27 +214,15 @@ public class CustomUserDetailService implements UserService {
         }
     }
 
-
     @Override
-    public UsernameDto getUsernameByEmail(String email) {
-        LOGGER.debug("Get username by email");
-        ApplicationUser applicationUser = userRepository.findByEmail(email);
-        if (applicationUser != null) {
-            UsernameDto username = new UsernameDto();
-            username.setUsername(applicationUser.getName());
-            return username;
-        }
-        throw new NotFoundException(String.format("Could not find the user with the email address %s", email));
-    }
-
-    @Override
-    public UserListDto getUserByEmail(String email) {
+    public UserLocalStorageDto getUserByEmail(String email) {
         LOGGER.debug("Get user by email");
         ApplicationUser applicationUser = userRepository.findByEmail(email);
         if (applicationUser != null) {
-            UserListDto user = new UserListDto();
+            UserLocalStorageDto user = new UserLocalStorageDto();
             user.setId(applicationUser.getId());
             user.setName(applicationUser.getName());
+            user.setEmail(applicationUser.getEmail());
             return user;
         }
         throw new NotFoundException(String.format("Could not find the user with the email address %s", email));

@@ -4,8 +4,10 @@ export interface UserListDto {
   name: string
 }
 
-export interface UsernameDto {
-  username: string
+export interface UserLocalStorageDto {
+  id: number;
+  username: string;
+  email: string;
 }
 
 export interface UserListGroupDto {

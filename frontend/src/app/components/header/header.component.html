@@ -39,7 +39,7 @@
           <span class="badge-round" *ngIf="getUnreadMessageCount() > 0">{{getUnreadMessageCount()}}</span>
         </a>
       </li>
-      <span class="navbar-text">Hello, {{localStorage.getItem('username')}}</span>
+      <span class="navbar-text">Hello, {{username}}</span>
       <li class="nav-item">
         <a class="nav-link custom-nav-link" *ngIf="authService.isLoggedIn()" routerLink="/settings" routerLinkActive="active">
           <i class="bi bi-person-circle custom-circle"></i>

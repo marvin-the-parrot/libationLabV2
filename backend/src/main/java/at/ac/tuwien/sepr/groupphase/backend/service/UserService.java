@@ -5,6 +5,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.ResetPasswordDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListGroupDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLocalStorageDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchExistingGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
@@ -94,18 +95,11 @@ public interface UserService extends UserDetailsService {
     void forgotPassword(String email) throws NotFoundException;
 
     /**
-     * Get Username by email.
-     *
-     * @param email the email address of the user
-     */
-    UsernameDto getUsernameByEmail(String email);
-
-    /**
      * Get Username and id by email.
      *
      * @param email the email address of the user
      */
-    UserListDto getUserByEmail(String email);
+    UserLocalStorageDto getUserByEmail(String email);
 
     /**
      * Find all users of a group.

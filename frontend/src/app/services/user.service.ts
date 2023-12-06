@@ -1,7 +1,7 @@
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {Globals} from "../global/globals";
 import {Injectable} from "@angular/core";
-import {UserListDto, UsernameDto} from "../dtos/user";
+import {UserListDto, UserLocalStorageDto} from "../dtos/user";
 import {CreateAccount} from "../dtos/create-account";
 import {Observable} from "rxjs";
 import {ResetPasswordDto} from "../dtos/resetPassword";
@@ -76,12 +76,9 @@ export class UserService {
   }
 
 
-  getUsername(): Observable<UsernameDto> {
-    return this.httpClient.get<UsernameDto>(this.baseUri + '/username');
-  }
 
-  getUser(): Observable<UserListDto> {
-    return this.httpClient.get<UserListDto>(this.baseUri + '/user');
+  getUser(): Observable<UserLocalStorageDto> {
+    return this.httpClient.get<UserLocalStorageDto>(this.baseUri + '/user');
   }
 
   deleteUser(): Observable<any> {

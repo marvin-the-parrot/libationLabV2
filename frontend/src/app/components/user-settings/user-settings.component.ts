@@ -29,6 +29,10 @@ export class UserSettingsComponent {
     private dialogService: DialogService,
   ) {
   }
+
+  protected readonly username = JSON.parse(localStorage.getItem('user')).name;
+  protected readonly email = JSON.parse(localStorage.getItem('user')).email;
+
   setMode(mode: string): void {
     // Perform actions based on the selected mode
     if (mode === 'AccountSettings') {
