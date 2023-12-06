@@ -31,10 +31,8 @@ export class ForgotPasswordComponent {
         this.router.navigate(['/login']);
       },
       error: error => {
-        setTimeout(() => {
-          this.notification.info('An Email has been sent to the provided email address');
-          this.router.navigate(['/login']);
-        }, 1000);
+        this.notification.info('An Email has been sent to the provided email address');
+        this.router.navigate(['/login']);
       }
     });
   }
