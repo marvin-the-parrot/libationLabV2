@@ -95,7 +95,6 @@ public class UserEndpoint {
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Failed to send email", e);
-            throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
 
