@@ -12,7 +12,7 @@ import java.lang.invoke.MethodHandles;
 
 @Profile("generateData")
 @Component
-public class AAIngredientsDataGenerator {
+public class AaIngredientsDataGenerator {
 
     //TODO change name to IngredientsDataGenerator
     //the profile is started in alphabetical order and therefore there are no ingredients
@@ -22,7 +22,7 @@ public class AAIngredientsDataGenerator {
     private static final int NUMBER_OF_INGREDIENTS_TO_GENERATE = 10;
     private final IngredientsRepository ingredientsRepository;
 
-    public AAIngredientsDataGenerator(IngredientsRepository ingredientsRepository) {
+    public AaIngredientsDataGenerator(IngredientsRepository ingredientsRepository) {
         this.ingredientsRepository = ingredientsRepository;
     }
 
