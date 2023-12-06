@@ -1,12 +1,15 @@
 package at.ac.tuwien.sepr.groupphase.backend.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 
 import java.util.Set;
 
@@ -35,6 +38,13 @@ public class ApplicationUser {
 
     @OneToMany(mappedBy = "applicationUser", cascade = CascadeType.REMOVE)
     private Set<ApplicationMessage> applicationMessages;
+
+    @ManyToMany
+    @JoinTable(
+        name = "user_ingredients",
+        joinColumns = @JoinColumn(name = "applicationUser_id"),
+        inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
+    Set<Ingredient> ingredients;
 
     private Boolean admin;
 
@@ -96,6 +106,14 @@ public class ApplicationUser {
         this.applicationMessages = applicationMessages;
     }
 
+    public Set<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(Set<Ingredient> ingredients) {
+        this.ingredients = ingredients;
+    }
+
     public Boolean getAdmin() {
         return admin;
     }
@@ -110,6 +128,7 @@ public class ApplicationUser {
         private String name;
         private String email;
         private String password;
+        private Set<Ingredient> ingredients;
 
         private ApplicationUserBuilder() {
         }
@@ -138,12 +157,18 @@ public class ApplicationUser {
             return this;
         }
 
+        public ApplicationUserBuilder withIngredients(Set<Ingredient> ingredients) {
+            this.ingredients = ingredients;
+            return this;
+        }
+
         public ApplicationUser build() {
             ApplicationUser applicationUser = new ApplicationUser();
             applicationUser.setId(id);
             applicationUser.setName(name);
             applicationUser.setEmail(email);
             applicationUser.setPassword(password);
+            applicationUser.setIngredients(ingredients);
             applicationUser.setAdmin(false);
             return applicationUser;
         }

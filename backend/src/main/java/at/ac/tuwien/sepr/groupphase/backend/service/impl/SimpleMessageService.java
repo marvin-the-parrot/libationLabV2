@@ -8,6 +8,7 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.MessageService;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import at.ac.tuwien.sepr.groupphase.backend.service.validators.MessageValidator;
+import jakarta.transaction.Transactional;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,13 +39,15 @@ public class SimpleMessageService implements MessageService {
     private final UserService userService;
     private final GroupService groupService;
     private final MessageValidator validator;
+    private final IngredientsRepository ingredientsRepository;
 
     @Autowired
-    public SimpleMessageService(MessageRepository messageRepository, UserService userService, MessageValidator validator, GroupService groupService) {
+    public SimpleMessageService(MessageRepository messageRepository, UserService userService, MessageValidator validator, GroupService groupService, IngredientsRepository ingredientsRepository) {
         this.messageRepository = messageRepository;
         this.userService = userService;
         this.validator = validator;
         this.groupService = groupService;
+        this.ingredientsRepository = ingredientsRepository;
     }
 
     @Override
@@ -53,6 +57,7 @@ public class SimpleMessageService implements MessageService {
         return messageRepository.countByApplicationUserAndIsRead(user, false);
     }
 
+    @Transactional
     @Override
     public List<ApplicationMessage> findAll() throws NotFoundException {
         LOGGER.debug("Find all messages");
