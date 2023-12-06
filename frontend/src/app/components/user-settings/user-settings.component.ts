@@ -52,6 +52,7 @@ export class UserSettingsComponent {
         this.userService.deleteUser().subscribe({
           next: () => {
             console.log('Account deleted');
+            localStorage.clear();
           },
           error: error => {
             console.log('Could not delete account due to:');

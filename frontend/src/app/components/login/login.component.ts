@@ -56,7 +56,10 @@ export class LoginComponent implements OnInit {
         console.log('Successfully logged in user: ' + authRequest.email);
         this.notification.success('Successfully logged in user: \n' + authRequest.email);
         this.setUserLocalStorage();
-        this.router.navigate(['/groups']);
+        //needed to reload the page to show the username in the header
+        setTimeout(() => {
+          this.router.navigate(['/groups']); // Navigate to '/groups' after a short delay
+        }, 100); // Adjust the delay time if needed
       },
       error: error => {
         console.log('Could not log in due to:');
