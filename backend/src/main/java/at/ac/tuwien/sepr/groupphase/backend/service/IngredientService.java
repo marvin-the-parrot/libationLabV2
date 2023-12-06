@@ -7,7 +7,7 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 /**
  * Service for Ingredients Entity.
  */
-public interface IngredientsService {
+public interface IngredientService {
 
     /**
      * Searching for ingredients.
@@ -16,5 +16,12 @@ public interface IngredientsService {
      * @return ingredients with searched name
      */
     public List<Ingredient> searchIngredients(String ingredientsName);
+
+    /**
+     * Get all ingredients.
+     *
+     * @return all ingredients
+     */
+    public List<Ingredient> getAllGroupIngredients(Long groupId);
 
 }

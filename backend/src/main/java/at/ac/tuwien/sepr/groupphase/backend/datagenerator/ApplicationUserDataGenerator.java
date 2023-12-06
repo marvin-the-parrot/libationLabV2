@@ -39,15 +39,16 @@ public class ApplicationUserDataGenerator {
         } else {
             LOGGER.debug("generating {} user entries", NUMBER_OF_USERS_TO_GENERATE);
             List<Ingredient> ingredients = ingredientsRepository.findAll();
-            Set<Ingredient> ingredientSet = Set.copyOf(ingredients);
+            //Set<Ingredient> ingredientSet = Set.copyOf(ingredients);
             for (int i = 0; i < NUMBER_OF_USERS_TO_GENERATE; i++) {
                 ApplicationUser applicationUser = ApplicationUser.ApplicationUserBuilder.applicationUser()
                     .withId((long) i)
                     .withName("User" + i)
                     .withEmail("user" + i + "@email.com")
                     .withPassword(passwordEncoder.encode("password"))
-                    .withIngredients(ingredientSet)
+                    .withIngredients(Set.copyOf(ingredients))
                     .build();
+                ingredients.remove(ingredients.size() - 1);
                 userRepository.save(applicationUser);
             }
             LOGGER.debug("generating {} user entries", NUMBER_OF_USERS_TO_GENERATE);

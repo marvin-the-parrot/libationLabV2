@@ -10,6 +10,8 @@ import {MessageService} from "../../../services/message.service";
 import {ToastrService} from 'ngx-toastr';
 import {DialogService} from 'src/app/services/dialog.service';
 import {ConfirmationDialogMode} from "../../../confirmation-dialog/confirmation-dialog.component";
+import {IngredientDto} from "../../../dtos/ingredient";
+import {IngredientService} from "../../../services/ingredient.service";
 
 @Component({
   selector: 'app-group-detail',
@@ -26,12 +28,13 @@ export class GroupDetailComponent {
   }
 
   username: string = localStorage.getItem('username');
-
   // for autocomplete
   user: UserListDto = {
     id: null,
     name: ''
   };
+
+  ingredients: IngredientDto[];
 
   dummyMemberSelectionModel: unknown; // Just needed for the autocomplete
   submitted = false;
@@ -43,7 +46,7 @@ export class GroupDetailComponent {
   constructor(
     private groupsService: GroupsService,
     private userService: UserService,
-    private service: GroupsService,
+    private ingredientService: IngredientService,
     private dialogService: DialogService,
     private messageService: MessageService,
     private notification: ToastrService,
@@ -55,6 +58,7 @@ export class GroupDetailComponent {
   ngOnInit(): void {
     const groupId = this.route.snapshot.params['id'];
     this.getGroup(groupId);
+    this.getIngredients(groupId);
   }
 
   memberSuggestions = (input: string): Observable<UserListDto[]> => (input === '')
@@ -91,7 +95,7 @@ export class GroupDetailComponent {
   private removeMemberFromGroup(member: UserListDto) {
     this.dialogService.openConfirmationDialog(ConfirmationDialogMode.Delete).subscribe((result) => {
       if (result) {
-        this.service.removeMemberFromGroup(this.group.id, member.id).subscribe({
+        this.groupsService.removeMemberFromGroup(this.group.id, member.id).subscribe({
           next: data => {
             this.notification.success(`Successfully removed '${member.name}' from Group '${this.group.name}'.`);
             this.getGroup(this.group.id); // refresh group
@@ -109,7 +113,7 @@ export class GroupDetailComponent {
     this.dialogService.openConfirmationDialog(ConfirmationDialogMode.MakeHost).subscribe((result) => {
       if (result) {
 
-        this.service.makeMemberHost(this.group.id, member.id).subscribe({
+        this.groupsService.makeMemberHost(this.group.id, member.id).subscribe({
           next: data => {
             this.notification.success(`Successfully made '${member.name}' host of Group '${this.group.name}'.`);
             this.getGroup(this.group.id); // refresh group
@@ -140,12 +144,6 @@ export class GroupDetailComponent {
     });
   }
 
-  private defaultServiceErrorHandling(error: any) {
-    console.log(error);
-    this.error = true;
-    this.notification.error(error.error.detail);
-  }
-
   /**
    * Get group data by id. Used to initially get the group and refresh it after a change.
    *
@@ -157,10 +155,28 @@ export class GroupDetailComponent {
         this.group = group;
       },
       error: error => {
-        console.error('Error fetching group', error);
+        console.error('Could not fetch group due to:');
+        this.defaultServiceErrorHandling(error);
         // todo: Handle error appropriately (e.g., show a message to the user)
       }
     });
+  }
+
+  private getIngredients(groupId: number): void {
+    this.ingredientService.getAllGroupIngredients(groupId).subscribe({
+      next: (ingredients: IngredientDto[]) => {
+        this.ingredients = ingredients;
+      },
+      error: error => {
+        console.error('Could not fetch ingredients due to:');
+      }
+    });
+  }
+
+  private defaultServiceErrorHandling(error: any) {
+    console.log(error);
+    this.error = true;
+    this.notification.error(error.error.detail);
   }
 }
 
