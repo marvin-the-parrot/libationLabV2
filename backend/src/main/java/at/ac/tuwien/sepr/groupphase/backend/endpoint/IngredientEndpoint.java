@@ -4,6 +4,10 @@ import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientSearchExistingUserDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchExistingGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import jakarta.validation.Valid;
@@ -14,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -22,10 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.web.server.ResponseStatusException;
-
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 /**
  * Ingredients endpoint controller.
  */
+
 @RestController
 @RequestMapping(path = IngredientEndpoint.BASE_PATH)
 public class IngredientEndpoint {
@@ -61,6 +68,49 @@ public class IngredientEndpoint {
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
+
+    @GetMapping("/user-ingredients-auto")
+    @Secured("ROLE_USER")
+    public List<IngredientListDto> search(@Valid IngredientSearchExistingUserDto searchParams) {
+        LOGGER.info("GET " + BASE_PATH + "user-ingredients-auto");
+        LOGGER.debug("Request Params: {}", searchParams);
+        try {
+            return ingredientService.searchUserIngredients(searchParams);
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Failed to search ingredients", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/user-ingredients")
+    @Secured("ROLE_USER")
+    public List<IngredientListDto> getUserIngredients() {
+        LOGGER.info("GET " + BASE_PATH + "user-ingredients");
+        try {
+            return ingredientService.getUserIngredients();
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Failed to search ingredients", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+    @PostMapping("/user-ingredients")
+    @Secured("ROLE_USER")
+    public List<IngredientListDto> addUserIngredients(@RequestBody IngredientListDto[] ingredients) {
+        LOGGER.info("POST " + BASE_PATH + "user-ingredients");
+        try {
+            return ingredientService.addIngredientsToUser(ingredients);
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Failed to search ingredients", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+
+
 
     private void logClientError(HttpStatus status, String message, Exception e) {
         LOGGER.warn("{} {}: {}: {}", status.value(), message,

@@ -143,8 +143,9 @@
 
 }
 .btn.rounded-button:active {
-  background-color: white; /* Set background color to transparent */
+  background-color: #6200EE; /* Set background color to transparent */
   box-shadow: none;
+  color: white;
 }
 
 .info {
@@ -233,4 +234,22 @@
   text-align: right;
   cursor: pointer;
 
+}
+
+.container-safe-button {
+  display: flex;
+  justify-content: right;
+  margin-right: 1em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.save-btn {
+  background-color: #AC6AFE;
+  color: white;
+  border: none;
+}
+
+.save-btn:active {
+  background-color: #6200EE; /* Change hover color */
 }

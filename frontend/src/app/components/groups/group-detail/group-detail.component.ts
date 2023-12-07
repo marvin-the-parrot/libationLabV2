@@ -34,7 +34,7 @@ export class GroupDetailComponent {
     name: ''
   };
 
-  ingredients: IngredientGroupDto[];
+  ingredients: IngredientGroupDto[] = [];
 
   dummyMemberSelectionModel: unknown; // Just needed for the autocomplete
   submitted = false;

@@ -63,13 +63,15 @@
           <i class="bi bi-info-circle info" data-tooltip="In your ingredients list you can add all the ingredients you have at home and want to use for cocktails"></i>
           <div class="wrapper">
             <app-autocomplete
-              id="memberSelectionInput"
-              name="memberSelection"
+              name="ingredientsSelection"
               textInputClass="form-control"
+              [suggestions]="ingredientSuggestions"
+              [formatModel]="formatIngredient"
               valueNeedsToMatchSuggestion="true"
+              [(ngModel)]="ingredient"
             >
             </app-autocomplete>
-            <button type="button" class="btn rounded-button">
+            <button type="button" class="btn rounded-button" (click)="addIngredient(ingredient)">
               <i class="bi bi-plus-circle"></i>
             </button>
           </div>
@@ -92,76 +94,24 @@
       <div class="ingredients-container">
 
         <div class="test">
-          <p class="ingredient-count">your Ingredients</p>
+          <p class="ingredient-count">{{userIngredients.length}} Ingredients</p>
         </div>
 
 
 
         <div class="ingredient-list">
-
-          <div class="ingredient-item">
-            Im a ingredient
-            <i class="bi bi-dash-circle remove-item"></i>
+          <div *ngFor="let ingredient of userIngredients; index as i" class="ingredient-item">
+            {{ ingredient.name }}
+            <i class="bi bi-dash-circle remove-item" (click)="removeIngredient(i)"></i>
           </div>
-
-          <div class="ingredient-item">
-            Im a ingredient
-            <i class="bi bi-dash-circle remove-item"></i>
-          </div>
-
-
-          <div class="ingredient-item">
-            Im a ingredient
-            <i class="bi bi-dash-circle remove-item"></i>
-          </div>
-
-          <div class="ingredient-item">
-            Im a ingredient
-            <i class="bi bi-dash-circle remove-item"></i>
-          </div>
-
-          <div class="ingredient-item">
-            Im a ingredient
-            <i class="bi bi-dash-circle remove-item"></i>
-          </div>
-
-          <div class="ingredient-item">
-            Im a ingredient
-            <i class="bi bi-dash-circle remove-item"></i>
-          </div>
-
-          <div class="ingredient-item">
-            Im a ingredient
-            <i class="bi bi-dash-circle remove-item"></i>
-          </div>
-
-          <div class="ingredient-item">
-            Im a ingredient
-            <i class="bi bi-dash-circle remove-item"></i>
-          </div>
-
-          <div class="ingredient-item">
-            Im a ingredient
-            <i class="bi bi-dash-circle remove-item"></i>
-          </div>
-
-          <div class="ingredient-item">
-            Im a ingredient
-            <i class="bi bi-dash-circle remove-item"></i>
-          </div>
-
-          <div class="ingredient-item">
-            Im a ingredient
-            <i class="bi bi-dash-circle remove-item"></i>
-          </div>
-
-
-
         </div>
 
-
+        <div class="container-safe-button">
+          <button type="button" class="btn btn-primary save-btn" (click)="saveIngredients()">Save</button>
+        </div>
 
       </div>
+
 
 
 
