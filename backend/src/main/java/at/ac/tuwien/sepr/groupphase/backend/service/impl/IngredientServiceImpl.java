@@ -43,14 +43,13 @@ public class IngredientServiceImpl implements IngredientService {
     @Autowired
     public IngredientServiceImpl(IngredientsRepository ingredientsRepository, UserGroupRepository userGroupRepository,
                                  UserRepository userRepository, GroupRepository groupRepository,
-                                 IngredientMapper ingredientMapper, UserMapper userMapper, UserRepository userRepository) {
+                                 IngredientMapper ingredientMapper, UserMapper userMapper) {
         this.ingredientsRepository = ingredientsRepository;
         this.userGroupRepository = userGroupRepository;
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
         this.ingredientMapper = ingredientMapper;
         this.userMapper = userMapper;
-        this.userRepository = userRepository;
     }
 
     @Override

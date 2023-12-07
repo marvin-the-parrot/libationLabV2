@@ -8,6 +8,8 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 
 @Mapper
 public interface IngredientMapper {
