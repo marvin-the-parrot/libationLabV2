@@ -82,6 +82,14 @@ export class GroupDetailComponent {
     this.create(createMessage);
   }
 
+  getUsersOfIngredient(ingredient: IngredientGroupDto): string {
+    let userIngredientString: string = ingredient.name + ' belongs to Users: ';
+    ingredient.users.forEach(function (user) {
+      userIngredientString += user.name + ', ';
+    });
+    return userIngredientString.slice(0, -2);
+  }
+
   public openMemberOptions(member: UserListDto): void {
     this.dialogService.openOptionDialog().subscribe((deleteOption) => {
       if (deleteOption) {

@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.repository;
 
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -45,6 +46,8 @@ public interface UserRepository extends JpaRepository<ApplicationUser, Long> {
      * @return List of ApplicationUser found by username
      */
     List<ApplicationUser> findFirst5ByEmailNotAndNameIgnoreCaseContaining(String email, String username);
+
+    ApplicationUser findByIngredientsAndUserGroups(Ingredient ingredients, UserGroup userGroups);
 
     ApplicationUser findApplicationUsersByUserGroups(UserGroup userGroups);
 

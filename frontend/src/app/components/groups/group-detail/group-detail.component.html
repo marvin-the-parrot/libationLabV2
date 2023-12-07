@@ -52,10 +52,13 @@
     <div>
       <h3>Ingredients</h3>
     </div>
-    <div class="list" *ngIf="ingredients !== null">
+    <div class="list ingredient-list" *ngIf="ingredients !== null">
       <p class="entry-count">{{ingredients.length}} Ingredients in Group</p>
       <div *ngFor="let ingredient of ingredients" class="list-item">
         <div class="list-name">{{ ingredient.name }}</div>
+        <div class="list-action">
+          <i class="bi bi-info-circle info" [attr.data-tooltip]="getUsersOfIngredient(ingredient)"></i>
+        </div>
       </div>
     </div>
   </div>
