@@ -1,6 +1,6 @@
 <!-- thumbs for every group -->
-<a *ngIf="group !== null" [routerLink]="[group.id, 'detail']">
-  <div class="grid-item">
+<div *ngIf="group !== null" class="grid-item">
+  <a [routerLink]="[group.id, 'detail']">
     <span *ngIf="group.host.name === username" class="badge"> You are Host </span>
     <span *ngIf="group.host.name !== username" class="badge"> You are Member </span>
     <div class="p-2">
@@ -15,13 +15,16 @@
         <li *ngFor="let cocktail of group.cocktails">{{cocktail}}</li>
       </ul>
     </div>
-    <div class="d-flex justify-content-between align-items-end">
-      <button *ngIf="group.host.name !== username" class="badge custom-button-del" (click)="leaveGroup()">Leave</button>
-      <button *ngIf="group.host.name === username" class="badge custom-button-edit">Edit</button>
-      <span class="d-flex align-items-center">Members: <span class="badge-round">{{group.members.length}}</span></span>
-    </div>
+  </a>
+  <div class="d-flex justify-content-between align-items-end">
+    <button *ngIf="group.host.name !== username" class="badge custom-button-del" (click)="leaveGroup()">Leave</button>
+    <button *ngIf="group.host.name === username" class="badge custom-button-edit" [routerLink]="[group.id, 'edit']">
+      Edit
+    </button>
+    <span class="d-flex align-items-center">Members: <span class="badge-round">{{group.members.length}}</span></span>
   </div>
-</a>
+
+</div>
 <!-- create new group -->
 <a *ngIf="group === null" routerLink="create">
   <div class="grid-item d-flex align-items-center justify-content-center flex-column">

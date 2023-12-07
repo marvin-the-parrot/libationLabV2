@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {GroupOverview} from "../../../dtos/group-overview";
 import {UserListDto} from "../../../dtos/user";
 import {DialogService} from "../../../services/dialog.service";
@@ -17,6 +17,7 @@ export class GroupThumbComponent {
   // get the group to display from the parent component
   @Input() group: GroupOverview;
   @Input() username: string;
+  @Output() groupLeft = new EventEmitter<void>(); // to send signal to parent component to reload groups, when user leaves a group
 
   constructor(
     private dialogService: DialogService,
@@ -38,15 +39,13 @@ export class GroupThumbComponent {
         this.service.removeMemberFromGroup(this.group.id, user.id).subscribe({
           next: data => {
             this.notification.success(`Successfully left Group '${this.group.name}'.`);
-            this.router.navigate(['/groups']);
+            this.groupLeft.emit();
           },
           error: error => {
             console.error(`Error leaving group.`, error);
             this.notification.error(`Error leaving group.`); // todo: show error message from backend
           }
         });
-      } else {
-        this.router.navigate(['/groups']);
       }
     });
   }
