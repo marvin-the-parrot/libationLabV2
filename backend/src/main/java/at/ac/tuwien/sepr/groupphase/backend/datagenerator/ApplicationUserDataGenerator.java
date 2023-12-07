@@ -46,7 +46,6 @@ public class ApplicationUserDataGenerator {
                     .withName("User" + i)
                     .withEmail("user" + i + "@email.com")
                     .withPassword(passwordEncoder.encode("password"))
-                    .withIngredients(ingredientSet)
                     .build();
                 userRepository.save(applicationUser);
             }
