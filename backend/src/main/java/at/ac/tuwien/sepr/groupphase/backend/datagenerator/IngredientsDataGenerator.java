@@ -38,31 +38,24 @@ public class IngredientsDataGenerator {
             LOGGER.debug("ingredients already generated");
         } else {
             LOGGER.debug("generating {} ingredients entries", NUMBER_OF_INGREDIENTS_TO_GENERATE);
-            List<ApplicationUser> users = userRepository.findAll();
             for (int i = 0; i < NUMBER_OF_INGREDIENTS_TO_GENERATE; i++) {
                 Ingredient ingredient = Ingredient.IngredientsBuilder.ingredients()
                     .withId((long) i)
                     .withName("Ingredient" + i)
                     .build();
-                users.get(1).setIngredients(Set.copyOf(List.of(ingredient)));
-                if (i > 3) {
-                    users.get(2).setIngredients(Set.copyOf(List.of(ingredient)));
-                }
-                if (i > 5) {
-                    users.get(3).setIngredients(Set.copyOf(List.of(ingredient)));
-                }
-                if (i > 7) {
-                    users.get(4).setIngredients(Set.copyOf(List.of(ingredient)));
-                }
-                if (i > 8) {
-                    users.get(5).setIngredients(Set.copyOf(List.of(ingredient)));
-                    users.get(6).setIngredients(Set.copyOf(List.of(ingredient)));
-                    users.get(7).setIngredients(Set.copyOf(List.of(ingredient)));
-                }
                 ingredientsRepository.save(ingredient);
-                userRepository.saveAll(users);
             }
             LOGGER.debug("generating {} ingredients entries", NUMBER_OF_INGREDIENTS_TO_GENERATE);
+
+
+            List<ApplicationUser> users = userRepository.findAll();
+            List<Ingredient> ingredients = ingredientsRepository.findAll();
+
+            for (ApplicationUser user : users) {
+                Set<Ingredient> ingredientSet = Set.copyOf(ingredients);
+                user.setIngredients(ingredientSet);
+                userRepository.save(user);
+            }
         }
     }
 }
