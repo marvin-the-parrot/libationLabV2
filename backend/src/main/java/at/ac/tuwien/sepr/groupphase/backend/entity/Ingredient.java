@@ -23,7 +23,7 @@ public class Ingredient {
     private String name;
 
     @ManyToMany(mappedBy = "ingredients")
-    Set<ApplicationUser> applicationUsers;
+    Set<ApplicationUser> applicationUser;
 
     public Ingredient() {
     }
@@ -49,19 +49,19 @@ public class Ingredient {
         this.name = name;
     }
 
-    public Set<ApplicationUser> getApplicationUsers() {
-        return applicationUsers;
+    public Set<ApplicationUser> getApplicationUser() {
+        return applicationUser;
     }
 
-    public void setApplicationUsers(Set<ApplicationUser> applicationUsers) {
-        this.applicationUsers = applicationUsers;
+    public void setApplicationUser(Set<ApplicationUser> applicationUser) {
+        this.applicationUser = applicationUser;
     }
 
     public static final class IngredientsBuilder {
 
         private Long id;
         private String name;
-        private Set<ApplicationUser> applicationUsers;
+        private Set<ApplicationUser> applicationUser;
 
         private IngredientsBuilder() {
         }
@@ -80,8 +80,8 @@ public class Ingredient {
             return this;
         }
 
-        public IngredientsBuilder withApplicationUsers(Set<ApplicationUser> applicationUsers) {
-            this.applicationUsers = applicationUsers;
+        public IngredientsBuilder withApplicationUsers(Set<ApplicationUser> applicationUser) {
+            this.applicationUser = applicationUser;
             return this;
         }
 
@@ -89,7 +89,7 @@ public class Ingredient {
             Ingredient ingredient = new Ingredient();
             ingredient.setId(id);
             ingredient.setName(name);
-            ingredient.setApplicationUsers(applicationUsers);
+            ingredient.setApplicationUser(applicationUser);
             return ingredient;
         }
     }

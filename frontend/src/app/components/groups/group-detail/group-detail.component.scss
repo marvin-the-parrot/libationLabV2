@@ -98,13 +98,13 @@
   cursor: pointer;
 }
 
-.members-list {
+.list {
   display: flex;
   flex-direction: column;
   margin: 0 1em;
 }
 
-.member-item {
+.list-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -112,11 +112,11 @@
   padding: 0.2em;
   min-height: 2.5em;
 }
-.member-item:first-of-type {
+.list-item:first-of-type {
   border-top: 1px solid #ccc;
 }
 
-.user-count{
+.entry-count{
   opacity: 0.5;
   margin: 0
 
