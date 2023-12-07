@@ -46,9 +46,7 @@ public class ApplicationUserDataGenerator {
                     .withName("User" + i)
                     .withEmail("user" + i + "@email.com")
                     .withPassword(passwordEncoder.encode("password"))
-                    .withIngredients(Set.copyOf(ingredients))
                     .build();
-                ingredients.remove(ingredients.size() - 1);
                 userRepository.save(applicationUser);
             }
             LOGGER.debug("generating {} user entries", NUMBER_OF_USERS_TO_GENERATE);
