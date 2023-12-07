@@ -104,6 +104,10 @@
   margin: 0 1em;
 }
 
+.ingredient-list {
+  margin-top: 10px
+}
+
 .list-item {
   display: flex;
   justify-content: space-between;
@@ -129,4 +133,32 @@
 
 input {
   width: 500px;
+}
+
+.info {
+  margin-right: 5px;
+  font-size: 20px;
+  cursor: pointer;
+  position:relative;
+}
+
+.info::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  background-color: #6200EE;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  pointer-events: none;
+  width: 300px;
+}
+
+.info:hover::after {
+  opacity: 1;
 }

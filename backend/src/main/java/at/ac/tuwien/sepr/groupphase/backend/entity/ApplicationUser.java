@@ -11,6 +11,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.ManyToMany;
 
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -120,6 +121,24 @@ public class ApplicationUser {
 
     public void setAdmin(Boolean admin) {
         this.admin = admin;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ApplicationUser applicationUser)) {
+            return false;
+        }
+        return Objects.equals(id, applicationUser.id)
+            && Objects.equals(name, applicationUser.name)
+            && Objects.equals(email, applicationUser.email)
+            && Objects.equals(password, applicationUser.password)
+            && Objects.equals(userGroups, applicationUser.userGroups)
+            && Objects.equals(applicationMessages, applicationUser.applicationMessages)
+            && Objects.equals(ingredients, applicationUser.ingredients)
+            && Objects.equals(admin, applicationUser.admin);
     }
 
     public static final class ApplicationUserBuilder {
