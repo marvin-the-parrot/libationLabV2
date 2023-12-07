@@ -5,6 +5,7 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -32,6 +33,7 @@ public class IngredientsDataGenerator {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     @PostConstruct
     public void generateIngredients() {
         if (ingredientsRepository.findAll().size() > 0) {
@@ -47,7 +49,6 @@ public class IngredientsDataGenerator {
             }
             LOGGER.debug("generating {} ingredients entries", NUMBER_OF_INGREDIENTS_TO_GENERATE);
 
-
             List<ApplicationUser> users = userRepository.findAll();
             List<Ingredient> ingredients = ingredientsRepository.findAll();
 
@@ -55,6 +56,7 @@ public class IngredientsDataGenerator {
                 Set<Ingredient> ingredientSet = Set.copyOf(ingredients);
                 user.setIngredients(ingredientSet);
                 userRepository.save(user);
+                ingredients.remove(0);
             }
         }
     }

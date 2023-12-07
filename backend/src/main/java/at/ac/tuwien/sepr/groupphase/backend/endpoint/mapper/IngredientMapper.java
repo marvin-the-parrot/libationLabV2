@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import org.mapstruct.IterableMapping;
@@ -14,12 +14,12 @@ import java.util.List;
 public interface IngredientMapper {
 
     @Named("ingredient")
-    IngredientDto ingredientToIngredientDto(Ingredient ingredient);
+    IngredientGroupDto ingredientToIngredientDto(Ingredient ingredient);
 
     @IterableMapping(qualifiedByName = "ingredient")
-    List<IngredientDto> ingredientToIngredientDto(List<Ingredient> ingredient);
+    List<IngredientGroupDto> ingredientToIngredientDto(List<Ingredient> ingredient);
 
-    /*@Mapping(source = "ingredient.name", target = "name")
-    @Mapping(source = "userListDto", target = "userListDto")
-    IngredientDto from(Ingredient ingredient, UserListDto userListDto);*/
+    @Mapping(source = "ingredient.name", target = "name")
+    @Mapping(source = "users", target = "users")
+    IngredientGroupDto from(Ingredient ingredient, UserListDto[] users);
 }

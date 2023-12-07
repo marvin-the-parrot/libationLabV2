@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Globals} from '../global/globals';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {IngredientDto} from "../dtos/ingredient";
+import {IngredientGroupDto} from "../dtos/ingredient";
 import {Observable} from "rxjs";
 
 @Injectable({
@@ -16,10 +16,10 @@ export class IngredientService {
   /**
    * Loads all ingredients of a group from the backend
    */
-  getAllGroupIngredients(groupId: number): Observable<IngredientDto[]> {
+  getAllGroupIngredients(groupId: number): Observable<IngredientGroupDto[]> {
     let params = new HttpParams();
     params = params.append("groupId", groupId);
 
-    return this.httpClient.get<IngredientDto[]>(this.ingredientBaseUri, { params });
+    return this.httpClient.get<IngredientGroupDto[]>(this.ingredientBaseUri, { params });
   }
 }

@@ -10,7 +10,7 @@ import {MessageService} from "../../../services/message.service";
 import {ToastrService} from 'ngx-toastr';
 import {DialogService} from 'src/app/services/dialog.service';
 import {ConfirmationDialogMode} from "../../../confirmation-dialog/confirmation-dialog.component";
-import {IngredientDto} from "../../../dtos/ingredient";
+import {IngredientGroupDto} from "../../../dtos/ingredient";
 import {IngredientService} from "../../../services/ingredient.service";
 
 @Component({
@@ -34,7 +34,7 @@ export class GroupDetailComponent {
     name: ''
   };
 
-  ingredients: IngredientDto[];
+  ingredients: IngredientGroupDto[];
 
   dummyMemberSelectionModel: unknown; // Just needed for the autocomplete
   submitted = false;
@@ -164,7 +164,7 @@ export class GroupDetailComponent {
 
   private getIngredients(groupId: number): void {
     this.ingredientService.getAllGroupIngredients(groupId).subscribe({
-      next: (ingredients: IngredientDto[]) => {
+      next: (ingredients: IngredientGroupDto[]) => {
         this.ingredients = ingredients;
       },
       error: error => {

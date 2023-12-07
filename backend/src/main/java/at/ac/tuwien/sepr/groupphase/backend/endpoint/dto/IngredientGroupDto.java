@@ -1,8 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
-public class IngredientDto {
+public class IngredientGroupDto {
     private String name;
-    private UserListDto users;
+    private UserListDto[] users;
 
     public String getName() {
         return name;
@@ -12,11 +12,11 @@ public class IngredientDto {
         this.name = name;
     }
 
-    public UserListDto getUsers() {
+    public UserListDto[] getUsers() {
         return users;
     }
 
-    public void setUsers(UserListDto users) {
+    public void setUsers(UserListDto[] users) {
         this.users = users;
     }
 }

@@ -2,7 +2,7 @@ package at.ac.tuwien.sepr.groupphase.backend.service;
 
 import java.util.List;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 
@@ -17,13 +17,13 @@ public interface IngredientService {
      * @param ingredientsName name of ingredients
      * @return ingredients with searched name
      */
-    public List<Ingredient> searchIngredients(String ingredientsName);
+    List<Ingredient> searchIngredients(String ingredientsName);
 
     /**
      * Get all ingredients.
      *
      * @return all ingredients
      */
-    public List<IngredientDto> getAllGroupIngredients(Long groupId) throws NotFoundException;
+    List<IngredientGroupDto> getAllGroupIngredients(Long groupId) throws NotFoundException;
 
 }
