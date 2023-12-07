@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GroupCreateEditComponent } from './group-create-edit.component';
+import { GroupCreateComponent } from './group-create.component';
 
 describe('GroupCreateEditComponent', () => {
-  let component: GroupCreateEditComponent;
-  let fixture: ComponentFixture<GroupCreateEditComponent>;
+  let component: GroupCreateComponent;
+  let fixture: ComponentFixture<GroupCreateComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [GroupCreateEditComponent]
+      declarations: [GroupCreateComponent]
     });
-    fixture = TestBed.createComponent(GroupCreateEditComponent);
+    fixture = TestBed.createComponent(GroupCreateComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

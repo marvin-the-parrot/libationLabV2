@@ -4,15 +4,13 @@ import {LoginComponent} from './components/login/login.component';
 import {AuthGuard} from './guards/auth.guard';
 import {MessageComponent} from './components/message/message.component';
 import {GroupsComponent} from "./components/groups/groups.component";
-import {
-  GroupCreateEditComponent,
-  GroupCreateEditMode
-} from "./components/groups/group-create-edit/group-create-edit.component";
 import {GroupDetailComponent} from "./components/groups/group-detail/group-detail.component";
 import {CreateAccountComponent} from "./components/create-account/create-account.component";
 import {ForgotPasswordComponent} from "./components/forgot-password/forgot-password.component";
 import {ResetPasswordComponent} from "./components/reset-password/reset-password.component";
 import {UserSettingsComponent} from "./components/user-settings/user-settings.component";
+import {GroupEditComponent} from "./components/groups/group-edit/group-edit.component";
+import {GroupCreateComponent} from "./components/groups/group-create/group-create.component";
 
 const routes: Routes = [
   {path: '', pathMatch: 'full', redirectTo: 'groups'},
@@ -25,8 +23,8 @@ const routes: Routes = [
   {
     path: 'groups',canActivate: mapToCanActivate([AuthGuard]), children: [
       {path: '', component: GroupsComponent},
-      {path: 'create', component: GroupCreateEditComponent, data: {mode: GroupCreateEditMode.create}},
-      {path: ':id/edit', component: GroupCreateEditComponent, data: {mode: GroupCreateEditMode.edit}},
+      {path: 'create', component: GroupCreateComponent},
+      {path: ':id/edit', component: GroupEditComponent},
       {path: ':id/detail', component: GroupDetailComponent}
     ]
   }

@@ -13,7 +13,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {httpInterceptorProviders} from './interceptors';
 import { GroupsComponent } from './components/groups/groups.component';
 import { GroupThumbComponent } from './components/groups/group-thumb/group-thumb.component';
-import { GroupCreateEditComponent } from './components/groups/group-create-edit/group-create-edit.component';
+import { GroupCreateComponent } from './components/groups/group-create/group-create.component';
 import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
 import { GroupDetailComponent } from './components/groups/group-detail/group-detail.component';
 import { CreateAccountComponent } from './components/create-account/create-account.component';
@@ -37,7 +37,7 @@ import { UserSettingsComponent } from './components/user-settings/user-settings.
     MessageComponent,
     GroupsComponent,
     GroupThumbComponent,
-    GroupCreateEditComponent,
+    GroupCreateComponent,
     AutocompleteComponent,
     GroupDetailComponent,
     CreateAccountComponent,
