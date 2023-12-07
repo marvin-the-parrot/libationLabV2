@@ -19,9 +19,6 @@ import java.util.Set;
 @Component
 public class IngredientsDataGenerator {
 
-    //TODO change name to IngredientsDataGenerator
-    //the profile is started in alphabetical order and therefore there are no ingredients
-    //available to set for the users in the many to many relationship
     private static final Logger LOGGER =
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final int NUMBER_OF_INGREDIENTS_TO_GENERATE = 10;
