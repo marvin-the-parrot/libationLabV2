@@ -53,15 +53,74 @@
 
     </div>
     <div *ngIf="currentMode === Modes.Ingredients" class="middle-container col-lg-4 col-md-4 col-sm-4 col-4">
-      <p>Ingredients</p>
+
+      <div class="search-container">
+        <div>
+          <label class="label-search">Search for ingredients</label>
+        </div>
+
+        <div class="flex-container">
+          <i class="bi bi-info-circle info" data-tooltip="In your ingredients list you can add all the ingredients you have at home and want to use for cocktails"></i>
+          <div class="wrapper">
+            <app-autocomplete
+              name="ingredientsSelection"
+              textInputClass="form-control"
+              [suggestions]="ingredientSuggestions"
+              [formatModel]="formatIngredient"
+              valueNeedsToMatchSuggestion="true"
+              [(ngModel)]="ingredient"
+            >
+            </app-autocomplete>
+            <button type="button" class="btn rounded-button" (click)="addIngredient(ingredient)">
+              <i class="bi bi-plus-circle"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
 
     </div>
+
     <div *ngIf="currentMode === Modes.Preferences" class="middle-container col-lg-4 col-md-4 col-sm-4 col-4">
       <p>Preferences</p>
     </div>
-    <div class="right-container col-lg-4 col-md-4 col-sm-4 col-4">
+
+    <div *ngIf="currentMode === Modes.AccountSettings" class="right-container col-lg-4 col-md-4 col-sm-4 col-4">
 
     </div>
+
+    <div *ngIf="currentMode === Modes.Ingredients" class="right-container col-lg-4 col-md-4 col-sm-4 col-4">
+
+      <div class="ingredients-container">
+
+        <div class="test">
+          <p class="ingredient-count">{{userIngredients.length}} Ingredients</p>
+        </div>
+
+
+
+        <div class="ingredient-list">
+          <div *ngFor="let ingredient of userIngredients; index as i" class="ingredient-item">
+            {{ ingredient.name }}
+            <i class="bi bi-dash-circle remove-item" (click)="removeIngredient(i)"></i>
+          </div>
+        </div>
+
+        <div class="container-safe-button">
+          <button type="button" class="btn btn-primary save-btn" (click)="saveIngredients()">Save</button>
+        </div>
+
+      </div>
+
+
+
+
+    </div>
+
+    <div *ngIf="currentMode === Modes.Preferences" class="right-container col-lg-4 col-md-4 col-sm-4 col-4">
+
+    </div>
+
 
 
 
