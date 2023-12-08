@@ -8,7 +8,6 @@ import {Observable, of} from "rxjs";
 import {UserListDto, UserListGroupDto} from "../../../dtos/user";
 import {UserService} from "../../../services/user.service";
 import {DialogService} from 'src/app/services/dialog.service';
-import {ConfirmationDialogMode} from "../../../confirmation-dialog/confirmation-dialog.component";
 import {ErrorFormatterService} from "../../../services/error-formatter.service";
 
 @Component({
@@ -63,22 +62,6 @@ export class GroupCreateComponent implements OnInit {
 
   }
 
-  public onDelete(): void {
-    this.dialogService.openConfirmationDialog(ConfirmationDialogMode.Delete).subscribe((result) => {
-      if (result) {
-        this.service.deleteGroup(this.group.id).subscribe({
-          next: data => {
-            this.notification.success(`Successfully deleted Group "${this.group.name}".`);
-            this.router.navigate(['/groups']);
-          },
-          error: error => {
-            console.error('Error deleting group', error);
-            this.notification.error(`Error deleting group "${this.group.name}".`);
-          }
-        });
-      }
-    });
-  }
 
   public onSubmit(form: NgForm) {
     console.log("is form valid?", form.valid, this.group);

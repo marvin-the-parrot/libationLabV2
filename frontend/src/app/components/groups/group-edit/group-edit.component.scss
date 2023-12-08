@@ -110,6 +110,18 @@
   margin-bottom: 20px;
 }
 
+.table-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-right: .2rem;
+}
+
+.remove-members-btn {
+  height: 2rem;
+  font-size: small;
+}
+
 .table-element {
   vertical-align: middle; /* Align elements vertically in the cell */
   text-align: end; /* Optionally center content horizontally */

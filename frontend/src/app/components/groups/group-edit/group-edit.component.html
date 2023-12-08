@@ -60,7 +60,7 @@
           </div>
           <div id="del-btn">
             <button type="button"
-                    class="btn btn-danger custom-button-del">
+                    class="btn btn-danger custom-button-del" (click)="onDelete()">
               Delete group
             </button>
           </div>
@@ -79,17 +79,24 @@
                 <td class="member-column">{{formatMember(member)}}</td>
                 <td class="table-element table-button">
                   <!-- Make button just hidden, when no participant is present, to keep layout correct -->
-                  <button *ngIf="!member.isHost" type="button"
-                          class="btn btn-light delete-button"
-                          (click)="removeMember(i)"
-                          [style.visibility]="member ? 'visible' : 'hidden'">
-                    <i class="bi bi-dash-circle"></i>
-                  </button>
+                  <!-- todo: checkbox color -->
+                  <mat-checkbox *ngIf="group.host.name !== member.name"
+                                (change)="membersSelectedForDeletion[i] = !membersSelectedForDeletion[i]"
+                                name="memberCheckbox{{i}}" style="padding: 0 0.75rem 0 0.75rem" [color]=""
+                                [style.visibility]="member ? 'visible' : 'hidden'"></mat-checkbox>
                   <div *ngIf="group.host.name === member.name" class="crown">👑</div>
                 </td>
               </tr>
               </tbody>
             </table>
+
+            <div class="table-footer">
+              <button type="button"
+                      class="btn btn-danger custom-button-del remove-members-btn" [disabled]="!isAnyMemberSelected()"
+                      (click)="removeSelectedMembers()">
+                Remove selected
+              </button>
+            </div>
           </div>
           <button type="submit"
                   class="btn btn-primary custom-button"

@@ -26,6 +26,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { OptionDialogComponent } from './option-dialog/option-dialog.component';
 import { GroupEditComponent } from './components/groups/group-edit/group-edit.component';
 import { UserSettingsComponent } from './components/user-settings/user-settings.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 
 @NgModule({
@@ -48,17 +49,18 @@ import { UserSettingsComponent } from './components/user-settings/user-settings.
     GroupEditComponent,
     UserSettingsComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    NgbModule,
-    FormsModule,
-    ToastrModule.forRoot(),
-    BrowserAnimationsModule,
-    MatDialogModule,
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        NgbModule,
+        FormsModule,
+        ToastrModule.forRoot(),
+        BrowserAnimationsModule,
+        MatDialogModule,
+        MatCheckboxModule,
+    ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]
 })

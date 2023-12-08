@@ -89,7 +89,7 @@ export class GroupDetailComponent {
   }
 
   private removeMemberFromGroup(member: UserListDto) {
-    this.dialogService.openConfirmationDialog(ConfirmationDialogMode.Delete).subscribe((result) => {
+    this.dialogService.openConfirmationDialog(ConfirmationDialogMode.RemoveUser).subscribe((result) => {
       if (result) {
         this.service.removeMemberFromGroup(this.group.id, member.id).subscribe({
           next: data => {
