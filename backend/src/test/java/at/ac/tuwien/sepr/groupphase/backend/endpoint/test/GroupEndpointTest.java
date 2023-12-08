@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -78,6 +79,7 @@ public class GroupEndpointTest {
     }
 
     @Test
+    @WithMockUser(roles = {"USER"})
     public void searchForMember_searchingMembersOfGroupByGroupId_expected2() throws Exception {
         this.prepareUserGroupAndMember();
 

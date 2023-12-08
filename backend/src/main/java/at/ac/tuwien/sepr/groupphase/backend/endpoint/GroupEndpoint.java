@@ -36,7 +36,6 @@ import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.annotation.security.PermitAll;
 import jakarta.transaction.Transactional;
 
 /**
@@ -221,7 +220,7 @@ public class GroupEndpoint {
      * @param groupId the id of the group
      * @return list of matched user
      */
-    @PermitAll
+    @Secured("ROLE_USER")
     @GetMapping("searchGroupMember/{groupId}")
     @ResponseStatus(HttpStatus.OK)
     public List<UserListDto> searchGroupMember(@PathVariable Long groupId) {
