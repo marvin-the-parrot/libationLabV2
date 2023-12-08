@@ -4,7 +4,6 @@ public class UsernameDto {
 
     private String username;
 
-
     public String getUsername() {
         return username;
     }

@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
-
 public class GroupCreateDto {
     private long id;
     private String name;

@@ -116,9 +116,10 @@ public class GroupValidator {
                 }
                 if (member.getName() == null || member.getName().isEmpty()) {
                     validationErrors.add("Group member name must not be empty");
-                } else if (member.getName().length() > 255) {
-                    validationErrors.add("Group member name must not be longer than 255 characters");
-                }
+                } else
+                    if (member.getName().length() > 255) {
+                        validationErrors.add("Group member name must not be longer than 255 characters");
+                    }
                 if (group.getHost() != null && Objects.equals(member.getId(), group.getHost().getId())) {
                     if (foundHost) {
                         validationErrors.add("Group host must not be added twice");

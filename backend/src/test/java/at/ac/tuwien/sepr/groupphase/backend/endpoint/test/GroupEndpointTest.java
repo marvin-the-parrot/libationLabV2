@@ -35,82 +35,83 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 @WebAppConfiguration
 public class GroupEndpointTest {
 
-	  @Autowired
-	  private WebApplicationContext webAppContext;
-	  private MockMvc mockMvc;
+    @Autowired
+    private WebApplicationContext webAppContext;
+    private MockMvc mockMvc;
 
-	  @Autowired
-	  private UserGroupRepository userGroupRepository;
+    @Autowired
+    private UserGroupRepository userGroupRepository;
 
-	  @Autowired
-	  private GroupRepository groupRepository;
+    @Autowired
+    private GroupRepository groupRepository;
 
-	  @Autowired
-	  private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-	  private ApplicationGroup applicationGroup;
+    private ApplicationGroup applicationGroup;
 
-	  private ApplicationUser applicationUser;
+    private ApplicationUser applicationUser;
 
-	  private ApplicationUser applicationUserMember;
+    private ApplicationUser applicationUserMember;
 
-	  private UserGroup userGroup;
+    private UserGroup userGroup;
 
-	  private UserGroupKey userGroupKey;
-	  
-	  @Autowired
-	  private ObjectMapper objectMapper;
+    private UserGroupKey userGroupKey;
 
-	  @BeforeEach
-	  public void setup() {
-	    this.mockMvc = MockMvcBuilders.webAppContextSetup(webAppContext).build();
-		applicationGroup = new ApplicationGroup();
-		applicationGroup.setId(999L);
-		applicationGroup.setName("newGroup");
-		applicationUser = new ApplicationUser();
-		applicationUser.setAdmin(true);
-		applicationUser.setId(999L);
-		applicationUser.setEmail(UUID.randomUUID() +"@gmail.com");
-		applicationUser.setName("New user");
-		applicationUser.setPassword("Password");
-		groupRepository.save(applicationGroup);
-		userRepository.save(applicationUser);
-	  }
-	  
-	  @Test
-	  public void searchForMember_searchingMembersOfGroupByGroupId_expected2() throws Exception {
-	      this.prepareUserGroupAndMember();
-	    
-          int expected = 2;
-	      MvcResult mvcResult= mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/groups/searchGroupMember/{groupId}", applicationGroup.getId())).andExpect(status().isOk()).andReturn();    
-          String contentResult = mvcResult.getResponse().getContentAsString();
-          int result = objectMapper.readValue(contentResult, new TypeReference<List<UserListDto>>() {}).size();
+    @Autowired
+    private ObjectMapper objectMapper;
 
-          assertEquals(result, expected);
-	  }  
-		    
-	private void prepareUserGroupAndMember() {
-	     userGroup = new UserGroup();
-			userGroupKey = new UserGroupKey(applicationUser.getId(), applicationGroup.getId());
-			userGroup.setId(userGroupKey);
-			userGroup.setHost(true);
-			userGroup.setUser(applicationUser);
-			userGroup.setGroups(applicationGroup);
-			userGroupRepository.save(userGroup);
-			applicationUserMember = new ApplicationUser();
-			applicationUserMember.setAdmin(false);
-			applicationUserMember.setId(9999L);
-			applicationUserMember.setEmail(UUID.randomUUID() +"@gmail.com");
-			applicationUserMember.setName("New user member");
-			applicationUserMember.setPassword("Password Member");
-			userRepository.save(applicationUserMember);
-			UserGroup userGroup2 = new UserGroup();
-			UserGroupKey userGroupKey2 = new UserGroupKey(applicationUserMember.getId(), applicationGroup.getId());
-			userGroup2.setId(userGroupKey2);
-			userGroup2.setHost(true);
-			userGroup2.setUser(applicationUser);
-			userGroup2.setGroups(applicationGroup);
-			userGroupRepository.save(userGroup2);
-		}
+    @BeforeEach
+    public void setup() {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(webAppContext).build();
+        applicationGroup = new ApplicationGroup();
+        applicationGroup.setId(999L);
+        applicationGroup.setName("newGroup");
+        applicationUser = new ApplicationUser();
+        applicationUser.setAdmin(true);
+        applicationUser.setId(999L);
+        applicationUser.setEmail(UUID.randomUUID() + "@gmail.com");
+        applicationUser.setName("New user");
+        applicationUser.setPassword("Password");
+        groupRepository.save(applicationGroup);
+        userRepository.save(applicationUser);
+    }
+
+    @Test
+    public void searchForMember_searchingMembersOfGroupByGroupId_expected2() throws Exception {
+        this.prepareUserGroupAndMember();
+
+        int expected = 2;
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/groups/searchGroupMember/{groupId}", applicationGroup.getId())).andExpect(status().isOk()).andReturn();
+        String contentResult = mvcResult.getResponse().getContentAsString();
+        int result = objectMapper.readValue(contentResult, new TypeReference<List<UserListDto>>() {
+        }).size();
+
+        assertEquals(result, expected);
+    }
+
+    private void prepareUserGroupAndMember() {
+        userGroup = new UserGroup();
+        userGroupKey = new UserGroupKey(applicationUser.getId(), applicationGroup.getId());
+        userGroup.setId(userGroupKey);
+        userGroup.setHost(true);
+        userGroup.setUser(applicationUser);
+        userGroup.setGroups(applicationGroup);
+        userGroupRepository.save(userGroup);
+        applicationUserMember = new ApplicationUser();
+        applicationUserMember.setAdmin(false);
+        applicationUserMember.setId(9999L);
+        applicationUserMember.setEmail(UUID.randomUUID() + "@gmail.com");
+        applicationUserMember.setName("New user member");
+        applicationUserMember.setPassword("Password Member");
+        userRepository.save(applicationUserMember);
+        UserGroup userGroup2 = new UserGroup();
+        UserGroupKey userGroupKey2 = new UserGroupKey(applicationUserMember.getId(), applicationGroup.getId());
+        userGroup2.setId(userGroupKey2);
+        userGroup2.setHost(true);
+        userGroup2.setUser(applicationUser);
+        userGroup2.setGroups(applicationGroup);
+        userGroupRepository.save(userGroup2);
+    }
 
 }

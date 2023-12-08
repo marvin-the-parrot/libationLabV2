@@ -1,15 +1,15 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
-import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
-
+import at.ac.tuwien.sepr.groupphase.backend.api.IngredientApi;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
+import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 
 @Mapper
 public interface IngredientMapper {
@@ -21,6 +21,8 @@ public interface IngredientMapper {
     IngredientListDto ingredientToIngredientListDto(Ingredient ingredient);
 
     List<IngredientListDto> ingredientToIngredientListDto(List<Ingredient> ingredient);
+
+    List<IngredientListDto> ingredientApiToIngredientListDto(List<IngredientApi> ingredient);
 
     Ingredient ingredientListDtoToIngredient(IngredientListDto ingredientListDto);
 

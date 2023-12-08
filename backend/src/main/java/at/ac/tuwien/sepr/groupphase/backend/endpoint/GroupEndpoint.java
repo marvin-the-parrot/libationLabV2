@@ -174,7 +174,6 @@ public class GroupEndpoint {
         }
     }
 
-
     /**
      * Delete group.
      *
@@ -219,7 +218,7 @@ public class GroupEndpoint {
     /**
      * Searching for member of group.
      *
-     * @param groupId    the id of the group
+     * @param groupId the id of the group
      * @return list of matched user
      */
     @PermitAll

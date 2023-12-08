@@ -26,6 +26,9 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { OptionDialogComponent } from './option-dialog/option-dialog.component';
 import { GroupEditComponent } from './components/groups/group-edit/group-edit.component';
 import { UserSettingsComponent } from './components/user-settings/user-settings.component';
+import { IngredientComponent } from './components/ingredient/ingredient.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 
 
@@ -48,19 +51,22 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
     OptionDialogComponent,
     GroupEditComponent,
     UserSettingsComponent,
+    IngredientComponent,
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        ReactiveFormsModule,
-        HttpClientModule,
-        NgbModule,
-        FormsModule,
-        ToastrModule.forRoot(),
-        BrowserAnimationsModule,
-        MatDialogModule,
-        MatCheckboxModule,
-    ],
+  imports: [
+    MatIconModule,
+    MatInputModule,
+    BrowserModule,
+    AppRoutingModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    NgbModule,
+    FormsModule,
+    ToastrModule.forRoot(),
+    BrowserAnimationsModule,
+    MatDialogModule,
+    MatCheckboxModule,
+  ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]
 })

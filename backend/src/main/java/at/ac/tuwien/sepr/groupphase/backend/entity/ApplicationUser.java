@@ -14,7 +14,6 @@ import jakarta.persistence.ManyToMany;
 import java.util.Objects;
 import java.util.Set;
 
-
 /**
  * Entity of table ApplicationUser.
  */

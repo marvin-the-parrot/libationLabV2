@@ -114,7 +114,6 @@ public class GroupOverviewDto {
             return this;
         }
 
-
         /**
          * Group detail dto builder.
          *

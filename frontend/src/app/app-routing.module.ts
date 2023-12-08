@@ -9,6 +9,7 @@ import {CreateAccountComponent} from "./components/create-account/create-account
 import {ForgotPasswordComponent} from "./components/forgot-password/forgot-password.component";
 import {ResetPasswordComponent} from "./components/reset-password/reset-password.component";
 import {UserSettingsComponent} from "./components/user-settings/user-settings.component";
+import { IngredientComponent } from './components/ingredient/ingredient.component';
 import {GroupEditComponent} from "./components/groups/group-edit/group-edit.component";
 import {GroupCreateComponent} from "./components/groups/group-create/group-create.component";
 
@@ -27,7 +28,8 @@ const routes: Routes = [
       {path: ':id/edit', component: GroupEditComponent},
       {path: ':id/detail', component: GroupDetailComponent}
     ]
-  }
+  },
+  {path: 'ingredient', canActivate: mapToCanActivate([AuthGuard]), component: IngredientComponent}
 ];
 
 @NgModule({

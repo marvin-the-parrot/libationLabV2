@@ -2,6 +2,9 @@ package at.ac.tuwien.sepr.groupphase.backend.service;
 
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientSearchExistingUserDto;
@@ -19,8 +22,10 @@ public interface IngredientService {
      *
      * @param ingredientsName name of ingredients
      * @return ingredients with searched name
+     * @throws JsonProcessingException in case of api exception
+     * @throws JsonMappingException in case of mapping exception
      */
-    List<Ingredient> searchIngredients(String ingredientsName);
+    List<IngredientListDto> searchIngredients(String ingredientsName) throws JsonMappingException, JsonProcessingException;
 
     /**
      * Get all ingredients.
@@ -28,7 +33,6 @@ public interface IngredientService {
      * @return all ingredients
      */
     List<IngredientGroupDto> getAllGroupIngredients(Long groupId) throws NotFoundException;
-
 
     /**
      * Retrieve all stored ingredients, that match the given parameters.
@@ -45,7 +49,6 @@ public interface IngredientService {
      * @return a stream of ingredients belonging to a user
      */
     List<IngredientListDto> getUserIngredients();
-
 
     /**
      * Add ingredients to user.

@@ -124,7 +124,6 @@ public class GroupServiceImpl implements GroupService {
         // remove the user from the group
         userGroupRepository.delete(toRemove);
 
-
         // var groupMembers = group.getMembers();
         // groupMembers.removeIf(member -> member.getUser().getId().equals(userId));
         // group.setMembers(groupMembers);
@@ -171,7 +170,6 @@ public class GroupServiceImpl implements GroupService {
         // todo update group in database
         return null; // todo return updated group
     }
-
 
     @Override
     @Transactional
