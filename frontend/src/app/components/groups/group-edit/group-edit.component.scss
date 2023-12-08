@@ -1,0 +1,199 @@
+
+// header:
+.grid-container > div > div:first-child {
+  background-color: #AC6AFE;
+  width: 100%;
+  margin: 0;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  border-radius: 15px 15px 0 0;
+}
+
+
+.grid-container {
+  background-color: #D9D9D9;
+  margin-top: 50px;
+  display: grid;
+  gap: 50px;
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 15px;
+}
+
+.grid-container > div {
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 4px 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 10%;
+  padding: 0px;
+}
+
+.form-column {
+  padding-top: 50px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.table-column {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+}
+
+// field labels:
+.input-row {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+}
+
+.input-field {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  width: 70%;
+  padding: 10px 0px 10px 20px;
+}
+
+// list of members:
+.table-container {
+  max-height: 500px; /* Set a fixed height for the container */
+  min-height: 500px;
+  background-color: white;
+  overflow-y: auto; /* Enable vertical scrolling when content exceeds height */
+  border: 1px solid #ccc; /* Optional: Add a border for the container */
+  padding: 10px; /* Optional: Add padding for the container */
+  border-radius: 15px; /* Rounded corners */
+  margin-bottom: 20px;
+  margin-top: 20px;
+  width: 70%;
+}
+
+.list-row {
+  border-bottom: 1px solid #ccc;
+}
+
+.entry-count {
+  margin-bottom: 0;
+  border-bottom: 1px solid #ccc;
+  color: grey;
+}
+
+.custom-button{
+  margin-bottom: 20px;
+  margin-right: 20px;
+  background-color: #6200EE;
+  border-color: #6200EE;
+}
+
+#del-btn {
+  display: flex;
+  flex-grow: 1;
+  align-items: end;
+  justify-content: left;
+}
+
+#del-btn > button {
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+
+.table-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-right: .2rem;
+}
+
+.remove-members-btn {
+  height: 2rem;
+  font-size: small;
+}
+
+.table-element {
+  vertical-align: middle; /* Align elements vertically in the cell */
+  text-align: end; /* Optionally center content horizontally */
+}
+
+.equal-columns {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.member-column {
+  width: 50%; /* Set an equal width for both columns */
+  height: 55px;
+  display: flex;
+  align-items: center; /* Vertically center content */
+  border-bottom: white;
+  margin-left: 20px;
+
+}
+
+.table-button {
+  width: 50%;
+  height: 55px;
+  margin-right: 20px; /* Push the button or crown to the right */
+  align-items: end;
+}
+
+.crown {
+  font-size: 20px;
+  margin-right: 20px;
+}
+
+.btn:disabled {
+  opacity: 0.2; /* You can adjust the opacity level to change the appearance */
+  cursor: not-allowed;
+}
+
+.delete-button {
+  margin-right: 12px;
+}
+.bi-dash-circle {
+  color: black;
+}
+
+.rounded-button {
+  background-color: #AC6AFE;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  padding-bottom: 0;
+  padding-top: 0;
+  height: 36px;
+}
+.btn.rounded-button:active {
+  background-color: white; /* Set background color to transparent */
+  box-shadow: none;
+}
+
+.wrapper {
+  position: relative;
+}
+
+.wrapper button {
+  border-radius: 0 5px 5px 0;
+  position: absolute;
+  right: 0;
+  top: 11px;
+
+
+}
+
+.bi-person-fill-add {
+  font-size: 20px;
+}
+

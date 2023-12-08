@@ -2,8 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {GroupOverview} from "../../dtos/group-overview";
 import {GroupsService} from "../../services/groups.service";
-import {MessageDetailDto} from "../../dtos/message";
-import {UserListGroupDto} from "../../dtos/user";
 
 @Component({
   selector: 'app-groups',
@@ -25,7 +23,7 @@ export class GroupsComponent implements OnInit {
     this.fetchGroups();
   }
 
-  private fetchGroups() {
+  fetchGroups() {
     this.groupService.getAllByUser().subscribe({
       next: (groups: GroupOverview[]) => {
         for (let group of groups) {

@@ -162,3 +162,17 @@ input {
 .info:hover::after {
   opacity: 1;
 }
+
+.custom-button-edit {
+  margin: 3rem 5rem 3rem 5rem;
+  border-radius: 10px;
+  height: 3em;
+  background-color: #6200ee;
+  opacity: 0.72;
+  color: white;
+}
+
+.custom-button-edit:hover {
+  background-color: #6200ee;
+  opacity: 1;
+}

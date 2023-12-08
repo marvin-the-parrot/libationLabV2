@@ -8,22 +8,14 @@ import {Observable, of} from "rxjs";
 import {UserListDto, UserListGroupDto} from "../../../dtos/user";
 import {UserService} from "../../../services/user.service";
 import {DialogService} from 'src/app/services/dialog.service';
-import {ConfirmationDialogMode} from "../../../confirmation-dialog/confirmation-dialog.component";
 import {ErrorFormatterService} from "../../../services/error-formatter.service";
-
-export enum GroupCreateEditMode {
-  create,
-  edit,
-}
 
 @Component({
   selector: 'app-group-create-edit',
-  templateUrl: './group-create-edit.component.html',
-  styleUrls: ['./group-create-edit.component.scss']
+  templateUrl: './group-create.component.html',
+  styleUrls: ['./group-create.component.scss']
 })
-export class GroupCreateEditComponent implements OnInit {
-
-  mode: GroupCreateEditMode = GroupCreateEditMode.create;
+export class GroupCreateComponent implements OnInit {
 
   group: GroupOverview = {
     id: 0,
@@ -70,74 +62,18 @@ export class GroupCreateEditComponent implements OnInit {
 
   }
 
-  public get heading(): string {
-    switch (this.mode) {
-      case GroupCreateEditMode.create:
-        return 'Create Group';
-      case GroupCreateEditMode.edit:
-        return `Edit: ${this.group.name}`;
-      default:
-        return "?";
-    }
-  }
-
-  public get submitButtonText(): string {
-    switch (this.mode) {
-      case GroupCreateEditMode.create:
-        return 'Create';
-      case GroupCreateEditMode.edit:
-        return 'Save';
-      default:
-        return "?";
-    }
-  }
-
-  get modeIsCreate(): boolean {
-    return this.mode === GroupCreateEditMode.create;
-  }
-
-  public onDelete(): void {
-    this.dialogService.openConfirmationDialog(ConfirmationDialogMode.Delete).subscribe((result) => {
-      if (result) {
-        this.service.deleteGroup(this.group.id).subscribe({
-          next: data => {
-            this.notification.success(`Successfully deleted Group "${this.group.name}".`);
-            this.router.navigate(['/groups']);
-          },
-          error: error => {
-            console.error('Error deleting group', error);
-            this.notification.error(`Error deleting group "${this.group.name}".`);
-          }
-        });
-      }
-    });
-  }
 
   public onSubmit(form: NgForm) {
     console.log("is form valid?", form.valid, this.group);
     if (form.valid) {
-      let observable: Observable<GroupOverview>;
-
-      switch (this.mode) {
-        case GroupCreateEditMode.create:
-          observable = this.service.create(this.group);
-          break;
-        case GroupCreateEditMode.edit:
-          observable = this.service.update(this.group);
-          break;
-        default:
-          console.log("unknown mode", this.mode);
-          return;
-      }
-
-      observable.subscribe({
+      this.service.create(this.group).subscribe({
         next: data => {
           this.router.navigate(["/groups"]);
-          this.notification.success(`Successfully ${this.modeIsCreate ? 'created' : 'updated'} Group "${this.group.name}".`);
+          this.notification.success(`Successfully created Group "${this.group.name}".`);
         },
         error: error => {
           console.error("Error creating/editing group", error);
-          this.notification.error(this.errorFormatter.format(error), `Error ${this.modeIsCreate ? 'creating' : 'updating'} group "${this.group.name}".`, {
+          this.notification.error(this.errorFormatter.format(error), `Error creating group "${this.group.name}".`, {
             enableHtml: true,
             timeOut: 10000,
           });
@@ -170,7 +106,7 @@ export class GroupCreateEditComponent implements OnInit {
     setTimeout(() => {
       for (let i = 0; i < this.group.members.length; i++) {
         if (this.group.members[i]?.id === user.id) {
-          // todo: show error message: duplicate member
+          // show error message: duplicate member
           this.notification.error(`User "${user.name}" is already a member of this group.`);
           this.dummyMemberSelectionModel = null;
           return;

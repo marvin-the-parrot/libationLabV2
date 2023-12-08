@@ -2,10 +2,12 @@ import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 
 export enum ConfirmationDialogMode {
-  Delete,
+  RemoveUser,
   MakeHost,
   Leave,
-  DeleteAccount
+  DeleteAccount,
+  RemoveUsers,
+  DeleteGroup
   // add more modes here if needed
 }
 
@@ -26,10 +28,22 @@ export class ConfirmationDialogComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data: { mode: ConfirmationDialogMode }) {
 
     switch (data.mode) {
-      case ConfirmationDialogMode.Delete:
+      case ConfirmationDialogMode.RemoveUser:
         this.dialogHeader = 'Confirm remove user'
         this.dialogText = "Are you sure you want to remove this user from the group?"
         this.confirmBtnText = 'Remove user';
+        this.backgroundColor = '#f95959';
+        break;
+      case ConfirmationDialogMode.RemoveUsers:
+        this.dialogHeader = 'Confirm remove users'
+        this.dialogText = "Are you sure you want to remove these users from the group?"
+        this.confirmBtnText = 'Remove users';
+        this.backgroundColor = '#f95959';
+        break;
+      case ConfirmationDialogMode.DeleteGroup:
+        this.dialogHeader = 'Confirm delete group'
+        this.dialogText = "Are you sure you want to delete this group? This action cannot be undone."
+        this.confirmBtnText = 'Delete group';
         this.backgroundColor = '#f95959';
         break;
       case ConfirmationDialogMode.MakeHost:

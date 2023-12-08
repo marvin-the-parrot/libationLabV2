@@ -13,7 +13,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {httpInterceptorProviders} from './interceptors';
 import { GroupsComponent } from './components/groups/groups.component';
 import { GroupThumbComponent } from './components/groups/group-thumb/group-thumb.component';
-import { GroupCreateEditComponent } from './components/groups/group-create-edit/group-create-edit.component';
+import { GroupCreateComponent } from './components/groups/group-create/group-create.component';
 import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
 import { GroupDetailComponent } from './components/groups/group-detail/group-detail.component';
 import { CreateAccountComponent } from './components/create-account/create-account.component';
@@ -26,6 +26,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { OptionDialogComponent } from './option-dialog/option-dialog.component';
 import { GroupEditComponent } from './components/groups/group-edit/group-edit.component';
 import { UserSettingsComponent } from './components/user-settings/user-settings.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 
 @NgModule({
@@ -37,7 +38,7 @@ import { UserSettingsComponent } from './components/user-settings/user-settings.
     MessageComponent,
     GroupsComponent,
     GroupThumbComponent,
-    GroupCreateEditComponent,
+    GroupCreateComponent,
     AutocompleteComponent,
     GroupDetailComponent,
     CreateAccountComponent,
@@ -48,17 +49,18 @@ import { UserSettingsComponent } from './components/user-settings/user-settings.
     GroupEditComponent,
     UserSettingsComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    NgbModule,
-    FormsModule,
-    ToastrModule.forRoot(),
-    BrowserAnimationsModule,
-    MatDialogModule,
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        NgbModule,
+        FormsModule,
+        ToastrModule.forRoot(),
+        BrowserAnimationsModule,
+        MatDialogModule,
+        MatCheckboxModule,
+    ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]
 })
