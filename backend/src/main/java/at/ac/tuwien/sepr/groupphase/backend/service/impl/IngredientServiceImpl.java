@@ -5,6 +5,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import at.ac.tuwien.sepr.groupphase.backend.api.IngredientApiResponse;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientSearchExistingUserDto;
@@ -13,19 +23,15 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.IngredientMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
-import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
-import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
+import jakarta.transaction.Transactional;
 
 /**
  * Ingredients service implementation.
@@ -39,22 +45,33 @@ public class IngredientServiceImpl implements IngredientService {
     private final GroupRepository groupRepository;
     private final IngredientMapper ingredientMapper;
     private final UserMapper userMapper;
+    public static final String SEARCH_INGREDIENT_URL = "https://www.thecocktaildb.com/api/json/v1/1/search.php";
+    private final RestTemplate restTemplate;
 
     @Autowired
     public IngredientServiceImpl(IngredientsRepository ingredientsRepository, UserGroupRepository userGroupRepository,
                                  UserRepository userRepository, GroupRepository groupRepository,
-                                 IngredientMapper ingredientMapper, UserMapper userMapper) {
+                                 IngredientMapper ingredientMapper, UserMapper userMapper, RestTemplate restTemplate) {
         this.ingredientsRepository = ingredientsRepository;
         this.userGroupRepository = userGroupRepository;
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
         this.ingredientMapper = ingredientMapper;
         this.userMapper = userMapper;
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public List<Ingredient> searchIngredients(String ingredientsName) {
-        return ingredientsRepository.searchIngredients(ingredientsName);
+    public List<IngredientListDto> searchIngredients(String ingredientsName) throws JsonProcessingException {
+        List<Ingredient> searchIngredientsFromDb = ingredientsRepository.searchIngredients(ingredientsName);
+        if (!searchIngredientsFromDb.isEmpty()) {
+            return ingredientMapper.ingredientToIngredientListDto(searchIngredientsFromDb);
+        }
+        String url = SEARCH_INGREDIENT_URL + "?i=" + ingredientsName;
+        String apiJsonCall = restTemplate.getForObject(url, String.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        IngredientApiResponse ingredientResponse = objectMapper.readValue(apiJsonCall, IngredientApiResponse.class);
+        return ingredientMapper.ingredientApiToIngredientListDto(ingredientResponse.getIngredients());
     }
 
     @Transactional

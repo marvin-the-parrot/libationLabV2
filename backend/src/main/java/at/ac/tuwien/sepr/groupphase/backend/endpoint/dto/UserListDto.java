@@ -20,5 +20,4 @@ public class UserListDto {
         this.name = name;
     }
 
-
 }

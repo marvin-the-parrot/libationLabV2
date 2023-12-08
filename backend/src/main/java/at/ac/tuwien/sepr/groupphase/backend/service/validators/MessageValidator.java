@@ -30,7 +30,6 @@ public class MessageValidator {
         this.groupService = groupService;
     }
 
-
     /**
      * Validates a message that should be created.
      *
@@ -76,10 +75,10 @@ public class MessageValidator {
      * Validates a message that should be updated.
      *
      * @param message the message to update
-     * @throws ValidationException          if the update data given for the message
-     *                                      is in itself incorrect (no name, name too long …)
-     * @throws ConflictException if the update data given for the message
-     *                                      is in conflict the data currently in the system (group does not exist)
+     * @throws ValidationException if the update data given for the message
+     *                             is in itself incorrect (no name, name too long …)
+     * @throws ConflictException   if the update data given for the message
+     *                             is in conflict the data currently in the system (group does not exist)
      */
     public void validateForUpdate(MessageDetailDto message)
         throws ValidationException, ConflictException {

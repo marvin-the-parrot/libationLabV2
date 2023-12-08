@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
-
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.ResetPasswordDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
@@ -99,7 +98,6 @@ public class CustomUserDetailService implements UserService {
         this.messageRepository = messageRepository;
         this.groupRepository = groupRepository;
     }
-
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

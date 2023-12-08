@@ -23,7 +23,6 @@ public class UserValidator {
     public UserValidator() {
     }
 
-
     /**
      * Validates a message that should be created.
      *

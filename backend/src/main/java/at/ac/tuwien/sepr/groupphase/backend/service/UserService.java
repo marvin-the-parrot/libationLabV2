@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
-
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.ResetPasswordDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
@@ -85,7 +84,6 @@ public interface UserService extends UserDetailsService {
      * @return a stream of users matching the parameters
      */
     List<UserListDto> search(UserSearchExistingGroupDto searchParams);
-
 
     /**
      * Send an email to the user with a link to reset his password.

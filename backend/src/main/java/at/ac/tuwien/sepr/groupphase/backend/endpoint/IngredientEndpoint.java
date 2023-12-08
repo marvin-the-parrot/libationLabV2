@@ -28,7 +28,12 @@ import org.springframework.web.bind.annotation.RestController;
 import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
+
 /**
  * Ingredients endpoint controller.
  */
@@ -47,11 +52,10 @@ public class IngredientEndpoint {
         this.ingredientService = ingredientService;
     }
 
-    @PermitAll
-    @RequestMapping(value = "searchIngredients/{ingredientsName}", method = RequestMethod.GET)
+    @Secured("ROLE_USER")
+    @GetMapping("searchIngredients/{ingredientsName}")
     @ResponseStatus(HttpStatus.OK)
-    public List<Ingredient> searchIngredients(@PathVariable String ingredientsName) {
-        //TODO: don't permit all and no RequestMapping instead GetMapping
+    public List<IngredientListDto> searchIngredients(@PathVariable String ingredientsName) throws JsonProcessingException {
         LOGGER.info("GET " + BASE_PATH + "searchIngredients/{}", ingredientsName);
         return ingredientService.searchIngredients(ingredientsName);
     }
@@ -108,9 +112,6 @@ public class IngredientEndpoint {
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
-
-
-
 
     private void logClientError(HttpStatus status, String message, Exception e) {
         LOGGER.warn("{} {}: {}: {}", status.value(), message,

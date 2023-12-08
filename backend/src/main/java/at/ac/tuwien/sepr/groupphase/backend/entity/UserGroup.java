@@ -99,7 +99,6 @@ public class UserGroup {
             return this;
         }
 
-
         /**
          * Build application group.
          *

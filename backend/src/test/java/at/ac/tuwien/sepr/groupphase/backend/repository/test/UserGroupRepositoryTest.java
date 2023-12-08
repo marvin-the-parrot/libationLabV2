@@ -22,96 +22,95 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 @SpringBootTest
 public class UserGroupRepositoryTest {
 
-	@Autowired
-	private UserGroupRepository userGroupRepository;
+    @Autowired
+    private UserGroupRepository userGroupRepository;
 
-	@Autowired
-	private GroupRepository groupRepository;
+    @Autowired
+    private GroupRepository groupRepository;
 
-	@Autowired
-	private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-	private ApplicationGroup applicationGroup;
+    private ApplicationGroup applicationGroup;
 
-	private ApplicationUser applicationUser;
+    private ApplicationUser applicationUser;
 
-	private UserGroup userGroup;
+    private UserGroup userGroup;
 
-	private UserGroupKey userGroupKey;
+    private UserGroupKey userGroupKey;
 
-	@BeforeEach
-	public void setUp() {
-		userGroupRepository.deleteAll();
-		applicationGroup = new ApplicationGroup();
-		applicationGroup.setId(9999L);
-		applicationGroup.setName("newGroup");
-		applicationUser = new ApplicationUser();
-		applicationUser.setAdmin(true);
-		applicationUser.setId(9999L);
-		applicationUser.setEmail(UUID.randomUUID() +"@gmail.com");
-		applicationUser.setName("New user");
-		applicationUser.setPassword("Password");
-		groupRepository.save(applicationGroup);
-		userRepository.save(applicationUser);
-		userGroup = new UserGroup();
-		userGroupKey = new UserGroupKey(applicationUser.getId(), applicationGroup.getId());
-		userGroup.setId(userGroupKey);
-		userGroup.setHost(true);
-		userGroup.setUser(applicationUser);
-		userGroup.setGroups(applicationGroup);
-		userGroupRepository.save(userGroup);
-	}
+    @BeforeEach
+    public void setUp() {
+        userGroupRepository.deleteAll();
+        applicationGroup = new ApplicationGroup();
+        applicationGroup.setId(9999L);
+        applicationGroup.setName("newGroup");
+        applicationUser = new ApplicationUser();
+        applicationUser.setAdmin(true);
+        applicationUser.setId(9999L);
+        applicationUser.setEmail(UUID.randomUUID() + "@gmail.com");
+        applicationUser.setName("New user");
+        applicationUser.setPassword("Password");
+        groupRepository.save(applicationGroup);
+        userRepository.save(applicationUser);
+        userGroup = new UserGroup();
+        userGroupKey = new UserGroupKey(applicationUser.getId(), applicationGroup.getId());
+        userGroup.setId(userGroupKey);
+        userGroup.setHost(true);
+        userGroup.setUser(applicationUser);
+        userGroup.setGroups(applicationGroup);
+        userGroupRepository.save(userGroup);
+    }
 
-	@Test
-	public void deleteById_deleteGroupByExistingId_expectedFalse() {
-		Optional<UserGroup> expected = userGroupRepository.findById(userGroupKey);
+    @Test
+    public void deleteById_deleteGroupByExistingId_expectedFalse() {
+        Optional<UserGroup> expected = userGroupRepository.findById(userGroupKey);
 
-		userGroupRepository.deleteById(userGroupKey);
-		Optional<UserGroup> result = userGroupRepository.findById(userGroupKey);
+        userGroupRepository.deleteById(userGroupKey);
+        Optional<UserGroup> result = userGroupRepository.findById(userGroupKey);
 
-		assertNotEquals(expected, result);
-	}
+        assertNotEquals(expected, result);
+    }
 
-	@Test
-	public void deleteById_deleteGroupByNotExistingId_expectedTrue() {
-		UserGroup expected = userGroupRepository.findById(userGroupKey).get();
+    @Test
+    public void deleteById_deleteGroupByNotExistingId_expectedTrue() {
+        UserGroup expected = userGroupRepository.findById(userGroupKey).get();
 
-		userGroupRepository.deleteById(new UserGroupKey());
-		UserGroup result = userGroupRepository.findById(userGroupKey).get();
+        userGroupRepository.deleteById(new UserGroupKey());
+        UserGroup result = userGroupRepository.findById(userGroupKey).get();
 
-		assertEquals(expected.getGroups().getId(), result.getGroups().getId());
-		assertEquals(expected.getUser().getId(), result.getUser().getId());
-	}
-	
-	@Test
-	public void findUsersByGroupId_findingUserOfGroup_expectedTwo() {
-		ApplicationUser applicationUser1 = new ApplicationUser();
-		applicationUser1.setAdmin(true);
-		applicationUser1.setId(99998L);
-		applicationUser1.setEmail(UUID.randomUUID() +"@gmail.com");
-		applicationUser1.setName("New user");
-		applicationUser1.setPassword("Password");
-		userRepository.save(applicationUser1);
-		ApplicationUser applicationUser2 = new ApplicationUser();
-		applicationUser2.setAdmin(true);
-		applicationUser2.setId(99997L);
-		applicationUser2.setEmail(UUID.randomUUID() +"@gmail.com");
-		applicationUser2.setName("New user");
-		applicationUser2.setPassword("Password");
-		userRepository.save(applicationUser2);
-		UserGroupKey userGroupKey2 = new UserGroupKey(applicationUser2.getId(), applicationGroup.getId());
-		UserGroup userGroup2 = new UserGroup();
-		userGroup2.setId(userGroupKey2);
-		userGroup2.setHost(false);
-		userGroup2.setGroups(applicationGroup);
-		userGroup2.setUser(applicationUser2);
-		userGroupRepository.save(userGroup2);
-		
-		int expected = 2;
-		int result = userGroupRepository.findUsersByGroupId(applicationGroup.getId()).size();
+        assertEquals(expected.getGroups().getId(), result.getGroups().getId());
+        assertEquals(expected.getUser().getId(), result.getUser().getId());
+    }
 
-		assertEquals(result, expected);
-	}
+    @Test
+    public void findUsersByGroupId_findingUserOfGroup_expectedTwo() {
+        ApplicationUser applicationUser1 = new ApplicationUser();
+        applicationUser1.setAdmin(true);
+        applicationUser1.setId(99998L);
+        applicationUser1.setEmail(UUID.randomUUID() + "@gmail.com");
+        applicationUser1.setName("New user");
+        applicationUser1.setPassword("Password");
+        userRepository.save(applicationUser1);
+        ApplicationUser applicationUser2 = new ApplicationUser();
+        applicationUser2.setAdmin(true);
+        applicationUser2.setId(99997L);
+        applicationUser2.setEmail(UUID.randomUUID() + "@gmail.com");
+        applicationUser2.setName("New user");
+        applicationUser2.setPassword("Password");
+        userRepository.save(applicationUser2);
+        UserGroupKey userGroupKey2 = new UserGroupKey(applicationUser2.getId(), applicationGroup.getId());
+        UserGroup userGroup2 = new UserGroup();
+        userGroup2.setId(userGroupKey2);
+        userGroup2.setHost(false);
+        userGroup2.setGroups(applicationGroup);
+        userGroup2.setUser(applicationUser2);
+        userGroupRepository.save(userGroup2);
 
+        int expected = 2;
+        int result = userGroupRepository.findUsersByGroupId(applicationGroup.getId()).size();
+
+        assertEquals(result, expected);
+    }
 
 }

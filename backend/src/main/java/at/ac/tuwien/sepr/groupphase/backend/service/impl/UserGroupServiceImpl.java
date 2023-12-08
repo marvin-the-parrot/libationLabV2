@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
 
-
 @Service
 public class UserGroupServiceImpl implements UserGroupService {
 

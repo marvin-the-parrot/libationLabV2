@@ -27,7 +27,7 @@ public interface MessageRepository extends JpaRepository<ApplicationMessage, Lon
     /**
      * Find count of all message entries of a user with isRead false.
      *
-     * @param user of message
+     * @param user   of message
      * @param isRead of message
      * @return ordered list of al message entries
      */
