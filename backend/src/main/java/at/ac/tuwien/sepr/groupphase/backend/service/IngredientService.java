@@ -8,8 +8,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientSearchExistingUserDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchExistingGroupDto;
-import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 
 /**
@@ -23,7 +21,7 @@ public interface IngredientService {
      * @param ingredientsName name of ingredients
      * @return ingredients with searched name
      * @throws JsonProcessingException in case of api exception
-     * @throws JsonMappingException in case of mapping exception
+     * @throws JsonMappingException    in case of mapping exception
      */
     List<IngredientListDto> searchIngredients(String ingredientsName) throws JsonMappingException, JsonProcessingException;
 
