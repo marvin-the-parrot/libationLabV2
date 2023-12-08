@@ -63,7 +63,7 @@ public class UserGroupRepositoryTest {
     }
 
     @Test
-    public void deleteById_deleteGroupByExistingId_expectedFalse() {
+    public void deleteById_deleteUserGroupByExistingId_expectedFalse() {
         Optional<UserGroup> expected = userGroupRepository.findById(userGroupKey);
 
         userGroupRepository.deleteById(userGroupKey);
@@ -73,7 +73,7 @@ public class UserGroupRepositoryTest {
     }
 
     @Test
-    public void deleteById_deleteGroupByNotExistingId_expectedTrue() {
+    public void deleteById_deleteUserGroupByNotExistingId_expectedTrue() {
         UserGroup expected = userGroupRepository.findById(userGroupKey).get();
 
         userGroupRepository.deleteById(new UserGroupKey());
