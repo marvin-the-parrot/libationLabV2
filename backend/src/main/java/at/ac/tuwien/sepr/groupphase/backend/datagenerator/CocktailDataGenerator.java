@@ -96,7 +96,6 @@ public class CocktailDataGenerator {
                     //String strAlcoholic = line[2];
                     //String strGlass = line[3];
                     String strInstructions = line[4];
-                    String strIngredients = line[5];
                     String strDrinkThumb = line[6];
 
                     Cocktail cocktail = new Cocktail();
@@ -105,7 +104,7 @@ public class CocktailDataGenerator {
                     cocktail.setImagePath(strDrinkThumb);
                     cocktailRepository.save(cocktail);
 
-
+                    String strIngredients = line[5];
                     // Remove curly braces and split into key-value pairs
                     String[] pairs = strIngredients.substring(1, strIngredients.length() - 1).split(", ");
 
