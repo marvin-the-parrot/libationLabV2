@@ -69,20 +69,12 @@ public class GroupServiceImpl implements GroupService {
     public void deleteGroup(Long groupId, String currentUserMail) throws ValidationException {
         LOGGER.debug("Delete group ({})", groupId);
 
-        ApplicationUser currentUser = userRepository.findByEmail(currentUserMail);
-        if (currentUser == null) {
-            throw new NotFoundException("Could not find current user");
-        }
-
         ApplicationGroup group = groupRepository.findById(groupId).orElse(null);
         if (group == null) {
             throw new NotFoundException("Could not find group");
         }
 
-        UserGroup userGroup = userGroupRepository.findById(new UserGroupKey(currentUser.getId(), groupId)).orElse(null);
-        if (userGroup == null || !userGroup.isHost()) {
-            throw new ValidationException("You are not allowed to delete this group", List.of("You are not the host of this group"));
-        }
+        validator.validateIsCurrentUserHost(userRepository, userGroupRepository, groupId, currentUserMail);
 
         // delete all user groups
         List<UserGroup> userGroups = userGroupRepository.findAllByApplicationGroup(group);
@@ -127,11 +119,6 @@ public class GroupServiceImpl implements GroupService {
         // remove the user from the group
         userGroupRepository.delete(toRemove);
 
-        // var groupMembers = group.getMembers();
-        // groupMembers.removeIf(member -> member.getUser().getId().equals(userId));
-        // group.setMembers(groupMembers);
-        // groupRepository.save(group);
-
     }
 
     @Override
@@ -166,10 +153,10 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public GroupCreateDto update(GroupCreateDto toUpdate) throws NotFoundException, ValidationException, ConflictException {
+    public GroupCreateDto update(GroupCreateDto toUpdate, String currentUser) throws NotFoundException, ValidationException, ConflictException {
         LOGGER.trace("update({})", toUpdate);
         // validate group:
-        validator.validateForUpdate(toUpdate);
+        validator.validateForUpdate(toUpdate, userRepository, userGroupRepository, currentUser);
 
         // build new group entity and save it:
         ApplicationGroup group = ApplicationGroup.GroupBuilder.group().withId(toUpdate.getId()).withName(toUpdate.getName()).build();
@@ -213,12 +200,6 @@ public class GroupServiceImpl implements GroupService {
         return groupMapper.groupToGroupCreateDto(group);
     }
 
-    /*private GroupCreateDto getGroupDto(ApplicationGroup group) {
-        var members = group.getMembers();
-        var host = members.stream().filter(UserGroup::isHost).findFirst().orElse(null);
-        return new GroupCreateDto(group.getId(), group.getName(), userMapper.userToUserListDto(userRepository.find), null, userMapper.userToUserListDto(group.getMembers()));
-    }*/
-
     @Override
     @Transactional
     public List<UserGroup> findGroupsByUser(String email) {
@@ -239,14 +220,7 @@ public class GroupServiceImpl implements GroupService {
         }
 
         // check if current user is host of the group
-        ApplicationUser currentUser = userRepository.findByEmail(currentUserMail);
-        if (currentUser == null) {
-            throw new NotFoundException("Could not find current user");
-        }
-        UserGroup currentUserGroup = userGroupRepository.findById(new UserGroupKey(currentUser.getId(), groupId)).orElse(null);
-        if (currentUserGroup == null || !currentUserGroup.isHost()) {
-            throw new ValidationException("You are not allowed to make this user host", List.of("You are not the host of this group"));
-        }
+        final UserGroup currentUserGroup = validator.validateIsCurrentUserHost(userRepository, userGroupRepository, groupId, currentUserMail);
 
         // check if user exists and is member of the group
         UserGroup makeHostUserGroup = userGroupRepository.findById(new UserGroupKey(userId, groupId)).orElse(null);

@@ -151,7 +151,7 @@ public class GroupEndpoint {
 
         toUpdate.setId(id);
         try {
-            return groupService.update(toUpdate);
+            return groupService.update(toUpdate, SecurityContextHolder.getContext().getAuthentication().getName());
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Group to update not found", e);
