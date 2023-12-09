@@ -11,7 +11,8 @@ import {GroupsService} from "../../services/groups.service";
 export class GroupsComponent implements OnInit {
 
   groups: GroupOverview[] = null;
-  username: string = localStorage.getItem('username');
+
+  username: string = JSON.parse(localStorage.getItem('user')).name;
 
   constructor(
     public authService: AuthService,

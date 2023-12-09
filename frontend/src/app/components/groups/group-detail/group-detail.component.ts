@@ -27,7 +27,7 @@ export class GroupDetailComponent {
     members: [{name: 'Sep', id: 4, isHost:false}, {name: 'Jan', id: 5,isHost:false}, {name: 'Peter', id: 6,isHost:false}, {name: 'Susanne', id: 7,isHost:false}],
   }
 
-  username: string = localStorage.getItem('username');
+  username: string = JSON.parse(localStorage.getItem('user')).name;
   // for autocomplete
   user: UserListDto = {
     id: null,
