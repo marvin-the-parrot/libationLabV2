@@ -12,6 +12,7 @@ import {UserSettingsComponent} from "./components/user-settings/user-settings.co
 import { IngredientComponent } from './components/ingredient/ingredient.component';
 import {GroupEditComponent} from "./components/groups/group-edit/group-edit.component";
 import {GroupCreateComponent} from "./components/groups/group-create/group-create.component";
+import { CocktailComponent } from './components/cocktail/cocktail.component';
 
 const routes: Routes = [
   {path: '', pathMatch: 'full', redirectTo: 'groups'},
@@ -29,7 +30,8 @@ const routes: Routes = [
       {path: ':id/detail', component: GroupDetailComponent}
     ]
   },
-  {path: 'ingredient', canActivate: mapToCanActivate([AuthGuard]), component: IngredientComponent}
+  {path: 'ingredient', canActivate: mapToCanActivate([AuthGuard]), component: IngredientComponent},
+  {path: 'cocktail', canActivate: mapToCanActivate([AuthGuard]), component: CocktailComponent}
 ];
 
 @NgModule({

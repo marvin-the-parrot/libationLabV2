@@ -4,9 +4,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -24,6 +27,17 @@ public class Ingredient {
 
     @ManyToMany(mappedBy = "ingredients")
     Set<ApplicationUser> applicationUser;
+
+    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.REMOVE)
+    private Set<CocktailIngredients> cocktailIngredients;
+
+    public Set<CocktailIngredients> getCocktailIngredients() {
+        return cocktailIngredients;
+    }
+
+    public void setCocktailIngredients(Set<CocktailIngredients> cocktailIngredients) {
+        this.cocktailIngredients = cocktailIngredients;
+    }
 
     public Ingredient() {
     }

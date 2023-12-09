@@ -1,0 +1,68 @@
+<app-header></app-header>
+
+<div class="custom-container">
+
+    <p>Search for cocktails</p>
+    
+    <form class="d-flex flex-row w-auto mb-3">
+        <button type="submit" hidden="hidden">submit</button>
+        <!-- Suchfeld für Name -->
+        <div class="flex-grow-1">
+            <label for="searchName" class="label-name col-form-label">
+                Name
+            </label>
+            <mat-form-field class = "search-field-name">
+                <mat-icon matPrefix>search</mat-icon>
+                <input
+                  matInput
+                  type="text"
+                  id="searchName"
+                  name="searchName"
+                  [(ngModel)]="nameOfCocktail"
+                  (ngModelChange)="searchChanged()"
+                  placeholder="Search for Cocktails"
+                /> 
+              </mat-form-field>
+        </div>
+        <!-- Zusätzliches Suchfeld für Zutaten -->
+        <div class="flex-grow-1">
+            <label for="searchIngredient" class="label-ingredient col-form-label">
+                Ingredients
+            </label>
+            <mat-form-field class="search-field-ingredient">
+                <mat-icon matPrefix>search</mat-icon>
+                <input
+                    matInput
+                    type="text"
+                    id="searchIngredient"
+                    name="searchIngredient"
+                    [(ngModel)]="nameOfIngredient"
+                    (ngModelChange)="searchChanged()"
+                    placeholder="Search for Ingredients"
+                />
+            </mat-form-field>
+        </div>
+    
+      </form>
+    <br><br>  
+    <div class="label-table" *ngIf = "cocktails?.length > 0">
+      <p>{{cocktails.length}} Result</p>
+      <table class="table-hover" >
+        <tbody>
+          <tr *ngFor="let cocktail of cocktails" class="center-td">
+            <th class="th-style" 
+            [style.background]="selectedCocktail === cocktail.name ? '#D9D9D9' : 'F5F5F5'"
+            (click)="showImage(cocktail.name)">
+            {{cocktail.name}}</th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="additional-div" *ngIf="isToShowImg">
+      <figure class="figure-style" >
+        <img [src]="imageUrl" >
+        <figcaption class="image-name">{{imageName}}</figcaption>
+      </figure>      
+    </div>
+</div>

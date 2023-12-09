@@ -1,0 +1,117 @@
+.custom-container {
+    position: absolute;
+    left: 40px;
+    top: 100px;
+    width: 461px;
+    height: 91px;
+    color: black;
+    //font-weight: bold;
+    font-size: 36px;
+  
+  .label-name {
+    font-size: 12px;
+    //font-weight: bold;
+    margin-top: 5px; 
+    position: absolute;
+    left: 80px;
+    top: 70px;
+    width: 52px;
+    height: 20px;
+  }
+
+  .label-ingredient {
+    font-size: 12px;
+    //font-weight: bold;
+    margin-top: 5px; 
+    position: absolute;
+    left: 712px;
+    top: 70px;
+    width: 52px;
+    height: 20px;
+  }
+  
+  .input-search {
+    margin-top: 5px; 
+    position: absolute;
+    left: 78px;
+    top: 100px;
+    width: 609px;
+    height: 39px;
+  }
+  
+  .search-field-name {
+    //border-radius: 15px !important;
+    display: flex;
+    align-items: center;
+    position: absolute;
+    margin-top: 5px; 
+    left: 78px;
+    top: 100px;
+    width: 609px;
+    height: 70px;
+    font-size: 14px;
+    border: none;
+    border-radius: 10px;
+    border-color: #B0B0B0;
+  }
+
+  .search-field-ingredient {
+    //border-radius: 15px !important;
+    display: flex;
+    align-items: center;
+    position: absolute;
+    margin-top: 5px; 
+    left: 710px;
+    top: 100px;
+    width: 300px;
+    height: 70px;
+    font-size: 14px;
+    border: none;
+    border-radius: 10px;
+    border-color: #B0B0B0;
+  }
+  
+  .additional-div {
+    position: absolute;
+    left: 1265px;
+    top: -10px;
+    width: 400px;
+    height: 680px;
+    background-color: #D9D9D9;
+  }
+  
+  .center-td > td {
+    vertical-align: middle;
+  }
+  
+  .label-table {
+    font-size: 14px;
+    //font-weight: bold;
+    margin-top: 5px; 
+    position: absolute;
+    left: 80px;
+    top: 170px;
+    width: 609px;
+    height: 20px;
+  }
+  
+  }
+  
+  .figure-style {
+    text-align: center; 
+    margin-top: 30px;
+  }
+  
+  .image-name {
+    margin-top: 10px;
+  }
+  
+  .th-style {
+    padding-left: 20px; 
+    border-top: 1px solid grey; 
+    border-bottom: 1px solid grey; 
+    width: 609px;
+  }
+  
+  
+  

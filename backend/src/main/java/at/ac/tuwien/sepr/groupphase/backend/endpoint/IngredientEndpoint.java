@@ -6,8 +6,6 @@ import java.util.List;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientSearchExistingUserDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchExistingGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -34,7 +32,6 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 /**
  * Ingredients endpoint controller.
  */
-
 @RestController
 @RequestMapping(path = IngredientEndpoint.BASE_PATH)
 public class IngredientEndpoint {
