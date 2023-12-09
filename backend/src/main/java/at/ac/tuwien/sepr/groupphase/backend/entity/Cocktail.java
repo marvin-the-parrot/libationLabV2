@@ -25,6 +25,9 @@ public class Cocktail {
     @Column(name = "image_path")
     private String imagePath;
 
+    @Column(name = "instructions", columnDefinition = "TEXT")
+    private String instructions;
+
     @OneToMany(mappedBy = "cocktail")
     private Set<CocktailIngredients> cocktailIngredients;
 
@@ -69,4 +72,11 @@ public class Cocktail {
         this.imagePath = imagePath;
     }
 
+    public String getInstructions() {
+        return instructions;
+    }
+
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
+    }
 }
