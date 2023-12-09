@@ -142,8 +142,9 @@ public class GroupEndpoint {
      * @throws ValidationException if the data is not valid
      * @throws ConflictException   if the data conflicts with existing data
      */
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_USER")
     @PutMapping("{id}")
+    @Operation(security = @SecurityRequirement(name = "apiKey"))
     public GroupCreateDto update(@PathVariable long id, @RequestBody GroupCreateDto toUpdate) throws ValidationException, ConflictException {
         LOGGER.info("PUT " + BASE_PATH + "/{}", toUpdate);
         LOGGER.debug("Body of request:\n{}", toUpdate);

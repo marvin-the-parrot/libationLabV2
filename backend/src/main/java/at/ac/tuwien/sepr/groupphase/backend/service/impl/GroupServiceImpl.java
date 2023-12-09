@@ -2,6 +2,7 @@ package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
@@ -38,6 +39,8 @@ public class GroupServiceImpl implements GroupService {
     @Autowired
     private final GroupRepository groupRepository;
     private final GroupValidator validator;
+    @Autowired
+    private GroupMapper groupMapper;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -159,17 +162,62 @@ public class GroupServiceImpl implements GroupService {
             userGroupRepository.save(newMember);
         }
 
-        return new GroupCreateDto(saved.getId(), saved.getName(), toCreate.getHost(), toCreate.getCocktails(),
-            toCreate.getMembers()); // todo: return created group
+        return groupMapper.groupToGroupCreateDto(group);
     }
 
     @Override
     public GroupCreateDto update(GroupCreateDto toUpdate) throws NotFoundException, ValidationException, ConflictException {
         LOGGER.trace("update({})", toUpdate);
+        // validate group:
         validator.validateForUpdate(toUpdate);
-        // todo update group in database
-        return null; // todo return updated group
+
+        // build new group entity and save it:
+        ApplicationGroup group = ApplicationGroup.GroupBuilder.group().withId(toUpdate.getId()).withName(toUpdate.getName()).build();
+        LOGGER.debug("saving group {}", group);
+        ApplicationGroup saved = groupRepository.save(group);
+
+        // update members in database:
+        List<UserGroup> existingUserGroups = userGroupRepository.findAllByApplicationGroup(group);
+
+        // remove members that are not in the new group anymore
+        for (var existingUserGroup : existingUserGroups) {
+            boolean found = false;
+            for (var member : toUpdate.getMembers()) {
+                if (existingUserGroup.getUser().getId().equals(member.getId())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                userGroupRepository.delete(existingUserGroup);
+            }
+        }
+
+        // add new members
+        for (var member : toUpdate.getMembers()) {
+            boolean found = false;
+            for (var existingUserGroup : existingUserGroups) {
+                if (existingUserGroup.getUser().getId().equals(member.getId())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                UserGroup newMember = UserGroup.UserGroupBuilder.userGroup().withUserGroupKey(new UserGroupKey(member.getId(), saved.getId()))
+                    .withUser(userRepository.findById(member.getId()).orElse(null)).withGroup(groupRepository.findById(saved.getId()).orElse(null))
+                    .withIsHost(member.getId().equals(toUpdate.getHost().getId())).build();
+                userGroupRepository.save(newMember);
+            }
+        }
+
+        return groupMapper.groupToGroupCreateDto(group);
     }
+
+    /*private GroupCreateDto getGroupDto(ApplicationGroup group) {
+        var members = group.getMembers();
+        var host = members.stream().filter(UserGroup::isHost).findFirst().orElse(null);
+        return new GroupCreateDto(group.getId(), group.getName(), userMapper.userToUserListDto(userRepository.find), null, userMapper.userToUserListDto(group.getMembers()));
+    }*/
 
     @Override
     @Transactional
