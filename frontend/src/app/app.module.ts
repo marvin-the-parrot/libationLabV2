@@ -30,6 +30,7 @@ import { IngredientComponent } from './components/ingredient/ingredient.componen
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import { CocktailComponent } from './components/cocktail/cocktail.component';
 
 
 @NgModule({
@@ -52,6 +53,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
     GroupEditComponent,
     UserSettingsComponent,
     IngredientComponent,
+    CocktailComponent,
   ],
   imports: [
     MatIconModule,
