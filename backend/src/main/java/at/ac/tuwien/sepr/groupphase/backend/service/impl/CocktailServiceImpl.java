@@ -1,8 +1,12 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
 import java.util.List;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
+import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
+import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,9 @@ public class CocktailServiceImpl implements CocktailIngredientService {
     private CocktailIngredientsRepository cocktailIngredientsRepository;
 
     @Autowired
+    private CocktailRepository cocktailRepository;
+
+    @Autowired
     private CocktailIngredientMapper cocktailIngredientMapper;
 
     @Override
@@ -38,6 +45,19 @@ public class CocktailServiceImpl implements CocktailIngredientService {
                 return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailIngredientsRepository.findByCocktailName(cocktailsName));
             }
         return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailIngredientsRepository.findByIngredientNameAndCocktailName(ingredientsName, cocktailsName));
+    }
+
+    @Override
+    public List<CocktailOverviewDto> getMixableCocktails() {
+        LOGGER.debug("Get all mixable cocktails");
+
+        List<Cocktail> cocktails = cocktailRepository.findAll();
+
+        List<CocktailOverviewDto> cocktailOverviewDto = new ArrayList<>();
+        for (Cocktail cocktail : cocktails) {
+            cocktailOverviewDto.add(cocktailIngredientMapper.cocktailToCocktailOverviewDto(cocktail));
+        }
+        return cocktailOverviewDto;
     }
 
 }

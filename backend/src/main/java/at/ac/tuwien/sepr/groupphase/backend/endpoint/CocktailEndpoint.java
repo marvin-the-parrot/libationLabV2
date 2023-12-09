@@ -3,6 +3,7 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,14 @@ public class CocktailEndpoint {
     public List<CocktailListDto> searchCoctailsByIngredient(@PathVariable String ingredientsName) throws JsonProcessingException {
         LOGGER.info("GET " + BASE_PATH + "searchCocktails/ingredient/{}", ingredientsName);
         return cocktailService.searchCocktailByCocktailNameAndIngredientName(null, ingredientsName);
+    }
+
+    @Secured("ROLE_USER")
+    @GetMapping("mixable")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CocktailOverviewDto> getMixableCocktails() throws JsonProcessingException {
+        LOGGER.info("GET " + BASE_PATH + "mixable");
+        return cocktailService.getMixableCocktails();
     }
 
 }
