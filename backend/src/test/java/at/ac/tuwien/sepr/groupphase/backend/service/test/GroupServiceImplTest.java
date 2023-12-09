@@ -63,11 +63,11 @@ public class GroupServiceImplTest {
         groupRepository.save(applicationGroup);
         userRepository.save(applicationUser);
     }
-    
+
     @Test
 	public void deleteGroup_deleteGroupByExistingIdAndFromHost_expectedFalse() throws ValidationException {
 		prepareUserGroupAndMember();
-		
+
     	int expected = groupRepository.findAll().size();
 		groupServiceImpl.deleteGroup(applicationGroup.getId(), applicationUser.getEmail());
 		int result = groupRepository.findAll().size();
@@ -92,7 +92,7 @@ public class GroupServiceImplTest {
 		ValidationException validationStatusException = assertThrows(ValidationException.class,
                 () -> groupServiceImpl.deleteGroup(applicationGroup.getId(), applicationUser.getEmail()));
 
-        assertEquals("You are not allowed to delete this group. Failed validations: You are not the host of this group.", validationStatusException.getMessage());
+        assertEquals("This action is not allowed. Failed validations: You are not the host of this group.", validationStatusException.getMessage());
 	}
 
 	@Test
@@ -112,7 +112,7 @@ public class GroupServiceImplTest {
 
 		NotFoundException notFoundException = assertThrows(NotFoundException.class,
 				() -> groupServiceImpl.deleteMember(applicationGroup.getId(), applicationUser.getId(), "wrong@email.com"));
-		
+
 		assertEquals("Could not find current user", notFoundException.getMessage());
 	}
 

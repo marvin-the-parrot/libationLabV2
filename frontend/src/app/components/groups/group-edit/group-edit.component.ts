@@ -82,7 +82,7 @@ export class GroupEditComponent {
       this.service.update(this.group).subscribe({
         next: data => {
           this.notification.success(`Successfully edited Group "${this.group.name}".`);
-          this.router.navigate(["../detail"]);
+          this.router.navigate([data.id, 'detail'], { relativeTo: this.route.parent });
         },
         error: error => {
           console.error("Error editing group", error);

@@ -2,6 +2,7 @@ package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
@@ -39,6 +40,8 @@ public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
     private final GroupValidator validator;
     @Autowired
+    private GroupMapper groupMapper;
+    @Autowired
     private UserRepository userRepository;
     @Autowired
     private UserGroupRepository userGroupRepository;
@@ -66,20 +69,12 @@ public class GroupServiceImpl implements GroupService {
     public void deleteGroup(Long groupId, String currentUserMail) throws ValidationException {
         LOGGER.debug("Delete group ({})", groupId);
 
-        ApplicationUser currentUser = userRepository.findByEmail(currentUserMail);
-        if (currentUser == null) {
-            throw new NotFoundException("Could not find current user");
-        }
-
         ApplicationGroup group = groupRepository.findById(groupId).orElse(null);
         if (group == null) {
             throw new NotFoundException("Could not find group");
         }
 
-        UserGroup userGroup = userGroupRepository.findById(new UserGroupKey(currentUser.getId(), groupId)).orElse(null);
-        if (userGroup == null || !userGroup.isHost()) {
-            throw new ValidationException("You are not allowed to delete this group", List.of("You are not the host of this group"));
-        }
+        validator.validateIsCurrentUserHost(userRepository, userGroupRepository, groupId, currentUserMail);
 
         // delete all user groups
         List<UserGroup> userGroups = userGroupRepository.findAllByApplicationGroup(group);
@@ -124,11 +119,6 @@ public class GroupServiceImpl implements GroupService {
         // remove the user from the group
         userGroupRepository.delete(toRemove);
 
-        // var groupMembers = group.getMembers();
-        // groupMembers.removeIf(member -> member.getUser().getId().equals(userId));
-        // group.setMembers(groupMembers);
-        // groupRepository.save(group);
-
     }
 
     @Override
@@ -159,16 +149,55 @@ public class GroupServiceImpl implements GroupService {
             userGroupRepository.save(newMember);
         }
 
-        return new GroupCreateDto(saved.getId(), saved.getName(), toCreate.getHost(), toCreate.getCocktails(),
-            toCreate.getMembers()); // todo: return created group
+        return groupMapper.groupToGroupCreateDto(group);
     }
 
     @Override
-    public GroupCreateDto update(GroupCreateDto toUpdate) throws NotFoundException, ValidationException, ConflictException {
+    public GroupCreateDto update(GroupCreateDto toUpdate, String currentUser) throws NotFoundException, ValidationException, ConflictException {
         LOGGER.trace("update({})", toUpdate);
-        validator.validateForUpdate(toUpdate);
-        // todo update group in database
-        return null; // todo return updated group
+        // validate group:
+        validator.validateForUpdate(toUpdate, userRepository, userGroupRepository, currentUser);
+
+        // build new group entity and save it:
+        ApplicationGroup group = ApplicationGroup.GroupBuilder.group().withId(toUpdate.getId()).withName(toUpdate.getName()).build();
+        LOGGER.debug("saving group {}", group);
+        ApplicationGroup saved = groupRepository.save(group);
+
+        // update members in database:
+        List<UserGroup> existingUserGroups = userGroupRepository.findAllByApplicationGroup(group);
+
+        // remove members that are not in the new group anymore
+        for (var existingUserGroup : existingUserGroups) {
+            boolean found = false;
+            for (var member : toUpdate.getMembers()) {
+                if (existingUserGroup.getUser().getId().equals(member.getId())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                userGroupRepository.delete(existingUserGroup);
+            }
+        }
+
+        // add new members
+        for (var member : toUpdate.getMembers()) {
+            boolean found = false;
+            for (var existingUserGroup : existingUserGroups) {
+                if (existingUserGroup.getUser().getId().equals(member.getId())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                UserGroup newMember = UserGroup.UserGroupBuilder.userGroup().withUserGroupKey(new UserGroupKey(member.getId(), saved.getId()))
+                    .withUser(userRepository.findById(member.getId()).orElse(null)).withGroup(groupRepository.findById(saved.getId()).orElse(null))
+                    .withIsHost(member.getId().equals(toUpdate.getHost().getId())).build();
+                userGroupRepository.save(newMember);
+            }
+        }
+
+        return groupMapper.groupToGroupCreateDto(group);
     }
 
     @Override
@@ -191,14 +220,7 @@ public class GroupServiceImpl implements GroupService {
         }
 
         // check if current user is host of the group
-        ApplicationUser currentUser = userRepository.findByEmail(currentUserMail);
-        if (currentUser == null) {
-            throw new NotFoundException("Could not find current user");
-        }
-        UserGroup currentUserGroup = userGroupRepository.findById(new UserGroupKey(currentUser.getId(), groupId)).orElse(null);
-        if (currentUserGroup == null || !currentUserGroup.isHost()) {
-            throw new ValidationException("You are not allowed to make this user host", List.of("You are not the host of this group"));
-        }
+        final UserGroup currentUserGroup = validator.validateIsCurrentUserHost(userRepository, userGroupRepository, groupId, currentUserMail);
 
         // check if user exists and is member of the group
         UserGroup makeHostUserGroup = userGroupRepository.findById(new UserGroupKey(userId, groupId)).orElse(null);
