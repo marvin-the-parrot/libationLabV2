@@ -41,10 +41,19 @@
     </div>
   </div>
 
-  <div class="grid-item-2">
+  <div class="grid-item-2 d-flex flex-column" >
     <div class="d-flex flex-column justify-content-center">
       <h3 class="m-0">Menu</h3>
       <div>{{group.name}}</div>
+    </div>
+    <div *ngIf="group.cocktails === null" class="d-flex justify-content-center align-items-center h-100">
+      <span *ngIf=""></span>
+      <button *ngIf="group.cocktails === null" class="btn menu-button" [routerLink]="['../menu']" >Create a Cocktail Menu</button>
+    </div>
+    <div *ngIf="group.cocktails !== null">
+      <span *ngFor="let cocktail of group.cocktails" >
+      {{ cocktail.name }}
+      </span>
     </div>
   </div>
 

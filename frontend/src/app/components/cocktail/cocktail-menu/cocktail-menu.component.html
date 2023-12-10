@@ -1,0 +1,51 @@
+<app-header></app-header>
+
+<div class="grid-container p-3 ">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="row g-0 menu-card">
+        <div class="menu-header">
+          <h2>Mixable Cocktails</h2>
+        </div>
+
+        <div class="m-2">
+          <label for="searchName" class="label-name">
+          </label>
+          <mat-form-field class="search-field-name">
+            <mat-icon matPrefix>search</mat-icon>
+            <input
+              matInput
+              type="text"
+              id="searchName"
+              name="searchName"
+              placeholder="!NOT YET IMPLEMENTED!"
+            />
+          </mat-form-field>
+        </div>
+        <div *ngFor="let cocktail of cocktails" class="mb-3 col-xxl-2 col-lg-3 col-md-6 col-sm-12">
+          <div class="card h-100">
+            <div class="container-fluid card-header">{{ cocktail.name }}</div>
+            <div class="card-body">
+              <img src="{{ cocktail.imagePath }}" class="img-fluid" alt="Responsive image">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-md-4">
+      <div class="menu-card">
+        <div clasS="menu-header">
+          <h2>Selected Menu</h2>
+        </div>
+        <div class="card-body">
+            <div class="menu-body d-flex align-items-center justify-content-center">
+              <h5> this is where selected cocktails will go</h5>
+            </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

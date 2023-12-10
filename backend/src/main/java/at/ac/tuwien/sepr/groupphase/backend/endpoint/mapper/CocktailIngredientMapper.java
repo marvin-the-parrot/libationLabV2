@@ -3,6 +3,8 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
+import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -19,7 +21,7 @@ public interface CocktailIngredientMapper {
         List<CocktailListDto> convertedDto = new ArrayList<>();
         for (CocktailIngredients eachCocktailIngredients : cocktailIngredientsList) {
             if (!convertedDto.stream().anyMatch(dto -> dto.getName().equals(eachCocktailIngredients.getCocktail().getName()))) {
-                convertedDto.add(new CocktailListDto(eachCocktailIngredients.getCocktail().getId(), 
+                convertedDto.add(new CocktailListDto(eachCocktailIngredients.getCocktail().getId(),
                       eachCocktailIngredients.getCocktail().getName(), eachCocktailIngredients.getCocktail().getImagePath(), List.of(eachCocktailIngredients.getIngredient().getName())));
             } else {
                 convertedDto.stream().anyMatch(dto -> {
@@ -38,4 +40,6 @@ public interface CocktailIngredientMapper {
     }
 
     ;
+
+    CocktailOverviewDto cocktailToCocktailOverviewDto(Cocktail cocktail);
 }

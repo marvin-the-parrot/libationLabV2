@@ -13,6 +13,7 @@ import { IngredientComponent } from './components/ingredient/ingredient.componen
 import {GroupEditComponent} from "./components/groups/group-edit/group-edit.component";
 import {GroupCreateComponent} from "./components/groups/group-create/group-create.component";
 import { CocktailComponent } from './components/cocktail/cocktail.component';
+import { CocktailMenuComponent } from './components/cocktail/cocktail-menu/cocktail-menu.component';
 
 const routes: Routes = [
   {path: '', pathMatch: 'full', redirectTo: 'groups'},
@@ -27,7 +28,8 @@ const routes: Routes = [
       {path: '', component: GroupsComponent},
       {path: 'create', component: GroupCreateComponent},
       {path: ':id/edit', component: GroupEditComponent},
-      {path: ':id/detail', component: GroupDetailComponent}
+      {path: ':id/detail', component: GroupDetailComponent},
+      {path: ':id/menu', canActivate: mapToCanActivate([AuthGuard]),component: CocktailMenuComponent}
     ]
   },
   {path: 'ingredient', canActivate: mapToCanActivate([AuthGuard]), component: IngredientComponent},
