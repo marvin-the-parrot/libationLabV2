@@ -20,7 +20,6 @@ public interface CocktailIngredientService {
     List<CocktailListDto> searchCocktailByCocktailNameAndIngredientName(String cocktailsName, String ingredientsName);
 
     /**
-     *
      * Searching for cocktails that can be mixed with the given ingredients.
      *
      * @return cocktails

@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
+import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,10 +44,16 @@ public class CocktailServiceImpl implements CocktailIngredientService {
     private UserRepository userRepository;
 
     @Autowired
+    private GroupRepository groupRepository;
+
+    @Autowired
     private IngredientsRepository ingredientsRepository;
 
     @Autowired
     private CocktailIngredientMapper cocktailIngredientMapper;
+
+    @Autowired
+    private IngredientService ingredientService;
 
     @Override
     public List<CocktailListDto> searchCocktailByCocktailNameAndIngredientName(String cocktailsName,
@@ -68,8 +77,15 @@ public class CocktailServiceImpl implements CocktailIngredientService {
 
         // get all ingredients from user
         ApplicationUser host = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        List<Ingredient> availableIngredients = ingredientsRepository.findAllByApplicationUser(host);
         // Todo: implement get all ingredients from group members
+
+        List<IngredientGroupDto> availableIngredients = ingredientService.getAllGroupIngredients(groupId);
+        // TODO: use one function for both cases
+        List<String> availableIngredientsList = new ArrayList<>();
+        for (IngredientGroupDto ingredientGroupDto : availableIngredients) {
+            availableIngredientsList.add(ingredientGroupDto.getName());
+        }
+
 
         // get all cocktails
         List<Cocktail> cocktails = cocktailRepository.findAllByOrderByNameAsc();
@@ -82,7 +98,7 @@ public class CocktailServiceImpl implements CocktailIngredientService {
 
             boolean hasAllIngredients = true;
             for (Ingredient ingredient : cocktailIngredients) {
-                if (!availableIngredients.contains(ingredient)) {
+                if (!availableIngredientsList.contains(ingredient.getName())) {
                     hasAllIngredients = false;
                     break;
                 }

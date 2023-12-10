@@ -242,7 +242,7 @@ public class GroupEndpoint {
     @GetMapping("{groupId}/mixables")
     @ResponseStatus(HttpStatus.OK)
     public List<CocktailOverviewDto> getMixableCocktails(@PathVariable Long groupId) throws JsonProcessingException {
-        LOGGER.info("GET " + BASE_PATH + groupId+ "mixable");
+        LOGGER.info("GET " + BASE_PATH + groupId + "mixable");
         return cocktailService.getMixableCocktails(groupId);
     }
 

@@ -63,7 +63,6 @@ public class CocktailDataGenerator {
         this.cocktailIngredeintsRepository = cocktailIngredeintsRepository;
     }
 
-    @Transactional
     @PostConstruct
     private void generateGroup() throws IOException {
         if (cocktailRepository.findAll().size() > 0) {
@@ -78,7 +77,7 @@ public class CocktailDataGenerator {
 
         }
     }
-    @Transactional
+
     private void giveUsersIngredients() {
         List<ApplicationUser> users = userRepository.findAll();
         Collections.reverse(users);
