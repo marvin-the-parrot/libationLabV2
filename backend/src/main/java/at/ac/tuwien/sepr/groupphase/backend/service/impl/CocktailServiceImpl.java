@@ -51,7 +51,7 @@ public class CocktailServiceImpl implements CocktailIngredientService {
     public List<CocktailOverviewDto> getMixableCocktails() {
         LOGGER.debug("Get all mixable cocktails");
 
-        List<Cocktail> cocktails = cocktailRepository.findAll();
+        List<Cocktail> cocktails = cocktailRepository.findAllByOrderByNameAsc();
 
         List<CocktailOverviewDto> cocktailOverviewDto = new ArrayList<>();
         for (Cocktail cocktail : cocktails) {

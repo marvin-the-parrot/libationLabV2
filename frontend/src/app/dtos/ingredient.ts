@@ -10,4 +10,10 @@ export interface IngredientListDto {
   name: string;
 }
 
+export interface IngredientDto {
+  id: number;
+  name: string;
+  amount: string;
+}
+
 

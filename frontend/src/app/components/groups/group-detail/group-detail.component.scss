@@ -9,6 +9,15 @@
   border-radius: 15px 15px 0 0;
 }
 
+.menu-button {
+  background-color: #AC6AFE;
+  padding: 0.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
 .grid-container {
   margin-top: 50px;
   display: grid;

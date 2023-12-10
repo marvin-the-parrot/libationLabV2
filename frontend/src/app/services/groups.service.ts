@@ -4,6 +4,7 @@ import {GroupOverview} from "../dtos/group-overview";
 import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
 import { UserListDto } from "../dtos/user";
+import {CocktailOverviewDto} from "../dtos/cocktail";
 
 @Injectable({
   providedIn: 'root'
@@ -55,7 +56,6 @@ export class GroupsService {
    * Gets a members by name and group id.
    *
    * @param groupId the id of the group
-   * @param name the name of member
    */
   getMembersOfGroup(groupId: number): Observable<UserListDto[]> {
     return this.httpClient.get<UserListDto[]>(`${this.baseUri}/searchGroupMember/${groupId}`);
@@ -92,5 +92,13 @@ export class GroupsService {
 
   getAllByUser() {
     return this.httpClient.get<GroupOverview[]>(`${this.baseUri}`);
+  }
+
+  /**
+   * Get all mixable cocktails for a group.
+   * @param id
+   */
+  getMixables(id: number) {
+    return this.httpClient.get<CocktailOverviewDto[]>(`${this.baseUri}/${id}/mixables`);
   }
 }

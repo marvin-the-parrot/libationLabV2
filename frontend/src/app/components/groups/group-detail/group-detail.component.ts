@@ -21,10 +21,10 @@ import {IngredientService} from "../../../services/ingredient.service";
 export class GroupDetailComponent {
 
   group: GroupOverview = {
-    id: 1,
-    name: 'Cocktail Party',
-    cocktails: ['Mojito', 'Mai Tai', 'White Russian'],
-    members: [{name: 'Sep', id: 4, isHost:false}, {name: 'Jan', id: 5,isHost:false}, {name: 'Peter', id: 6,isHost:false}, {name: 'Susanne', id: 7,isHost:false}],
+    id: null,
+    name: null,
+    cocktails: [],
+    members: [],
   }
 
   username: string = localStorage.getItem('username');
@@ -41,7 +41,6 @@ export class GroupDetailComponent {
   // Error flag
   error = false;
   errorMessage = '';
-  private destroy$ = new Subject<void>();
 
   constructor(
     private groupsService: GroupsService,
@@ -51,7 +50,6 @@ export class GroupDetailComponent {
     private messageService: MessageService,
     private notification: ToastrService,
     private route: ActivatedRoute,
-    private router: Router,
   ) {
   }
 
@@ -59,6 +57,7 @@ export class GroupDetailComponent {
     const groupId = this.route.snapshot.params['id'];
     this.getGroup(groupId);
     this.getIngredients(groupId);
+    console.log(this.group.cocktails);
   }
 
   memberSuggestions = (input: string): Observable<UserListDto[]> => (input === '')
@@ -161,6 +160,7 @@ export class GroupDetailComponent {
     this.groupsService.getById(id).subscribe({
       next: (group: GroupOverview) => {
         this.group = group;
+        console.log(this.group)
       },
       error: error => {
         console.error('Could not fetch group due to:');

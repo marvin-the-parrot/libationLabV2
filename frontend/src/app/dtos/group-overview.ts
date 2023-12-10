@@ -3,7 +3,7 @@ import {UserListDto, UserListGroupDto} from "./user";
 export class GroupOverview {
   id: number;
   name: string;
-  cocktails?: string[];
+  cocktails?: String[];
   host?: UserListDto;
   members: UserListGroupDto[];
 

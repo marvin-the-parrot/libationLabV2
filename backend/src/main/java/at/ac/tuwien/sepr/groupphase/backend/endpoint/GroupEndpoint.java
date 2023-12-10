@@ -4,6 +4,9 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
+import at.ac.tuwien.sepr.groupphase.backend.service.CocktailIngredientService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,13 +55,16 @@ public class GroupEndpoint {
     private final GroupMapper groupMapper;
     private final UserService userService;
     private final UserMapper userMapper;
+    private final CocktailIngredientService cocktailService;
 
     @Autowired
-    public GroupEndpoint(GroupService groupService, GroupMapper groupMapper, UserService userService, UserMapper userMapper) {
+    public GroupEndpoint(GroupService groupService, GroupMapper groupMapper, UserService userService, UserMapper userMapper,
+                         CocktailIngredientService cocktailService) {
         this.groupService = groupService;
         this.groupMapper = groupMapper;
         this.userService = userService;
         this.userMapper = userMapper;
+        this.cocktailService = cocktailService;
     }
 
     /**
@@ -230,6 +236,14 @@ public class GroupEndpoint {
 
     private void logClientError(HttpStatus status, String message, Exception e) {
         LOGGER.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
+    }
+
+    @Secured("ROLE_USER")
+    @GetMapping("{groupId}/mixables")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CocktailOverviewDto> getMixableCocktails(@PathVariable Long groupId) throws JsonProcessingException {
+        LOGGER.info("GET " + BASE_PATH + groupId+ "mixable");
+        return cocktailService.getMixableCocktails();
     }
 
 }

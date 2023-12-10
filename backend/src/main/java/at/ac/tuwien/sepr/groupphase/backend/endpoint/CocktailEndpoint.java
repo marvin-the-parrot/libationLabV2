@@ -63,12 +63,4 @@ public class CocktailEndpoint {
         return cocktailService.searchCocktailByCocktailNameAndIngredientName(null, ingredientsName);
     }
 
-    @Secured("ROLE_USER")
-    @GetMapping("mixable")
-    @ResponseStatus(HttpStatus.OK)
-    public List<CocktailOverviewDto> getMixableCocktails() throws JsonProcessingException {
-        LOGGER.info("GET " + BASE_PATH + "mixable");
-        return cocktailService.getMixableCocktails();
-    }
-
 }
