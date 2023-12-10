@@ -123,8 +123,7 @@ public class GroupValidator {
 
         if (group.getName() == null || group.getName().isEmpty()) {
             validationErrors.add("Group name must not be empty");
-        }
-        else if (group.getName().length() > 255) {
+        } else if (group.getName().length() > 255) {
             validationErrors.add("Group name must not be longer than 255 characters");
         }
         if (group.getHost() == null) {
