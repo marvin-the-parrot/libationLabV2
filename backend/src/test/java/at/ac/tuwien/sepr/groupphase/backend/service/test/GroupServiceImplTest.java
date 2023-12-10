@@ -2,18 +2,6 @@ package at.ac.tuwien.sepr.groupphase.backend.service.test;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.util.Optional;
-import java.util.UUID;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
@@ -338,8 +326,7 @@ public class GroupServiceImplTest {
     @Test
     public void deleteGroup_deleteGroupByNotExistingIdAndFromHost_expectedTrue() throws ValidationException {
         generateTestData();
-        NotFoundException notFoundException = assertThrows(NotFoundException.class,
-            () -> groupServiceImpl.deleteGroup(-60L, applicationUser.getEmail()));
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupServiceImpl.deleteGroup(-60L, applicationUser.getEmail()));
 
         assertEquals("Could not find group", notFoundException.getMessage());
     }
@@ -350,15 +337,16 @@ public class GroupServiceImplTest {
         applicationUser.setAdmin(false);
         userRepository.save(applicationUser);
 
-        ValidationException validationStatusException = assertThrows(ValidationException.class,
-            () -> groupServiceImpl.deleteGroup(applicationGroup.getId(), applicationUser.getEmail()));
+        ValidationException validationStatusException =
+            assertThrows(ValidationException.class, () -> groupServiceImpl.deleteGroup(applicationGroup.getId(), applicationUser.getEmail()));
 
         assertEquals("This action is not allowed. Failed validations: You are not the host of this group.", validationStatusException.getMessage());
     }
 
     // delete member
     @Test
-    public void deleteMember_deleteGroupByExistingIdAndFromHost_expectedFalse() throws ValidationException {generateTestData();
+    public void deleteMember_deleteGroupByExistingIdAndFromHost_expectedFalse() throws ValidationException {
+        generateTestData();
         prepareUserGroupAndMember();
         Optional<UserGroup> expected = userGroupRepository.findById(userGroupKey);
 
@@ -373,8 +361,8 @@ public class GroupServiceImplTest {
         generateTestData();
         prepareUserGroupAndMember();
 
-        NotFoundException notFoundException = assertThrows(NotFoundException.class,
-            () -> groupServiceImpl.deleteMember(applicationGroup.getId(), applicationUser.getId(), "wrong@email.com"));
+        NotFoundException notFoundException =
+            assertThrows(NotFoundException.class, () -> groupServiceImpl.deleteMember(applicationGroup.getId(), applicationUser.getId(), "wrong@email.com"));
 
         assertEquals("Could not find current user", notFoundException.getMessage());
     }
