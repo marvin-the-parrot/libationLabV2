@@ -1,18 +1,17 @@
 package at.ac.tuwien.sepr.groupphase.backend.repository;
 
-import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
 import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredientsKey;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 public interface CocktailIngredientsRepository extends JpaRepository<CocktailIngredients, CocktailIngredientsKey> {
 
-    List<CocktailIngredients> findByIngredientNameAndCocktailName(String ingredientName, String cocktailName);
+    List<CocktailIngredients> findByIngredientNameContainingIgnoreCaseAndCocktailNameContainingIgnoreCase(String ingredientName, String cocktailName);
 
-    List<CocktailIngredients> findByIngredientName(String ingredientName);
+    List<CocktailIngredients> findByIngredientNameContainingIgnoreCase(String ingredientName);
 
-    List<CocktailIngredients> findByCocktailName(String cocktailName);
+    List<CocktailIngredients> findByCocktailNameContainingIgnoreCase(String cocktailName);
 
 }

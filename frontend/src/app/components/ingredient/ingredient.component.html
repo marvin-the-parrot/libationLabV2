@@ -39,8 +39,8 @@
       </table>
     </div>
 
-    <div class="additional-div" *ngIf="isToShowImg">
-      <figure class="figure-style" >
+    <div class="additional-div" >
+      <figure class="figure-style" *ngIf="isToShowImg">
         <img [src]="imageUrl" >
         <figcaption class="image-name">{{imageName}}</figcaption>
       </figure>      

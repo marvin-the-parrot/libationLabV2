@@ -59,10 +59,17 @@
       </table>
     </div>
 
-    <div class="additional-div" *ngIf="isToShowImg">
-      <figure class="figure-style" >
-        <img [src]="imageUrl" >
-        <figcaption class="image-name">{{imageName}}</figcaption>
-      </figure>      
+    <div class="additional-div" >
+      <div *ngIf="isToShowImg" class="additional-ingredient">
+        <figure class="figure-style" >
+          <img [src]="imageUrl" >
+          <figcaption class="image-name">{{imageName}}</figcaption>
+        </figure>    
+        <br>
+        <p style="font-size: 20px;">Ingredients:</p>
+        <ul style="font-size: 16px;">
+          <li *ngFor="let ingredient of cocktailIngredients">{{ ingredient }}</li>
+        </ul>  
     </div>
+  </div>
 </div>

@@ -129,7 +129,6 @@ public class CocktailDataGenerator {
                         cocktailIngredeintsRepository.save(cocktailIngredients);
                     }
 
-
                 }
             } catch (IOException e) {
                 e.printStackTrace();
