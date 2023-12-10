@@ -96,7 +96,7 @@ public class CocktailDataGenerator {
 
     private void ingestCocktailsWithIngredients() {
         // generate a new file
-        Path path = Paths.get("src\\main\\java\\at\\ac\\tuwien\\sepr\\groupphase\\backend", "datagenerator", "dataset", "cocktails.csv");
+        Path path = Paths.get("src", "main", "java", "at", "ac", "tuwien", "sepr", "groupphase", "backend", "datagenerator", "dataset", "cocktails.csv");
 
         try (CSVReader reader = new CSVReaderBuilder(new FileReader(path.toString())).withSkipLines(1).build()) {
             List<String[]> lines = reader.readAll();
@@ -149,7 +149,7 @@ public class CocktailDataGenerator {
 
     private void ingestIngredients() {
         // generate Ingredients
-        Path path = Paths.get("src\\main\\java\\at\\ac\\tuwien\\sepr\\groupphase\\backend", "datagenerator", "dataset", "ingredients.csv");
+        Path path = Paths.get("src", "main", "java", "at", "ac", "tuwien", "sepr", "groupphase", "backend", "datagenerator", "dataset", "ingredients.csv");
         LOGGER.debug("Reading ingredients from file: {}", path);
 
         try (CSVReader reader = new CSVReaderBuilder(new FileReader(path.toString())).withSkipLines(1).build()) {
