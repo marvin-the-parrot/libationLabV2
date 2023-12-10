@@ -149,7 +149,7 @@ public class GroupServiceImpl implements GroupService {
             userGroupRepository.save(newMember);
         }
 
-        return groupMapper.groupToGroupCreateDto(group);
+        return applicationGroupToGroupCreateDto(saved);
     }
 
     @Override
@@ -197,7 +197,7 @@ public class GroupServiceImpl implements GroupService {
             }
         }
 
-        return groupMapper.groupToGroupCreateDto(group);
+        return applicationGroupToGroupCreateDto(saved);
     }
 
     @Override
@@ -235,5 +235,34 @@ public class GroupServiceImpl implements GroupService {
         currentUserGroup.setHost(false);
         userGroupRepository.save(currentUserGroup);
 
+    }
+
+
+    /**
+     * Converts a ApplicationGroup to a GroupCreateDto.
+     *
+     * @param group the group to convert
+     * @return the converted group
+     */
+    public GroupCreateDto applicationGroupToGroupCreateDto(ApplicationGroup group) {
+
+        GroupCreateDto groupCreateDto = new GroupCreateDto();
+        groupCreateDto.setId(group.getId());
+        groupCreateDto.setName(group.getName());
+
+        List<UserGroup> userGroups = userGroupRepository.findAllByApplicationGroup(group);
+        UserListDto[] members = new UserListDto[userGroups.size()];
+        for (int i = 0; i < userGroups.size(); i++) {
+            members[i] = userMapper.userToUserListDto(userGroups.get(i).getUser());
+        }
+        groupCreateDto.setMembers(members);
+
+        //set host
+        for (var user : userGroups) {
+            if (user.isHost()) {
+                groupCreateDto.setHost(userMapper.userToUserListDto(user.getUser()));
+            }
+        }
+        return groupCreateDto;
     }
 }
