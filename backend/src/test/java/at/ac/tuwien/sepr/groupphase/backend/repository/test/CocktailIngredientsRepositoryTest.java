@@ -32,7 +32,7 @@ public class CocktailIngredientsRepositoryTest {
     @Test
     public void findByIngredientNameAndCocktailName_searchByIngredientAndCocktailName_Expected1() {
         int expected = 0;
-        int result = cocktailIngredientsRepository.findByIngredientNameAndCocktailName("Mojito", "Lime").size();
+        int result = cocktailIngredientsRepository.findByIngredientNameContainingIgnoreCaseAndCocktailNameContainingIgnoreCase("Mojito", "Lime").size();
 
         assertEquals(expected, result);
     }
@@ -40,15 +40,15 @@ public class CocktailIngredientsRepositoryTest {
     @Test
     public void findByIngredientNameAndCocktailName_searchByCocktailName_Expected1() {
         int expected = 4;
-        int result = cocktailIngredientsRepository.findByCocktailName("Mojito").size();
+        int result = cocktailIngredientsRepository.findByCocktailNameContainingIgnoreCase("Mojito").size();
 
         assertEquals(expected, result);
     }
 
     @Test
-    public void findByIngredientNameAndCocktailName_searchByIngredientsName_Expected2() {
-        int expected = 9;
-        int result = cocktailIngredientsRepository.findByIngredientName("Lime").size();
+    public void findByIngredientNameAndCocktailName_searchByIngredientsName_ExpectedTwentyThree() {
+        int expected = 23;
+        int result = cocktailIngredientsRepository.findByIngredientNameContainingIgnoreCase("Lime").size();
 
         assertEquals(expected, result);
     }

@@ -42,16 +42,16 @@ public class CocktailServiceImplTest {
     }
 
     @Test
-    public void searchCocktailByCocktailNameAndIngredientName_searchByCocktailName_Expected4() {
-        int expected = 4;
+    public void searchCocktailByCocktailNameAndIngredientName_searchByCocktailName_Expected1() {
+        int expected = 1;
         int result = cocktailIngredientService.searchCocktailByCocktailNameAndIngredientName("Mojito", null).size();
 
         assertEquals(expected, result);
     }
 
     @Test
-    public void searchCocktailByCocktailNameAndIngredientName_searchByIngredientsName_Expected9() {
-        int expected = 9;
+    public void searchCocktailByCocktailNameAndIngredientName_searchByIngredientsName_ExpectedTwentyTwo() {
+        int expected = 22;
         int result = cocktailIngredientService.searchCocktailByCocktailNameAndIngredientName(null, "Lime").size();
 
         assertEquals(expected, result);
