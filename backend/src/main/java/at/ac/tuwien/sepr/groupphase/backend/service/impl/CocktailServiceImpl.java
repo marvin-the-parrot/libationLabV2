@@ -59,6 +59,7 @@ public class CocktailServiceImpl implements CocktailIngredientService {
     public List<CocktailListDto> searchCocktailByCocktailNameAndIngredientName(String cocktailsName,
                                                                                String ingredientsName) {
         LOGGER.debug("Search for cocktail by cocktail name and ingredient name {}", cocktailsName, ingredientsName);
+        //TODO Bug: is case sensitive when ingredient is searched
         if (cocktailsName == null) {
             return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailIngredientsRepository.findByIngredientNameContainingIgnoreCase(ingredientsName));
         } else if (ingredientsName == null) {

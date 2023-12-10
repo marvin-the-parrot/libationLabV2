@@ -18,7 +18,9 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroupKey;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("generateData")
 @SpringBootTest
 public class UserGroupRepositoryTest {
 
