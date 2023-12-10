@@ -2,6 +2,7 @@ package at.ac.tuwien.sepr.groupphase.backend.repository;
 
 import java.util.List;
 
+import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
@@ -14,5 +15,7 @@ public interface CocktailIngredientsRepository extends JpaRepository<CocktailIng
     List<CocktailIngredients> findByIngredientName(String ingredientName);
 
     List<CocktailIngredients> findByCocktailName(String cocktailName);
+
+    List<CocktailIngredients> findAllByCocktail(Cocktail cocktail);
 
 }

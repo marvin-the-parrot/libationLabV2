@@ -25,5 +25,5 @@ public interface CocktailIngredientService {
      *
      * @return cocktails
      */
-    List<CocktailOverviewDto> getMixableCocktails();
+    List<CocktailOverviewDto> getMixableCocktails(Long groupId);
 }
