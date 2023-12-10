@@ -75,72 +75,72 @@ public class GroupEndpointTest {
         groupRepository.save(applicationGroup);
         userRepository.save(applicationUser);
     }
-    
-	  @Test
-	  @WithMockUser(roles = {"USER"})
-	  public void deleteGroup_deleteGroupByExistingIdAndFromHost_expectedFalse() throws Exception {
+
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void deleteGroup_deleteGroupByExistingIdAndFromHost_expectedFalse() throws Exception {
         prepareUserGroupAndMember();
-		int expected = groupRepository.findAll().size();
-	    mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{id}", userGroup.getId())).andExpect(status().isBadRequest());
-		int result = groupRepository.findAll().size();
-	    assertEquals(expected, result);
-	  }
+        int expected = groupRepository.findAll().size();
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{id}", userGroup.getId())).andExpect(status().isBadRequest());
+        int result = groupRepository.findAll().size();
+        assertEquals(expected, result);
+    }
 
-	  @Test
-	  @WithMockUser(roles = {"USER"})
-	  public void deleteGroup_deleteGroupByNotExistingIdAndFromHost_expectedTrue() throws Exception {
-		int expected = groupRepository.findAll().size();
-	    mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{id}", -60L, applicationUser.getId())).andExpect(status().isNotFound());
-		int result = groupRepository.findAll().size();
-	    assertEquals(expected, result);
-	  }
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void deleteGroup_deleteGroupByNotExistingIdAndFromHost_expectedTrue() throws Exception {
+        int expected = groupRepository.findAll().size();
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{id}", -60L, applicationUser.getId())).andExpect(status().isNotFound());
+        int result = groupRepository.findAll().size();
+        assertEquals(expected, result);
+    }
 
-	  @Test
-	  @WithMockUser(roles = {"USER"})
-	  public void deleteGroup_deleteGroupByExistingIdAndFromNotHost_expectedTrue() throws Exception {
-		applicationUser.setAdmin(false);
-		userRepository.save(applicationUser);
-		int expected = groupRepository.findAll().size();
-	    mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{id}", applicationGroup.getId())).andExpect(status().isNotFound());
-		int result = groupRepository.findAll().size();
-		assertEquals(expected, result);
-	  }
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void deleteGroup_deleteGroupByExistingIdAndFromNotHost_expectedTrue() throws Exception {
+        applicationUser.setAdmin(false);
+        userRepository.save(applicationUser);
+        int expected = groupRepository.findAll().size();
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{id}", applicationGroup.getId())).andExpect(status().isNotFound());
+        int result = groupRepository.findAll().size();
+        assertEquals(expected, result);
+    }
 
-	  @Test
-	  @WithMockUser(roles = {"USER"})
-	  public void deleteMember_deleteGroupByExistingIdAndFromHost_expectedFalse() throws Exception {
-		prepareUserGroupAndMember();
-		Optional<UserGroup> expected = userGroupRepository.findById(userGroupKey);
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void deleteMember_deleteGroupByExistingIdAndFromHost_expectedFalse() throws Exception {
+        prepareUserGroupAndMember();
+        Optional<UserGroup> expected = userGroupRepository.findById(userGroupKey);
 
-		mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{groupId}/{userId}", applicationGroup.getId(), applicationUserMember.getId())).andExpect(status().isNotFound());
-		Optional<UserGroup> result = userGroupRepository.findById(userGroupKey);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{groupId}/{userId}", applicationGroup.getId(), applicationUserMember.getId())).andExpect(status().isNotFound());
+        Optional<UserGroup> result = userGroupRepository.findById(userGroupKey);
 
-	    assertNotEquals(expected, result);
-	  }
+        assertNotEquals(expected, result);
+    }
 
-	  @Test
-	  @WithMockUser(roles = {"USER"})
-	  public void deleteMember_deleteGroupByNotExistingIdAndFromHost_expectedTrue() throws Exception {
-		prepareUserGroupAndMember();
-		Optional<UserGroup> expected = userGroupRepository.findById(userGroupKey);
-		mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{groupId}/{userId}", -60L, applicationUser.getId(), applicationUserMember.getId())).andExpect(status().isNotFound());
-		Optional<UserGroup> result = userGroupRepository.findById(userGroupKey);
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void deleteMember_deleteGroupByNotExistingIdAndFromHost_expectedTrue() throws Exception {
+        prepareUserGroupAndMember();
+        Optional<UserGroup> expected = userGroupRepository.findById(userGroupKey);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{groupId}/{userId}", -60L, applicationUser.getId(), applicationUserMember.getId())).andExpect(status().isNotFound());
+        Optional<UserGroup> result = userGroupRepository.findById(userGroupKey);
 
-		assertEquals(expected.get().getGroups().getId(), result.get().getGroups().getId());
-		assertEquals(expected.get().getUser().getId(), result.get().getUser().getId());
-	  }
+        assertEquals(expected.get().getGroups().getId(), result.get().getGroups().getId());
+        assertEquals(expected.get().getUser().getId(), result.get().getUser().getId());
+    }
 
-	  @Test
-	  @WithMockUser(roles = {"USER"})
-	  public void deleteMember_deleteGroupByExistingIdAndFromNotHost_expectedTrue() throws Exception {
-		prepareUserGroupAndMember();
-		applicationUser.setAdmin(false);
-		userRepository.save(applicationUser);
-		List<UserGroup> expected = userGroupRepository.findAllByApplicationGroup(userGroup.getGroups());
-	    mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{userId}", applicationGroup.getId(), applicationUser.getId())).andExpect(status().isNotFound());
-		List<UserGroup> result = userGroupRepository.findAllByApplicationGroup(userGroup.getGroups());
-		assertEquals(expected.size(), result.size());
-	  }
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void deleteMember_deleteGroupByExistingIdAndFromNotHost_expectedTrue() throws Exception {
+        prepareUserGroupAndMember();
+        applicationUser.setAdmin(false);
+        userRepository.save(applicationUser);
+        List<UserGroup> expected = userGroupRepository.findAllByApplicationGroup(userGroup.getGroups());
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{userId}", applicationGroup.getId(), applicationUser.getId())).andExpect(status().isNotFound());
+        List<UserGroup> result = userGroupRepository.findAllByApplicationGroup(userGroup.getGroups());
+        assertEquals(expected.size(), result.size());
+    }
 
     @Test
     @WithMockUser(roles = {"USER"})
@@ -148,12 +148,12 @@ public class GroupEndpointTest {
         this.prepareUserGroupAndMember();
 
         int expected = 0;
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/groups/searchGroupMember/{groupId}", applicationGroup.getId()+9999)).andExpect(status().isOk()).andReturn();
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/groups/searchGroupMember/{groupId}", applicationGroup.getId() + 9999)).andExpect(status().isOk()).andReturn();
         String contentResult = mvcResult.getResponse().getContentAsString();
         int result = objectMapper.readValue(contentResult, new TypeReference<List<UserListDto>>() {
         }).size();
 
-        assertEquals(expected, result );
+        assertEquals(expected, result);
     }
 
     private void prepareUserGroupAndMember() {

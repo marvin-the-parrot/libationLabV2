@@ -13,31 +13,31 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 @SpringBootTest
 public class GroupRepositoryTest {
 
-	@Autowired
-	private GroupRepository groupRepository;
+    @Autowired
+    private GroupRepository groupRepository;
 
-	@Test
-	public void deleteById_deleteGroupByExistingId_expectedFalse() {
-		ApplicationGroup newGroup = new ApplicationGroup();
-		newGroup.setId(99999L);
-		newGroup.setName("newGroup");
-		groupRepository.save(newGroup);
-		int expected = groupRepository.findAll().size();
+    @Test
+    public void deleteById_deleteGroupByExistingId_expectedFalse() {
+        ApplicationGroup newGroup = new ApplicationGroup();
+        newGroup.setId(99999L);
+        newGroup.setName("newGroup");
+        groupRepository.save(newGroup);
+        int expected = groupRepository.findAll().size();
 
-		groupRepository.deleteById(newGroup.getId());
-		int result = groupRepository.findAll().size();
+        groupRepository.deleteById(newGroup.getId());
+        int result = groupRepository.findAll().size();
 
-		assertNotEquals(expected, result);
-	}
+        assertNotEquals(expected, result);
+    }
 
-	@Test
-	public void deleteById_deleteGroupByNotExistingId_expectedTrue() {
-		int expected = groupRepository.findAll().size();
+    @Test
+    public void deleteById_deleteGroupByNotExistingId_expectedTrue() {
+        int expected = groupRepository.findAll().size();
 
-		groupRepository.deleteById(-60L);
-		int result = groupRepository.findAll().size();
+        groupRepository.deleteById(-60L);
+        int result = groupRepository.findAll().size();
 
-		assertEquals(expected, result);
-	}
+        assertEquals(expected, result);
+    }
 
 }

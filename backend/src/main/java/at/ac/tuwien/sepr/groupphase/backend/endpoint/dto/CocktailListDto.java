@@ -1,18 +1,22 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+import java.util.List;
+
 public class CocktailListDto {
 
     private Long id;
     private String name;
     private String imagePath;
+    private List<String> ingredientsName;
 
     public CocktailListDto() {
     }
 
-    public CocktailListDto(Long id, String name, String imagePath) {
+    public CocktailListDto(Long id, String name, String imagePath, List<String> ingredientsName) {
         this.id = id;
         this.name = name;
         this.imagePath = imagePath;
+        this.ingredientsName = ingredientsName;
     }
 
     public Long getId() {
@@ -37,6 +41,14 @@ public class CocktailListDto {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public List<String> getIngredientsName() {
+        return ingredientsName;
+    }
+
+    public void setIngredientsName(List<String> ingredientsName) {
+        this.ingredientsName = ingredientsName;
     }
 
 }

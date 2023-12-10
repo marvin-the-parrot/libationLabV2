@@ -65,72 +65,72 @@ public class GroupServiceImplTest {
     }
 
     @Test
-	public void deleteGroup_deleteGroupByExistingIdAndFromHost_expectedFalse() throws ValidationException {
-		prepareUserGroupAndMember();
+    public void deleteGroup_deleteGroupByExistingIdAndFromHost_expectedFalse() throws ValidationException {
+        prepareUserGroupAndMember();
 
-    	int expected = groupRepository.findAll().size();
-		groupServiceImpl.deleteGroup(applicationGroup.getId(), applicationUser.getEmail());
-		int result = groupRepository.findAll().size();
+        int expected = groupRepository.findAll().size();
+        groupServiceImpl.deleteGroup(applicationGroup.getId(), applicationUser.getEmail());
+        int result = groupRepository.findAll().size();
 
-		assertNotEquals(expected, result);
-	}
+        assertNotEquals(expected, result);
+    }
 
-	@Test
-	public void deleteGroup_deleteGroupByNotExistingIdAndFromHost_expectedTrue() throws ValidationException {
+    @Test
+    public void deleteGroup_deleteGroupByNotExistingIdAndFromHost_expectedTrue() throws ValidationException {
 
-		NotFoundException notFoundException = assertThrows(NotFoundException.class,
-				() -> groupServiceImpl.deleteGroup(-60L, applicationUser.getEmail()));
+        NotFoundException notFoundException = assertThrows(NotFoundException.class,
+            () -> groupServiceImpl.deleteGroup(-60L, applicationUser.getEmail()));
 
-		assertEquals("Could not find group", notFoundException.getMessage());
-	}
+        assertEquals("Could not find group", notFoundException.getMessage());
+    }
 
-	@Test
-	public void deleteGroup_deleteGroupByExistingIdAndNotFromHost_expectedException() {
-		applicationUser.setAdmin(false);
-		userRepository.save(applicationUser);
+    @Test
+    public void deleteGroup_deleteGroupByExistingIdAndNotFromHost_expectedException() {
+        applicationUser.setAdmin(false);
+        userRepository.save(applicationUser);
 
-		ValidationException validationStatusException = assertThrows(ValidationException.class,
-                () -> groupServiceImpl.deleteGroup(applicationGroup.getId(), applicationUser.getEmail()));
+        ValidationException validationStatusException = assertThrows(ValidationException.class,
+            () -> groupServiceImpl.deleteGroup(applicationGroup.getId(), applicationUser.getEmail()));
 
         assertEquals("This action is not allowed. Failed validations: You are not the host of this group.", validationStatusException.getMessage());
-	}
+    }
 
-	@Test
-	public void deleteMember_deleteGroupByExistingIdAndFromHost_expectedFalse() throws ValidationException {
-		prepareUserGroupAndMember();
-		Optional<UserGroup> expected = userGroupRepository.findById(userGroupKey);
+    @Test
+    public void deleteMember_deleteGroupByExistingIdAndFromHost_expectedFalse() throws ValidationException {
+        prepareUserGroupAndMember();
+        Optional<UserGroup> expected = userGroupRepository.findById(userGroupKey);
 
-		groupServiceImpl.deleteMember(applicationGroup.getId(), applicationUser.getId(), applicationUserMember.getEmail());
-		Optional<UserGroup> result = userGroupRepository.findById(userGroupKey);
+        groupServiceImpl.deleteMember(applicationGroup.getId(), applicationUser.getId(), applicationUserMember.getEmail());
+        Optional<UserGroup> result = userGroupRepository.findById(userGroupKey);
 
-		assertNotEquals(expected, result);
-	}
+        assertNotEquals(expected, result);
+    }
 
-	@Test
-	public void deleteMember_deleteGroupByNotExistingIdAndFromHost_expectedTrue() throws ValidationException {
-		prepareUserGroupAndMember();
+    @Test
+    public void deleteMember_deleteGroupByNotExistingIdAndFromHost_expectedTrue() throws ValidationException {
+        prepareUserGroupAndMember();
 
-		NotFoundException notFoundException = assertThrows(NotFoundException.class,
-				() -> groupServiceImpl.deleteMember(applicationGroup.getId(), applicationUser.getId(), "wrong@email.com"));
+        NotFoundException notFoundException = assertThrows(NotFoundException.class,
+            () -> groupServiceImpl.deleteMember(applicationGroup.getId(), applicationUser.getId(), "wrong@email.com"));
 
-		assertEquals("Could not find current user", notFoundException.getMessage());
-	}
+        assertEquals("Could not find current user", notFoundException.getMessage());
+    }
 
-	@Test
-	public void deleteMember_deleteGroupByExistingIdAndNotFromHost_expectedException() {
-		prepareUserGroupAndMember();
-		applicationUser.setAdmin(false);
-		userRepository.save(applicationUser);
+    @Test
+    public void deleteMember_deleteGroupByExistingIdAndNotFromHost_expectedException() {
+        prepareUserGroupAndMember();
+        applicationUser.setAdmin(false);
+        userRepository.save(applicationUser);
         //userGroupKey = new UserGroupKey(applicationUserMember.getId(), applicationGroup.getId());
         //userGroup.setId(userGroupKey);
         userGroup.setHost(false);
         userGroupRepository.save(userGroup);
 
-		ValidationException validationStatusException = assertThrows(ValidationException.class,
-                () -> groupServiceImpl.deleteMember(applicationGroup.getId(), applicationUserMember.getId(), applicationUser.getEmail()));
+        ValidationException validationStatusException = assertThrows(ValidationException.class,
+            () -> groupServiceImpl.deleteMember(applicationGroup.getId(), applicationUserMember.getId(), applicationUser.getEmail()));
 
         assertEquals("You are not allowed to remove this user from the group. Failed validations: .", validationStatusException.getMessage());
-	}
+    }
 
     @Test
     public void searchForMember_searchingMembersOfGroupByGroupId_expected2() {

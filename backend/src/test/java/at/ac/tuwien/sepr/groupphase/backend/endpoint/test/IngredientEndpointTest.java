@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.test;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -26,7 +25,6 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 
-
 @SpringBootTest
 @EnableWebMvc
 @WebAppConfiguration
@@ -34,35 +32,35 @@ public class IngredientEndpointTest {
 
     @Autowired
     private WebApplicationContext webAppContext;
-    
+
     private MockMvc mockMvc;
-    
+
     @Autowired
     private ObjectMapper objectMapper;
-    
-	@Autowired
-	private IngredientsRepository ingredientsRepository;
-    
+
+    @Autowired
+    private IngredientsRepository ingredientsRepository;
+
     @BeforeEach
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webAppContext).build();
-		ingredientsRepository.deleteAll();
-		Ingredient firstIngredient = new Ingredient();
-		firstIngredient.setId(-999L);
-		firstIngredient.setName("VeryUniqueIngredient1");
-		ingredientsRepository.save(firstIngredient);
-		Ingredient secondIngredient = new Ingredient();
-		secondIngredient.setId(-998L);
-		secondIngredient.setName("VeryUniqueIngredient2");
-		ingredientsRepository.save(firstIngredient);
-		Ingredient threeIngredient = new Ingredient();
-		threeIngredient.setId(-997L);
-		threeIngredient.setName("XxXIngredient");
-		ingredientsRepository.save(firstIngredient);
-		ingredientsRepository.save(secondIngredient);
-		ingredientsRepository.save(threeIngredient);
+        ingredientsRepository.deleteAll();
+        Ingredient firstIngredient = new Ingredient();
+        firstIngredient.setId(-999L);
+        firstIngredient.setName("VeryUniqueIngredient1");
+        ingredientsRepository.save(firstIngredient);
+        Ingredient secondIngredient = new Ingredient();
+        secondIngredient.setId(-998L);
+        secondIngredient.setName("VeryUniqueIngredient2");
+        ingredientsRepository.save(firstIngredient);
+        Ingredient threeIngredient = new Ingredient();
+        threeIngredient.setId(-997L);
+        threeIngredient.setName("XxXIngredient");
+        ingredientsRepository.save(firstIngredient);
+        ingredientsRepository.save(secondIngredient);
+        ingredientsRepository.save(threeIngredient);
     }
-    
+
     @Test
     @WithMockUser(roles = {"USER"})
     public void findByNameContainingIgnoreCase_searchingForIngredientVery_findingTwoResult() throws Exception {

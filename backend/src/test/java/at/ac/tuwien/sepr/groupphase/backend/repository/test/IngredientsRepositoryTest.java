@@ -12,35 +12,35 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 
 @SpringBootTest
 public class IngredientsRepositoryTest {
-	
-	@Autowired
-	private IngredientsRepository ingredientsRepository;
-	
-	@BeforeEach
-	public void setUp() {
-		ingredientsRepository.deleteAll();
-		Ingredient firstIngredient = new Ingredient();
-		firstIngredient.setId(-999L);
-		firstIngredient.setName("VeryUniqueIngredient1");
-		ingredientsRepository.save(firstIngredient);
-		Ingredient secondIngredient = new Ingredient();
-		secondIngredient.setId(-998L);
-		secondIngredient.setName("VeryUniqueIngredient2");
-		ingredientsRepository.save(firstIngredient);
-		Ingredient threeIngredient = new Ingredient();
-		threeIngredient.setId(-997L);
-		threeIngredient.setName("XxXIngredient");
-		ingredientsRepository.save(firstIngredient);
-		ingredientsRepository.save(secondIngredient);
-		ingredientsRepository.save(threeIngredient);
-	}
-	
-	@Test
-	public void findByNameContainingIgnoreCase_searchingForIngredientVery_findingTwoResult() {        
-		int expected = 2;
+
+    @Autowired
+    private IngredientsRepository ingredientsRepository;
+
+    @BeforeEach
+    public void setUp() {
+        ingredientsRepository.deleteAll();
+        Ingredient firstIngredient = new Ingredient();
+        firstIngredient.setId(-999L);
+        firstIngredient.setName("VeryUniqueIngredient1");
+        ingredientsRepository.save(firstIngredient);
+        Ingredient secondIngredient = new Ingredient();
+        secondIngredient.setId(-998L);
+        secondIngredient.setName("VeryUniqueIngredient2");
+        ingredientsRepository.save(firstIngredient);
+        Ingredient threeIngredient = new Ingredient();
+        threeIngredient.setId(-997L);
+        threeIngredient.setName("XxXIngredient");
+        ingredientsRepository.save(firstIngredient);
+        ingredientsRepository.save(secondIngredient);
+        ingredientsRepository.save(threeIngredient);
+    }
+
+    @Test
+    public void findByNameContainingIgnoreCase_searchingForIngredientVery_findingTwoResult() {
+        int expected = 2;
         int result = ingredientsRepository.findByNameContainingIgnoreCase("Very").size();
-        
+
         assertEquals(expected, result);
-	}
+    }
 
 }

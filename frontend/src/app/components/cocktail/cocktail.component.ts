@@ -3,6 +3,7 @@ import {debounceTime, Subject} from 'rxjs';
 import {CocktailService} from 'src/app/services/cocktail.service';
 import {CocktailListDto} from '../../dtos/cocktail';
 import {ToastrService} from 'ngx-toastr';
+import { List } from 'lodash';
 
 @Component({
   selector: 'app-cocktail',
@@ -12,11 +13,11 @@ import {ToastrService} from 'ngx-toastr';
 export class CocktailComponent {
 
   cocktails: CocktailListDto[] = [];
+  cocktailIngredients: List<String>
   searchChangedObservable = new Subject<void>();
-  nameOfCocktail: String;
-  nameOfIngredient: String;
+  nameOfCocktail: string;
+  nameOfIngredient: string;
   bannerError: string | null = null;
-  firstImageUrlPart:string = "https://www.thecocktaildb.com/images/ingredients/"; 
   imageUrl: string = "";
   isToShowImg: boolean = false;
   imageName: String = "";
@@ -29,8 +30,9 @@ export class CocktailComponent {
 
   
   searchChanged() {
-    if(this.nameOfCocktail.length != 0 || this.nameOfIngredient.length != 0){
+    if(this.nameOfCocktail?.length != 0 || this.nameOfIngredient?.length != 0){
       this.isToShowImg = false;
+      this.selectedCocktail = ""; 
       if(!this.nameOfIngredient){
         this.service.searchByCoctailName(this.nameOfCocktail)
         .subscribe({
@@ -46,7 +48,6 @@ export class CocktailComponent {
             const errorMessage = error.status === 0
               ? 'Is the backend up?'
               : error.message.message;
-            this.notification.error(errorMessage, 'Could Not Fetch Cocktails');
           }
         });
       } else if(!this.nameOfCocktail){
@@ -64,7 +65,6 @@ export class CocktailComponent {
             const errorMessage = error.status === 0
               ? 'Is the backend up?'
               : error.message.message;
-            this.notification.error(errorMessage, 'Could Not Fetch Cocktails');
           }
         });
       } else {
@@ -82,22 +82,28 @@ export class CocktailComponent {
             const errorMessage = error.status === 0
               ? 'Is the backend up?'
               : error.message.message;
-            this.notification.error(errorMessage, 'Could Not Fetch Cocktails');
           }
         });
       }
     } else {
-      this.cocktails = []
+      this.cocktails = [];
       this.isToShowImg = false;
-      this.selectedCocktail = ""
+      this.selectedCocktail = "";
     }
 
   }
   
   showImage(name: String) : void {
     this.isToShowImg = true;
-    this.imageUrl = this.firstImageUrlPart + name + "-Medium.png"; 
+    this.imageUrl = this.getCocktailImageByName(name).imagePath;
+    this.cocktailIngredients = this.getCocktailImageByName(name).ingredientsName;
+    console.log(this.imageUrl)
     this.imageName = name;
     this.selectedCocktail = name;
   }
+
+  getCocktailImageByName(cocktailName: String): CocktailListDto | undefined {
+    return this.cocktails.find((cocktail) => cocktail.name === cocktailName);
+  }
+
 }

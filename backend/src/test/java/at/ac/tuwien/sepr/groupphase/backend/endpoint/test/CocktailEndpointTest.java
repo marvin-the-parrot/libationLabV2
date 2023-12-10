@@ -41,9 +41,6 @@ public class CocktailEndpointTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private CocktailIngredientService cocktailIngredientService;
-
-    @Autowired
     private CocktailIngredientsRepository cocktailIngredientsRepository;
 
     @Autowired
@@ -71,11 +68,13 @@ public class CocktailEndpointTest {
 
         Cocktail cocktail1 = new Cocktail();
         cocktail1.setId(9999L);
+        cocktail1.setImagePath("https://www.thecocktaildb.com/images/ingredients/gin-Medium.png");
         cocktail1.setName("Unique one");
 
         Cocktail cocktail2 = new Cocktail();
         cocktail2.setId(9998L);
         cocktail2.setName("Two X");
+        cocktail2.setImagePath("https://www.thecocktaildb.com/images/ingredients/vodka-Medium.png");
 
         cocktailRepository.save(cocktail1);
         cocktailRepository.save(cocktail2);
