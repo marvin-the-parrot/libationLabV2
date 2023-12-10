@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+import java.util.Objects;
+
 public class UserListDto {
     private Long id;
     private String name;
@@ -20,4 +22,15 @@ public class UserListDto {
         this.name = name;
     }
 
+    @Override
+    public boolean equals(Object o) { // Needed for testing
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        UserListDto that = (UserListDto) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
+    }
 }
