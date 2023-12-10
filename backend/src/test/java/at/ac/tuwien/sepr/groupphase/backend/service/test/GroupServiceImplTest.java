@@ -22,7 +22,9 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.impl.GroupServiceImpl;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("generateData")
 @SpringBootTest
 public class GroupServiceImplTest {
 
@@ -63,11 +65,11 @@ public class GroupServiceImplTest {
         groupRepository.save(applicationGroup);
         userRepository.save(applicationUser);
     }
-    
+
     @Test
 	public void deleteGroup_deleteGroupByExistingIdAndFromHost_expectedFalse() throws ValidationException {
 		prepareUserGroupAndMember();
-		
+
     	int expected = groupRepository.findAll().size();
 		groupServiceImpl.deleteGroup(applicationGroup.getId(), applicationUser.getEmail());
 		int result = groupRepository.findAll().size();
@@ -112,7 +114,7 @@ public class GroupServiceImplTest {
 
 		NotFoundException notFoundException = assertThrows(NotFoundException.class,
 				() -> groupServiceImpl.deleteMember(applicationGroup.getId(), applicationUser.getId(), "wrong@email.com"));
-		
+
 		assertEquals("Could not find current user", notFoundException.getMessage());
 	}
 

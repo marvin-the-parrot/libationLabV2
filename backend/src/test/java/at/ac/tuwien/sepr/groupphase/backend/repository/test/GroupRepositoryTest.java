@@ -9,7 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("generateData")
 @SpringBootTest
 public class GroupRepositoryTest {
 

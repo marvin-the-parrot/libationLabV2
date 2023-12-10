@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -31,6 +32,7 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 
+@ActiveProfiles("generateData")
 @SpringBootTest
 public class GroupEndpointTest {
 
@@ -75,7 +77,7 @@ public class GroupEndpointTest {
         groupRepository.save(applicationGroup);
         userRepository.save(applicationUser);
     }
-    
+
 	  @Test
 	  @WithMockUser(roles = {"USER"})
 	  public void deleteGroup_deleteGroupByExistingIdAndFromHost_expectedFalse() throws Exception {
