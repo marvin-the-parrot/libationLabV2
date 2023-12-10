@@ -139,13 +139,13 @@ public class CocktailDataGenerator {
                     cocktailIngredeintsRepository.save(cocktailIngredients);
                 }
 
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (CsvException e) {
-                e.printStackTrace();
             }
-}
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (CsvException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void ingestIngredients() {
         // generate Ingredients
