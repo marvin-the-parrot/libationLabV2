@@ -244,9 +244,11 @@ public class GroupServiceImpl implements GroupService {
      * @param group the group to convert
      * @return the converted group
      */
-    private GroupCreateDto applicationGroupToGroupCreateDto(ApplicationGroup group) {
+    public GroupCreateDto applicationGroupToGroupCreateDto(ApplicationGroup group) {
 
-        GroupCreateDto groupCreateDto = groupMapper.groupToGroupCreateDto(group);
+        GroupCreateDto groupCreateDto = new GroupCreateDto();
+        groupCreateDto.setId(group.getId());
+        groupCreateDto.setName(group.getName());
 
         List<UserGroup> userGroups = userGroupRepository.findAllByApplicationGroup(group);
         UserListDto[] members = new UserListDto[userGroups.size()];
