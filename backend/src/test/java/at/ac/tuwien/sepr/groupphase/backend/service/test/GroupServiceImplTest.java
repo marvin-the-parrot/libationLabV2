@@ -6,6 +6,7 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroupKey;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
@@ -20,15 +21,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.tuple;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 @SpringBootTest
 @ActiveProfiles({"test", "generateData"})
@@ -74,6 +80,9 @@ public class GroupServiceImplTest {
         GroupCreateDto groupCreateDto = createBasicGroup();
         GroupCreateDto createdGroupDto = assertDoesNotThrow(() -> groupService.create(groupCreateDto));
         assertNotNull(createdGroupDto);
+        assertEquals(groupCreateDto.getName(), createdGroupDto.getName());
+        assertEquals(groupCreateDto.getHost(), createdGroupDto.getHost());
+        assertArrayEquals(groupCreateDto.getMembers(), createdGroupDto.getMembers());
 
         int numberOfGroupsAfter = groupRepository.findAll().size();
         assertEquals(numberOfGroupsBefore + 1, numberOfGroupsAfter);
@@ -83,6 +92,223 @@ public class GroupServiceImplTest {
         assertEquals(groupCreateDto.getName(), newGroup.getName());
     }
 
+    @Test
+    public void create_createGroupByNonExistentUser_expectedException() {
+        GroupCreateDto groupCreateDto = createBasicGroup();
+        // create nonexistent host and add him to the members
+        UserListDto host = new UserListDto();
+        host.setId(9999L);
+        host.setName("Nonexistent user");
+        groupCreateDto.setHost(host);
+        var members = groupCreateDto.getMembers();
+        members[0].setId(9999L);
+        members[0].setName("Nonexistent user");
+        groupCreateDto.setMembers(members);
+
+        ConflictException conflictException = assertThrows(ConflictException.class, () -> groupService.create(groupCreateDto));
+        assertEquals("Validation of group for create failed. Conflicts: Group host does not exist, Group member Nonexistent user does not exist.",
+            conflictException.getMessage());
+    }
+
+    @Test
+    public void create_createGroupByExistingUserWithNonExistentMember_expectedException() {
+        GroupCreateDto groupCreateDto = createBasicGroup();
+        // create nonexistent member
+        UserListDto[] members = groupCreateDto.getMembers();
+        members[1].setId(9999L);
+        members[1].setName("Nonexistent user");
+        groupCreateDto.setMembers(members);
+
+        ConflictException conflictException = assertThrows(ConflictException.class, () -> groupService.create(groupCreateDto));
+        assertEquals("Validation of group for create failed. Conflicts: Group member Nonexistent user does not exist.", conflictException.getMessage());
+    }
+
+    @Test
+    public void create_createGroupByExistingUserWhichIsNotInMembers_expectedException() {
+        GroupCreateDto groupCreateDto = createBasicGroup();
+        // remove host from members
+        UserListDto[] members = groupCreateDto.getMembers();
+        members = Arrays.copyOfRange(members, 1, members.length);
+        groupCreateDto.setMembers(members);
+
+        ValidationException validationException = assertThrows(ValidationException.class, () -> groupService.create(groupCreateDto));
+        assertEquals("Validation of group for create failed. Failed validations: Group host must be in group members.", validationException.getMessage());
+    }
+
+    @Test
+    public void create_createGroupByExistingUserWithDuplicateMembers_expectedException() {
+        GroupCreateDto groupCreateDto = createBasicGroup();
+        // add duplicate member
+        UserListDto[] members = groupCreateDto.getMembers();
+        members = Arrays.copyOf(members, members.length + 1);
+        members[members.length - 1] = members[1];
+        groupCreateDto.setMembers(members);
+
+        ValidationException validationException = assertThrows(ValidationException.class, () -> groupService.create(groupCreateDto));
+        assertEquals("Validation of group for create failed. Failed validations: Group member must not be added twice.", validationException.getMessage());
+    }
+
+    @Test
+    public void create_createGroupWithoutName_expectedException() {
+        GroupCreateDto groupCreateDto = createBasicGroup();
+        groupCreateDto.setName(null);
+
+        ValidationException validationException = assertThrows(ValidationException.class, () -> groupService.create(groupCreateDto));
+        assertEquals("Validation of group for create failed. Failed validations: Group name must not be empty.", validationException.getMessage());
+
+        groupCreateDto.setName("");
+        validationException = assertThrows(ValidationException.class, () -> groupService.create(groupCreateDto));
+        assertEquals("Validation of group for create failed. Failed validations: Group name must not be empty.", validationException.getMessage());
+    }
+
+    @Test
+    public void create_createGroupWithTooLongName_expectedException() {
+        GroupCreateDto groupCreateDto = createBasicGroup();
+        groupCreateDto.setName("a".repeat(256));
+
+        ValidationException validationException = assertThrows(ValidationException.class, () -> groupService.create(groupCreateDto));
+        assertEquals("Validation of group for create failed. Failed validations: Group name must not be longer than 255 characters.",
+            validationException.getMessage());
+    }
+
+    @Test
+    public void create_createGroupWithoutHost_expectedException() {
+        GroupCreateDto groupCreateDto = createBasicGroup();
+        groupCreateDto.setHost(null);
+
+        ValidationException validationException = assertThrows(ValidationException.class, () -> groupService.create(groupCreateDto));
+        assertEquals("Validation of group for create failed. Failed validations: Group host must not be null, Group host must be in group members.",
+            validationException.getMessage());
+    }
+
+    @Test
+    public void create_createGroupWithoutMembers_expectedException() {
+        GroupCreateDto groupCreateDto = createBasicGroup();
+        groupCreateDto.setMembers(null);
+
+        ValidationException validationException = assertThrows(ValidationException.class, () -> groupService.create(groupCreateDto));
+        assertEquals("Validation of group for create failed. Failed validations: Group members must not be null.", validationException.getMessage());
+    }
+
+    @Test
+    public void create_createGroupWithNullMember_expectedException() {
+        GroupCreateDto groupCreateDto = createBasicGroup();
+        groupCreateDto.getMembers()[1] = null;
+
+        ValidationException validationException = assertThrows(ValidationException.class, () -> groupService.create(groupCreateDto));
+        assertEquals("Validation of group for create failed. Failed validations: Group member must not be null.", validationException.getMessage());
+    }
+
+    @Test
+    public void create_createGroupWithoutMemberId_expectedException() {
+        GroupCreateDto groupCreateDto = createBasicGroup();
+        groupCreateDto.getMembers()[1].setId(null);
+
+        ValidationException validationException = assertThrows(ValidationException.class, () -> groupService.create(groupCreateDto));
+        assertEquals("Validation of group for create failed. Failed validations: Group member id must not be null.", validationException.getMessage());
+    }
+
+    // update group (edit)
+    @Test
+    public void update_updateExistingGroupFromHost_expectedTrue() {
+        GroupCreateDto groupCreateDto = createBasicGroup();
+        groupCreateDto.setId(1L);
+        GroupCreateDto updatedGroupDto = assertDoesNotThrow(() -> groupService.update(groupCreateDto, "user1@email.com"));
+        assertNotNull(updatedGroupDto);
+        assertEquals(groupCreateDto.getName(), updatedGroupDto.getName());
+        assertEquals(groupCreateDto.getHost(), updatedGroupDto.getHost());
+
+        // edit checks if some members already exist in the group (so the order of the members might be shuffled)
+        assertThat(updatedGroupDto.getMembers()).extracting("id", "name")
+            .containsExactlyInAnyOrder(tuple(1L, "User1"), tuple(2L, "User2"), tuple(3L, "User3"), tuple(4L, "User4"), tuple(5L, "User5"));
+    }
+
+    @Test
+    public void update_updateGroupWithId0_expectedException() {
+        GroupCreateDto groupCreateDto = createBasicGroup();
+        groupCreateDto.setId(0L);
+
+        ValidationException validationException = assertThrows(ValidationException.class, () -> groupService.update(groupCreateDto, "user1@email.com"));
+        assertEquals("Validation of group for update failed. Failed validations: Group id must not be 0.", validationException.getMessage());
+    }
+
+    @Test
+    public void update_updateNonExistentGroup_expectedException() {
+        GroupCreateDto groupCreateDto = createBasicGroup();
+        groupCreateDto.setId(9999L);
+
+        ValidationException validationException = assertThrows(ValidationException.class, () -> groupService.update(groupCreateDto, "user1@email.com"));
+        assertEquals("This action is not allowed. Failed validations: You are not the host of this group.", validationException.getMessage());
+    }
+
+    @Test
+    public void update_updateGroupByNonexistentUser_expectedException() {
+        GroupCreateDto groupCreateDto = createBasicGroup();
+        groupCreateDto.setId(1L);
+
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupService.update(groupCreateDto, "nonexisten@email.com"));
+        assertEquals("Could not find current user", notFoundException.getMessage());
+    }
+
+    @Test
+    public void update_updateGroupRemovesMembersFromGroup_expectedTrue() {
+        // expecting DB to contain the following group:
+        var groupMembers = userGroupRepository.findAllByApplicationGroup(groupRepository.findById(1L).orElse(null));
+        assertEquals(3, groupMembers.size());
+        assertEquals(1L, groupMembers.get(0).getUser().getId());
+        assertEquals(3L, groupMembers.get(1).getUser().getId());
+        assertEquals(4L, groupMembers.get(2).getUser().getId());
+
+        // update group:
+        GroupCreateDto groupCreateDto = createBasicGroup();
+        groupCreateDto.setId(1L);
+        groupCreateDto.setMembers(Arrays.copyOfRange(groupCreateDto.getMembers(), 0, 2)); // this should remove user 3 and 4 from the group (and add user 2)
+        GroupCreateDto updatedGroupDto = assertDoesNotThrow(() -> groupService.update(groupCreateDto, "user1@email.com"));
+
+        assertNotNull(updatedGroupDto);
+        assertEquals(groupCreateDto.getName(), updatedGroupDto.getName());
+        assertEquals(groupCreateDto.getHost(), updatedGroupDto.getHost());
+        assertThat(updatedGroupDto.getMembers()).extracting("id", "name").containsExactlyInAnyOrder(tuple(1L, "User1"), tuple(2L, "User2"));
+    }
+
+    // make member host
+    @Test
+    public void makeMemberHost_makeMemberHostByExistingIdAndFromHost_expectedTrue() {
+
+        assertDoesNotThrow(() -> groupServiceImpl.makeMemberHost(1L, 3L, "user1@email.com"));
+
+        GroupCreateDto group = groupServiceImpl.applicationGroupToGroupCreateDto(groupRepository.findById(1L).orElse(null));
+        assertEquals(group.getHost().getId(), 3L);
+    }
+
+    @Test
+    public void makeMemberHost_makeNonexistentMemberHost_expectedException() {
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(1L, 9999L, "user1@email.con"));
+    }
+
+    @Test
+    public void makeMemberHost_makeMemberHostByExistingIdAndNotFromHost_expectedException() {
+
+        ValidationException validationStatusException =
+            assertThrows(ValidationException.class, () -> groupServiceImpl.makeMemberHost(1L, 3L, "user3@email.com"));
+
+        assertEquals("This action is not allowed. Failed validations: You are not the host of this group.", validationStatusException.getMessage());
+    }
+
+    @Test
+    public void makeMemberHost_makeMemberHostOfNonexistentGroup_expectedException() {
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(9999L, 3L, "user1@email.com"));
+    }
+
+    @Test
+    public void makeMemberHost_makeUserThatIsNoMemberOfGroupHost_expectedException() {
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(1L, 2L, "user1@email.com"));
+    }
+
+    @Test
+    public void makeMemberHost_makeUserHostByNonexistentUser_expectedException() {
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(1L, 3L, "nonexistent@mail.cmom"));
+    }
 
     // delete group
     @Test
