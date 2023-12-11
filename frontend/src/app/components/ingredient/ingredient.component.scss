@@ -1,89 +1,89 @@
-.custom-container {
-  position: absolute;
-  left: 40px;
-  top: 100px;
-  width: 461px;
-  height: 91px;
-  color: black;
-  //font-weight: bold;
-  font-size: 36px;
-
-.label-name {
-  font-size: 12px;
-  //font-weight: bold;
-  margin-top: 5px; 
-  position: absolute;
-  left: 80px;
-  top: 70px;
-  width: 52px;
-  height: 20px;
+.grid-container {
+  height: calc(100vh - 88px);
+  //min-height: 100vh;
+  display: flex;
 }
 
-.input-search {
-  margin-top: 5px; 
-  position: absolute;
-  left: 78px;
-  top: 100px;
-  width: 609px;
-  height: 39px;
+.left-container {
+  min-height: calc(100vh - 88px);
 }
 
-.search-field {
-  //border-radius: 15px !important;
+.header-left-container {
+  padding-left: 45px;
+  padding-top: 30px;
+}
+
+.right-container {
+  background-color: #D9D9D9;
+  min-height: calc(100vh - 88px);
+  position: relative;
   display: flex;
   align-items: center;
-  position: absolute;
-  margin-top: 5px; 
-  left: 78px;
-  top: 100px;
-  width: 609px;
-  height: 70px;
-  font-size: 14px;
-  border: none;
-  border-radius: 10px;
-  border-color: #B0B0B0;
-}
-
-.additional-div {
-  position: absolute;
-  left: 1265px;
-  top: -10px;
-  width: 400px;
-  height: 680px;
-  background-color: #D9D9D9;
-}
-
-.center-td > td {
-  vertical-align: middle;
-}
-
-.label-table {
-  font-size: 14px;
-  //font-weight: bold;
-  margin-top: 5px; 
-  position: absolute;
-  left: 80px;
-  top: 170px;
-  width: 609px;
-  height: 20px;
-}
-
+  justify-content: center; 
 }
 
 .figure-style {
   text-align: center; 
   margin-top: 30px;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
 }
 
 .image-name {
   margin-top: 10px;
+  font-size: 25px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.search-container {
+  margin-left: 6vw;
+  margin-top: 2vh;
+}
+
+.label-search {
+  margin-left: 0vw;
+  font-size: 18px;
+}
+
+.flex-container {
+  margin-left: 6vw;
+  display: flex;
+  align-items: center;
+
+}
+
+.wrapper {
+  position: relative;
+  width: 40vw;
+}
+
+.label-table {
+  font-size: 18px;
+  margin-top: 10px; 
+  position: relative;
+  margin-left: 6vw;
+  margin-top: -4vh;
+  width: 40vw;
+  max-height: 70%; 
+  overflow-y: auto; 
+}
+
+.result-style {
+  font-size: 14px;
+  margin-left: 0vw;
+  position: sticky;
+  top: 0;
+  background-color: #ECECEC !important;
 }
 
 .th-style {
   padding-left: 20px; 
   border-top: 1px solid grey; 
   border-bottom: 1px solid grey; 
-  width: 609px;
+  width: 40vw;
 }
 
 

@@ -31,6 +31,7 @@ export class IngredientComponent implements OnInit {
   searchChanged() {
     if(this.nameOfIngredient.length != 0){
       this.isToShowImg = false;
+      this.selectedIngredient = null;
       this.service.search(this.nameOfIngredient)
       .subscribe({
         next: data => {
@@ -51,7 +52,7 @@ export class IngredientComponent implements OnInit {
     } else {
       this.ingredients = []
       this.isToShowImg = false;
-      this.selectedIngredient = ""
+      this.selectedIngredient = null;
     }
 
   }
