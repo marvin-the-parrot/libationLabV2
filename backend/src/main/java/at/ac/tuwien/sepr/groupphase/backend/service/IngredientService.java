@@ -2,12 +2,12 @@ package at.ac.tuwien.sepr.groupphase.backend.service;
 
 import java.util.List;
 
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientSearchExistingUserDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 
 /**
@@ -39,7 +39,7 @@ public interface IngredientService {
      * @param searchParams parameters to search ingredients by
      * @return a stream of ingredients matching the parameters
      */
-    List<IngredientListDto> searchUserIngredients(IngredientSearchExistingUserDto searchParams);
+    List<IngredientListDto> searchUserIngredients(String searchParams);
 
     /**
      * Retrieve all stored ingredients, are associated with a user.
@@ -53,6 +53,6 @@ public interface IngredientService {
      *
      * @param ingredientListDto ingredients to add
      */
-    List<IngredientListDto> addIngredientsToUser(IngredientListDto[] ingredientListDto);
+    List<IngredientListDto> addIngredientsToUser(IngredientListDto[] ingredientListDto) throws ConflictException;
 
 }

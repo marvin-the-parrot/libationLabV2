@@ -6,6 +6,7 @@ import java.util.List;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientSearchExistingUserDto;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -67,13 +68,13 @@ public class IngredientEndpoint {
         }
     }
 
-    @GetMapping("/user-ingredients-auto")
+    @GetMapping("/user-ingredients-auto/{ingredientsName}")
     @Secured("ROLE_USER")
-    public List<IngredientListDto> search(@Valid IngredientSearchExistingUserDto searchParams) {
+    public List<IngredientListDto> searchAutocomplete(@PathVariable String ingredientsName) {
         LOGGER.info("GET " + BASE_PATH + "user-ingredients-auto");
-        LOGGER.debug("Request Params: {}", searchParams);
+        LOGGER.debug("Request Params: {}", ingredientsName);
         try {
-            return ingredientService.searchUserIngredients(searchParams);
+            return ingredientService.searchUserIngredients(ingredientsName);
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Failed to search ingredients", e);
@@ -102,6 +103,10 @@ public class IngredientEndpoint {
             return ingredientService.addIngredientsToUser(ingredients);
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Failed to search ingredients", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        } catch (ConflictException e) {
+            HttpStatus status = HttpStatus.CONFLICT;
             logClientError(status, "Failed to search ingredients", e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
