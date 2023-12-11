@@ -3,21 +3,21 @@ package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import at.ac.tuwien.sepr.groupphase.backend.api.IngredientApiResponse;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientSearchExistingUserDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.IngredientMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
@@ -109,29 +109,33 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Transactional
     @Override
-    public List<IngredientListDto> searchUserIngredients(IngredientSearchExistingUserDto searchParams) {
+    public List<IngredientListDto> searchUserIngredients(String searchParams) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         ApplicationUser user = userRepository.findByEmail(email);
-        List<ApplicationUser> userList = new ArrayList<>();
-        userList.add(user);
+        if (user == null) {
+            throw new NotFoundException("User not found");
+        }
         List<Ingredient> userIngredients = ingredientsRepository.findAllByApplicationUser(user);
         List<String> names = new ArrayList<>();
         for (Ingredient ingredient : userIngredients) {
             names.add(ingredient.getName());
         }
-        return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst5ByNameNotInAndNameIgnoreCaseContaining(names, searchParams.getName()));
+        return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst5ByNameNotInAndNameIgnoreCaseContaining(names, searchParams));
     }
 
     @Override
     public List<IngredientListDto> getUserIngredients() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         ApplicationUser user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new NotFoundException("User not found");
+        }
         List<Ingredient> userIngredients = ingredientsRepository.findAllByApplicationUser(user);
         return ingredientMapper.ingredientToIngredientListDto(userIngredients);
     }
 
     @Override
-    public List<IngredientListDto> addIngredientsToUser(IngredientListDto[] ingredientListDto) {
+    public List<IngredientListDto> addIngredientsToUser(IngredientListDto[] ingredientListDto) throws ConflictException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         ApplicationUser user = userRepository.findByEmail(email);
         if (user == null) {
@@ -147,6 +151,11 @@ public class IngredientServiceImpl implements IngredientService {
             Ingredient ingredient = ingredientsRepository.findById(ingredientDto.getId())
                 .orElseThrow(() -> new NotFoundException("Ingredient not found"));
 
+            if (!Objects.equals(ingredientDto.getName(), ingredient.getName())) {
+                List<String> conflictException = new ArrayList<>();
+                conflictException.add(ingredientDto.getName() + " is not the same as " + ingredient.getName());
+                throw new ConflictException("ConflictException", conflictException);
+            }
             updatedIngredients.add(ingredient);
         }
         // Update user's ingredients by adding new ingredients and removing missing ones
