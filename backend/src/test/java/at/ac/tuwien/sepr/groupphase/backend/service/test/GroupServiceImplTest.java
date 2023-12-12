@@ -10,6 +10,7 @@ import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
@@ -27,15 +28,13 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles({"test", "generateData"})
@@ -58,6 +57,9 @@ public class GroupServiceImplTest {
     @Autowired
     private UserGroupRepository userGroupRepository;
 
+    @Autowired
+    private MessageRepository messageRepository;
+
     private ApplicationGroup applicationGroup;
 
     private ApplicationUser applicationUser;
@@ -78,12 +80,17 @@ public class GroupServiceImplTest {
         int numberOfGroupsBefore = groupRepository.findAll().size();
         assertNull(groupRepository.findById((long) numberOfGroupsBefore + 1).orElse(null));
 
+        int numberOfMessagesBefore = messageRepository.findAll().size();
+        assertEquals(4, numberOfMessagesBefore);
+
         GroupCreateDto groupCreateDto = createBasicGroup();
         GroupCreateDto createdGroupDto = assertDoesNotThrow(() -> groupService.create(groupCreateDto));
         assertNotNull(createdGroupDto);
         assertEquals(groupCreateDto.getName(), createdGroupDto.getName());
         assertEquals(groupCreateDto.getHost(), createdGroupDto.getHost());
-        assertArrayEquals(groupCreateDto.getMembers(), createdGroupDto.getMembers());
+
+        int numberOfMessagesAfter = messageRepository.findAll().size();
+        assertEquals(numberOfMessagesBefore + 4, numberOfMessagesAfter);
 
         int numberOfGroupsAfter = groupRepository.findAll().size();
         assertEquals(numberOfGroupsBefore + 1, numberOfGroupsAfter);
@@ -212,6 +219,10 @@ public class GroupServiceImplTest {
     // update group (edit)
     @Test
     public void update_updateExistingGroupFromHost_expectedTrue() {
+
+        int numberOfMessagesBefore = messageRepository.findAll().size();
+        assertEquals(4, numberOfMessagesBefore);
+
         GroupCreateDto groupCreateDto = createBasicGroup();
         groupCreateDto.setId(1L);
         GroupCreateDto updatedGroupDto = assertDoesNotThrow(() -> groupService.update(groupCreateDto, "user1@email.com"));
@@ -220,8 +231,22 @@ public class GroupServiceImplTest {
         assertEquals(groupCreateDto.getHost(), updatedGroupDto.getHost());
 
         // edit checks if some members already exist in the group (so the order of the members might be shuffled)
-        assertThat(updatedGroupDto.getMembers()).extracting("id", "name")
-            .containsExactlyInAnyOrder(tuple(1L, "User1"), tuple(2L, "User2"), tuple(3L, "User3"), tuple(4L, "User4"), tuple(5L, "User5"));
+        assertThat(updatedGroupDto.getMembers()).extracting("id", "name").containsExactlyInAnyOrder(tuple(1L, "User1"), tuple(3L, "User3"), tuple(4L,
+            "User4")); // user 1, user 3, user 4 were already in the group (and should still be in the group), while user 2 and user 5 are new and should get and invitation message
+
+        int numberOfMessagesAfter = messageRepository.findAll().size();
+        assertEquals(numberOfMessagesBefore + 2, numberOfMessagesAfter);
+
+        messageRepository.findAllByApplicationUserOrderByIsReadAscSentAtDesc(userRepository.findById(2L).orElse(null)).forEach(message -> {
+            assertEquals("You were invited to drink with newGroup", message.getText());
+            assertEquals(updatedGroupDto.getId(), message.getGroupId());
+            assertFalse(message.getIsRead());
+        });
+        messageRepository.findAllByApplicationUserOrderByIsReadAscSentAtDesc(userRepository.findById(5L).orElse(null)).forEach(message -> {
+            assertEquals("You were invited to drink with newGroup", message.getText());
+            assertEquals(updatedGroupDto.getId(), message.getGroupId());
+            assertFalse(message.getIsRead());
+        });
     }
 
     @Test
@@ -260,6 +285,9 @@ public class GroupServiceImplTest {
         assertEquals(3L, groupMembers.get(1).getUser().getId());
         assertEquals(4L, groupMembers.get(2).getUser().getId());
 
+        int numberOfMessagesBefore = messageRepository.findAll().size();
+        assertEquals(4, numberOfMessagesBefore);
+
         // update group:
         GroupCreateDto groupCreateDto = createBasicGroup();
         groupCreateDto.setId(1L);
@@ -269,7 +297,19 @@ public class GroupServiceImplTest {
         assertNotNull(updatedGroupDto);
         assertEquals(groupCreateDto.getName(), updatedGroupDto.getName());
         assertEquals(groupCreateDto.getHost(), updatedGroupDto.getHost());
-        assertThat(updatedGroupDto.getMembers()).extracting("id", "name").containsExactlyInAnyOrder(tuple(1L, "User1"), tuple(2L, "User2"));
+
+        // only user 1 were in the group and did not get removed
+        assertThat(updatedGroupDto.getMembers()).extracting("id", "name").containsExactlyInAnyOrder(tuple(1L, "User1"));
+
+        // user2 was added to the group and should get an invitation message
+        int numberOfMessagesAfter = messageRepository.findAll().size();
+        assertEquals(numberOfMessagesBefore + 1, numberOfMessagesAfter);
+
+        messageRepository.findAllByApplicationUserOrderByIsReadAscSentAtDesc(userRepository.findById(2L).orElse(null)).forEach(message -> {
+            assertEquals("You were invited to drink with newGroup", message.getText());
+            assertEquals(updatedGroupDto.getId(), message.getGroupId());
+            assertFalse(message.getIsRead());
+        });
     }
 
     // make member host
