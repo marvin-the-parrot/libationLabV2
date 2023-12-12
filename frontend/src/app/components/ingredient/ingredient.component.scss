@@ -105,4 +105,20 @@
   font-weight: 500
 }
 
+.container-myIng-button {
+  display: flex;
+  justify-content: right;
+  margin-right: 1em;
+  margin-top: -2.5em;
+  margin-bottom: 1em;
+}
 
+.myIng-btn {
+  background-color: #AC6AFE;
+  color: white;
+  border: none;
+}
+
+.myIng-btn:active {
+  background-color: #6200EE; /* Change hover color */
+}

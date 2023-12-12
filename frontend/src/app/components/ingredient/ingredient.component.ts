@@ -3,6 +3,7 @@ import {debounceTime, Subject} from 'rxjs';
 import {IngredientService} from 'src/app/services/ingredient.service';
 import {IngredientListDto} from '../../dtos/ingredient';
 import {ToastrService} from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-ingredient',
@@ -23,6 +24,7 @@ export class IngredientComponent implements OnInit {
   constructor(
     private service: IngredientService,
     private notification: ToastrService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -62,6 +64,10 @@ export class IngredientComponent implements OnInit {
     this.imageUrl = this.firstImageUrlPart + name + "-Medium.png"; 
     this.imageName = name;
     this.selectedIngredient = name;
+  }
+
+  navigateToMyIngredients(): void {
+    this.router.navigate(['/settings']);
   }
   
 }
