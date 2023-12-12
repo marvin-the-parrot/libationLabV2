@@ -28,7 +28,7 @@ export class IngredientService {
     let params = new HttpParams();
     params = params.append("groupId", groupId);
 
-    return this.httpClient.get<IngredientGroupDto[]>(this.ingredientBaseUri, { params });
+    return this.httpClient.get<IngredientGroupDto[]>(this.ingredientBaseUri + `/${groupId}`);
   }
 
   /**

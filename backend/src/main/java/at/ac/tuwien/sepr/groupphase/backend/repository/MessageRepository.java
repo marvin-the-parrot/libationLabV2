@@ -20,6 +20,7 @@ public interface MessageRepository extends JpaRepository<ApplicationMessage, Lon
     /**
      * Find all message entries ordered by published at date (descending).
      *
+     * @param user   of message
      * @return ordered list of al message entries
      */
     List<ApplicationMessage> findAllByApplicationUserOrderByIsReadAscSentAtDesc(ApplicationUser user);
@@ -32,4 +33,13 @@ public interface MessageRepository extends JpaRepository<ApplicationMessage, Lon
      * @return ordered list of al message entries
      */
     long countByApplicationUserAndIsRead(ApplicationUser user, boolean isRead);
+
+    /**
+     * Find all message entries of a group and user.
+     *
+     * @param user  of message
+     * @param groupId of message
+     * @return list of all message entries
+     */
+    List<ApplicationMessage> findAllByApplicationUserAndGroupId(ApplicationUser user, Long groupId);
 }
