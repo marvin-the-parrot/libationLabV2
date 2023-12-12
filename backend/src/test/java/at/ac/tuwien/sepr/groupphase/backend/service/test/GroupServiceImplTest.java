@@ -81,7 +81,7 @@ public class GroupServiceImplTest {
         assertNull(groupRepository.findById((long) numberOfGroupsBefore + 1).orElse(null));
 
         int numberOfMessagesBefore = messageRepository.findAll().size();
-        assertEquals(4, numberOfMessagesBefore);
+        assertEquals(1, numberOfMessagesBefore);
 
         GroupCreateDto groupCreateDto = createBasicGroup();
         GroupCreateDto createdGroupDto = assertDoesNotThrow(() -> groupService.create(groupCreateDto));
@@ -221,7 +221,7 @@ public class GroupServiceImplTest {
     public void update_updateExistingGroupFromHost_expectedTrue() {
 
         int numberOfMessagesBefore = messageRepository.findAll().size();
-        assertEquals(4, numberOfMessagesBefore);
+        assertEquals(1, numberOfMessagesBefore);
 
         GroupCreateDto groupCreateDto = createBasicGroup();
         groupCreateDto.setId(1L);
@@ -286,7 +286,7 @@ public class GroupServiceImplTest {
         assertEquals(4L, groupMembers.get(2).getUser().getId());
 
         int numberOfMessagesBefore = messageRepository.findAll().size();
-        assertEquals(4, numberOfMessagesBefore);
+        assertEquals(1, numberOfMessagesBefore);
 
         // update group:
         GroupCreateDto groupCreateDto = createBasicGroup();

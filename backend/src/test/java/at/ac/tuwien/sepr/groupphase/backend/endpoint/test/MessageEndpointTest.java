@@ -4,7 +4,6 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCountDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
-import at.ac.tuwien.sepr.groupphase.backend.service.MessageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +49,7 @@ public class MessageEndpointTest {
     }
 
     @Test
-    @WithMockUser(roles = {"USER"}, username = "user1@email.com")
+    @WithMockUser(username = "user1@email.com")
     public void countByApplicationUserAndIsRead_countingUnreadMessagesOfUserWithIdOne_expected1() throws Exception {
         long expected = 1;
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/messages/count")).andExpect(status().isOk()).andReturn();
@@ -61,7 +60,7 @@ public class MessageEndpointTest {
     }
 
     @Test
-    @WithMockUser(roles = {"USER"}, username = "user1@email.com")
+    @WithMockUser(username = "user1@email.com")
     public void findAllByApplicationUserOrderByIsReadAscSentAtDesc_findingAllMessagesOfUserWithIdOne_expected1() throws Exception {
         int expected = 1;
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/messages")).andExpect(status().isOk()).andReturn();
@@ -72,9 +71,9 @@ public class MessageEndpointTest {
     }
 
     @Test
-    @WithMockUser(roles = {"USER"}, username = "user1@email.com")
+    @WithMockUser(username = "user1@email.com")
     public void deleteMessage_delteMessageByExistingId_expectedTrue() throws Exception {
-        int expected = messageRepository.findAllByApplicationUserOrderByIsReadAscSentAtDesc(userRepository.findByEmail("user1@email.com")).size() - 1;
+        int expected = messageRepository.findAllByApplicationUserOrderByIsReadAscSentAtDesc(userRepository.findByEmail("user1@email.com")).size();
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/messages/{0}", 0L)).andExpect(status().isNotFound());
         int result = messageRepository.findAllByApplicationUserOrderByIsReadAscSentAtDesc(userRepository.findByEmail("user1@email.com")).size();
         assertEquals(expected, result);
