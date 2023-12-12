@@ -5,7 +5,7 @@
     <div class="left-container col-lg-9 col-md-9 col-sm-9 col-9">
        
        <div class="header-left-container">
-         <h2>Search for ingredients</h2>
+         <h2>Search for Ingredients</h2>
        </div>
 
        <div class="container-myIng-button">
@@ -41,9 +41,8 @@
           <p class="result-style"> &nbsp;&nbsp;&nbsp;{{ingredients.length}} Result</p>
           <table >
             <tbody>
-              <tr *ngFor="let ingredient of ingredients">
+              <tr *ngFor="let ingredient of ingredients"  [style.background]="selectedIngredient === ingredient.name ? '#D9D9D9' : '#ECECEC'">
                 <td class="td-style" 
-                [style.background]="selectedIngredient === ingredient.name ? '#D9D9D9' : '#ECECEC'"
                 (click)="showImage(ingredient.name)">
                 {{ingredient.name}}</td>
               </tr>

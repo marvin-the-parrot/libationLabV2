@@ -135,3 +135,12 @@
   width: 45vw;
   font-weight: 500;
 }
+
+.td-style:hover,
+.td-style:focus,
+.td-style:active {
+  background-color: #D9D9D9;
+  color: black;
+  border-color: #B0B0B0;
+}
+
