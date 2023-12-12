@@ -8,15 +8,10 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
-import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.MessageService;
-
-import java.lang.invoke.MethodHandles;
-import java.time.LocalDateTime;
-import java.util.List;
-
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import at.ac.tuwien.sepr.groupphase.backend.service.validators.MessageValidator;
 import jakarta.transaction.Transactional;
@@ -26,6 +21,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.lang.invoke.MethodHandles;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Simple message service.
@@ -37,16 +36,16 @@ public class SimpleMessageService implements MessageService {
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final MessageRepository messageRepository;
     private final UserService userService;
-    private final GroupService groupService;
+    private final GroupRepository groupRepository;
     private final MessageValidator validator;
     private final IngredientsRepository ingredientsRepository;
 
     @Autowired
-    public SimpleMessageService(MessageRepository messageRepository, UserService userService, MessageValidator validator, GroupService groupService, IngredientsRepository ingredientsRepository) {
+    public SimpleMessageService(MessageRepository messageRepository, UserService userService, GroupRepository groupRepository, MessageValidator validator, IngredientsRepository ingredientsRepository) {
         this.messageRepository = messageRepository;
         this.userService = userService;
+        this.groupRepository = groupRepository;
         this.validator = validator;
-        this.groupService = groupService;
         this.ingredientsRepository = ingredientsRepository;
     }
 
@@ -69,7 +68,7 @@ public class SimpleMessageService implements MessageService {
     public ApplicationMessage create(MessageCreateDto message) throws ConstraintViolationException, ValidationException {
         LOGGER.debug("Publish new message {}", message);
         validator.validateForCreate(message);
-        ApplicationGroup group = groupService.findOne(message.getGroupId());
+        ApplicationGroup group = groupRepository.findById(message.getGroupId()).orElse(null);
         ApplicationMessage applicationMessage = ApplicationMessage.ApplicationMessageBuilder.message()
             .withApplicationUser(userService.findApplicationUserById(message.getUserId()))
             .withText("You were invited to drink with " + group.getName())

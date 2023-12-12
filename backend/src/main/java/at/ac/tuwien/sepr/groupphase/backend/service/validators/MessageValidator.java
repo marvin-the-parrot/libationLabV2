@@ -3,9 +3,8 @@ package at.ac.tuwien.sepr.groupphase.backend.service.validators;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
-import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
-import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
+import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.impl.CustomUserDetailService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -22,12 +21,12 @@ public class MessageValidator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final CustomUserDetailService userService;
-    private final GroupService groupService;
+    private final GroupRepository groupRepository;
 
     @Autowired
-    public MessageValidator(CustomUserDetailService userService, GroupService groupService) {
+    public MessageValidator(CustomUserDetailService userService, GroupRepository groupRepository) {
         this.userService = userService;
-        this.groupService = groupService;
+        this.groupRepository = groupRepository;
     }
 
     /**
@@ -58,7 +57,7 @@ public class MessageValidator {
             constraintViolationErrors.add("User does not exist");
         }
 
-        if (groupService.findOne(toCreate.getGroupId()) == null) {
+        if (groupRepository.findById(toCreate.getGroupId()).orElse(null) == null) {
             constraintViolationErrors.add("Group does not exist");
         }
 
