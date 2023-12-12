@@ -55,8 +55,8 @@ public class IngredientEndpoint {
     }
 
     @Secured("ROLE_USER")
-    @GetMapping
-    public List<IngredientGroupDto> getAllGroupIngredients(@Valid Long groupId) {
+    @GetMapping("/{groupId}")
+    public List<IngredientGroupDto> getAllGroupIngredients(@PathVariable Long groupId) {
         LOGGER.info("GET " + BASE_PATH + "getAllGroupIngredients/{}", groupId);
         try {
             return ingredientService.getAllGroupIngredients(groupId);

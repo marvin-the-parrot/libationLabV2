@@ -16,7 +16,7 @@ export class IngredientService {
   private ingredientBaseUri: string = this.globals.backendUri + '/ingredients';
 
   constructor(
-    private httpClient: HttpClient, 
+    private httpClient: HttpClient,
     private globals: Globals
     ) {
      }
@@ -28,7 +28,7 @@ export class IngredientService {
     let params = new HttpParams();
     params = params.append("groupId", groupId);
 
-    return this.httpClient.get<IngredientGroupDto[]>(this.ingredientBaseUri, { params });
+    return this.httpClient.get<IngredientGroupDto[]>(this.ingredientBaseUri + `/${groupId}`);
   }
 
   /**
@@ -57,12 +57,12 @@ export class IngredientService {
   }
 
   /**
-   * Searching for ingredients 
-   * 
+   * Searching for ingredients
+   *
    * @param name of ingredient
    * @returns return matched ingredients
    */
-  search(name: String): Observable<IngredientListDto[]> { 
+  search(name: String): Observable<IngredientListDto[]> {
     return this.httpClient.get<IngredientListDto[]>(`${this.ingredientBaseUri}/searchIngredients/` + name);
   }
 

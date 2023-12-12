@@ -19,7 +19,7 @@ public interface IngredientsRepository extends JpaRepository<Ingredient, Long> {
 
     List<Ingredient> findByNameContainingIgnoreCase(String name);
 
-    List<Ingredient> findAllByApplicationUserIn(List<ApplicationUser> applicationUser);
+    List<Ingredient> findAllByApplicationUserInOrderByName(List<ApplicationUser> applicationUser);
 
     List<Ingredient> findAllByApplicationUser(ApplicationUser applicationUser);
 
