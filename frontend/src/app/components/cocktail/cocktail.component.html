@@ -1,75 +1,90 @@
 <app-header></app-header>
 
-<div class="custom-container">
+<div class="grid-container">
 
-    <p>Search for cocktails</p>
-    
-    <form class="d-flex flex-row w-auto mb-3">
-        <button type="submit" hidden="hidden">submit</button>
-        <!-- Suchfeld für Name -->
-        <div class="flex-grow-1">
-            <label for="searchName" class="label-name col-form-label">
-                Name
-            </label>
-            <mat-form-field class = "search-field-name">
-                <mat-icon matPrefix>search</mat-icon>
-                <input
-                  matInput
-                  type="text"
-                  id="searchName"
-                  name="searchName"
-                  [(ngModel)]="nameOfCocktail"
-                  (ngModelChange)="searchChanged()"
-                  placeholder="Search for Cocktails"
-                /> 
-              </mat-form-field>
-        </div>
-        <!-- Zusätzliches Suchfeld für Zutaten -->
-        <div class="flex-grow-1">
-            <label for="searchIngredient" class="label-ingredient col-form-label">
-                Ingredients
-            </label>
-            <mat-form-field class="search-field-ingredient">
-                <mat-icon matPrefix>search</mat-icon>
-                <input
-                    matInput
-                    type="text"
-                    id="searchIngredient"
-                    name="searchIngredient"
-                    [(ngModel)]="nameOfIngredient"
-                    (ngModelChange)="searchChanged()"
-                    placeholder="Search for Ingredients"
-                />
-            </mat-form-field>
-        </div>
-    
-      </form>
-    <br><br>  
-    <div class="label-table" *ngIf = "cocktails?.length > 0">
-      <p>{{cocktails.length}} Result</p>
-      <table class="table-hover" >
-        <tbody>
-          <tr *ngFor="let cocktail of cocktails" class="center-td">
-            <th class="th-style" 
-            [style.background]="selectedCocktail === cocktail.name ? '#D9D9D9' : 'F5F5F5'"
-            (click)="showImage(cocktail.name)">
-            {{cocktail.name}}</th>
-          </tr>
-        </tbody>
-      </table>
+  <div class="left-container col-lg-9 col-md-9 col-sm-9 col-9">
+       
+    <div class="header-left-container">
+      <h2> Search for cocktails </h2>
     </div>
 
-    <div class="additional-div" >
-      <div *ngIf="isToShowImg" class="additional-ingredient">
-        <figure class="figure-style" >
-          <img [src]="imageUrl" >
-          <figcaption class="image-name">{{imageName}}</figcaption>
-        </figure>    
-        <br>
-        <p style="font-size: 20px;">Ingredients:</p>
-        <ul style="font-size: 16px;">
-          <li *ngFor="let ingredient of cocktailIngredients">{{ ingredient }}</li>
-        </ul>  
+    <div class="flex-container">
+
+    <div class="search-container">
+         <label class="label-search-name">
+             Name
+         </label>
+          <!-- Suchfeld für Name -->
+          <div class="wrapper-name col-md-6 col-lg-6">
+            <input matInput
+                   type="text"
+                   id="searchName"
+                   name="searchName"
+                   placeholder="Search for Cocktails"
+                   class="form-control"
+                   [(ngModel)]="nameOfCocktail"
+                   (ngModelChange)="searchChanged()"
+                   #groupNameModel="ngModel"
+                   required
+                   autofocus
+            >
+    </div>
+    </div>
+    
+
+   <div class="search-container">
+        <label class="label-search-ing">
+          Ingredients
+        </label>
+            <!-- Suchfeld für Zutaten -->
+      <div class="wrapper-ingredients col-md-6 col-lg-6">
+        <input matInput
+               type="text"
+               id="searchName"
+               name="searchName"
+               placeholder="Search for Ingredients"
+               class="form-control"
+               [(ngModel)]="nameOfIngredient"
+               (ngModelChange)="searchChanged()"
+               #groupNameModel="ngModel"
+               required
+               autofocus
+        >
+      </div>
+   </div>
+
+    </div>
+
+     <br><br>  
+     
+     <div class="label-table" *ngIf = "cocktails?.length > 0">
+       <p class="result-style"> &nbsp;&nbsp;&nbsp;{{cocktails.length}} Result</p>
+       <table >
+         <tbody>
+           <tr *ngFor="let cocktail of cocktails">
+             <td class="td-style" 
+             [style.background]="selectedCocktail === cocktail.name ? '#D9D9D9' : '#ECECEC'"
+             (click)="showImage(cocktail.name)">
+             {{cocktail.name}}</td>
+           </tr>
+         </tbody>
+       </table>
+    </div>
+
+   </div>
+
+  <div class="right-container col-lg-3 col-md-3 col-sm-3 col-3" >
+    <figure *ngIf="isToShowImg">
+      <img class="image-style" [src]="imageUrl" >
+      <figcaption class="image-name">{{imageName}}</figcaption>
+    </figure>   
+    <br> <br>
+    <div class="info-ing-container" *ngIf="isToShowImg">
+      <p class="info-ing">Ingredients:</p>
+      <ul class="info-ings">
+        <li *ngFor="let ingredient of cocktailIngredients">{{ ingredient }}</li>
+      </ul>  
     </div>
   </div>
+
 </div>

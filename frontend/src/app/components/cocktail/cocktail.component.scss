@@ -1,125 +1,137 @@
-.custom-container {
-    position: absolute;
-    left: 40px;
-    top: 100px;
-    width: 461px;
-    height: 91px;
-    color: black;
-    //font-weight: bold;
-    font-size: 36px;
-  
-  .label-name {
-    font-size: 12px;
-    //font-weight: bold;
-    margin-top: 5px; 
-    position: absolute;
-    left: 80px;
-    top: 70px;
-    width: 52px;
-    height: 20px;
-  }
+.grid-container {
+  height: calc(100vh - 88px);
+  //min-height: 100vh;
+  display: flex;
+}
 
-  .label-ingredient {
-    font-size: 12px;
-    //font-weight: bold;
-    margin-top: 5px; 
-    position: absolute;
-    left: 712px;
-    top: 70px;
-    width: 52px;
-    height: 20px;
-  }
-  
-  .input-search {
-    margin-top: 5px; 
-    position: absolute;
-    left: 78px;
-    top: 100px;
-    width: 609px;
-    height: 39px;
-  }
-  
-  .search-field-name {
-    //border-radius: 15px !important;
-    display: flex;
-    align-items: center;
-    position: absolute;
-    margin-top: 5px; 
-    left: 78px;
-    top: 100px;
-    width: 609px;
-    height: 70px;
-    font-size: 14px;
-    border: none;
-    border-radius: 10px;
-    border-color: #B0B0B0;
-  }
+.left-container {
+  min-height: calc(100vh - 88px);
+}
 
-  .search-field-ingredient {
-    //border-radius: 15px !important;
-    display: flex;
-    align-items: center;
-    position: absolute;
-    margin-top: 5px; 
-    left: 710px;
-    top: 100px;
-    width: 300px;
-    height: 70px;
-    font-size: 14px;
-    border: none;
-    border-radius: 10px;
-    border-color: #B0B0B0;
-  }
-  
-  .additional-div {
-    position: absolute;
-    left: 1265px;
-    top: -10px;
-    width: 400px;
-    height: 680px;
-    background-color: #D9D9D9; 
-  }
-  
-  .additional-ingredient {
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    justify-content: center; 
-    text-align: center;
-  }
+.header-left-container {
+  padding-left: 45px;
+  padding-top: 30px;
+}
 
-  .center-td > td {
-    vertical-align: middle;
-  }
-  
-  .label-table {
-    font-size: 14px;
-    //font-weight: bold;
-    margin-top: 5px; 
-    position: absolute;
-    left: 80px;
-    top: 170px;
-    width: 609px;
-    height: 20px;
-  }
-  
-  }
-  
-  .figure-style {
-    text-align: center; 
-    margin-top: 30px;
-  }
-  
-  .image-name {
-    margin-top: 10px;
-  }
-  
-  .th-style {
-    padding-left: 20px; 
-    border-top: 1px solid grey; 
-    border-bottom: 1px solid grey; 
-    width: 609px;
-  }
-  
-  
-  
+.right-container {
+  background-color: #D9D9D9;
+  min-height: calc(100vh - 88px);
+  position: relative;
+  display: flex;
+  margin: auto;
+  align-items: center;
+  justify-content: center; 
+  flex-direction: column;
+}
+
+.image-style {
+  align-self: center; 
+  margin-top: 5px;
+  margin-left: 45px;
+  max-width: 80%;
+  max-height: 80%;
+  width: auto;
+  height: auto;
+  border-radius: 10px; 
+  border: 3px solid #AC6AFE; 
+}
+
+.image-name {
+  margin-top: 10px;
+  font-size: 25px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.info-ing {
+  font-size: 23px;
+  text-align: left;
+  font-weight: 500;
+  margin-left: -7vw;
+}
+
+.info-ings {
+  font-size: 17px;
+  text-align: left;
+  font-weight: 550;
+  margin-left: -7vw;
+}
+
+.info-ing-container {
+  text-align: left; 
+  margin-top: 10px;
+}
+
+.search-container {
+  margin-left: 5.7vw;
+  margin-top: 2vh;
+}
+
+.label-search-name {
+  margin-left: 0.5vw;
+  font-size: 18px;
+}
+
+.label-search-ing {
+  margin-left: -4.5vw;
+  font-size: 18px;
+}
+
+.flex-container {
+  margin-left: -1vw;
+  display: flex;
+  align-items: center;
+
+}
+
+.wrapper-name {
+  position: relative;
+  width: 28vw;
+}
+
+.wrapper-ingredients {
+  position: relative;
+  width: 17vw;
+  margin-top: 0vh;
+  margin-left: -5vw;
+}
+
+.label-table {
+  font-size: 18px;
+  position: relative;
+  margin-left: 5vw;
+  margin-top: -1vh;
+  margin-bottom: 2vh;
+  width: 46.5vw;
+  max-height: 70%; 
+  overflow-y: auto; 
+}
+
+.label-table::-webkit-scrollbar {
+  width: 4px; 
+}
+
+.label-table::-webkit-scrollbar-thumb {
+  background-color: grey; 
+  border-radius: 3px; 
+}
+
+.label-table::-webkit-scrollbar-track {
+  background-color: #eee; 
+}
+
+.result-style {
+  font-size: 14px;
+  margin-left: 0vw;
+  position: sticky;
+  top: 0;
+  background-color: #ECECEC !important;
+}
+
+.td-style {
+  padding-left: 20px; 
+  border-top: 1px solid grey; 
+  border-bottom: 1px solid grey; 
+  width: 45vw;
+  font-weight: 500;
+}
