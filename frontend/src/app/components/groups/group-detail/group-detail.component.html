@@ -47,12 +47,12 @@
       <div>{{group.name}}</div>
     </div>
     <div *ngIf="group.cocktails === null" class="d-flex justify-content-center align-items-center h-100">
-      <span *ngIf=""></span>
+      <span></span>
       <button *ngIf="group.cocktails === null" class="btn menu-button" [routerLink]="['../menu']" >Create a Cocktail Menu</button>
     </div>
     <div *ngIf="group.cocktails !== null">
       <span *ngFor="let cocktail of group.cocktails" >
-      {{ cocktail.name }}
+      {{ cocktail }}
       </span>
     </div>
   </div>
@@ -61,12 +61,14 @@
     <div>
       <h3>Ingredients</h3>
     </div>
-    <div class="list ingredient-list" *ngIf="ingredients !== null">
-      <p class="entry-count">{{ingredients.length}} Ingredients in Group</p>
-      <div *ngFor="let ingredient of ingredients" class="list-item">
-        <div class="list-name">{{ ingredient.name }}</div>
-        <div class="list-action">
-          <i class="bi bi-info-circle info" [attr.data-tooltip]="getUsersOfIngredient(ingredient)"></i>
+    <div class="container-scrollable">
+      <div class="list ingredient-list" *ngIf="ingredients !== null">
+        <p class="entry-count">{{ingredients.length}} Ingredients in Group</p>
+        <div *ngFor="let ingredient of ingredients" class="list-item">
+          <div class="list-name">{{ ingredient.name }}</div>
+          <div class="list-action">
+            <i class="bi bi-info-circle info" [attr.data-tooltip]="getUsersOfIngredient(ingredient)"></i>
+          </div>
         </div>
       </div>
     </div>

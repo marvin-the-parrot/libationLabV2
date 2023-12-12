@@ -87,7 +87,7 @@ public class IngredientServiceImpl implements IngredientService {
         List<UserGroup> userGroups = userGroupRepository.findAllByApplicationGroup(group);
 
         List<IngredientGroupDto> ingredientGroupDtos = new ArrayList<>();
-        List<Ingredient> ingredients = ingredientsRepository.findAllByApplicationUserIn(applicationUser);
+        List<Ingredient> ingredients = ingredientsRepository.findAllByApplicationUserInOrderByName(applicationUser);
 
         for (Ingredient ingredient : ingredients) {
             List<ApplicationUser> ingredientUsers = new ArrayList<>();
