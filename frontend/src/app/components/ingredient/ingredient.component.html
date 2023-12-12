@@ -37,10 +37,10 @@
           <table >
             <tbody>
               <tr *ngFor="let ingredient of ingredients">
-                <th class="th-style" 
+                <td class="td-style" 
                 [style.background]="selectedIngredient === ingredient.name ? '#D9D9D9' : '#ECECEC'"
                 (click)="showImage(ingredient.name)">
-                {{ingredient.name}}</th>
+                {{ingredient.name}}</td>
               </tr>
             </tbody>
           </table>
@@ -50,7 +50,7 @@
 
     <div class="right-container col-lg-3 col-md-3 col-sm-3 col-3" >
       <figure class="figure-style" *ngIf="isToShowImg">
-        <img [src]="imageUrl" >
+        <img class="image-style" [src]="imageUrl" >
         <figcaption class="image-name">{{imageName}}</figcaption>
       </figure>      
     </div>
