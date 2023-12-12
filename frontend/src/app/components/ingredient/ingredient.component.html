@@ -38,7 +38,7 @@
             <tbody>
               <tr *ngFor="let ingredient of ingredients">
                 <th class="th-style" 
-                [style.background]="selectedIngredient === ingredient.name ? '#D9D9D9' : '#F5F5F5'"
+                [style.background]="selectedIngredient === ingredient.name ? '#D9D9D9' : '#ECECEC'"
                 (click)="showImage(ingredient.name)">
                 {{ingredient.name}}</th>
               </tr>
