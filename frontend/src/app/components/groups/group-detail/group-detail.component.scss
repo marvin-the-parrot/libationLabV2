@@ -169,11 +169,12 @@ input {
   font-size: 14px;
   bottom: calc(100% + 4px);
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-100%);
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
   pointer-events: none;
   width: 300px;
+  z-index: 1;
 }
 
 .info:hover::after {
