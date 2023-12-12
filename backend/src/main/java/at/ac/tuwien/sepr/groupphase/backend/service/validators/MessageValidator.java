@@ -2,13 +2,12 @@ package at.ac.tuwien.sepr.groupphase.backend.service.validators;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
-import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
+import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.impl.CustomUserDetailService;
 import org.hibernate.exception.ConstraintViolationException;
@@ -26,16 +25,16 @@ public class MessageValidator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final CustomUserDetailService userService;
-    private final GroupService groupService;
     private final MessageRepository messageRepository;
     private final GroupRepository groupRepository;
+    private final UserGroupRepository userGroupRepository;
 
     @Autowired
-    public MessageValidator(CustomUserDetailService userService, GroupService groupService, MessageRepository messageRepository, GroupRepository groupRepository) {
+    public MessageValidator(CustomUserDetailService userService, MessageRepository messageRepository, GroupRepository groupRepository, UserGroupRepository userGroupRepository) {
         this.userService = userService;
-        this.groupService = groupService;
         this.messageRepository = messageRepository;
         this.groupRepository = groupRepository;
+        this.userGroupRepository = userGroupRepository;
     }
 
     /**
@@ -68,20 +67,22 @@ public class MessageValidator {
             constraintViolationErrors.add("User does not exist");
         }
 
-        if (groupService.findOne(toCreate.getGroupId()) == null) {
+        if (groupRepository.findById(toCreate.getGroupId()).orElse(null) == null) {
             constraintViolationErrors.add("Group does not exist");
         }
 
         List<ApplicationMessage> messages = messageRepository.findAllByApplicationUserAndGroupId(user, toCreate.getGroupId());
 
         if (!messages.isEmpty()) {
+            assert user != null;
             validationErrors.add(String.format("You already invited user %s to the group", user.getName()));
         }
 
-        List<UserListDto> groupUsers = groupService.searchForMember(toCreate.getGroupId());
+        List<ApplicationUser> groupUsers = userGroupRepository.findUsersByGroupId(toCreate.getGroupId());
 
-        for (UserListDto groupUser : groupUsers) {
+        for (ApplicationUser groupUser : groupUsers) {
             if (groupUser.getId().equals(toCreate.getUserId())) {
+                assert user != null;
                 validationErrors.add(String.format("User %s is already in the group", user.getName()));
             }
         }
