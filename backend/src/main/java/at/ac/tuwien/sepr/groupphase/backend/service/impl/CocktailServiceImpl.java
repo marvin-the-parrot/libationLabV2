@@ -8,6 +8,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
+import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
@@ -59,13 +60,19 @@ public class CocktailServiceImpl implements CocktailIngredientService {
     public List<CocktailListDto> searchCocktailByCocktailNameAndIngredientName(String cocktailsName,
                                                                                String ingredientsName) {
         LOGGER.debug("Search for cocktail by cocktail name and ingredient name {}", cocktailsName, ingredientsName);
-        //TODO Bug: is case sensitive when ingredient is searched
         if (cocktailsName == null) {
-            return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailIngredientsRepository.findByIngredientNameContainingIgnoreCase(ingredientsName));
+            List<CocktailIngredients> ingredientsByName = cocktailIngredientsRepository.findByIngredientNameContainingIgnoreCase(ingredientsName);
+            List<CocktailIngredients> cocktailsByIngredientsName = new ArrayList<>();
+            ingredientsByName.forEach(ingredient -> cocktailsByIngredientsName.addAll(cocktailIngredientsRepository.findByCocktailNameContainingIgnoreCase(ingredient.getCocktail().getName())));
+            return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailsByIngredientsName);
         } else if (ingredientsName == null) {
             return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailIngredientsRepository.findByCocktailNameContainingIgnoreCase(cocktailsName));
-        }
-        return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailIngredientsRepository.findByIngredientNameContainingIgnoreCaseAndCocktailNameContainingIgnoreCase(ingredientsName, cocktailsName));
+        } else {
+            List<CocktailIngredients> cocktailsAndIngredients = cocktailIngredientsRepository.findByIngredientNameContainingIgnoreCaseAndCocktailNameContainingIgnoreCase(ingredientsName, cocktailsName);
+            List<CocktailIngredients> cocktailsByIngredientsName = new ArrayList<>();
+            cocktailsAndIngredients.forEach(ingredient -> cocktailsByIngredientsName.addAll(cocktailIngredientsRepository.findByCocktailNameContainingIgnoreCase(ingredient.getCocktail().getName())));
+            return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailsByIngredientsName);   
+        } 
     }
 
     @Override
