@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
@@ -15,6 +16,7 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
+import at.ac.tuwien.sepr.groupphase.backend.service.MessageService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import at.ac.tuwien.sepr.groupphase.backend.service.validators.GroupValidator;
 import jakarta.transaction.Transactional;
@@ -36,6 +38,7 @@ public class GroupServiceImpl implements GroupService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final UserService userService;
+    private final MessageService messageService;
     @Autowired
     private final GroupRepository groupRepository;
     private final GroupValidator validator;
@@ -48,10 +51,11 @@ public class GroupServiceImpl implements GroupService {
     @Autowired
     private UserMapper userMapper;
 
-    public GroupServiceImpl(UserService userService, GroupRepository groupRepository, GroupValidator validator) {
+    public GroupServiceImpl(UserService userService, GroupRepository groupRepository, GroupValidator validator, MessageService messageService) {
         this.userService = userService;
         this.groupRepository = groupRepository;
         this.validator = validator;
+        this.messageService = messageService;
     }
 
     @Override
@@ -142,11 +146,29 @@ public class GroupServiceImpl implements GroupService {
         for (var member : toCreate.getMembers()) {
             boolean isHost = member.getId().equals(toCreate.getHost().getId()); // save host in database
 
-            UserGroup newMember = UserGroup.UserGroupBuilder.userGroup().withUserGroupKey(new UserGroupKey(member.getId(), saved.getId()))
-                .withUser(userRepository.findById(member.getId()).orElse(null)).withGroup(groupRepository.findById(saved.getId()).orElse(null))
-                .withIsHost(isHost).build();
+            if (isHost) {
+                // save host in database
+                UserGroup newMember = UserGroup.UserGroupBuilder.userGroup().withUserGroupKey(new UserGroupKey(member.getId(), saved.getId()))
+                    .withUser(userRepository.findById(member.getId()).orElse(null)).withGroup(groupRepository.findById(saved.getId()).orElse(null))
+                    .withIsHost(true).build();
+                userGroupRepository.save(newMember);
+            } else {
+                // send invitation to member
 
-            userGroupRepository.save(newMember);
+                /*ApplicationMessage message = ApplicationMessage.ApplicationMessageBuilder.message()
+                    .withApplicationUser(userRepository.findById(member.getId()).orElse(null))
+                    .withText("You were invited to drink with " + saved.getName())
+                    .withGroupId(saved.getId())
+                    .withIsRead(false)
+                    .withSentAt(java.time.LocalDateTime.now())
+                    .build();*/
+
+                MessageCreateDto message = new MessageCreateDto();
+                message.setUserId(member.getId());
+                message.setGroupId(saved.getId());
+                messageService.create(message);
+            }
+
         }
 
         return applicationGroupToGroupCreateDto(saved);
@@ -190,10 +212,11 @@ public class GroupServiceImpl implements GroupService {
                 }
             }
             if (!found) {
-                UserGroup newMember = UserGroup.UserGroupBuilder.userGroup().withUserGroupKey(new UserGroupKey(member.getId(), saved.getId()))
-                    .withUser(userRepository.findById(member.getId()).orElse(null)).withGroup(groupRepository.findById(saved.getId()).orElse(null))
-                    .withIsHost(member.getId().equals(toUpdate.getHost().getId())).build();
-                userGroupRepository.save(newMember);
+
+                MessageCreateDto message = new MessageCreateDto();
+                message.setUserId(member.getId());
+                message.setGroupId(saved.getId());
+                messageService.create(message);
             }
         }
 
