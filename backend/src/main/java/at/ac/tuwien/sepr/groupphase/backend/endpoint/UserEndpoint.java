@@ -9,6 +9,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchExistingGroup
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import jakarta.annotation.security.PermitAll;
@@ -112,6 +113,10 @@ public class UserEndpoint {
             userService.resetPassword(resetPasswordDto);
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Failed to reset password", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        } catch (ValidationException e) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
             logClientError(status, "Failed to reset password", e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }

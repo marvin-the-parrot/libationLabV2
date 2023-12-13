@@ -167,7 +167,7 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public void resetPassword(ResetPasswordDto resetPasswordDto) {
+    public void resetPassword(ResetPasswordDto resetPasswordDto) throws ValidationException {
         LOGGER.debug("Reset password");
 
         ResetToken resetToken = resetTokenRepository.findByToken(resetPasswordDto.getToken());
@@ -179,6 +179,11 @@ public class CustomUserDetailService implements UserService {
         ApplicationUser applicationUser = userRepository.findById(resetToken.getUserId()).orElse(null);
 
         if (applicationUser != null) {
+            if (resetPasswordDto.getPassword().length() < 8) {
+                List<String> errors = new ArrayList<>();
+                errors.add("Password must be at least 8 characters long");
+                throw new ValidationException("ValidationException", errors);
+            }
             applicationUser.setPassword(passwordEncoder.encode(resetPasswordDto.getPassword()));
             userRepository.save(applicationUser);
             userRepository.flush();
@@ -328,7 +333,7 @@ public class CustomUserDetailService implements UserService {
             message.setSubject("Reset your password");
 
             // Set the content of the email message
-            message.setText("Here is your link to reset your password: " + ResetPasswordLinkGenerator.generateResetLink(generateToken(userId)));
+            message.setText("Here is your link to reset your password: " + generateResetLink(generateToken(userId)));
 
             // Send the email
             Transport.send(message);
@@ -354,12 +359,11 @@ public class CustomUserDetailService implements UserService {
         return resetToken.getToken();
     }
 
-    private class ResetPasswordLinkGenerator {
 
-        // Generate a reset password link with a token parameter
-        public static String generateResetLink(String token) {
-            return "http://localhost:4200/#/reset-password?token=" + token;
-        }
+    // Generate a reset password link with a token parameter
+    public static String generateResetLink(String token) {
+        return "http://localhost:4200/#/reset-password?token=" + token;
     }
+
 
 }

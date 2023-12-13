@@ -1,7 +1,10 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.test;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.ResetPasswordDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserEmailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLocalStorageDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
@@ -17,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
@@ -31,6 +35,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -135,9 +140,134 @@ public class UserEndpointTest {
             .andExpect(status().isBadRequest()).andReturn();
     }
 
+    @Test
+    @Rollback
+    @Transactional
+    public void forgotPassword_requestResetMailCorrectMail_expectSuccessfulMailSent() throws Exception {
+        UserEmailDto userEmailDto = new UserEmailDto();
+        userEmailDto.setEmail("user1@email.com");
 
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/forgot-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userEmailDto)))
+            .andExpect(status().isCreated()).andReturn();
+    }
 
+    @Test
+    @Rollback
+    @Transactional
+    public void forgotPassword_requestResetPasswordIncorrectMail_expectIsCreatedBecauseOfSecurityReasons() throws Exception {
+        UserEmailDto userEmailDto = new UserEmailDto();
+        userEmailDto.setEmail("user1@wrongDomain.com");
 
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/forgot-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userEmailDto)))
+            .andExpect(status().isCreated()).andReturn();
+    }
 
+    @Test
+    @Rollback
+    @Transactional
+    public void resetPassword_resetPasswordWithCorrectToken_expectSuccessfulReset() throws Exception {
+        //TODO: TestDataSet witch Tokens
+    }
+
+    @Test
+    @Rollback
+    @Transactional
+    public void resetPassword_resetPasswordWithIncorrectToken_expectError() throws Exception {
+        ResetPasswordDto resetPasswordDto = new ResetPasswordDto();
+        resetPasswordDto.setToken("WRONG_TOKEN");
+        resetPasswordDto.setPassword("newPassword");
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/reset-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(resetPasswordDto)))
+            .andExpect(status().isNotFound()).andReturn();
+    }
+
+    @Test
+    @Rollback
+    @Transactional
+    public void resetPassword_resetPasswordWithIncorrectPassword_expectError() throws Exception {
+        ResetPasswordDto resetPasswordDto = new ResetPasswordDto();
+        //TODO: TestDataSet witch Tokens
+        resetPasswordDto.setToken("WRONG_TOKEN");
+        resetPasswordDto.setPassword("1234567");
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/reset-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(resetPasswordDto)))
+            //TODO: Change to isBadRequest
+            .andExpect(status().isNotFound()).andReturn();
+    }
+
+    @Test
+    @Rollback
+    @Transactional
+    public void resetPassword_resetPasswordWithTokenWithoutUser_expectError() throws Exception {
+        ResetPasswordDto resetPasswordDto = new ResetPasswordDto();
+        //TODO: TestDataSet witch Tokens
+        resetPasswordDto.setToken("WRONG_TOKEN");
+        resetPasswordDto.setPassword("newPassword");
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/reset-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(resetPasswordDto)))
+            .andExpect(status().isNotFound()).andReturn();
+    }
+
+    @Test
+    @WithMockUser(roles = {"USER"}, username = "user1@email.com")
+    @Transactional
+    @Rollback
+    public void deleteUser_deleteUser_expectSuccessfulDeletionAndLoginNotPossible() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/users/delete"))
+            .andExpect(status().isOk()).andReturn();
+
+        UserLoginDto loginDto = new UserLoginDto();
+        loginDto.setEmail("user1@email.com");
+        loginDto.setPassword("password");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/authentication")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginDto)))
+            .andExpect(status().isNotFound()).andReturn();
+    }
+
+    @Test
+    @WithMockUser(roles = {"USER"}, username = "user1@email.com")
+    @Transactional
+    @Rollback
+    public void deleteUser_deleteUserTwice_NotFoundException() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/users/delete"))
+            .andExpect(status().isOk()).andReturn();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/users/delete"))
+            .andExpect(status().isNotFound()).andReturn();
+    }
+
+    @Test
+    @WithMockUser(roles = {"USER"}, username = "user1@email.com")
+    @Transactional
+    @Rollback
+    public void getUser_getUser_expectSuccessfulGet() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/user"))
+            .andExpect(status().isOk()).andReturn();
+
+        UserLocalStorageDto user = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), UserLocalStorageDto.class);
+        assertAll(
+            () -> assertEquals("User1", user.getName()),
+            () -> assertEquals("user1@email.com", user.getEmail()),
+            () -> assertEquals(1L, user.getId())
+        );
+    }
+
+    @Test
+    @WithMockUser(roles = {"USER"}, username = "user1@wrongDomain.com")
+    @Transactional
+    @Rollback
+    public void getUser_getUsernonExistingUser_expectError() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/user"))
+            .andExpect(status().isNotFound()).andReturn();
+    }
 
 }

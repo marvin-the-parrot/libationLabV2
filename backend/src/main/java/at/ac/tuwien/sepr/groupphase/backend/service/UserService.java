@@ -74,7 +74,7 @@ public interface UserService extends UserDetailsService {
      *
      * @param resetPasswordDto reset credentials
      */
-    void resetPassword(ResetPasswordDto resetPasswordDto);
+    void resetPassword(ResetPasswordDto resetPasswordDto) throws ValidationException;
 
     /**
      * Retrieve all stored users, that match the given parameters.
