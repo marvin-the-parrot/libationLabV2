@@ -13,8 +13,6 @@ import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.MessageService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserGroupService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 
 import java.lang.invoke.MethodHandles;
@@ -98,20 +96,19 @@ public class MessageEndpoint {
      * Create message endpoint.
      *
      * @param message - messageCreateDto
-     * @return published message
      */
     //@Secured("ROLE_USER")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
     @Operation(summary = "Publish a new message")
-    public MessageDetailDto create(@Valid @RequestBody MessageCreateDto message) {
+    public void create(@Valid @RequestBody MessageCreateDto message) {
         LOGGER.info("POST /api/v1/messages body: {}", message);
         if (message == null) {
-            return null;
+            return;
         }
         try {
-            return messageMapper.from(messageService.create(message), groupMapper.groupToGroupDetailDto(groupService.findOne((message.getGroupId()))));
-        } catch (ConstraintViolationException e) {
+            messageMapper.from(messageService.create(message), groupMapper.groupToGroupDetailDto(groupService.findOne((message.getGroupId()))));
+        } catch (NotFoundException e) {
             logClientError(HttpStatus.NOT_FOUND, "Failed to create message since ", e);
             HttpStatus status = HttpStatus.NOT_FOUND;
             throw new ResponseStatusException(status, e.getMessage(), e);
@@ -148,10 +145,6 @@ public class MessageEndpoint {
             logClientError(HttpStatus.UNPROCESSABLE_ENTITY, "Failed to accept message since ", e);
             HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
             throw new ResponseStatusException(status, e.getMessage(), e);
-        } catch (ConflictException e) {
-            logClientError(HttpStatus.CONFLICT, "Failed to accept message since ", e);
-            HttpStatus status = HttpStatus.CONFLICT;
-            throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
 
@@ -180,10 +173,6 @@ public class MessageEndpoint {
         } catch (ValidationException e) {
             HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
             logClientError(status, "Message to update is invalid", e);
-            throw new ResponseStatusException(status, e.getMessage(), e);
-        } catch (ConflictException e) {
-            HttpStatus status = HttpStatus.CONFLICT;
-            logClientError(status, "Message to update conflicts with existing data", e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }

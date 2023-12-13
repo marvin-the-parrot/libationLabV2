@@ -7,7 +7,6 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLocalStorageDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchExistingGroupDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
@@ -62,7 +61,6 @@ public class CustomUserDetailService implements UserService {
     private static final Logger LOGGER =
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final UserRepository userRepository;
-    private final MessageRepository messageRepository;
     private final ResetTokenRepository resetTokenRepository;
     private final UserGroupRepository userGroupRepository;
     private final GroupRepository groupRepository;
@@ -87,7 +85,7 @@ public class CustomUserDetailService implements UserService {
     public CustomUserDetailService(UserRepository userRepository, ResetTokenRepository resetTokenRepository,
                                    UserGroupRepository userGroupRepository, PasswordEncoder passwordEncoder,
                                    JwtTokenizer jwtTokenizer, UserValidator validator,
-                                   UserMapper userMapper, MessageRepository messageRepository, GroupRepository groupRepository) {
+                                   UserMapper userMapper, GroupRepository groupRepository) {
         this.userRepository = userRepository;
         this.resetTokenRepository = resetTokenRepository;
         this.userGroupRepository = userGroupRepository;
@@ -95,7 +93,6 @@ public class CustomUserDetailService implements UserService {
         this.jwtTokenizer = jwtTokenizer;
         this.validator = validator;
         this.userMapper = userMapper;
-        this.messageRepository = messageRepository;
         this.groupRepository = groupRepository;
     }
 
@@ -129,11 +126,11 @@ public class CustomUserDetailService implements UserService {
     @Override
     public ApplicationUser findApplicationUserById(Long userId) throws NotFoundException {
         LOGGER.debug("Find application user by id");
-        ApplicationUser applicationUser = userRepository.findById(userId).orElseThrow();
+        ApplicationUser applicationUser = userRepository.findById(userId).orElse(null);
         if (applicationUser != null) {
             return applicationUser;
         }
-        throw new NotFoundException(String.format("Could not find the user with name %s", applicationUser.getName()));
+        throw new NotFoundException("Could not find the user");
     }
 
     @Override

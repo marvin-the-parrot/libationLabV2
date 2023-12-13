@@ -5,17 +5,14 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
-import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
-import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.MessageService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import at.ac.tuwien.sepr.groupphase.backend.service.validators.MessageValidator;
 import jakarta.transaction.Transactional;
-import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,15 +35,13 @@ public class SimpleMessageService implements MessageService {
     private final UserService userService;
     private final GroupRepository groupRepository;
     private final MessageValidator validator;
-    private final IngredientsRepository ingredientsRepository;
 
     @Autowired
-    public SimpleMessageService(MessageRepository messageRepository, UserService userService, GroupRepository groupRepository, MessageValidator validator, IngredientsRepository ingredientsRepository) {
+    public SimpleMessageService(MessageRepository messageRepository, UserService userService, GroupRepository groupRepository, MessageValidator validator) {
         this.messageRepository = messageRepository;
         this.userService = userService;
         this.groupRepository = groupRepository;
         this.validator = validator;
-        this.ingredientsRepository = ingredientsRepository;
     }
 
     @Override
@@ -65,12 +60,17 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public ApplicationMessage create(MessageCreateDto message) throws ConstraintViolationException, ValidationException {
+    public ApplicationMessage create(MessageCreateDto message) throws NotFoundException, ValidationException {
         LOGGER.debug("Publish new message {}", message);
         validator.validateForCreate(message);
         ApplicationGroup group = groupRepository.findById(message.getGroupId()).orElse(null);
+        if (group == null) {
+            throw new NotFoundException("Could not find group");
+        }
+        ApplicationUser user = userService.findApplicationUserById(message.getUserId());
+
         ApplicationMessage applicationMessage = ApplicationMessage.ApplicationMessageBuilder.message()
-            .withApplicationUser(userService.findApplicationUserById(message.getUserId()))
+            .withApplicationUser(user)
             .withText("You were invited to drink with " + group.getName())
             .withGroupId(message.getGroupId())
             .withIsRead(false)
@@ -80,13 +80,18 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public ApplicationMessage update(MessageDetailDto toUpdate) throws NotFoundException, ValidationException, ConflictException {
+    public ApplicationMessage update(MessageDetailDto toUpdate) throws NotFoundException, ValidationException {
         LOGGER.debug("Update message {}", toUpdate);
         ApplicationMessage myMessage = messageRepository.findById(toUpdate.getId()).orElse(null);
         if (myMessage == null) {
             throw new NotFoundException(String.format("Could not find message from group %s sent at %s",
                 toUpdate.getGroup().getName(), toUpdate.getSentAt()));
         }
+        ApplicationGroup group = groupRepository.findById(toUpdate.getGroup().getId()).orElse(null);
+        if (group == null) {
+            throw new NotFoundException("Could not find group");
+        }
+
         toUpdate.setIsRead(true);
         validator.validateForUpdate(toUpdate);
         myMessage.setIsRead(toUpdate.getIsRead());
