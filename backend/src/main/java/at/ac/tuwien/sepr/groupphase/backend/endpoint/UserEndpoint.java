@@ -6,11 +6,8 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserEmailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLocalStorageDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchExistingGroupDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
-import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
@@ -55,8 +52,8 @@ public class UserEndpoint {
         LOGGER.debug("Request Params: {}", searchParams);
         try {
             return userService.search(searchParams);
-        } catch (NotFoundException e) {
-            HttpStatus status = HttpStatus.NOT_FOUND;
+        } catch (Exception e) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
             logClientError(status, "Failed to search users", e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }

@@ -6,13 +6,6 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserEmailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLocalStorageDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
-import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
-import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroupKey;
-import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
-import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
-import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
@@ -32,15 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles("generateData")
+@ActiveProfiles({"test", "generateData"})
 @SpringBootTest
 public class UserEndpointTest {
 
@@ -268,6 +256,61 @@ public class UserEndpointTest {
     public void getUser_getUsernonExistingUser_expectError() throws Exception {
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/user"))
             .andExpect(status().isNotFound()).andReturn();
+    }
+
+    @Test
+    @WithMockUser(username = "user1@email.com")
+    public void search_searchUserExistingGroupWithExistingData_expectSuccessfulSearchAndListOfUserListDto() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users?name=u&groupId=1"))
+            .andExpect(status().isOk()).andReturn();
+
+        List<UserListDto> users = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<UserListDto>>() {
+        });
+        assertAll(
+            () -> assertEquals(5, users.size()),
+            () -> assertEquals("User2", users.get(0).getName()),
+            () -> assertEquals("User5", users.get(1).getName()),
+            () -> assertEquals("User6", users.get(2).getName()),
+            () -> assertEquals("User7", users.get(3).getName()),
+            () -> assertEquals("User8", users.get(4).getName())
+        );
+    }
+
+    @Test
+    @WithMockUser(username = "user1@email.com")
+    public void search_searchUserExistingGroupWithNotExistingDataa_expectedIsOkAndEmptyListBecauseNoErrorShouldBeThrown() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users?name=x&groupId=1"))
+            .andExpect(status().isOk()).andReturn();
+
+        List<UserListDto> users = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<UserListDto>>() {
+        });
+
+        assertEquals(0, users.size());
+    }
+
+    @Test
+    @WithMockUser(username = "user1@email.com")
+    public void search_searchUserExistingGroupWithBadRequest_expectedIsBadRequest() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users?name=x&groupId=WRONG_GROUP_ID"))
+            .andExpect(status().isBadRequest()).andReturn();
+    }
+
+    @Test
+    @WithMockUser(username = "user1@email.com")
+    public void search_searchUserCreatingGroupWithValidData_expectSuccessfulSearchAndListOfUserListDto() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users?name=u"))
+            .andExpect(status().isOk()).andReturn();
+
+        List<UserListDto> users = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<UserListDto>>() {
+        });
+        assertAll(
+            () -> assertEquals(5, users.size()),
+            () -> assertEquals("User2", users.get(0).getName()),
+            () -> assertEquals("User3", users.get(1).getName()),
+            () -> assertEquals("User4", users.get(2).getName()),
+            () -> assertEquals("User5", users.get(3).getName()),
+            () -> assertEquals("User6", users.get(4).getName())
+        );
     }
 
 }
