@@ -124,12 +124,11 @@ public class UserEndpoint {
     @ResponseStatus(HttpStatus.OK)
     public UserLocalStorageDto getUser() {
         LOGGER.info("GET /api/v1/user/user");
-        String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
         try {
-            return userService.getUserByEmail(userMail);
+            return userService.getUserByEmail();
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
-            logClientError(status, String.format("Failed to get user with mail %s", userMail), e);
+            logClientError(status, String.format("Failed to get user with mail %s", SecurityContextHolder.getContext().getAuthentication().getName()), e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
@@ -139,12 +138,11 @@ public class UserEndpoint {
     @ResponseStatus(HttpStatus.OK)
     public void deleteUser() {
         LOGGER.info("DELETE /api/v1/user/delete");
-        String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
         try {
-            userService.deleteUserByEmail(userMail);
+            userService.deleteUserByEmail();
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
-            logClientError(status, String.format("Failed to delete user with mail %s", userMail), e);
+            logClientError(status, String.format("Failed to delete user with mail %s", SecurityContextHolder.getContext().getAuthentication().getName()), e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }

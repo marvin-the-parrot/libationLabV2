@@ -23,6 +23,7 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
@@ -71,13 +72,15 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public void deleteGroup(Long groupId, String currentUserMail) throws ValidationException {
+    public void deleteGroup(Long groupId) throws ValidationException {
         LOGGER.debug("Delete group ({})", groupId);
 
         ApplicationGroup group = groupRepository.findById(groupId).orElse(null);
         if (group == null) {
             throw new NotFoundException("Could not find group");
         }
+
+        String currentUserMail = SecurityContextHolder.getContext().getAuthentication().getName();
 
         validator.validateIsCurrentUserHost(userRepository, userGroupRepository, groupId, currentUserMail);
 
@@ -90,7 +93,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public void deleteMember(Long groupId, Long userId, String currentUserMail) throws ValidationException {
+    public void deleteMember(Long groupId, Long userId) throws ValidationException {
         LOGGER.debug("Remove member from group({}, {})", groupId, userId);
 
         // check if user exists
@@ -98,6 +101,8 @@ public class GroupServiceImpl implements GroupService {
         if (userToRemove.isEmpty()) {
             throw new NotFoundException("Could not find user");
         }
+
+        String currentUserMail = SecurityContextHolder.getContext().getAuthentication().getName();
 
         // check if the user to remove is the current user or if the current user is the host of the group
         if (!userToRemove.get().getEmail().equals(currentUserMail)) {
@@ -179,7 +184,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public GroupCreateDto update(GroupCreateDto toUpdate, String currentUser) throws NotFoundException, ValidationException, ConflictException {
+    public GroupCreateDto update(GroupCreateDto toUpdate) throws NotFoundException, ValidationException, ConflictException {
+        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
         LOGGER.trace("update({})", toUpdate);
         // validate group:
         validator.validateForUpdate(toUpdate, userRepository, userGroupRepository, currentUser);
@@ -229,7 +235,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public List<UserGroup> findGroupsByUser(String email) {
+    public List<UserGroup> findGroupsByUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         LOGGER.trace("findGroupsByUser({})", email);
         // find groups in database
         List<UserGroup> groups = userGroupRepository.findAllByApplicationUser(userRepository.findByEmail(email));
@@ -238,7 +245,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public void makeMemberHost(Long groupId, Long userId, String currentUserMail) throws ValidationException {
+    public void makeMemberHost(Long groupId, Long userId) throws ValidationException {
+        String currentUserMail = SecurityContextHolder.getContext().getAuthentication().getName();
         LOGGER.trace("makeMemberHost({}, {}, {})", groupId, userId, currentUserMail);
 
         // check if group exists

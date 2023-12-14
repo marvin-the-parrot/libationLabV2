@@ -1,29 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
-import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
-import java.util.List;
-
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
-import at.ac.tuwien.sepr.groupphase.backend.service.CocktailIngredientService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
@@ -35,11 +12,32 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepr.groupphase.backend.service.CocktailIngredientService;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Group endpoint controller.
@@ -78,7 +76,7 @@ public class GroupEndpoint {
     @Operation(summary = "Get a list of groups that this viewer is part of", security = @SecurityRequirement(name = "apiKey"))
     public GroupOverviewDto[] findGroupsByUser() {
         LOGGER.info("GET /api/v1/groups");
-        List<UserGroup> userGroupMatchings = groupService.findGroupsByUser(SecurityContextHolder.getContext().getAuthentication().getName());
+        List<UserGroup> userGroupMatchings = groupService.findGroupsByUser();
         List<GroupOverviewDto> groupOverviewDtos = new ArrayList<>();
         for (UserGroup group : userGroupMatchings) {
             GroupOverviewDto groupOverviewDto;
@@ -157,7 +155,7 @@ public class GroupEndpoint {
 
         toUpdate.setId(id);
         try {
-            return groupService.update(toUpdate, SecurityContextHolder.getContext().getAuthentication().getName());
+            return groupService.update(toUpdate);
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Group to update not found", e);
@@ -172,7 +170,7 @@ public class GroupEndpoint {
     public void makeMemberHost(@PathVariable Long groupId, @PathVariable Long userId) throws ValidationException {
         LOGGER.info("PUT " + BASE_PATH + "/{}/{}", groupId, userId);
         try {
-            groupService.makeMemberHost(groupId, userId, SecurityContextHolder.getContext().getAuthentication().getName());
+            groupService.makeMemberHost(groupId, userId);
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Group member to make host not found", e);
@@ -192,7 +190,7 @@ public class GroupEndpoint {
     public void delete(@PathVariable Long id) throws ValidationException, ConflictException {
         LOGGER.info("DELETE " + BASE_PATH + "/{}", id);
         try {
-            groupService.deleteGroup(id, SecurityContextHolder.getContext().getAuthentication().getName());
+            groupService.deleteGroup(id);
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Group to delete not found", e);
@@ -213,7 +211,7 @@ public class GroupEndpoint {
     public void removeMemberFromGroup(@PathVariable Long groupId, @PathVariable Long userId) throws ValidationException {
         LOGGER.info("DELETE " + BASE_PATH + "/{}/{}", groupId, userId);
         try {
-            groupService.deleteMember(groupId, userId, SecurityContextHolder.getContext().getAuthentication().getName());
+            groupService.deleteMember(groupId, userId);
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Group member to delete not found", e);

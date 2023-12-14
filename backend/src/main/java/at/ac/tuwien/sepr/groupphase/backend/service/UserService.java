@@ -7,7 +7,6 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLocalStorageDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchExistingGroupDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
@@ -93,11 +92,10 @@ public interface UserService extends UserDetailsService {
     void forgotPassword(String email) throws NotFoundException;
 
     /**
-     * Get Username and id by email.
+     * Get Username and id by of the user that is currently logged in.
      *
-     * @param email the email address of the user
      */
-    UserLocalStorageDto getUserByEmail(String email);
+    UserLocalStorageDto getUserByEmail();
 
     /**
      * Find all users of a group.
@@ -108,10 +106,9 @@ public interface UserService extends UserDetailsService {
     List<UserListGroupDto> findUsersByGroup(ApplicationGroup group);
 
     /**
-     * Delete a user by email.
+     * Delete the current user. (the mail is extracted from the security context)
      *
-     * @param email the email address of the user
      */
-    void deleteUserByEmail(String email);
+    void deleteUserByEmail();
 
 }
