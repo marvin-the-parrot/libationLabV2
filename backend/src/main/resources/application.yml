@@ -71,3 +71,13 @@ spring:
     timeout-per-shutdown-phase: 30s
 server:
   shutdown: graceful
+
+---
+# email configuration for forgetPassword
+spring:
+  mail:
+    username: "dionysuslibationlab@gmail.com"
+    password: "mvry hsuu mjvm mxrz "
+    host: "smtp.gmail.com"
+    port: "465"
+    auth: true

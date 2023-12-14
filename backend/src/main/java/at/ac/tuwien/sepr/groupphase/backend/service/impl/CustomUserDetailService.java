@@ -22,6 +22,7 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.security.JwtTokenizer;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import at.ac.tuwien.sepr.groupphase.backend.service.validators.UserValidator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.lang.invoke.MethodHandles;
@@ -68,6 +69,22 @@ public class CustomUserDetailService implements UserService {
     private final JwtTokenizer jwtTokenizer;
     private final UserValidator validator;
     private final UserMapper userMapper;
+
+    // values for the sendEmail method
+    @Value("${spring.mail.host}")
+    private String host;
+
+    @Value("${spring.mail.port}")
+    private String port;
+
+    @Value("${spring.mail.auth}")
+    private boolean auth;
+
+    @Value("${spring.mail.username}")
+    private String senderEmail;
+
+    @Value("${spring.mail.password}")
+    private String senderPassword;
 
     /**
      * Customer user detail service.
@@ -292,25 +309,21 @@ public class CustomUserDetailService implements UserService {
         return userMapper.userToUserListDto(userRepository.findFirst5ByEmailNotAndNameIgnoreCaseContaining(email, searchParams.getName()));
     }
 
-    private void sendEmail(String email) {
+    private void sendEmail(String recipientEmail) {
         // Sender's email address and password
-        final String senderEmail = "dionysuslibationlab@gmail.com";
 
         //DONT DELTE THIS!!!
-        final String senderPassword = "mvry hsuu mjvm mxrz ";
+        // final String senderPassword = "mvry hsuu mjvm mxrz ";
         //DONT DELTE THIS!!!
-
-        // Recipient's email address
-        String recipientEmail = email;
 
         long userId = userRepository.findByEmail(recipientEmail).getId();
 
         // Setup properties for the SMTP server
         Properties properties = new Properties();
-        properties.put("mail.smtp.host", "smtp.gmail.com");
-        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.host", host);
+        properties.put("mail.smtp.auth", auth);
         properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        properties.put("mail.smtp.socketFactory.port", "465");
+        properties.put("mail.smtp.socketFactory.port", port);
 
         // Create a Session object with authentication
         Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
