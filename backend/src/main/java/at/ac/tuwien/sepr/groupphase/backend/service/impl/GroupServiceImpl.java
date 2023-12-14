@@ -70,6 +70,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
     public void deleteGroup(Long groupId, String currentUserMail) throws ValidationException {
         LOGGER.debug("Delete group ({})", groupId);
 
@@ -88,6 +89,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
     public void deleteMember(Long groupId, Long userId, String currentUserMail) throws ValidationException {
         LOGGER.debug("Remove member from group({}, {})", groupId, userId);
 
@@ -132,6 +134,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
     public GroupCreateDto create(GroupCreateDto toCreate) throws ValidationException, ConflictException {
         LOGGER.trace("create({})", toCreate);
         // validate group:
@@ -175,6 +178,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
     public GroupCreateDto update(GroupCreateDto toUpdate, String currentUser) throws NotFoundException, ValidationException, ConflictException {
         LOGGER.trace("update({})", toUpdate);
         // validate group:
@@ -233,6 +237,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
     public void makeMemberHost(Long groupId, Long userId, String currentUserMail) throws ValidationException {
         LOGGER.trace("makeMemberHost({}, {}, {})", groupId, userId, currentUserMail);
 
