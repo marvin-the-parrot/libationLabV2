@@ -1,0 +1,46 @@
+.card-header{
+  color: white;
+  background-color: #AC6AFE;
+  transition-duration: 0.25s;
+}
+
+.card:hover .card-header{
+  color: white;
+  background-color: #6200EE;
+}
+
+.card{
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+  margin: 0.25rem;
+  margin-bottom: 1rem;
+  padding: 0;
+}
+
+.card:hover{
+  cursor: pointer;
+}
+
+.menu-card{
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+  margin: 0.25rem;
+  margin-bottom: 1rem;
+  padding: 0;
+  background-color: white;
+  border-radius: 0.25rem;
+}
+.menu-header{
+  color: white;
+  margin: 0;
+  text-align: center;
+  background-color: #AC6AFE;
+  border-radius: 0.25rem 0.25rem 0 0;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.menu-body{
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+  height: 70vh;
+}

@@ -1,12 +1,12 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
-
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.ResetPasswordDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListGroupDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLocalStorageDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchExistingGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
@@ -74,7 +74,7 @@ public interface UserService extends UserDetailsService {
      *
      * @param resetPasswordDto reset credentials
      */
-    void resetPassword(ResetPasswordDto resetPasswordDto);
+    void resetPassword(ResetPasswordDto resetPasswordDto) throws ValidationException;
 
     /**
      * Retrieve all stored users, that match the given parameters.
@@ -83,8 +83,7 @@ public interface UserService extends UserDetailsService {
      * @param searchParams parameters to search users by
      * @return a stream of users matching the parameters
      */
-    List<UserListDto> search(UserSearchDto searchParams);
-
+    List<UserListDto> search(UserSearchExistingGroupDto searchParams);
 
     /**
      * Send an email to the user with a link to reset his password.
@@ -94,18 +93,11 @@ public interface UserService extends UserDetailsService {
     void forgotPassword(String email) throws NotFoundException;
 
     /**
-     * Get Username by email.
-     *
-     * @param email the email address of the user
-     */
-    UsernameDto getUsernameByEmail(String email);
-
-    /**
      * Get Username and id by email.
      *
      * @param email the email address of the user
      */
-    UserListDto getUserByEmail(String email);
+    UserLocalStorageDto getUserByEmail(String email);
 
     /**
      * Find all users of a group.
@@ -114,4 +106,12 @@ public interface UserService extends UserDetailsService {
      * @return a list of groups
      */
     List<UserListGroupDto> findUsersByGroup(ApplicationGroup group);
+
+    /**
+     * Delete a user by email.
+     *
+     * @param email the email address of the user
+     */
+    void deleteUserByEmail(String email);
+
 }

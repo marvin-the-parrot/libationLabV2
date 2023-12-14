@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupDetailDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCountDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
@@ -16,13 +17,10 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface MessageMapper {
 
-    //MessageDetailDto messageToDetailedMessageDto(ApplicationMessage message);
-
-    //List<MessageDetailDto> messageToDetailedMessageDto(List<ApplicationMessage> message);
-
-    //ApplicationMessage messageCreateDtoToMessage(MessageCreateDto messageCreateDto, Long groupId, );
+    MessageCountDto countToMessageCountDto(Long count);
 
     @Mapping(source = "message.id", target = "id")
+    @Mapping(source = "message.text", target = "text")
     @Mapping(source = "group", target = "group")
     @Mapping(source = "message.isRead", target = "isRead")
     @Mapping(source = "message.sentAt", target = "sentAt")

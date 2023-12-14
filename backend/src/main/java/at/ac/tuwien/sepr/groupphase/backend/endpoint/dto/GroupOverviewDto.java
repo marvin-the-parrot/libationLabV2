@@ -9,7 +9,7 @@ public class GroupOverviewDto {
 
     private Long id;
     private String name;
-    private String cocktails;
+    private CocktailOverviewDto[] cocktails;
     private UserListGroupDto host;
 
     public UserListGroupDto getHost() {
@@ -38,11 +38,11 @@ public class GroupOverviewDto {
         this.name = name;
     }
 
-    public String getCocktail() {
+    public CocktailOverviewDto[] getCocktails() {
         return cocktails;
     }
 
-    public void setCocktail(String cocktail) {
+    public void setCocktails(CocktailOverviewDto[] cocktail) {
         this.cocktails = cocktail;
     }
 
@@ -71,7 +71,7 @@ public class GroupOverviewDto {
         private Long id;
         private String name;
         private boolean isHost;
-        private String cocktails;
+        private CocktailOverviewDto[] cocktails;
         private UserListGroupDto[] members;
 
         public GroupDetailDtoBuilder() {
@@ -101,8 +101,8 @@ public class GroupOverviewDto {
             return this;
         }
 
-        public GroupDetailDtoBuilder withCocktail(String cocktail) {
-            this.cocktails = cocktail;
+        public GroupDetailDtoBuilder withCocktail(CocktailOverviewDto[] cocktails) {
+            this.cocktails = cocktails;
             return this;
         }
 
@@ -114,7 +114,6 @@ public class GroupOverviewDto {
             return this;
         }
 
-
         /**
          * Group detail dto builder.
          *
@@ -124,7 +123,7 @@ public class GroupOverviewDto {
             GroupOverviewDto groupOverviewDto = new GroupOverviewDto();
             groupOverviewDto.setId(id);
             groupOverviewDto.setName(name);
-            groupOverviewDto.setCocktail(cocktails);
+            groupOverviewDto.setCocktails(cocktails);
             groupOverviewDto.setMembers(members);
             return groupOverviewDto;
         }

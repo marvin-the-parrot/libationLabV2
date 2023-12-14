@@ -4,6 +4,9 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
+import at.ac.tuwien.sepr.groupphase.backend.service.CocktailIngredientService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +39,6 @@ import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.annotation.security.PermitAll;
 import jakarta.transaction.Transactional;
 
 /**
@@ -53,13 +55,16 @@ public class GroupEndpoint {
     private final GroupMapper groupMapper;
     private final UserService userService;
     private final UserMapper userMapper;
+    private final CocktailIngredientService cocktailService;
 
     @Autowired
-    public GroupEndpoint(GroupService groupService, GroupMapper groupMapper, UserService userService, UserMapper userMapper) {
+    public GroupEndpoint(GroupService groupService, GroupMapper groupMapper, UserService userService, UserMapper userMapper,
+                         CocktailIngredientService cocktailService) {
         this.groupService = groupService;
         this.groupMapper = groupMapper;
         this.userService = userService;
         this.userMapper = userMapper;
+        this.cocktailService = cocktailService;
     }
 
     /**
@@ -143,15 +148,16 @@ public class GroupEndpoint {
      * @throws ValidationException if the data is not valid
      * @throws ConflictException   if the data conflicts with existing data
      */
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_USER")
     @PutMapping("{id}")
+    @Operation(security = @SecurityRequirement(name = "apiKey"))
     public GroupCreateDto update(@PathVariable long id, @RequestBody GroupCreateDto toUpdate) throws ValidationException, ConflictException {
         LOGGER.info("PUT " + BASE_PATH + "/{}", toUpdate);
         LOGGER.debug("Body of request:\n{}", toUpdate);
 
         toUpdate.setId(id);
         try {
-            return groupService.update(toUpdate);
+            return groupService.update(toUpdate, SecurityContextHolder.getContext().getAuthentication().getName());
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Group to update not found", e);
@@ -173,7 +179,6 @@ public class GroupEndpoint {
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
-
 
     /**
      * Delete group.
@@ -219,10 +224,10 @@ public class GroupEndpoint {
     /**
      * Searching for member of group.
      *
-     * @param groupId    the id of the group
+     * @param groupId the id of the group
      * @return list of matched user
      */
-    @PermitAll
+    @Secured("ROLE_USER")
     @GetMapping("searchGroupMember/{groupId}")
     @ResponseStatus(HttpStatus.OK)
     public List<UserListDto> searchGroupMember(@PathVariable Long groupId) {
@@ -232,6 +237,14 @@ public class GroupEndpoint {
 
     private void logClientError(HttpStatus status, String message, Exception e) {
         LOGGER.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
+    }
+
+    @Secured("ROLE_USER")
+    @GetMapping("{groupId}/mixables")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CocktailOverviewDto> getMixableCocktails(@PathVariable Long groupId) throws JsonProcessingException {
+        LOGGER.info("GET " + BASE_PATH + groupId + "mixable");
+        return cocktailService.getMixableCocktails(groupId);
     }
 
 }

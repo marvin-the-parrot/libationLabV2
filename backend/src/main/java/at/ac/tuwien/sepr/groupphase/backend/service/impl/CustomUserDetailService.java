@@ -1,13 +1,12 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
-
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.ResetPasswordDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListGroupDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLocalStorageDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchExistingGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
@@ -15,6 +14,8 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.ResetToken;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.ResetTokenRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
@@ -62,6 +63,7 @@ public class CustomUserDetailService implements UserService {
     private final UserRepository userRepository;
     private final ResetTokenRepository resetTokenRepository;
     private final UserGroupRepository userGroupRepository;
+    private final GroupRepository groupRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenizer jwtTokenizer;
     private final UserValidator validator;
@@ -83,7 +85,7 @@ public class CustomUserDetailService implements UserService {
     public CustomUserDetailService(UserRepository userRepository, ResetTokenRepository resetTokenRepository,
                                    UserGroupRepository userGroupRepository, PasswordEncoder passwordEncoder,
                                    JwtTokenizer jwtTokenizer, UserValidator validator,
-                                   UserMapper userMapper) {
+                                   UserMapper userMapper, GroupRepository groupRepository) {
         this.userRepository = userRepository;
         this.resetTokenRepository = resetTokenRepository;
         this.userGroupRepository = userGroupRepository;
@@ -91,8 +93,8 @@ public class CustomUserDetailService implements UserService {
         this.jwtTokenizer = jwtTokenizer;
         this.validator = validator;
         this.userMapper = userMapper;
+        this.groupRepository = groupRepository;
     }
-
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -124,11 +126,11 @@ public class CustomUserDetailService implements UserService {
     @Override
     public ApplicationUser findApplicationUserById(Long userId) throws NotFoundException {
         LOGGER.debug("Find application user by id");
-        ApplicationUser applicationUser = userRepository.findById(userId).orElseThrow();
+        ApplicationUser applicationUser = userRepository.findById(userId).orElse(null);
         if (applicationUser != null) {
             return applicationUser;
         }
-        throw new NotFoundException(String.format("Could not find the user with name %s", applicationUser.getName()));
+        throw new NotFoundException("Could not find the user");
     }
 
     @Override
@@ -165,7 +167,7 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public void resetPassword(ResetPasswordDto resetPasswordDto) {
+    public void resetPassword(ResetPasswordDto resetPasswordDto) throws ValidationException {
         LOGGER.debug("Reset password");
 
         ResetToken resetToken = resetTokenRepository.findByToken(resetPasswordDto.getToken());
@@ -177,6 +179,11 @@ public class CustomUserDetailService implements UserService {
         ApplicationUser applicationUser = userRepository.findById(resetToken.getUserId()).orElse(null);
 
         if (applicationUser != null) {
+            if (resetPasswordDto.getPassword().length() < 8) {
+                List<String> errors = new ArrayList<>();
+                errors.add("Password must be at least 8 characters long");
+                throw new ValidationException("ValidationException", errors);
+            }
             applicationUser.setPassword(passwordEncoder.encode(resetPasswordDto.getPassword()));
             userRepository.save(applicationUser);
             userRepository.flush();
@@ -187,12 +194,12 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public List<UserListDto> search(UserSearchDto searchParams) {
+    public List<UserListDto> search(UserSearchExistingGroupDto searchParams) {
         LOGGER.trace("search({})", searchParams);
         if (searchParams.getGroupId() == null) {
-            return searchExistingGroup(searchParams);
-        } else {
             return searchCreatingGroup(searchParams);
+        } else {
+            return searchExistingGroup(searchParams);
         }
     }
 
@@ -207,27 +214,15 @@ public class CustomUserDetailService implements UserService {
         }
     }
 
-
     @Override
-    public UsernameDto getUsernameByEmail(String email) {
-        LOGGER.debug("Get username by email");
-        ApplicationUser applicationUser = userRepository.findByEmail(email);
-        if (applicationUser != null) {
-            UsernameDto username = new UsernameDto();
-            username.setUsername(applicationUser.getName());
-            return username;
-        }
-        throw new NotFoundException(String.format("Could not find the user with the email address %s", email));
-    }
-
-    @Override
-    public UserListDto getUserByEmail(String email) {
+    public UserLocalStorageDto getUserByEmail(String email) {
         LOGGER.debug("Get user by email");
         ApplicationUser applicationUser = userRepository.findByEmail(email);
         if (applicationUser != null) {
-            UserListDto user = new UserListDto();
+            UserLocalStorageDto user = new UserLocalStorageDto();
             user.setId(applicationUser.getId());
             user.setName(applicationUser.getName());
+            user.setEmail(applicationUser.getEmail());
             return user;
         }
         throw new NotFoundException(String.format("Could not find the user with the email address %s", email));
@@ -249,7 +244,40 @@ public class CustomUserDetailService implements UserService {
         return users;
     }
 
-    private List<UserListDto> searchExistingGroup(UserSearchDto searchParams) {
+    @Override
+    public void deleteUserByEmail(String email) {
+        LOGGER.debug("Delete user by email");
+        ApplicationUser applicationUser = userRepository.findByEmail(email);
+        if (applicationUser != null) {
+            List<UserGroup> userGroups = userGroupRepository.findAllByApplicationUser(applicationUser);
+            for (UserGroup userGroup1 : userGroups) {
+                if (userGroup1.isHost()) {
+
+                    ApplicationGroup group = userGroup1.getGroups();
+                    List<UserGroup> userGroupList = userGroupRepository.findAllByApplicationGroup(group);
+                    //If user is only member of group
+                    if (userGroupList.size() == 1) {
+                        userGroupRepository.delete(userGroup1);
+                        groupRepository.delete(group);
+                    } else {
+                        for (UserGroup userGroup2 : userGroupList) {
+                            if (!userGroup2.isHost()) {
+                                userGroup1.setHost(false);
+                                userGroupRepository.save(userGroup1);
+                                userGroup2.setHost(true);
+                                userGroupRepository.save(userGroup2);
+                            }
+                        }
+                    }
+                }
+            }
+            userRepository.delete(applicationUser);
+        } else {
+            throw new NotFoundException(String.format("Could not find the user with the email address %s", email));
+        }
+    }
+
+    private List<UserListDto> searchExistingGroup(UserSearchExistingGroupDto searchParams) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         List<ApplicationUser> users = userGroupRepository.findUsersByGroupId(searchParams.getGroupId());
         List<String> emails = new ArrayList<>();
@@ -259,7 +287,7 @@ public class CustomUserDetailService implements UserService {
         return userMapper.userToUserListDto(userRepository.findFirst5ByEmailNotAndEmailNotInAndNameIgnoreCaseContaining(email, emails, searchParams.getName()));
     }
 
-    private List<UserListDto> searchCreatingGroup(UserSearchDto searchParams) {
+    private List<UserListDto> searchCreatingGroup(UserSearchExistingGroupDto searchParams) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userMapper.userToUserListDto(userRepository.findFirst5ByEmailNotAndNameIgnoreCaseContaining(email, searchParams.getName()));
     }
@@ -305,7 +333,7 @@ public class CustomUserDetailService implements UserService {
             message.setSubject("Reset your password");
 
             // Set the content of the email message
-            message.setText("Here is your link to reset your password: " + ResetPasswordLinkGenerator.generateResetLink(generateToken(userId)));
+            message.setText("Here is your link to reset your password: " + generateResetLink(generateToken(userId)));
 
             // Send the email
             Transport.send(message);
@@ -331,12 +359,11 @@ public class CustomUserDetailService implements UserService {
         return resetToken.getToken();
     }
 
-    private class ResetPasswordLinkGenerator {
 
-        // Generate a reset password link with a token parameter
-        public static String generateResetLink(String token) {
-            return "http://localhost:4200/#/reset-password?token=" + token;
-        }
+    // Generate a reset password link with a token parameter
+    public static String generateResetLink(String token) {
+        return "http://localhost:4200/#/reset-password?token=" + token;
     }
+
 
 }

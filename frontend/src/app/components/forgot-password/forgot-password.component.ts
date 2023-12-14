@@ -25,19 +25,14 @@ export class ForgotPasswordComponent {
   }
 
   forgotPassword(email: string) {
-    console.log(email);
     this.service.forgotPassword(email).subscribe({
       next: () => {
-        console.log("Email sent");
-        // Additional logic if needed
-        this.notification.success('Email sent to: \n' + email);
+        this.notification.info('An Email has been sent to the provided email address');
         this.router.navigate(['/login']);
       },
       error: error => {
-        console.log("Could not send email due to:");
-        console.log(error);
-        // Additional error handling logic
-        this.notification.error('Could not send email due to: \n' + error.error.detail);
+        this.notification.info('An Email has been sent to the provided email address');
+        this.router.navigate(['/login']);
       }
     });
   }

@@ -1,0 +1,98 @@
+<app-header></app-header>
+
+
+<div class="grid-container">
+  <div class="grid-item">
+    <div>
+      <h3>Create New Group</h3>
+    </div>
+
+    <form #form="ngForm" [class.was-validated]="form.submitted" (ngSubmit)="onSubmit(form)">
+
+      <div class="row group-name">
+        <label for="groupName" class="col-form-label text-md-end text-muted col-md-3 col-lg-3">
+          Name
+        </label>
+        <div class="wrapper col-md-6 col-lg-6">
+          <input type="text"
+                 id="groupName"
+                 name="groupName"
+                 placeholder="Group name"
+                 class="form-control"
+                 [class]="dynamicCssClassesForInput(groupNameModel)"
+                 [(ngModel)]="group.name"
+                 #groupNameModel="ngModel"
+                 required
+                 autofocus
+          >
+
+          <div class="invalid-feedback">
+            <!-- This is shown, when the form validation deems the name input to be invalid -->
+            Name is required!
+          </div>
+        </div>
+      </div>
+
+      <div class="row add-group-member">
+        <label for="memberSelectionInput" class="col-form-label text-md-end text-muted col-md-3 col-lg-3">
+          Add Member
+        </label>
+        <div class="wrapper col-md-6 col-lg-6">
+
+          <app-autocomplete
+            id="memberSelectionInput"
+            name="memberSelection"
+            textInputClass="form-control"
+            [suggestions]="memberSuggestions"
+            [formatModel]="formatMember"
+            valueNeedsToMatchSuggestion="true"
+            [(ngModel)]="user"
+          >
+          </app-autocomplete>
+
+          <button type="button" class="btn rounded-button" (click)="addMember(user)">
+            <i class="bi bi-person-fill-add"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3 col-lg-3"></div>
+        <div class="col-md-6 col-lg-6">
+
+          <div class="table-container">
+            <p class="entry-count">{{ group.members.length }} User in Group</p>
+
+            <table class="table align-baseline equal-columns">
+              <tbody>
+                <tr class="list-row" *ngFor="let member of group.members; index as i">
+
+
+                  <td class="member-column">{{formatMember(member)}}</td>
+                  <td class="table-element table-button">
+                    <!-- Make button just hidden, when no participant is present, to keep layout correct -->
+                    <button *ngIf="!member.isHost" type="button"
+                            class="btn btn-light delete-button"
+                            (click)="removeMember(i)"
+                            [style.visibility]="member ? 'visible' : 'hidden'">
+                      <i class="bi bi-dash-circle"></i>
+                    </button>
+                    <div *ngIf="group.host.name === member.name" class="crown">👑</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+        <div class="col-lg-3 d-flex align-items-end justify-content-center">
+          <button type="submit"
+                  class="btn btn-primary custom-button"
+                  [disabled]="!form.valid">
+            Create
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

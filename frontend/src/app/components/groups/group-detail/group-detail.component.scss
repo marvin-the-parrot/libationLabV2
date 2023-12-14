@@ -9,6 +9,15 @@
   border-radius: 15px 15px 0 0;
 }
 
+.menu-button {
+  background-color: #AC6AFE;
+  padding: 0.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
 .grid-container {
   margin-top: 50px;
   display: grid;
@@ -98,13 +107,25 @@
   cursor: pointer;
 }
 
-.members-list {
+.container-scrollable {
+  padding: 0;
+  margin: 0;
+  height: 430px;
+  overflow-y: auto;
+  overflow-x: clip;
+}
+
+.list {
   display: flex;
   flex-direction: column;
   margin: 0 1em;
 }
 
-.member-item {
+.ingredient-list {
+  margin-top: 10px;
+}
+
+.list-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -112,11 +133,11 @@
   padding: 0.2em;
   min-height: 2.5em;
 }
-.member-item:first-of-type {
+.list-item:first-of-type {
   border-top: 1px solid #ccc;
 }
 
-.user-count{
+.entry-count{
   opacity: 0.5;
   margin: 0
 
@@ -129,4 +150,47 @@
 
 input {
   width: 500px;
+}
+
+.info {
+  margin-right: 5px;
+  font-size: 20px;
+  cursor: pointer;
+  position:relative;
+}
+
+.info::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  background-color: #6200EE;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-100%);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  pointer-events: none;
+  width: 300px;
+  z-index: 1;
+}
+
+.info:hover::after {
+  opacity: 1;
+}
+
+.custom-button-edit {
+  margin: 3rem 5rem 3rem 5rem;
+  border-radius: 10px;
+  height: 3em;
+  background-color: #6200ee;
+  opacity: 0.72;
+  color: white;
+}
+
+.custom-button-edit:hover {
+  background-color: #6200ee;
+  opacity: 1;
 }

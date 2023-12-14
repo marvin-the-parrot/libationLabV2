@@ -23,7 +23,6 @@ public class UserValidator {
     public UserValidator() {
     }
 
-
     /**
      * Validates a message that should be created.
      *
@@ -59,7 +58,7 @@ public class UserValidator {
             validationErrors.add("Username too long");
         }
 
-        if (toCreate.getPassword().length() <= 8) {
+        if (toCreate.getPassword().length() < 8) {
             validationErrors.add("Password too short");
         }
 
@@ -70,11 +69,11 @@ public class UserValidator {
         // }
 
         if (!validationErrors.isEmpty()) {
-            throw new ValidationException("Validation of message for create failed", validationErrors);
+            throw new ValidationException("Validation of user for create failed", validationErrors);
         }
 
         if (!constraintViolationErrors.isEmpty()) {
-            throw new ConstraintViolationException("Constraint violation of message for create failed", null, constraintViolationErrors.toString());
+            throw new ConstraintViolationException("Constraint violation of user for create failed", null, constraintViolationErrors.toString());
         }
     }
 

@@ -1,0 +1,132 @@
+.grid-container {
+  height: calc(100vh - 88px);
+  //min-height: 100vh;
+  display: flex;
+}
+
+.left-container {
+  min-height: calc(100vh - 88px);
+}
+
+.header-left-container {
+  padding-left: 45px;
+  padding-top: 30px;
+}
+
+.right-container {
+  background-color: #D9D9D9;
+  min-height: calc(100vh - 88px);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+}
+
+.figure-style {
+  text-align: center; 
+  margin-top: 1px;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+}
+
+.image-style {
+  border-radius: 10px; 
+  border: 3px solid #AC6AFE; 
+}
+
+.image-name {
+  margin-top: 10px;
+  font-size: 25px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.search-container {
+  margin-left: 6vw;
+  margin-top: 2vh;
+}
+
+.label-search {
+  margin-left: 0.2vw;
+  font-size: 18px;
+}
+
+.flex-container {
+  margin-left: 6vw;
+  display: flex;
+  align-items: center;
+
+}
+
+.wrapper {
+  position: relative;
+  width: 40vw;
+}
+
+.label-table {
+  font-size: 18px;
+  position: relative;
+  margin-left: 6vw;
+  margin-top: -1vh;
+  margin-bottom: 2vh;
+  width: 40vw;
+  max-height: 70%; 
+  overflow-y: auto; 
+}
+
+.label-table::-webkit-scrollbar {
+  width: 4px; 
+}
+
+.label-table::-webkit-scrollbar-thumb {
+  background-color: grey; 
+  border-radius: 3px; 
+}
+
+.label-table::-webkit-scrollbar-track {
+  background-color: #eee; 
+}
+
+.result-style {
+  font-size: 14px;
+  margin-left: 0vw;
+  position: sticky;
+  top: 0;
+  background-color: #ECECEC !important;
+}
+
+.td-style {
+  padding-left: 20px; 
+  border-top: 1px solid grey; 
+  border-bottom: 1px solid grey; 
+  width: 39vw;
+  font-weight: 500
+}
+
+.container-myIng-button {
+  display: flex;
+  justify-content: right;
+  margin-right: 1em;
+  margin-top: -2.5em;
+  margin-bottom: 1em;
+}
+
+.myIng-btn {
+  background-color: #AC6AFE;
+  color: white;
+  border: none;
+}
+
+.myIng-btn:active {
+  background-color: #6200EE; /* Change hover color */
+}
+
+.td-style:hover,
+.td-style:focus,
+.td-style:active {
+  background-color: #D9D9D9;
+  color: black;
+  border-color: #B0B0B0;
+}

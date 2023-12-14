@@ -1,0 +1,61 @@
+<app-header></app-header>
+
+<div class="grid-container">
+    
+    <div class="left-container col-lg-9 col-md-9 col-sm-9 col-9">
+       
+       <div class="header-left-container">
+         <h2>Search for Ingredients</h2>
+       </div>
+
+       <div class="container-myIng-button">
+        <button type="button" class="btn btn-primary myIng-btn" (click)="navigateToMyIngredients()">My Ingredients</button>
+      </div>
+
+       <div class="search-container">
+            <label class="label-search">
+                Name
+            </label>
+        </div>
+        <div class="flex-container">
+
+          <div class="wrapper col-md-6 col-lg-6">
+            <input matInput
+                   type="text"
+                   id="searchName"
+                   name="searchName"
+                   placeholder="Search for Ingredients"
+                   class="form-control"
+                   [(ngModel)]="nameOfIngredient"
+                   (ngModelChange)="searchChanged()"
+                   #groupNameModel="ngModel"
+                   required
+                   autofocus
+            >
+          </div>
+
+        </div>
+        <br><br>  
+        
+        <div class="label-table" *ngIf = "ingredients?.length > 0">
+          <p class="result-style"> &nbsp;&nbsp;&nbsp;{{ingredients.length}} Result</p>
+          <table >
+            <tbody>
+              <tr *ngFor="let ingredient of ingredients"  [style.background]="selectedIngredient === ingredient.name ? '#D9D9D9' : '#ECECEC'">
+                <td class="td-style" 
+                (click)="showImage(ingredient.name)">
+                {{ingredient.name}}</td>
+              </tr>
+            </tbody>
+          </table>
+       </div>
+
+      </div>
+
+    <div class="right-container col-lg-3 col-md-3 col-sm-3 col-3" >
+      <figure class="figure-style" *ngIf="isToShowImg">
+        <img class="image-style" [src]="imageUrl" >
+        <figcaption class="image-name">{{imageName}}</figcaption>
+      </figure>      
+    </div>
+</div>

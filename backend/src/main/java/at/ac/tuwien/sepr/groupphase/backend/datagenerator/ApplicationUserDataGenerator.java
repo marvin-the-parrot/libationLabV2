@@ -18,9 +18,7 @@ public class ApplicationUserDataGenerator {
     private static final Logger LOGGER =
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final int NUMBER_OF_USERS_TO_GENERATE = 10;
-
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
 
     public ApplicationUserDataGenerator(UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -43,6 +41,7 @@ public class ApplicationUserDataGenerator {
                     .build();
                 userRepository.save(applicationUser);
             }
+            LOGGER.debug("generating {} user entries", NUMBER_OF_USERS_TO_GENERATE);
         }
     }
 

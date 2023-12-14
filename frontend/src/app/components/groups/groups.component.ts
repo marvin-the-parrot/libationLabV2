@@ -2,8 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {GroupOverview} from "../../dtos/group-overview";
 import {GroupsService} from "../../services/groups.service";
-import {MessageDetailDto} from "../../dtos/message";
-import {UserListGroupDto} from "../../dtos/user";
 
 @Component({
   selector: 'app-groups',
@@ -13,7 +11,8 @@ import {UserListGroupDto} from "../../dtos/user";
 export class GroupsComponent implements OnInit {
 
   groups: GroupOverview[] = null;
-  username: string = localStorage.getItem('username');
+
+  username: string = JSON.parse(localStorage.getItem('user')).name;
 
   constructor(
     public authService: AuthService,
@@ -25,7 +24,7 @@ export class GroupsComponent implements OnInit {
     this.fetchGroups();
   }
 
-  private fetchGroups() {
+  fetchGroups() {
     this.groupService.getAllByUser().subscribe({
       next: (groups: GroupOverview[]) => {
         for (let group of groups) {

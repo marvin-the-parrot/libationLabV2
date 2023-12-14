@@ -26,6 +26,9 @@ public class ApplicationMessage {
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     private ApplicationUser applicationUser;
 
+    @Column
+    private String text;
+
     @Column(nullable = false)
     private Long groupId;
 
@@ -49,6 +52,14 @@ public class ApplicationMessage {
 
     public void setApplicationUser(ApplicationUser userId) {
         this.applicationUser = userId;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public Long getGroupId() {
@@ -85,6 +96,7 @@ public class ApplicationMessage {
         }
         return Objects.equals(id, applicationMessage.id)
             && Objects.equals(applicationUser, applicationMessage.applicationUser)
+            && Objects.equals(text, applicationMessage.text)
             && Objects.equals(groupId, applicationMessage.groupId)
             && Objects.equals(isRead, applicationMessage.isRead)
             && Objects.equals(sentAt, applicationMessage.sentAt);
@@ -99,6 +111,7 @@ public class ApplicationMessage {
     public String toString() {
         return "Message{"
             + "id=" + id
+            + ", text='" + text + '\''
             + ", sent_at='" + sentAt + '\''
             + '}';
     }
@@ -106,6 +119,7 @@ public class ApplicationMessage {
     public static final class ApplicationMessageBuilder {
         private Long id;
         private ApplicationUser applicationUser;
+        private String text;
         private Long groupId;
         private boolean isRead;
         private LocalDateTime sentAt;
@@ -124,6 +138,11 @@ public class ApplicationMessage {
 
         public ApplicationMessageBuilder withApplicationUser(ApplicationUser applicationUser) {
             this.applicationUser = applicationUser;
+            return this;
+        }
+
+        public ApplicationMessageBuilder withText(String text) {
+            this.text = text;
             return this;
         }
 
@@ -146,6 +165,7 @@ public class ApplicationMessage {
             ApplicationMessage applicationMessage = new ApplicationMessage();
             applicationMessage.setId(id);
             applicationMessage.setApplicationUser(applicationUser);
+            applicationMessage.setText(text);
             applicationMessage.setGroupId(groupId);
             applicationMessage.setIsRead(isRead);
             applicationMessage.setSentAt(sentAt);

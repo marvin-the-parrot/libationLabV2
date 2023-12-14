@@ -55,9 +55,11 @@ export class LoginComponent implements OnInit {
       next: () => {
         console.log('Successfully logged in user: ' + authRequest.email);
         this.notification.success('Successfully logged in user: \n' + authRequest.email);
-        this.setUsernameLocalStorage();
         this.setUserLocalStorage();
-        this.router.navigate(['/groups']);
+        //needed to reload the page to show the username in the header
+        setTimeout(() => {
+          this.router.navigate(['/groups']); // Navigate to '/groups' after a short delay
+        }, 100); // Adjust the delay time if needed
       },
       error: error => {
         console.log('Could not log in due to:');
@@ -74,22 +76,6 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
   }
 
-  /**
-   * Get Username from backend and return it
-   */
-  // todo: remove this method (as there is one that saves username and user id in the local storage)
-  setUsernameLocalStorage() {
-    this.userService.getUsername().subscribe({
-      next: data => {
-        console.log(data);
-        localStorage.setItem('username', data.username);
-        console.log(localStorage.getItem('username'));
-      },
-      error: error => {
-        console.log(error);
-      }
-    });
-  }
 
   /**
    * Get User from backend and return it

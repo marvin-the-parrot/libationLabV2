@@ -1,17 +1,19 @@
 package at.ac.tuwien.sepr.groupphase.backend.datagenerator;
 
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +26,7 @@ public class MessageDataGenerator {
 
     private static final Logger LOGGER =
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final int NUMBER_OF_MESSAGES_TO_GENERATE = 5;
+    private static final int NUMBER_OF_MESSAGES_TO_GENERATE = 2;
 
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
@@ -45,7 +47,8 @@ public class MessageDataGenerator {
                 ApplicationMessage message = ApplicationMessage.ApplicationMessageBuilder.message()
                     .withId((long) i)
                     .withApplicationUser(userRepository.findByEmail("user1@email.com"))
-                    .withGroupId((long) i)
+                    .withText("You were invited to drink with Group" + 3)
+                    .withGroupId(3L)
                     .withIsRead(false)
                     .withSentAt(LocalDateTime.now())
                     .build();

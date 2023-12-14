@@ -1,7 +1,7 @@
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {Globals} from "../global/globals";
 import {Injectable} from "@angular/core";
-import {UserListDto, UsernameDto} from "../dtos/user";
+import {UserListDto, UserLocalStorageDto} from "../dtos/user";
 import {CreateAccount} from "../dtos/create-account";
 import {Observable} from "rxjs";
 import {ResetPasswordDto} from "../dtos/resetPassword";
@@ -23,10 +23,26 @@ export class UserService {
    * @param id the search parameters: username and limit
    * @return an Observable for the list of users
    */
-  public search(name: string, id: number): Observable<UserListDto[]> {
+  public searchUsersGroupExisting(name: string, id: number): Observable<UserListDto[]> {
     let params = new HttpParams();
     params = params.append("name", name);
     params = params.append("groupId", id);
+
+    return this.httpClient.get<UserListDto[]>(this.baseUri, { params });
+  }
+
+  /**
+   * Search for users in the system.
+   *
+   * @param name the search parameters: username and limit
+   * @param id the search parameters: username and limit
+   * @return an Observable for the list of users
+   */
+  public searchUsersGroupCreating(name: string, members: UserListDto[]): Observable<UserListDto[]> {
+    let params = new HttpParams();
+    params = params.append("name", name);
+    //TODO pass members already in group
+    //params = params.append("members", members);
 
     return this.httpClient.get<UserListDto[]>(this.baseUri, { params });
   }
@@ -60,11 +76,12 @@ export class UserService {
   }
 
 
-  getUsername(): Observable<UsernameDto> {
-    return this.httpClient.get<UsernameDto>(this.baseUri + '/username');
+
+  getUser(): Observable<UserLocalStorageDto> {
+    return this.httpClient.get<UserLocalStorageDto>(this.baseUri + '/user');
   }
 
-  getUser(): Observable<UserListDto> {
-    return this.httpClient.get<UserListDto>(this.baseUri + '/user');
+  deleteUser(): Observable<any> {
+    return this.httpClient.delete<any>(this.baseUri + '/delete');
   }
 }

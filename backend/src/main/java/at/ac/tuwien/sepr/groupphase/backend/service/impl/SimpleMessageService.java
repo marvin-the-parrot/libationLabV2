@@ -2,26 +2,26 @@ package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
-import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.MessageService;
-
-import java.lang.invoke.MethodHandles;
-import java.time.LocalDateTime;
-import java.util.List;
-
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import at.ac.tuwien.sepr.groupphase.backend.service.validators.MessageValidator;
-import org.hibernate.exception.ConstraintViolationException;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.lang.invoke.MethodHandles;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Simple message service.
@@ -33,15 +33,25 @@ public class SimpleMessageService implements MessageService {
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final MessageRepository messageRepository;
     private final UserService userService;
+    private final GroupRepository groupRepository;
     private final MessageValidator validator;
 
     @Autowired
-    public SimpleMessageService(MessageRepository messageRepository, UserService userService, MessageValidator validator) {
+    public SimpleMessageService(MessageRepository messageRepository, UserService userService, GroupRepository groupRepository, MessageValidator validator) {
         this.messageRepository = messageRepository;
         this.userService = userService;
+        this.groupRepository = groupRepository;
         this.validator = validator;
     }
 
+    @Override
+    public long getUnreadMessageCount() {
+        LOGGER.debug("Count unread messages");
+        ApplicationUser user = userService.findApplicationUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        return messageRepository.countByApplicationUserAndIsRead(user, false);
+    }
+
+    @Transactional
     @Override
     public List<ApplicationMessage> findAll() throws NotFoundException {
         LOGGER.debug("Find all messages");
@@ -50,11 +60,18 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public ApplicationMessage create(MessageCreateDto message) throws ConstraintViolationException, ValidationException {
+    public ApplicationMessage create(MessageCreateDto message) throws NotFoundException, ValidationException {
         LOGGER.debug("Publish new message {}", message);
         validator.validateForCreate(message);
+        ApplicationGroup group = groupRepository.findById(message.getGroupId()).orElse(null);
+        if (group == null) {
+            throw new NotFoundException("Could not find group");
+        }
+        ApplicationUser user = userService.findApplicationUserById(message.getUserId());
+
         ApplicationMessage applicationMessage = ApplicationMessage.ApplicationMessageBuilder.message()
-            .withApplicationUser(userService.findApplicationUserById(message.getUserId()))
+            .withApplicationUser(user)
+            .withText("You were invited to drink with " + group.getName())
             .withGroupId(message.getGroupId())
             .withIsRead(false)
             .withSentAt(LocalDateTime.now())
@@ -63,13 +80,18 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public ApplicationMessage update(MessageDetailDto toUpdate) throws NotFoundException, ValidationException, ConflictException {
+    public ApplicationMessage update(MessageDetailDto toUpdate) throws NotFoundException, ValidationException {
         LOGGER.debug("Update message {}", toUpdate);
         ApplicationMessage myMessage = messageRepository.findById(toUpdate.getId()).orElse(null);
         if (myMessage == null) {
             throw new NotFoundException(String.format("Could not find message from group %s sent at %s",
                 toUpdate.getGroup().getName(), toUpdate.getSentAt()));
         }
+        ApplicationGroup group = groupRepository.findById(toUpdate.getGroup().getId()).orElse(null);
+        if (group == null) {
+            throw new NotFoundException("Could not find group");
+        }
+
         toUpdate.setIsRead(true);
         validator.validateForUpdate(toUpdate);
         myMessage.setIsRead(toUpdate.getIsRead());

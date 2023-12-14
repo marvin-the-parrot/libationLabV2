@@ -7,14 +7,13 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {HeaderComponent} from './components/header/header.component';
 import {FooterComponent} from './components/footer/footer.component';
-import {HomeComponent} from './components/home/home.component';
 import {LoginComponent} from './components/login/login.component';
 import {MessageComponent} from './components/message/message.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {httpInterceptorProviders} from './interceptors';
 import { GroupsComponent } from './components/groups/groups.component';
 import { GroupThumbComponent } from './components/groups/group-thumb/group-thumb.component';
-import { GroupCreateEditComponent } from './components/groups/group-create-edit/group-create-edit.component';
+import { GroupCreateComponent } from './components/groups/group-create/group-create.component';
 import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
 import { GroupDetailComponent } from './components/groups/group-detail/group-detail.component';
 import { CreateAccountComponent } from './components/create-account/create-account.component';
@@ -27,6 +26,12 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { OptionDialogComponent } from './option-dialog/option-dialog.component';
 import { GroupEditComponent } from './components/groups/group-edit/group-edit.component';
 import { UserSettingsComponent } from './components/user-settings/user-settings.component';
+import { IngredientComponent } from './components/ingredient/ingredient.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import { CocktailComponent } from './components/cocktail/cocktail.component';
+import { CocktailMenuComponent } from './components/cocktail/cocktail-menu/cocktail-menu.component';
 
 
 @NgModule({
@@ -34,12 +39,11 @@ import { UserSettingsComponent } from './components/user-settings/user-settings.
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    HomeComponent,
     LoginComponent,
     MessageComponent,
     GroupsComponent,
     GroupThumbComponent,
-    GroupCreateEditComponent,
+    GroupCreateComponent,
     AutocompleteComponent,
     GroupDetailComponent,
     CreateAccountComponent,
@@ -49,8 +53,13 @@ import { UserSettingsComponent } from './components/user-settings/user-settings.
     OptionDialogComponent,
     GroupEditComponent,
     UserSettingsComponent,
+    IngredientComponent,
+    CocktailComponent,
+    CocktailMenuComponent,
   ],
   imports: [
+    MatIconModule,
+    MatInputModule,
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
@@ -60,6 +69,7 @@ import { UserSettingsComponent } from './components/user-settings/user-settings.
     ToastrModule.forRoot(),
     BrowserAnimationsModule,
     MatDialogModule,
+    MatCheckboxModule,
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

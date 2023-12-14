@@ -1,14 +1,18 @@
 package at.ac.tuwien.sepr.groupphase.backend.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 
+import java.util.Objects;
 import java.util.Set;
-
 
 /**
  * Entity of table ApplicationUser.
@@ -29,11 +33,18 @@ public class ApplicationUser {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "applicationUser")
+    @OneToMany(mappedBy = "applicationUser", cascade = CascadeType.REMOVE)
     private Set<UserGroup> userGroups;
 
-    @OneToMany(mappedBy = "applicationUser")
+    @OneToMany(mappedBy = "applicationUser", cascade = CascadeType.REMOVE)
     private Set<ApplicationMessage> applicationMessages;
+
+    @ManyToMany
+    @JoinTable(
+        name = "user_ingredients",
+        joinColumns = @JoinColumn(name = "applicationUser_id"),
+        inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
+    Set<Ingredient> ingredients;
 
     private Boolean admin;
 
@@ -95,6 +106,14 @@ public class ApplicationUser {
         this.applicationMessages = applicationMessages;
     }
 
+    public Set<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(Set<Ingredient> ingredients) {
+        this.ingredients = ingredients;
+    }
+
     public Boolean getAdmin() {
         return admin;
     }
@@ -103,12 +122,31 @@ public class ApplicationUser {
         this.admin = admin;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ApplicationUser applicationUser)) {
+            return false;
+        }
+        return Objects.equals(id, applicationUser.id)
+            && Objects.equals(name, applicationUser.name)
+            && Objects.equals(email, applicationUser.email)
+            && Objects.equals(password, applicationUser.password)
+            && Objects.equals(userGroups, applicationUser.userGroups)
+            && Objects.equals(applicationMessages, applicationUser.applicationMessages)
+            && Objects.equals(ingredients, applicationUser.ingredients)
+            && Objects.equals(admin, applicationUser.admin);
+    }
+
     public static final class ApplicationUserBuilder {
 
         private Long id;
         private String name;
         private String email;
         private String password;
+        private Set<Ingredient> ingredients;
 
         private ApplicationUserBuilder() {
         }
@@ -137,12 +175,18 @@ public class ApplicationUser {
             return this;
         }
 
+        public ApplicationUserBuilder withIngredients(Set<Ingredient> ingredients) {
+            this.ingredients = ingredients;
+            return this;
+        }
+
         public ApplicationUser build() {
             ApplicationUser applicationUser = new ApplicationUser();
             applicationUser.setId(id);
             applicationUser.setName(name);
             applicationUser.setEmail(email);
             applicationUser.setPassword(password);
+            applicationUser.setIngredients(ingredients);
             applicationUser.setAdmin(false);
             return applicationUser;
         }

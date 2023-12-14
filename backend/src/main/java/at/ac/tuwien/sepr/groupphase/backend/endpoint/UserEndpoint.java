@@ -1,18 +1,14 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
-
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.ResetPasswordDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserEmailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UsernameDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLocalStorageDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchExistingGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import org.hibernate.exception.ConstraintViolationException;
@@ -22,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,20 +41,19 @@ public class UserEndpoint {
     private final UserService userService;
 
     @Autowired
-    public UserEndpoint(GroupService groupService, GroupMapper groupMapper, UserService userService) {
+    public UserEndpoint(UserService userService) {
         this.userService = userService;
     }
 
     @Secured("ROLE_USER")
     @GetMapping
-    @PermitAll
-    public List<UserListDto> search(@Valid UserSearchDto searchParams) {
+    public List<UserListDto> search(@Valid UserSearchExistingGroupDto searchParams) {
         LOGGER.info("GET " + BASE_PATH);
         LOGGER.debug("Request Params: {}", searchParams);
         try {
             return userService.search(searchParams);
-        } catch (NotFoundException e) {
-            HttpStatus status = HttpStatus.NOT_FOUND;
+        } catch (Exception e) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
             logClientError(status, "Failed to search users", e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
@@ -96,7 +92,12 @@ public class UserEndpoint {
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Failed to send email", e);
-            throw new ResponseStatusException(status, e.getMessage(), e);
+            //wait for 1000ms to prevent brute force attacks
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException interruptedException) {
+                interruptedException.printStackTrace();
+            }
         }
     }
 
@@ -111,19 +112,9 @@ public class UserEndpoint {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Failed to reset password", e);
             throw new ResponseStatusException(status, e.getMessage(), e);
-        }
-    }
-
-    @GetMapping("/username")
-    @PermitAll
-    @ResponseStatus(HttpStatus.OK)
-    public UsernameDto getUsername() {
-        LOGGER.info("GET /api/v1/user/username");
-        try {
-            return userService.getUsernameByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        } catch (NotFoundException e) {
-            HttpStatus status = HttpStatus.NOT_FOUND;
-            logClientError(status, "Failed to get username", e);
+        } catch (ValidationException e) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+            logClientError(status, "Failed to reset password", e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
@@ -131,7 +122,7 @@ public class UserEndpoint {
     @GetMapping("/user")
     @PermitAll
     @ResponseStatus(HttpStatus.OK)
-    public UserListDto getUser() {
+    public UserLocalStorageDto getUser() {
         LOGGER.info("GET /api/v1/user/user");
         String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
         try {
@@ -139,6 +130,21 @@ public class UserEndpoint {
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, String.format("Failed to get user with mail %s", userMail), e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+    @DeleteMapping("/delete")
+    @Secured("ROLE_USER")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteUser() {
+        LOGGER.info("DELETE /api/v1/user/delete");
+        String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
+        try {
+            userService.deleteUserByEmail(userMail);
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, String.format("Failed to delete user with mail %s", userMail), e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }

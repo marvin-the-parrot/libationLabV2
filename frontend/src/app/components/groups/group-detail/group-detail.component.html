@@ -28,9 +28,9 @@
       </div>
     </div>
 
-    <div class="members-list">
-      <p class="user-count">{{group.members.length}} Users in Group</p>
-      <div *ngFor="let member of group.members" class="member-item">
+    <div class="list">
+      <p class="entry-count">{{group.members.length}} Users in Group</p>
+      <div *ngFor="let member of group.members" class="list-item">
           <div class="list-name">{{ member.name }} <span *ngIf="member.name===username"> (You)</span></div>
         <div *ngIf="group?.host?.name === member?.name" class="list-action">👑</div>
         <div *ngIf="member?.name !== username && group?.host?.name === username" class="list-action">
@@ -40,15 +40,42 @@
 
     </div>
   </div>
-  <div class="grid-item-2">
+
+  <div class="grid-item-2 d-flex flex-column" >
     <div class="d-flex flex-column justify-content-center">
       <h3 class="m-0">Menu</h3>
       <div>{{group.name}}</div>
     </div>
+    <div *ngIf="group.cocktails === null" class="d-flex justify-content-center align-items-center h-100">
+      <span></span>
+      <button *ngIf="group.cocktails === null" class="btn menu-button" [routerLink]="['../menu']" >Create a Cocktail Menu</button>
+    </div>
+    <div *ngIf="group.cocktails !== null">
+      <span *ngFor="let cocktail of group.cocktails" >
+      {{ cocktail }}
+      </span>
+    </div>
   </div>
+
   <div class="grid-item-3">
     <div>
       <h3>Ingredients</h3>
     </div>
+    <div class="container-scrollable">
+      <div class="list ingredient-list" *ngIf="ingredients !== null">
+        <p class="entry-count">{{ingredients.length}} Ingredients in Group</p>
+        <div *ngFor="let ingredient of ingredients" class="list-item">
+          <div class="list-name">{{ ingredient.name }}</div>
+          <div class="list-action">
+            <i class="bi bi-info-circle info" [attr.data-tooltip]="getUsersOfIngredient(ingredient)"></i>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+</div>
+<div class="d-flex justify-content-end">
+  <button *ngIf="group?.host?.name === username" class="custom-button-edit" [routerLink]="['../edit']">
+    Edit Group <i class="bi bi-pencil-fill"></i>
+  </button>
 </div>

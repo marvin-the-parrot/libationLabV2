@@ -62,7 +62,8 @@ public interface GroupService {
     /**
      * Updates the group with given ID with the data given in {@code toUpdate}.
      *
-     * @param toUpdate the data of the group to update
+     * @param toUpdate        the data of the group to update
+     * @param currentUserMail the email of the user that sends the request
      * @return the updated group
      * @throws NotFoundException   if the group with given ID does not exist
      *                             in the persistent data store
@@ -71,7 +72,7 @@ public interface GroupService {
      * @throws ConflictException   if the data given for the group
      *                             is in conflict the data currently in the system
      */
-    GroupCreateDto update(GroupCreateDto toUpdate) throws NotFoundException, ValidationException, ConflictException;
+    GroupCreateDto update(GroupCreateDto toUpdate, String currentUserMail) throws NotFoundException, ValidationException, ConflictException;
 
     /**
      * Find all group entries for this user.
@@ -84,8 +85,8 @@ public interface GroupService {
     /**
      * Make the user with the given ID host of the group with the given ID.
      *
-     * @param groupId the ID of the group
-     * @param userId the ID of the user to make host
+     * @param groupId         the ID of the group
+     * @param userId          the ID of the user to make host
      * @param currentUserMail the email of the user that sends the request
      * @throws ValidationException if the user is not a member of the group or the current user is not the host
      */

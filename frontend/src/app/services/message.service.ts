@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Globals} from '../global/globals';
-import {MessageCreate, MessageDetailDto} from "../dtos/message";
+import {MessageCountDto, MessageCreate, MessageDetailDto} from "../dtos/message";
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +12,13 @@ export class MessageService {
   private messageBaseUri: string = this.globals.backendUri + '/messages';
 
   constructor(private httpClient: HttpClient, private globals: Globals) {
+  }
+
+  /**
+   * Loads all messages from the backend
+   */
+  getUnreadMessageCount(): Observable<MessageCountDto> {
+    return this.httpClient.get<MessageCountDto>(this.messageBaseUri + "/count");
   }
 
   /**

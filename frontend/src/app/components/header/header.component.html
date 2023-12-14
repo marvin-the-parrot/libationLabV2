@@ -8,11 +8,11 @@
       </a>
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/" >Cocktails</a>
+          <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/cocktail" routerLinkActive="active">Cocktails</a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/" >Ingredients</a>
+          <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/ingredient" routerLinkActive="active">Ingredients</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/groups" routerLinkActive="active">Groups</a>
@@ -34,11 +34,13 @@
     <!-- Right elements -->
     <ul class="navbar-nav align-items-center col-lg-4 justify-content-lg-end">
       <li class="nav-item">
-        <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/message" routerLinkActive="active">
+        <a class="nav-link bell-nav-link" *ngIf="authService.isLoggedIn()" routerLink="/message" routerLinkActive="active">
           <i class="bi bi-bell-fill custom-bell"></i>
+          <span class="badge-round" *ngIf="getUnreadMessageCount() > 0">{{getUnreadMessageCount()}}</span>
+          <span class="badge-round" *ngIf="getUnreadMessageCount() > 9">+</span>
         </a>
       </li>
-      <span class="navbar-text">Hello, {{localStorage.getItem('username')}}</span>
+      <span class="navbar-text">Hello, {{username}}</span>
       <li class="nav-item">
         <a class="nav-link custom-nav-link" *ngIf="authService.isLoggedIn()" routerLink="/settings" routerLinkActive="active">
           <i class="bi bi-person-circle custom-circle"></i>
