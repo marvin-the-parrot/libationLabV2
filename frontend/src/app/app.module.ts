@@ -32,6 +32,7 @@ import { MatIconModule } from '@angular/material/icon';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import { CocktailComponent } from './components/cocktail/cocktail.component';
 import { CocktailMenuComponent } from './components/cocktail/cocktail-menu/cocktail-menu.component';
+import { AddIngredientDialogComponent } from './add-ingredient-dialog/add-ingredient-dialog.component';
 
 
 @NgModule({
@@ -56,6 +57,7 @@ import { CocktailMenuComponent } from './components/cocktail/cocktail-menu/cockt
     IngredientComponent,
     CocktailComponent,
     CocktailMenuComponent,
+    AddIngredientDialogComponent,
   ],
   imports: [
     MatIconModule,

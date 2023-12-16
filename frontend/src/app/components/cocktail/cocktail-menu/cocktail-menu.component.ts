@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import {UserListDto} from "../../../dtos/user";
 import {IngredientGroupDto} from "../../../dtos/ingredient";
 import {GroupsService} from "../../../services/groups.service";
 import {UserService} from "../../../services/user.service";
@@ -20,6 +19,8 @@ export class CocktailMenuComponent {
 
   ingredients: IngredientGroupDto[] = [];
 
+  groupId: number;
+
   dummyMemberSelectionModel: unknown; // Just needed for the autocomplete
   submitted = false;
   // Error flag
@@ -39,17 +40,15 @@ export class CocktailMenuComponent {
   }
 
   ngOnInit(): void {
-    const groupId = this.route.snapshot.params['id'];
-    this.getGroup(groupId);
+    this.groupId = this.route.snapshot.params['id'];
+    this.getGroup();
   }
 
   /**
-   * Get group data by id. Used to initially get the group and refresh it after a change.
-   *
-   * @param id the id of the group
+   * Get group data by the id from the route. Used to initially get the group and refresh it after a change.
    */
-  private getGroup(id: number) {
-    this.groupsService.getMixables(id).subscribe({
+  private getGroup() {
+    this.groupsService.getMixables(this.groupId).subscribe({
       next: (cocktails: CocktailOverviewDto[]) => {
         this.cocktails = cocktails;
         console.log(this.cocktails)
@@ -66,6 +65,12 @@ export class CocktailMenuComponent {
     console.log(error);
     this.error = true;
     this.notification.error(error.error.detail);
+  }
+
+  openAddIngredientModal() {
+    this.dialogService.openAddIngredientDialog(this.groupId).subscribe((result) => {
+      // todo: Handle result
+    });
   }
 }
 

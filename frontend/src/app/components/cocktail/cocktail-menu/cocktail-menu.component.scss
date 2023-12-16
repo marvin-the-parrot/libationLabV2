@@ -44,3 +44,21 @@
   padding-left: 0.5rem;
   height: 70vh;
 }
+
+.text-semi-bold{
+  font-weight: 500;
+  margin: .4rem;
+}
+
+.custom-button-primary {
+  border-radius: 10px;
+  height: 3em;
+  background-color: #6200ee;
+  opacity: 0.72;
+  color: white;
+}
+
+.custom-button-primary:hover {
+  background-color: #6200ee;
+  opacity: 1;
+}

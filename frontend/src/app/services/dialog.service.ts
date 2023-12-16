@@ -6,6 +6,7 @@ import {
 } from '../confirmation-dialog/confirmation-dialog.component';
 import { Observable, Subject } from 'rxjs';
 import { OptionDialogComponent } from '../option-dialog/option-dialog.component';
+import {AddIngredientDialogComponent} from "../add-ingredient-dialog/add-ingredient-dialog.component";
 
 @Injectable({
   providedIn: 'root',
@@ -30,6 +31,17 @@ export class DialogService {
   openOptionDialog(): Observable<Boolean> {
     const dialogRef = this.dialog.open<OptionDialogComponent, any, boolean>(
       OptionDialogComponent
+    );
+
+    return dialogRef.afterClosed();
+  }
+
+  openAddIngredientDialog(groupId: number): Observable<Boolean> {
+    const dialogRef = this.dialog.open<AddIngredientDialogComponent, any, boolean>(
+      AddIngredientDialogComponent,
+      {
+        data: { groupId }
+      }
     );
 
     return dialogRef.afterClosed();

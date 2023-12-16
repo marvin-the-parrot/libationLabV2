@@ -3,14 +3,12 @@
 <div class="grid-container p-3 ">
   <div class="row">
     <div class="col-md-8">
-      <div class="row g-0 menu-card">
+      <div class="row g-0 menu-card ">
         <div class="menu-header">
           <h2>Mixable Cocktails</h2>
         </div>
 
-        <div class="m-2">
-          <label for="searchName" class="label-name">
-          </label>
+        <div class="m-2 d-flex justify-content-sm-between p-3">
           <mat-form-field class="search-field-name">
             <mat-icon matPrefix>search</mat-icon>
             <input
@@ -21,6 +19,13 @@
               placeholder="!NOT YET IMPLEMENTED!"
             />
           </mat-form-field>
+          <div class="align-items-center justify-content-end">
+            <span class="text-semi-bold">Not satisfied with the possible cocktails?</span>
+            <button class="custom-button-primary" (click)="openAddIngredientModal()">
+              <i class="bi bi-bag-plus-fill"></i>
+              Add new Ingredients
+            </button>
+          </div>
         </div>
         <div *ngFor="let cocktail of cocktails" class="mb-3 col-xxl-2 col-lg-3 col-md-6 col-sm-12">
           <div class="card h-100">
@@ -39,9 +44,9 @@
           <h2>Selected Menu</h2>
         </div>
         <div class="card-body">
-            <div class="menu-body d-flex align-items-center justify-content-center">
-              <h5> this is where selected cocktails will go</h5>
-            </div>
+          <div class="menu-body d-flex align-items-center justify-content-center">
+            <h5> this is where selected cocktails will go</h5>
+          </div>
         </div>
 
       </div>
