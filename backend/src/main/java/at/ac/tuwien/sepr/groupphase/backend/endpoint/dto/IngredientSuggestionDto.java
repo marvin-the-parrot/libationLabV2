@@ -13,5 +13,15 @@ public class IngredientSuggestionDto {
         this.possibleCocktails = possibleCocktails;
     }
 
+    public long getId() {
+        return id;
+    }
 
+    public String getName() {
+        return name;
+    }
+
+    public List<CocktailOverviewDto> getPossibleCocktails() {
+        return possibleCocktails;
+    }
 }

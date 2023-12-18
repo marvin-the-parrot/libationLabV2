@@ -1,18 +1,22 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepr.groupphase.backend.api.IngredientApiResponse;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientSuggestionDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailIngredientMapperImpl;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.IngredientMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
@@ -27,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -46,10 +51,13 @@ public class IngredientServiceImpl implements IngredientService {
     private final IngredientMapper ingredientMapper;
     private final UserMapper userMapper;
     private final RestTemplate restTemplate;
+    private final CocktailRepository cocktailRepository;
+    private final CocktailIngredientMapperImpl cocktailIngredientMapper;
 
     @Autowired
     public IngredientServiceImpl(IngredientsRepository ingredientsRepository, UserGroupRepository userGroupRepository, UserRepository userRepository,
-                                 GroupRepository groupRepository, IngredientMapper ingredientMapper, UserMapper userMapper, RestTemplate restTemplate) {
+                                 GroupRepository groupRepository, IngredientMapper ingredientMapper, UserMapper userMapper, RestTemplate restTemplate,
+                                 CocktailRepository cocktailRepository, CocktailIngredientMapperImpl cocktailIngredientMapper) {
         this.ingredientsRepository = ingredientsRepository;
         this.userGroupRepository = userGroupRepository;
         this.userRepository = userRepository;
@@ -57,6 +65,8 @@ public class IngredientServiceImpl implements IngredientService {
         this.ingredientMapper = ingredientMapper;
         this.userMapper = userMapper;
         this.restTemplate = restTemplate;
+        this.cocktailRepository = cocktailRepository;
+        this.cocktailIngredientMapper = cocktailIngredientMapper;
     }
 
     @Override
@@ -146,8 +156,7 @@ public class IngredientServiceImpl implements IngredientService {
         // Iterate through the received ingredient IDs
         for (IngredientListDto ingredientDto : ingredientListDto) {
             // Get the ingredient from the repository using its ID
-            Ingredient ingredient = ingredientsRepository.findById(ingredientDto.getId())
-                .orElseThrow(() -> new NotFoundException("Ingredient not found"));
+            Ingredient ingredient = ingredientsRepository.findById(ingredientDto.getId()).orElseThrow(() -> new NotFoundException("Ingredient not found"));
 
             if (!Objects.equals(ingredientDto.getName(), ingredient.getName())) {
                 List<String> conflictException = new ArrayList<>();
@@ -167,6 +176,7 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
+    @Transactional
     public List<IngredientSuggestionDto> getIngredientSuggestions(Long groupId) throws NotFoundException, ConflictException {
         // validate request
         ApplicationGroup group = groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException("Group not found"));
@@ -182,8 +192,70 @@ public class IngredientServiceImpl implements IngredientService {
             throw new ConflictException("Getting ingredient suggestions failed.", List.of("User is not the host of the group"));
         }
 
-        // todo: implement algorithm
 
-        return null;
+        // get all ingredients from group
+        List<IngredientGroupDto> existingIngredients = getAllGroupIngredients(groupId);
+
+        // get all cocktails from the db
+        List<Cocktail> allCocktails = cocktailRepository.findAllByOrderByNameAsc();
+
+        // ingredients and list of cocktails that can be mixed with it
+        var foundIngredients = new HashMap<Ingredient, List<CocktailOverviewDto>>();
+
+        // iterate over all cocktails, and check if they can be mixed with only one more ingredient
+        for (var cocktail : allCocktails) {
+            var cocktailIngredients = cocktail.getCocktailIngredients();
+
+            var newIngredients = new ArrayList<Ingredient>();
+            for (var cocktailIngredient : cocktailIngredients) {
+
+                if (!containsIngredient(existingIngredients, cocktailIngredient.getIngredient())) {
+                    newIngredients.add(cocktailIngredient.getIngredient());
+                }
+            }
+
+            if (newIngredients.size() != 1) { // skip cocktails that can only be mixed with more than one ingredient (or can already be mixed)
+                continue;
+            }
+            // update found ingredients:
+            if (foundIngredients.containsKey(newIngredients.get(0))) {
+                var mixableCocktails = new ArrayList<>(foundIngredients.get(newIngredients.get(0)));
+                mixableCocktails.add(cocktailIngredientMapper.cocktailToCocktailOverviewDto(cocktail));
+                foundIngredients.put(newIngredients.get(0), mixableCocktails);
+            } else {
+                foundIngredients.put(newIngredients.get(0), List.of(cocktailIngredientMapper.cocktailToCocktailOverviewDto(cocktail)));
+            }
+        }
+
+        // analyze results
+        List<IngredientSuggestionDto> suggestions = new ArrayList<>(foundIngredients.size());
+        for (var entry : foundIngredients.entrySet()) {
+            suggestions.add(new IngredientSuggestionDto(entry.getKey().getId(), entry.getKey().getName(), entry.getValue()));
+        }
+
+        suggestions.sort((s1, s2) -> s2.getPossibleCocktails().size() - s1.getPossibleCocktails().size());
+
+        /* todo: uncomment this if you want to limit the number of suggestions
+        if (suggestions.size() > 5) {
+            return suggestions.subList(0, 5);
+        }
+        */
+        return suggestions;
+    }
+
+    /**
+     * Checks if a list of ingredients contains a specific ingredient (by name).
+     *
+     * @param ingredients list of ingredients
+     * @param ingredient ingredient to search for
+     * @return true if the ingredient is in the list, false otherwise
+     */
+    private boolean containsIngredient(List<IngredientGroupDto> ingredients, Ingredient ingredient) {
+        for (var i : ingredients) {
+            if (i.getName().equalsIgnoreCase(ingredient.getName())) { // todo: there are some ingredients with different capitalization
+                return true;
+            }
+        }
+        return false;
     }
 }
