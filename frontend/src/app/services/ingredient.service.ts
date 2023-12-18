@@ -1,8 +1,8 @@
 import {Injectable } from '@angular/core';
 import {Globals} from '../global/globals';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {IngredientGroupDto, IngredientListDto} from "../dtos/ingredient";
-import {Observable, tap, map} from "rxjs";
+import {IngredientGroupDto, IngredientListDto, IngredientSuggestionDto} from "../dtos/ingredient";
+import {Observable} from "rxjs";
 import {UserListDto} from "../dtos/user";
 import {environment} from "../../environments/environment";
 
@@ -29,6 +29,13 @@ export class IngredientService {
     params = params.append("groupId", groupId);
 
     return this.httpClient.get<IngredientGroupDto[]>(this.ingredientBaseUri + `/${groupId}`);
+  }
+
+  getIngredientSuggestions(groupId: number): Observable<IngredientSuggestionDto[]> {
+    let params = new HttpParams();
+    params = params.append("groupId", groupId);
+
+    return this.httpClient.get<IngredientSuggestionDto[]>(this.ingredientBaseUri + `/suggestions/${groupId}`);
   }
 
   /**

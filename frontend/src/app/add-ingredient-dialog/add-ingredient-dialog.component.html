@@ -13,7 +13,7 @@
           <tbody>
           <tr class="list-row" *ngFor="let ingredient of ingredients; index as i">
 
-            <td class="ingredient-row">{{ingredient}}</td>
+            <td class="ingredient-row">{{ingredient.name}}</td>
           </tr>
           </tbody>
         </table>
@@ -22,15 +22,16 @@
 
     <div class="cocktail-column">
       <div class="cocktail-container">
-        <div *ngFor="let cocktail of cocktails" class="mb-3 cocktail-item">
+        <div class="cocktail-container-grid">
+        <div *ngFor="let cocktail of currentIngredientCocktails; index as i" class="mb-3 cocktail-item">
           <div class="card h-100">
             <div class="container-fluid card-header">{{ cocktail.name }}</div>
             <div class="card-body">
-              <img src="{{ cocktail.imagePath }}" class="img-fluid" alt="Responsive image">
+              <img ngSrc="{{ cocktail.imagePath }}" class="img-fluid" alt="Responsive image">
             </div>
           </div>
         </div>
-
+        </div>
         <mat-dialog-actions class="mt-4 d-flex justify-content-between">
           <button mat-button [mat-dialog-close]="true" class="btn rounded-button"
                   cdkFocusInitial>Add

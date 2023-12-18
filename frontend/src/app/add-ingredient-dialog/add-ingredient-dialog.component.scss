@@ -60,6 +60,9 @@
   margin-top: 20px;
   width: 90%;
 
+
+}
+.cocktail-container-grid {
   display: grid;
   justify-content: space-between;
   grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));

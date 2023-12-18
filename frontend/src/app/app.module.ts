@@ -33,6 +33,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import { CocktailComponent } from './components/cocktail/cocktail.component';
 import { CocktailMenuComponent } from './components/cocktail/cocktail-menu/cocktail-menu.component';
 import { AddIngredientDialogComponent } from './add-ingredient-dialog/add-ingredient-dialog.component';
+import {NgOptimizedImage} from "@angular/common";
 
 
 @NgModule({
@@ -59,20 +60,21 @@ import { AddIngredientDialogComponent } from './add-ingredient-dialog/add-ingred
     CocktailMenuComponent,
     AddIngredientDialogComponent,
   ],
-  imports: [
-    MatIconModule,
-    MatInputModule,
-    BrowserModule,
-    AppRoutingModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    NgbModule,
-    FormsModule,
-    ToastrModule.forRoot(),
-    BrowserAnimationsModule,
-    MatDialogModule,
-    MatCheckboxModule,
-  ],
+    imports: [
+        MatIconModule,
+        MatInputModule,
+        BrowserModule,
+        AppRoutingModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        NgbModule,
+        FormsModule,
+        ToastrModule.forRoot(),
+        BrowserAnimationsModule,
+        MatDialogModule,
+        MatCheckboxModule,
+        NgOptimizedImage,
+    ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]
 })
