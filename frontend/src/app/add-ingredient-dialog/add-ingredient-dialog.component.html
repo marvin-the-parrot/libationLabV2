@@ -4,7 +4,7 @@
   </div>
 
 
-  <div class="content-grid">
+  <div *ngIf="ingredients.length > 0" class="content-grid">
 
     <div class="table-column">
       <div class="table-container">
@@ -12,8 +12,10 @@
         <table class="table align-baseline equal-columns">
           <tbody>
           <tr class="list-row" *ngFor="let ingredient of ingredients; index as i">
-
-            <td class="ingredient-row">{{ingredient.name}}</td>
+            <td [ngClass]="{'ingredient-row-selected': i === currentIngredient, 'ingredient-row': true}" (click)="currentIngredient = i">
+              {{ingredient.name}}
+              <span>{{ingredient.possibleCocktails.length}} new</span>
+            </td>
           </tr>
           </tbody>
         </table>
@@ -23,18 +25,20 @@
     <div class="cocktail-column">
       <div class="cocktail-container">
         <div class="cocktail-container-grid">
-        <div *ngFor="let cocktail of currentIngredientCocktails; index as i" class="mb-3 cocktail-item">
-          <div class="card h-100">
-            <div class="container-fluid card-header">{{ cocktail.name }}</div>
-            <div class="card-body">
-              <img ngSrc="{{ cocktail.imagePath }}" class="img-fluid" alt="Responsive image">
+          <div *ngFor="let cocktail of currentIngredientCocktails; index as i" class="mb-3 cocktail-item">
+            <div class="card h-100">
+              <div class="container-fluid card-header">{{ cocktail.name }}</div>
+              <div class="card-body">
+                <img src="{{ cocktail.imagePath }}" class="img-fluid" alt="Responsive image">
+              </div>
             </div>
           </div>
         </div>
-        </div>
-        <mat-dialog-actions class="mt-4 d-flex justify-content-between">
-          <button mat-button [mat-dialog-close]="true" class="btn rounded-button"
-                  cdkFocusInitial>Add
+        <mat-dialog-actions class="d-flex add-action">
+          Happy with the new cocktails? Add {{ingredients[currentIngredient].name}} to your List
+          <button mat-button [mat-dialog-close]="true" class="btn rounded-button" cdkFocusInitial>
+            Add
+            <i class="bi bi-plus-circle"></i>
           </button>
         </mat-dialog-actions>
       </div>

@@ -45,16 +45,13 @@
 }
 
 .cocktail-column {
-  display: flex;
   justify-content: center;
 }
 
 .cocktail-container {
-  max-height: 500px; /* Set a fixed height for the container */
   background-color: white;
-  overflow-y: auto; /* Enable vertical scrolling when content exceeds height */
   border: 1px solid #ccc; /* Optional: Add a border for the container */
-  padding: 10px; /* Optional: Add padding for the container */
+  padding: 10px 10px 0 10px;; /* Optional: Add padding for the container */
   border-radius: 15px; /* Rounded corners */
   margin-bottom: 20px;
   margin-top: 20px;
@@ -63,6 +60,8 @@
 
 }
 .cocktail-container-grid {
+  max-height: 500px;
+  overflow-y: auto; /* Enable vertical scrolling when content exceeds height */
   display: grid;
   justify-content: space-between;
   grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
@@ -75,10 +74,12 @@
   border-bottom: 1px solid #ccc;
 }
 
+
 .entry-count {
   margin-bottom: 0;
   border-bottom: 1px solid #ccc;
   color: grey;
+  text-align: center;
 }
 
 .custom-button{
@@ -100,13 +101,34 @@
 
 // a ingredient row in the list of ingredients
 .ingredient-row {
-  width: 50%; /* Set an equal width for both columns */
+  width: 100%; /* Set an equal width for both columns */
   height: 55px;
   display: flex;
   align-items: center; /* Vertically center content */
+  justify-content: space-between;
   border-bottom: white;
-  margin-left: 20px;
+  background-color: white;
+}
 
+.ingredient-row > span {
+  font-size: smaller;
+}
+
+.ingredient-row:hover {
+  background-color: #d9d9d9;
+  cursor: pointer;
+}
+
+.ingredient-row-selected {
+  background-color: #bebebe;
+}
+
+.add-action {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-left: 10px;
+  border-top: 1px solid #ccc;
 }
 
 .rounded-button {
@@ -117,6 +139,7 @@
   padding-bottom: 0;
   padding-top: 0;
   height: 36px;
+  margin: 10px 0 10px 10px;
 }
 .btn.rounded-button:active {
   background-color: white; /* Set background color to transparent */

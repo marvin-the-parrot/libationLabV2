@@ -11,21 +11,7 @@ import {IngredientSuggestionDto} from "../dtos/ingredient";
 })
 export class AddIngredientDialogComponent implements OnInit {
   backgroundColor = '#bb90f2';
-  ingredients: IngredientSuggestionDto[] = [
-    {
-      "id": 0,
-      "name": "Loading...",
-      "possibleCocktails": [
-        {
-          "id": 0,
-          "name": "Loading...",
-          "imagePath": "",
-          "ingredients": [],
-          "instructions": ""
-        }
-      ]
-    }
-  ];
+  ingredients: IngredientSuggestionDto[] = [];
   currentIngredient: number = 0; // the index of the ingredient that is currently selected, to show its cocktails
 
 
@@ -47,7 +33,9 @@ export class AddIngredientDialogComponent implements OnInit {
   /**
    * Get the cocktails that can be made with the currently selected ingredient
    */
-  currentIngredientCocktails = this.ingredients[this.currentIngredient].possibleCocktails;
+  get currentIngredientCocktails() {
+    return (this.ingredients.length > 0) ? this.ingredients[this.currentIngredient].possibleCocktails : null;
+  }
 
 
   /**
@@ -57,9 +45,10 @@ export class AddIngredientDialogComponent implements OnInit {
    */
   private getIngredientSuggestions(id: number) {
     this.ingredientService.getIngredientSuggestions(id).subscribe({
-      next: (ingredients: any[]) => {
+      next: (ingredients: IngredientSuggestionDto[]) => {
         this.ingredients = ingredients;
-        console.log("Successfully fetched ingredients");
+        console.log("Successfully fetched ingredients: ");
+        console.log(ingredients);
       },
       error: error => {
         console.error('Could not fetch ingredients due to:' + error.message);
