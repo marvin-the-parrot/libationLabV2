@@ -1,29 +1,28 @@
-<mat-dialog-content>
-  <div class="grid-item">
-    <div>
-      <h3 class="modal-title">Ingredient Suggestions</h3>
+<mat-dialog-content class="grid-container">
+  <div>
+    <h3 class="modal-title">Ingredient Suggestions</h3>
+  </div>
+
+
+  <div class="content-grid">
+
+    <div class="table-column">
+      <div class="table-container">
+        <p class="entry-count">our suggestions</p>
+        <table class="table align-baseline equal-columns">
+          <tbody>
+          <tr class="list-row" *ngFor="let ingredient of ingredients; index as i">
+
+            <td class="ingredient-row">{{ingredient}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-
-    <div class="form-grid">
-
-      <div class="table-column">
-        <div class="table-container">
-          <p class="entry-count">our suggestions</p>
-          <table class="table align-baseline equal-columns">
-            <tbody>
-            <tr class="list-row" *ngFor="let ingredient of ingredients; index as i">
-
-              <td class="member-column">{{ingredient}}</td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="cocktail-column">
-
-        <div *ngFor="let cocktail of cocktails" class="mb-3 col-xxl-2 col-lg-3 col-md-6 col-sm-12">
+    <div class="cocktail-column">
+      <div class="cocktail-container">
+        <div *ngFor="let cocktail of cocktails" class="mb-3 cocktail-item">
           <div class="card h-100">
             <div class="container-fluid card-header">{{ cocktail.name }}</div>
             <div class="card-body">
@@ -33,14 +32,13 @@
         </div>
 
         <mat-dialog-actions class="mt-4 d-flex justify-content-between">
-          <button mat-button [mat-dialog-close]="true" class="btn btn-danger"
-                  [style.background-color]="backgroundColor"
+          <button mat-button [mat-dialog-close]="true" class="btn rounded-button"
                   cdkFocusInitial>Add
           </button>
         </mat-dialog-actions>
       </div>
-
     </div>
+
   </div>
 
 </mat-dialog-content>

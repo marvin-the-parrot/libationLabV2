@@ -50,15 +50,16 @@
   margin: .4rem;
 }
 
-.custom-button-primary {
-  border-radius: 10px;
-  height: 3em;
-  background-color: #6200ee;
-  opacity: 0.72;
-  color: white;
+.rounded-button {
+  background-color: #AC6AFE;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  padding-bottom: 0;
+  padding-top: 0;
+  height: 36px;
 }
-
-.custom-button-primary:hover {
-  background-color: #6200ee;
-  opacity: 1;
+.btn.rounded-button:active {
+  background-color: white; /* Set background color to transparent */
+  box-shadow: none;
 }
