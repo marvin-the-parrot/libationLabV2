@@ -1,14 +1,12 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
-import java.lang.invoke.MethodHandles;
-import java.util.List;
-
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientSearchExistingUserDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientSuggestionDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
-import jakarta.validation.Valid;
+import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,21 +19,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
+import java.lang.invoke.MethodHandles;
+import java.util.List;
 
 /**
  * Ingredients endpoint controller.
  */
 @RestController
 @RequestMapping(path = IngredientEndpoint.BASE_PATH)
-public class IngredientEndpoint {
+public class  IngredientEndpoint {
 
     private static final Logger LOGGER =
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -67,6 +61,20 @@ public class IngredientEndpoint {
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
+
+    @Secured("ROLE_USER")
+    @GetMapping("/suggestions/{groupId}")
+    public List<IngredientSuggestionDto> getIngredientSuggestions(@PathVariable Long groupId) throws ConflictException {
+        LOGGER.info("GET " + BASE_PATH + "getIngredientSuggestions/{}", groupId);
+        try {
+            return ingredientService.getIngredientSuggestions(groupId);
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Group not found", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
 
     @GetMapping("/user-ingredients-auto/{ingredientsName}")
     @Secured("ROLE_USER")

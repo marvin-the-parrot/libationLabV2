@@ -1,23 +1,9 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
-import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import at.ac.tuwien.sepr.groupphase.backend.api.IngredientApiResponse;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientSuggestionDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.IngredientMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
@@ -25,13 +11,26 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Ingredients service implementation.
@@ -39,19 +38,18 @@ import jakarta.transaction.Transactional;
 @Service
 public class IngredientServiceImpl implements IngredientService {
 
+    public static final String SEARCH_INGREDIENT_URL = "https://www.thecocktaildb.com/api/json/v1/1/search.php";
     private final IngredientsRepository ingredientsRepository;
     private final UserGroupRepository userGroupRepository;
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
     private final IngredientMapper ingredientMapper;
     private final UserMapper userMapper;
-    public static final String SEARCH_INGREDIENT_URL = "https://www.thecocktaildb.com/api/json/v1/1/search.php";
     private final RestTemplate restTemplate;
 
     @Autowired
-    public IngredientServiceImpl(IngredientsRepository ingredientsRepository, UserGroupRepository userGroupRepository,
-                                 UserRepository userRepository, GroupRepository groupRepository,
-                                 IngredientMapper ingredientMapper, UserMapper userMapper, RestTemplate restTemplate) {
+    public IngredientServiceImpl(IngredientsRepository ingredientsRepository, UserGroupRepository userGroupRepository, UserRepository userRepository,
+                                 GroupRepository groupRepository, IngredientMapper ingredientMapper, UserMapper userMapper, RestTemplate restTemplate) {
         this.ingredientsRepository = ingredientsRepository;
         this.userGroupRepository = userGroupRepository;
         this.userRepository = userRepository;
@@ -166,5 +164,26 @@ public class IngredientServiceImpl implements IngredientService {
 
         return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findAllByApplicationUser(user));
 
+    }
+
+    @Override
+    public List<IngredientSuggestionDto> getIngredientSuggestions(Long groupId) throws NotFoundException, ConflictException {
+        // validate request
+        ApplicationGroup group = groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException("Group not found"));
+        ApplicationUser user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        if (user == null) {
+            throw new NotFoundException("User not found");
+        }
+        UserGroup userGroup = userGroupRepository.findByApplicationUserAndApplicationGroup(user, group);
+        if (userGroup == null) {
+            throw new ConflictException("Getting ingredient suggestions failed.", List.of("User is not a member of the group"));
+        }
+        if (!userGroup.isHost()) {
+            throw new ConflictException("Getting ingredient suggestions failed.", List.of("User is not the host of the group"));
+        }
+
+        // todo: implement algorithm
+
+        return null;
     }
 }
