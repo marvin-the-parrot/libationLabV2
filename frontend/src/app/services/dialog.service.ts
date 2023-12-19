@@ -40,6 +40,7 @@ export class DialogService {
     const dialogRef = this.dialog.open<AddIngredientDialogComponent, any, boolean>(
       AddIngredientDialogComponent,
       {
+        height: '80%', // makes sure the dialog is big enough
         data: { groupId }
       }
     );

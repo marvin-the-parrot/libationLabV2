@@ -1,3 +1,7 @@
+// component:
+.mat-mdc-dialog-content {
+  max-height: 100%;
+}
 
 // header:
 .grid-container > div:first-child {
@@ -16,7 +20,7 @@
 }
 
 
-// a grid layout to display the content of the ingredient dialog
+  // a grid layout to display the content of the ingredient dialog
 .content-grid {
   display: grid;
   grid-template-columns: 1fr 2fr;
@@ -39,8 +43,7 @@
   border: 1px solid #ccc; /* Optional: Add a border for the container */
   padding: 10px; /* Optional: Add padding for the container */
   border-radius: 15px; /* Rounded corners */
-  margin-bottom: 20px;
-  margin-top: 20px;
+  margin: 20px;
   width: 90%;
 }
 
@@ -59,6 +62,7 @@
 
 
 }
+
 .cocktail-container-grid {
   max-height: 500px;
   overflow-y: auto; /* Enable vertical scrolling when content exceeds height */
@@ -67,7 +71,6 @@
   grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
   gap: 2px;
 }
-
 
 
 .list-row {
@@ -82,7 +85,7 @@
   text-align: center;
 }
 
-.custom-button{
+.custom-button {
   margin-bottom: 20px;
   margin-right: 20px;
   background-color: #6200EE;
@@ -141,30 +144,31 @@
   height: 36px;
   margin: 10px 0 10px 10px;
 }
+
 .btn.rounded-button:active {
   background-color: white; /* Set background color to transparent */
   box-shadow: none;
 }
 
 
-.card-header{
+.card-header {
   color: white;
   background-color: #AC6AFE;
   transition-duration: 0.25s;
 }
 
-.card:hover .card-header{
+.card:hover .card-header {
   color: white;
   background-color: #6200EE;
 }
 
-.card{
-  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+.card {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
   margin: 0.25rem;
   margin-bottom: 1rem;
   padding: 0;
 }
 
-.card:hover{
+.card:hover {
   cursor: pointer;
 }
