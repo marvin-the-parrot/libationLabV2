@@ -34,16 +34,17 @@
             </div>
           </div>
         </div>
-        <mat-dialog-actions class="d-flex add-action">
+        <div class="d-flex add-action">
           Happy with the new cocktails? Add {{ingredients[currentIngredient].name}} to your List
-          <button mat-button [mat-dialog-close]="true" class="btn rounded-button" cdkFocusInitial>
+          <button (click)="addIngredient()" class="btn rounded-button">
             Add
             <i class="bi bi-plus-circle"></i>
           </button>
-        </mat-dialog-actions>
+        </div>
       </div>
     </div>
 
   </div>
+  <h4 *ngIf="ingredients.length === 0" class="text-center">Loading...</h4>
 
 </mat-dialog-content>

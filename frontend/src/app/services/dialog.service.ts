@@ -36,7 +36,7 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  openAddIngredientDialog(groupId: number): Observable<Boolean> {
+  openAddIngredientDialog(groupId: number): Observable<boolean> {
     const dialogRef = this.dialog.open<AddIngredientDialogComponent, any, boolean>(
       AddIngredientDialogComponent,
       {
@@ -44,6 +44,10 @@ export class DialogService {
         data: { groupId }
       }
     );
+
+    dialogRef.componentInstance.result.subscribe((res: boolean) => {
+      dialogRef.close(res);
+    });
 
     return dialogRef.afterClosed();
   }
