@@ -51,6 +51,7 @@
 }
 
 .rounded-button {
+  position: relative;
   background-color: #AC6AFE;
   color: #fff;
   border: none;
@@ -58,8 +59,50 @@
   padding-bottom: 0;
   padding-top: 0;
   height: 36px;
+  margin-top: 2vh;
+  margin-left: 10vw;
 }
 .btn.rounded-button:active {
   background-color: white; /* Set background color to transparent */
   box-shadow: none;
+}
+
+.btn-info {
+  font-weight: 500;
+  position: relative;
+  margin-left: 4vw;
+  text-align: end;
+}
+
+.flex-container {
+  margin-left: -1vw;
+  display: flex;
+  align-items: center;
+}
+
+.search-container {
+  margin-left: 2vw;
+  margin-top: 2vh;
+}
+
+.label-search-name {
+  margin-left: 0.5vw;
+  font-size: 18px;
+}
+
+.label-search-ing-pref {
+  margin-left: -0.5vw;
+  font-size: 18px;
+}
+
+.wrapper-name {
+  position: relative;
+  width: 14vw;
+}
+
+.wrapper-ing-pref {
+  position: relative;
+  width: 12vw;
+  margin-top: 0vh;
+  margin-left: -1vw;
 }

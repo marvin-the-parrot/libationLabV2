@@ -9,24 +9,81 @@
         </div>
 
         <div class="m-2 d-flex justify-content-sm-between p-3">
-          <mat-form-field class="search-field-name">
-            <mat-icon matPrefix>search</mat-icon>
-            <input
-              matInput
-              type="text"
-              id="searchName"
-              name="searchName"
-              placeholder="!NOT YET IMPLEMENTED!"
-            />
-          </mat-form-field>
+          
+          <!-- Suchfelder für Cocktails -->
+    
+        <div class="flex-container">
+    
+          <div class="search-container">
+               <label class="label-search-name">
+                   Name
+               </label>
+                <!-- Suchfeld für Name -->
+                <div class="wrapper-name col-md-6 col-lg-6">
+                  <input matInput
+                         type="text"
+                         id="searchName"
+                         name="searchName"
+                         placeholder="Search for Cocktail Name"
+                         class="form-control"
+                         required
+                         autofocus
+                  >
+          </div>
+          </div>
+          
+      
+         <div class="search-container">
+              <label class="label-search-ing-pref">
+                Ingredients
+              </label>
+                  <!-- Suchfeld für Zutaten -->
+            <div class="wrapper-ing-pref col-md-6 col-lg-6">
+              <input matInput
+                     type="text"
+                     id="searchName"
+                     name="searchName"
+                     placeholder="Search for Ingredient"
+                     class="form-control"
+                     required
+                     autofocus
+              >
+            </div>
+         </div>
+      
+      
+         <div class="search-container">
+          <label class="label-search-ing-pref">
+            Preferences
+          </label>
+              <!-- Suchfeld für Präferenzen -->
+        <div class="wrapper-ing-pref col-md-6 col-lg-6">
+          <input matInput
+                 type="text"
+                 id="searchName"
+                 name="searchName"
+                 placeholder="Search for Preference"
+                 class="form-control"
+                 required
+                 autofocus
+          >
+        </div>
+      </div>
+
           <div class="align-items-center justify-content-end">
-            <span class="text-semi-bold">Not satisfied with the possible cocktails?</span>
+            <label class="btn-info">
+              Not satisfied with the possible cocktails?
+            </label>
             <button class="btn rounded-button" (click)="openAddIngredientModal()">
               <i class="bi bi-bag-plus-fill"></i>
               Add new Ingredients
             </button>
           </div>
-        </div>
+        
+      </div> 
+
+    </div>
+
         <div *ngFor="let cocktail of cocktails" class="mb-3 col-xxl-2 col-lg-3 col-md-6 col-sm-12">
           <div class="card h-100">
             <div class="container-fluid card-header">{{ cocktail.name }}</div>
