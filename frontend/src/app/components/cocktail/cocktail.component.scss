@@ -72,7 +72,7 @@
   font-size: 18px;
 }
 
-.label-search-ing {
+.label-search-ing-pref {
   margin-left: -4.5vw;
   font-size: 18px;
 }
@@ -81,7 +81,6 @@
   margin-left: -1vw;
   display: flex;
   align-items: center;
-
 }
 
 .wrapper-name {
@@ -89,7 +88,7 @@
   width: 28vw;
 }
 
-.wrapper-ingredients {
+.wrapper-ing-pref {
   position: relative;
   width: 17vw;
   margin-top: 0vh;
@@ -102,7 +101,7 @@
   margin-left: 5vw;
   margin-top: -1vh;
   margin-bottom: 2vh;
-  width: 46.5vw;
+  width: 63vw;
   max-height: 70%; 
   overflow-y: auto; 
 }
@@ -132,7 +131,7 @@
   padding-left: 20px; 
   border-top: 1px solid grey; 
   border-bottom: 1px solid grey; 
-  width: 45vw;
+  width: 62vw;
   font-weight: 500;
 }
 

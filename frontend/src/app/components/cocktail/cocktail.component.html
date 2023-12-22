@@ -20,7 +20,7 @@
                    type="text"
                    id="searchName"
                    name="searchName"
-                   placeholder="Search for Cocktails"
+                   placeholder="Search for Cocktail Name"
                    class="form-control"
                    [(ngModel)]="nameOfCocktail"
                    (ngModelChange)="searchChanged()"
@@ -33,16 +33,16 @@
     
 
    <div class="search-container">
-        <label class="label-search-ing">
+        <label class="label-search-ing-pref">
           Ingredients
         </label>
             <!-- Suchfeld für Zutaten -->
-      <div class="wrapper-ingredients col-md-6 col-lg-6">
+      <div class="wrapper-ing-pref col-md-6 col-lg-6">
         <input matInput
                type="text"
                id="searchName"
                name="searchName"
-               placeholder="Search for Ingredients"
+               placeholder="Search for Ingredient"
                class="form-control"
                [(ngModel)]="nameOfIngredient"
                (ngModelChange)="searchChanged()"
@@ -52,6 +52,28 @@
         >
       </div>
    </div>
+
+
+   <div class="search-container">
+    <label class="label-search-ing-pref">
+      Preferences
+    </label>
+        <!-- Suchfeld für Präferenzen -->
+  <div class="wrapper-ing-pref col-md-6 col-lg-6">
+    <input matInput
+           type="text"
+           id="searchName"
+           name="searchName"
+           placeholder="Search for Preference"
+           class="form-control"
+           [(ngModel)]="nameOfPreference"
+           (ngModelChange)="searchChanged()"
+           #groupNameModel="ngModel"
+           required
+           autofocus
+    >
+  </div>
+</div>
 
     </div>
 

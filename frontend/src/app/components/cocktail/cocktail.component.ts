@@ -13,10 +13,12 @@ import { List } from 'lodash';
 export class CocktailComponent {
 
   cocktails: CocktailListDto[] = [];
-  cocktailIngredients: List<String>
+  cocktailIngredients: List<String>;
+  userPreferences: List<String>;
   searchChangedObservable = new Subject<void>();
   nameOfCocktail: string;
   nameOfIngredient: string;
+  nameOfPreference: string;
   bannerError: string | null = null;
   imageUrl: string = "";
   isToShowImg: boolean = false;
@@ -30,10 +32,10 @@ export class CocktailComponent {
 
   
   searchChanged() {
-    if(this.nameOfCocktail?.length != 0 || this.nameOfIngredient?.length != 0){
+    if(this.nameOfCocktail?.length != 0 || this.nameOfIngredient?.length != 0 || this.nameOfPreference?.length !=0){
       this.isToShowImg = false;
       this.selectedCocktail = ""; 
-      if(!this.nameOfIngredient){
+      if(!this.nameOfIngredient && !this.nameOfPreference){
         this.service.searchByCoctailName(this.nameOfCocktail)
         .subscribe({
           next: data => {
@@ -50,7 +52,7 @@ export class CocktailComponent {
               : error.message.message;
           }
         });
-      } else if(!this.nameOfCocktail){
+      } else if(!this.nameOfCocktail && !this.nameOfPreference){
         this.service.searchByIngredientName(this.nameOfIngredient)
         .subscribe({
           next: data => {
@@ -67,8 +69,25 @@ export class CocktailComponent {
               : error.message.message;
           }
         });
+      } else if(!this.nameOfCocktail && !this.nameOfIngredient){
+        this.service.searchByPreferenceName(this.nameOfPreference)
+        .subscribe({
+          next: data => {
+            this.cocktails = data;
+            if (data == null) {
+              this.isToShowImg = false;
+            }
+          },
+          error: error => {
+            console.error('Error fetching cocktails', error);
+            this.bannerError = 'Could not fetch cocktails: ' + error.message;
+            const errorMessage = error.status === 0
+              ? 'Is the backend up?'
+              : error.message.message;
+          }
+        });
       } else {
-        this.service.search(this.nameOfCocktail, this.nameOfIngredient)
+        this.service.search(this.nameOfCocktail, this.nameOfIngredient) //, this.nameOfPreference)
         .subscribe({
           next: data => {
             this.cocktails = data;
