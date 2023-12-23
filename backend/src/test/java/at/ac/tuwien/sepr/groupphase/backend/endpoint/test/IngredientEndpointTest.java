@@ -75,6 +75,28 @@ public class IngredientEndpointTest {
     }
 
     @Test
+    @WithMockUser(username = "user1@email.com")
+    public void getIngredientSuggestions_getSuggestionsForGroup1_expectedSuccess() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/ingredients/suggestions/{groupId}", 1)).andExpect(status().isOk()).andReturn();
+        var contentResult = mvcResult.getResponse().getContentAsString();
+        assertTrue(contentResult.contains("Lime"));
+        assertTrue(contentResult.contains("Sweet Vermouth"));
+        assertTrue(contentResult.contains("Triple sec"));
+        assertTrue(contentResult.contains("Tequila"));
+        assertTrue(contentResult.contains("Creme de Cassis"));
+        assertTrue(contentResult.contains("Green Chartreuse"));
+        assertTrue(contentResult.contains("Orange"));
+        assertTrue(contentResult.contains("Grenadine"));
+    }
+
+    @Test
+    @WithMockUser(username = "user1@email.com")
+    public void getIngredientSuggestions_getSuggestionsForGroup999_expectedNotFound() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/ingredients/suggestions/{groupId}", 999)).andExpect(status().isNotFound()).andReturn();
+        assertTrue(mvcResult.getResponse().getContentAsString().contains("Group not found"));
+    }
+
+    @Test
     @WithMockUser(roles = {"USER"}, username = "user1@email.com")
     public void searchAutocomplete_searchingForIngredientsPositive_FindingResultsContainingR() throws Exception{
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/ingredients/user-ingredients-auto/{ingredientsName}", "r"))

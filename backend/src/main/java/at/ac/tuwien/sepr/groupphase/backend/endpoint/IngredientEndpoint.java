@@ -70,7 +70,7 @@ public class  IngredientEndpoint {
             return ingredientService.getIngredientSuggestions(groupId);
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
-            logClientError(status, "Group not found", e);
+            logClientError(status, e.getMessage(), e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }

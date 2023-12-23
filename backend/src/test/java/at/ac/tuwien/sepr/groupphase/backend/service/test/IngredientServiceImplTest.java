@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.test;
 
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.impl.IngredientServiceImpl;
@@ -7,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -38,6 +40,22 @@ public class IngredientServiceImplTest {
         int result = ingredientServiceImpl.searchIngredients("Milk").size();
 
         assertEquals(expected, result);
+    }
+
+    @Test
+    @WithMockUser(username = "user1@email.com")
+    public void getIngredientSuggestions_fromUserOutsideGroup_expectedException() {
+        ConflictException exception = assertThrows(ConflictException.class, () -> ingredientServiceImpl.getIngredientSuggestions(3L));
+        assertEquals("Getting ingredient suggestions failed.", exception.summary());
+        assertEquals("User is not a member of the group", exception.errors().get(0));
+    }
+
+    @Test
+    @WithMockUser(username = "user1@email.com")
+    public void getIngredientSuggestions_fromUserThatIsNotHost_expectedException() {
+        ConflictException exception = assertThrows(ConflictException.class, () -> ingredientServiceImpl.getIngredientSuggestions(2L));
+        assertEquals("Getting ingredient suggestions failed.", exception.summary());
+        assertEquals("User is not the host of the group", exception.errors().get(0));
     }
 
     @Test
