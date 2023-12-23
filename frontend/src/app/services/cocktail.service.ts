@@ -20,6 +20,24 @@ export class CocktailService {
     ) {
      }
 
+  searchCocktails(cocktailName: String, ingredient: String, preference: String): Observable<CocktailListDto[]> {
+    if ((cocktailName == null || cocktailName.length == 0) && (preference  == null || preference.length == 0) && ingredient) {
+      return this.searchByIngredientName(ingredient);
+    } else if ((ingredient == null || ingredient.length == 0) && (preference == null || preference.length == 0) && cocktailName) {
+      return this.searchByCoctailName(cocktailName);
+    } else if ((preference == null || preference.length == 0) && cocktailName && ingredient){
+      return this.search(cocktailName, ingredient);
+    } else if ((cocktailName == null || cocktailName.length == 0) && (ingredient == null || ingredient.length == 0) && preference) {
+      return this.searchByPreferenceName(preference);
+    } else if ((cocktailName == null || cocktailName.length == 0) && ingredient && preference) {
+      return this.searchByIngredientNameAndPreference(ingredient, preference);
+    } else if ((ingredient == null || ingredient.length == 0) && cocktailName && preference) {
+      return this.searchByCoctailNameAndPreference(cocktailName, preference); 
+    } else {
+      return this.searchByCocktailNameAndIngredientAndPreference(cocktailName, ingredient, preference);
+    }
+  }
+
   /**
    * Searching for cocktails 
    * 
@@ -27,8 +45,19 @@ export class CocktailService {
    * @returns return matched cocktails
    */
   searchByCoctailName(name: String): Observable<CocktailListDto[]> { 
-    return this.httpClient.get<CocktailListDto[]>(`${this.cocktailBaseUri}/searchCocktails/` + name);
+    return this.httpClient.get<CocktailListDto[]>(`${this.cocktailBaseUri}/searchCocktails/cocktail/` + name);
   }
+
+  /**
+   * Searching for cocktails 
+   * 
+   * @param name name of cocktail
+   * @param preference name of preference
+   * @returns return matched cocktails
+   */
+    searchByCoctailNameAndPreference(name: String, preference: String): Observable<CocktailListDto[]> { 
+      return this.httpClient.get<CocktailListDto[]>(`${this.cocktailBaseUri}/searchCocktails/cocktail/` + name + '/' + preference);
+    }
 
    /**
    * Searching for cocktails 
@@ -38,7 +67,18 @@ export class CocktailService {
    */
     searchByIngredientName(name: String): Observable<CocktailListDto[]> { 
         return this.httpClient.get<CocktailListDto[]>(`${this.cocktailBaseUri}/searchCocktails/ingredient/` + name);
-      }
+    }
+
+   /**
+   * Searching for cocktails 
+   * 
+   * @param name name of ingredient
+   * @param preference name of preference
+   * @returns return matched cocktails
+   */
+    searchByIngredientNameAndPreference(name: String, preference: String): Observable<CocktailListDto[]> { 
+        return this.httpClient.get<CocktailListDto[]>(`${this.cocktailBaseUri}/searchCocktails/ingredient/` + name + '/' + preference);
+    }
 
     /**
    * Searching for cocktails 
@@ -47,10 +87,10 @@ export class CocktailService {
    * @returns return matched cocktails
    */
     searchByPreferenceName(name: String): Observable<CocktailListDto[]> { 
-      return this.httpClient.get<CocktailListDto[]>(`${this.cocktailBaseUri}/searchCocktails/` + name);
+      return this.httpClient.get<CocktailListDto[]>(`${this.cocktailBaseUri}/searchCocktails/preference/` + name);
     }
 
-    /**
+  /**
    * Searching for cocktails 
    * 
    * @param coctail name of cocktail
@@ -60,5 +100,17 @@ export class CocktailService {
     search(coctail: String, ingredient: String): Observable<CocktailListDto[]> { 
         return this.httpClient.get<CocktailListDto[]>(`${this.cocktailBaseUri}/searchCocktails/` + coctail + '/' + ingredient);
     }
+
+  /**
+   * Searching for cocktails 
+   * 
+   * @param coctail name of cocktail
+   * @param ingredient name of ingredient
+   * @param preference name of preference
+   * @returns return matched cocktails
+   */
+  searchByCocktailNameAndIngredientAndPreference(coctail: String, ingredient: String, preference): Observable<CocktailListDto[]> { 
+      return this.httpClient.get<CocktailListDto[]>(`${this.cocktailBaseUri}/searchCocktails/` + coctail + '/' + ingredient + '/' + preference);
+  }
 
 }

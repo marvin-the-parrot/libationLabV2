@@ -40,19 +40,27 @@ public class CocktailEndpoint {
     }
 
     @Secured("ROLE_USER")
+    @GetMapping("searchCocktails/{cocktailName}/{ingredientsName}/{preference}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CocktailListDto> searchCoctails(@PathVariable String cocktailName, @PathVariable String ingredientsName, @PathVariable String preference) throws JsonProcessingException {
+        LOGGER.info("GET " + BASE_PATH + "searchCocktails/{}", cocktailName, ingredientsName, preference);
+        return cocktailService.searchCocktailByCocktailNameAndIngredientName(cocktailName, ingredientsName, preference);
+    }
+
+    @Secured("ROLE_USER")
     @GetMapping("searchCocktails/{cocktailName}/{ingredientsName}")
     @ResponseStatus(HttpStatus.OK)
     public List<CocktailListDto> searchCoctails(@PathVariable String cocktailName, @PathVariable String ingredientsName) throws JsonProcessingException {
         LOGGER.info("GET " + BASE_PATH + "searchCocktails/{}", cocktailName, ingredientsName);
-        return cocktailService.searchCocktailByCocktailNameAndIngredientName(cocktailName, ingredientsName);
+        return cocktailService.searchCocktailByCocktailNameAndIngredientName(cocktailName, ingredientsName, null);
     }
 
-    @Secured("ROLE_USER")
-    @GetMapping("searchCocktails/{cocktailName}")
+    // @Secured("ROLE_USER")
+    @GetMapping("searchCocktails/cocktail/{cocktailName}")
     @ResponseStatus(HttpStatus.OK)
-    public List<CocktailListDto> searchCoctails(@PathVariable String cocktailName) throws JsonProcessingException {
+    public List<CocktailListDto> searchCoctailsByCocktail(@PathVariable String cocktailName) throws JsonProcessingException {
         LOGGER.info("GET " + BASE_PATH + "searchCocktails/{}", cocktailName);
-        return cocktailService.searchCocktailByCocktailNameAndIngredientName(cocktailName, null);
+        return cocktailService.searchCocktailByCocktailNameAndIngredientName(cocktailName, null, null);
     }
 
     @Secured("ROLE_USER")
@@ -60,7 +68,31 @@ public class CocktailEndpoint {
     @ResponseStatus(HttpStatus.OK)
     public List<CocktailListDto> searchCoctailsByIngredient(@PathVariable String ingredientsName) throws JsonProcessingException {
         LOGGER.info("GET " + BASE_PATH + "searchCocktails/ingredient/{}", ingredientsName);
-        return cocktailService.searchCocktailByCocktailNameAndIngredientName(null, ingredientsName);
+        return cocktailService.searchCocktailByCocktailNameAndIngredientName(null, ingredientsName, null);
+    }
+
+    @Secured("ROLE_USER")
+    @GetMapping("searchCocktails/cocktail/{cocktailName}/{preference}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CocktailListDto> searchCoctailsByCocktailAndPreference(@PathVariable String cocktailName, @PathVariable String preference) throws JsonProcessingException {
+        LOGGER.info("GET " + BASE_PATH + "searchCocktails/{}", cocktailName, preference);
+        return cocktailService.searchCocktailByCocktailNameAndIngredientName(cocktailName, null, preference);
+    }
+
+    @Secured("ROLE_USER")
+    @GetMapping("searchCocktails/ingredient/{ingredientsName}/{preference}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CocktailListDto> searchCoctailsByIngredientAndPreference(@PathVariable String ingredientsName, @PathVariable String preference) throws JsonProcessingException {
+        LOGGER.info("GET " + BASE_PATH + "searchCocktails/ingredient/{}", ingredientsName, preference);
+        return cocktailService.searchCocktailByCocktailNameAndIngredientName(null, ingredientsName, preference);
+    }
+
+    @Secured("ROLE_USER")
+    @GetMapping("searchCocktails/preference/{preference}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CocktailListDto> searchCocktailsByPreference(@PathVariable String preference) throws JsonProcessingException {
+        LOGGER.info("GET " + BASE_PATH + "searchCocktails/preference/{}", preference);
+        return cocktailService.searchCocktailByCocktailNameAndIngredientName(null, null, preference);
     }
 
 }

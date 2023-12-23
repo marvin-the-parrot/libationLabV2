@@ -75,7 +75,7 @@ public class CocktailEndpointTest {
     @WithMockUser(roles = {"USER"})
     public void searchCoctails_searchByCocktailName_Expected1() throws Exception {
         int expected = 1;
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/cocktails/searchCocktails/{cocktailName}", "Mojito")).andExpect(status().isOk()).andReturn();
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/cocktails/searchCocktails/cocktail/{cocktailName}", "Mojito")).andExpect(status().isOk()).andReturn();
         String contentResult = mvcResult.getResponse().getContentAsString();
         int result = objectMapper.readValue(contentResult, new TypeReference<List<CocktailListDto>>() {
         }).size();

@@ -32,78 +32,25 @@ export class CocktailComponent {
 
   
   searchChanged() {
-    if(this.nameOfCocktail?.length != 0 || this.nameOfIngredient?.length != 0 || this.nameOfPreference?.length !=0){
+    if((this.nameOfCocktail && this.nameOfCocktail.length != 0) || (this.nameOfIngredient && this.nameOfIngredient.length != 0) || (this.nameOfPreference && this.nameOfPreference.length != 0)){
       this.isToShowImg = false;
       this.selectedCocktail = ""; 
-      if(!this.nameOfIngredient && !this.nameOfPreference){
-        this.service.searchByCoctailName(this.nameOfCocktail)
-        .subscribe({
-          next: data => {
-            this.cocktails = data;
-            if (data == null) {
-              this.isToShowImg = false;
-            }
-          },
-          error: error => {
-            console.error('Error fetching cocktails', error);
-            this.bannerError = 'Could not fetch cocktails: ' + error.message;
-            const errorMessage = error.status === 0
-              ? 'Is the backend up?'
-              : error.message.message;
+      this.service.searchCocktails(this.nameOfCocktail, this.nameOfIngredient, this.nameOfPreference)
+      .subscribe({
+        next: data => {
+          this.cocktails = data;
+          if (data == null) {
+            this.isToShowImg = false;
           }
-        });
-      } else if(!this.nameOfCocktail && !this.nameOfPreference){
-        this.service.searchByIngredientName(this.nameOfIngredient)
-        .subscribe({
-          next: data => {
-            this.cocktails = data;
-            if (data == null) {
-              this.isToShowImg = false;
-            }
-          },
-          error: error => {
-            console.error('Error fetching cocktails', error);
-            this.bannerError = 'Could not fetch cocktails: ' + error.message;
-            const errorMessage = error.status === 0
-              ? 'Is the backend up?'
-              : error.message.message;
-          }
-        });
-      } else if(!this.nameOfCocktail && !this.nameOfIngredient){
-        this.service.searchByPreferenceName(this.nameOfPreference)
-        .subscribe({
-          next: data => {
-            this.cocktails = data;
-            if (data == null) {
-              this.isToShowImg = false;
-            }
-          },
-          error: error => {
-            console.error('Error fetching cocktails', error);
-            this.bannerError = 'Could not fetch cocktails: ' + error.message;
-            const errorMessage = error.status === 0
-              ? 'Is the backend up?'
-              : error.message.message;
-          }
-        });
-      } else {
-        this.service.search(this.nameOfCocktail, this.nameOfIngredient) //, this.nameOfPreference)
-        .subscribe({
-          next: data => {
-            this.cocktails = data;
-            if (data == null) {
-              this.isToShowImg = false;
-            }
-          },
-          error: error => {
-            console.error('Error fetching cocktails', error);
-            this.bannerError = 'Could not fetch cocktails: ' + error.message;
-            const errorMessage = error.status === 0
-              ? 'Is the backend up?'
-              : error.message.message;
-          }
-        });
-      }
+        },
+        error: error => {
+          console.error('Error fetching cocktails', error);
+          this.bannerError = 'Could not fetch cocktails: ' + error.message;
+          const errorMessage = error.status === 0
+            ? 'Is the backend up?'
+            : error.message.message;
+        }
+      });
     } else {
       this.cocktails = [];
       this.isToShowImg = false;
