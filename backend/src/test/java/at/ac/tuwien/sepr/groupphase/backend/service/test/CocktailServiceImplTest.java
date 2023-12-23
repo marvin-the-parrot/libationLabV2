@@ -36,7 +36,7 @@ public class CocktailServiceImplTest {
     @Test
     public void searchCocktailByCocktailNameAndIngredientName_searchByIngredientAndCocktailName_Expected1() {
         int expected = 1;
-        int result = cocktailIngredientService.searchCocktailByCocktailNameAndIngredientName("Mojito", "Lime").size();
+        int result = cocktailIngredientService.searchCocktailByCocktailNameAndIngredientName("Mojito", "Lime", null).size();
         //TODO: adjust these tests to new dataset
         assertEquals(expected, result);
     }
@@ -44,7 +44,7 @@ public class CocktailServiceImplTest {
     @Test
     public void searchCocktailByCocktailNameAndIngredientName_searchByCocktailName_Expected1() {
         int expected = 1;
-        int result = cocktailIngredientService.searchCocktailByCocktailNameAndIngredientName("Mojito", null).size();
+        int result = cocktailIngredientService.searchCocktailByCocktailNameAndIngredientName("Mojito", null, null).size();
 
         assertEquals(expected, result);
     }
@@ -52,7 +52,7 @@ public class CocktailServiceImplTest {
     @Test
     public void searchCocktailByCocktailNameAndIngredientName_searchByIngredientsName_ExpectedTwentyTwo() {
         int expected = 22;
-        int result = cocktailIngredientService.searchCocktailByCocktailNameAndIngredientName(null, "Lime").size();
+        int result = cocktailIngredientService.searchCocktailByCocktailNameAndIngredientName(null, "Lime", null).size();
 
         assertEquals(expected, result);
     }

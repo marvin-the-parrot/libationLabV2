@@ -2,6 +2,7 @@ package at.ac.tuwien.sepr.groupphase.backend.entity;
 
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,10 +11,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
 /**
- * Entity of table Cocktail.
+ * Entity of table Preference.
  */
 @Entity
-public class Cocktail {
+public class Preference {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,25 +23,15 @@ public class Cocktail {
     @Column(nullable = false)
     private String name;
 
-    @Column(name = "image_path")
-    private String imagePath;
-
-    @Column(name = "instructions", columnDefinition = "TEXT")
-    private String instructions;
-
-    @OneToMany(mappedBy = "cocktail")
-    private Set<CocktailIngredients> cocktailIngredients;
-
-    @OneToMany(mappedBy = "cocktail")
+    @OneToMany(mappedBy = "preference", cascade = CascadeType.REMOVE)
     private Set<CocktailPreference> cocktailPreference;
 
-    public Cocktail() {
+    public Preference() {
     }
 
-    public Cocktail(Long id, String name, String imagePath) {
+    public Preference(Long id, String name) {
         this.id = id;
         this.name = name;
-        this.imagePath = imagePath;
     }
 
     public Long getId() {
@@ -59,30 +50,6 @@ public class Cocktail {
         this.name = name;
     }
 
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
-
-    public String getInstructions() {
-        return instructions;
-    }
-
-    public void setInstructions(String instructions) {
-        this.instructions = instructions;
-    }
-
-    public Set<CocktailIngredients> getCocktailIngredients() {
-        return cocktailIngredients;
-    }
-
-    public void setCocktailIngredients(Set<CocktailIngredients> cocktailIngredients) {
-        this.cocktailIngredients = cocktailIngredients;
-    }
-
     public Set<CocktailPreference> getCocktailPreference() {
         return cocktailPreference;
     }
@@ -90,4 +57,5 @@ public class Cocktail {
     public void setCocktailPreference(Set<CocktailPreference> cocktailPreference) {
         this.cocktailPreference = cocktailPreference;
     }
+
 }

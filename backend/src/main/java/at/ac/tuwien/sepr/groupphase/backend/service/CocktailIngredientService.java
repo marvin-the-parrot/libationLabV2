@@ -15,9 +15,10 @@ public interface CocktailIngredientService {
      *
      * @param cocktailsName   name of cocktail
      * @param ingredientsName name of ingredients
+     * @param preferenceName  name of preference
      * @return cocktails
      */
-    List<CocktailListDto> searchCocktailByCocktailNameAndIngredientName(String cocktailsName, String ingredientsName);
+    List<CocktailListDto> searchCocktailByCocktailNameAndIngredientName(String cocktailsName, String ingredientsName, String preferenceName);
 
     /**
      * Searching for cocktails that can be mixed with the given ingredients.

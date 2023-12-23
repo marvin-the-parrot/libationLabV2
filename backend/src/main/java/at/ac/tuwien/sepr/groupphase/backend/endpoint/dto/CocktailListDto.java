@@ -8,15 +8,17 @@ public class CocktailListDto {
     private String name;
     private String imagePath;
     private List<String> ingredientsName;
+    private List<String> preferenceName;
 
     public CocktailListDto() {
     }
 
-    public CocktailListDto(Long id, String name, String imagePath, List<String> ingredientsName) {
+    public CocktailListDto(Long id, String name, String imagePath, List<String> ingredientsName, List<String> preferenceName) {
         this.id = id;
         this.name = name;
         this.imagePath = imagePath;
         this.ingredientsName = ingredientsName;
+        this.preferenceName = preferenceName;
     }
 
     public Long getId() {
@@ -49,6 +51,14 @@ public class CocktailListDto {
 
     public void setIngredientsName(List<String> ingredientsName) {
         this.ingredientsName = ingredientsName;
+    }
+
+    public List<String> getPreferenceName() {
+        return preferenceName;
+    }
+
+    public void setPreferenceName(List<String> preferenceName) {
+        this.preferenceName = preferenceName;
     }
 
 }

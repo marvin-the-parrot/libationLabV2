@@ -26,7 +26,7 @@ public interface CocktailIngredientMapper {
             String ingredientName = eachCocktailIngredients.getIngredient().getName();
             CocktailListDto dto = cocktailMap.computeIfAbsent(cocktailName, key ->
                     new CocktailListDto(eachCocktailIngredients.getCocktail().getId(),
-                            cocktailName, eachCocktailIngredients.getCocktail().getImagePath(), new ArrayList<>()));
+                            cocktailName, eachCocktailIngredients.getCocktail().getImagePath(), new ArrayList<>(), new ArrayList<>()));
             dto.getIngredientsName().add(ingredientName);
         }
         return new ArrayList<>(cocktailMap.values());
