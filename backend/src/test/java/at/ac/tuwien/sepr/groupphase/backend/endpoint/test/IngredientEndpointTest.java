@@ -77,16 +77,16 @@ public class IngredientEndpointTest {
     @Test
     @WithMockUser(username = "user1@email.com")
     public void getIngredientSuggestions_getSuggestionsForGroup1_expectedSuccess() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/ingredients/suggestions/{groupId}", 1)).andExpect(status().isConflict()).andReturn();
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/ingredients/suggestions/{groupId}", 1)).andExpect(status().isOk()).andReturn();
         var contentResult = mvcResult.getResponse().getContentAsString();
-        assertFalse(contentResult.contains("Lime"));
-        assertFalse(contentResult.contains("Sweet Vermouth"));
-        assertFalse(contentResult.contains("Triple sec"));
-        assertFalse(contentResult.contains("Tequila"));
-        assertFalse(contentResult.contains("Creme de Cassis"));
-        assertFalse(contentResult.contains("Green Chartreuse"));
-        assertFalse(contentResult.contains("Orange"));
-        assertFalse(contentResult.contains("Grenadine"));
+        assertTrue(contentResult.contains("Lime"));
+        assertTrue(contentResult.contains("Sweet Vermouth"));
+        assertTrue(contentResult.contains("Triple sec"));
+        assertTrue(contentResult.contains("Tequila"));
+        assertTrue(contentResult.contains("Creme de Cassis"));
+        assertTrue(contentResult.contains("Green Chartreuse"));
+        assertTrue(contentResult.contains("Orange"));
+        assertTrue(contentResult.contains("Grenadine"));
     }
 
     @Test
