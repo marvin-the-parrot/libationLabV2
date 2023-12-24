@@ -10,7 +10,7 @@
 
         <div class="m-2 d-flex justify-content-sm-between p-3">
           
-          <!-- Suchfelder für Cocktails -->
+          <!-- Search fields for cocktails -->
     
         <div class="flex-container">
     
@@ -18,7 +18,7 @@
                <label class="label-search-name">
                    Name
                </label>
-                <!-- Suchfeld für Name -->
+                <!-- Search field for cocktails by name -->
                 <div class="wrapper-name col-md-6 col-lg-6">
                   <input matInput
                          type="text"
@@ -40,7 +40,7 @@
               <label class="label-search-ing-pref">
                 Ingredients
               </label>
-                  <!-- Suchfeld für Zutaten -->
+                  <!-- Search field for cocktails by ingredients -->
             <div class="wrapper-ing-pref col-md-6 col-lg-6">
               <input matInput
                      type="text"
@@ -62,7 +62,7 @@
           <label class="label-search-ing-pref">
             Preferences
           </label>
-              <!-- Suchfeld für Präferenzen -->
+              <!-- Search field for cocktails by preferences -->
         <div class="wrapper-ing-pref col-md-6 col-lg-6">
           <input matInput
                  type="text"
@@ -80,7 +80,7 @@
       </div>
 
       
-          <div class="search-container">
+          <div class="search-container d-flex justify-content-right">
             <div class="wrapper-btn d-flex flex-column align-items-end">
             <label class="btn-info mb-2">
               Not satisfied with the possible cocktails?
@@ -99,15 +99,20 @@
 
     </div>
 
+    <div class="row g-0 menu-card cards-container">
         <div *ngFor="let cocktail of cocktails_list" class="mb-3 col-xxl-2 col-lg-3 col-md-6 col-sm-12">
-          <div class="card h-100">
-            <div class="container-fluid card-header">{{ cocktail.name }}</div>
+          <div class="card h-100" (click)="clickOnCocktailImage(cocktail.name)">
+            <div class="container-fluid card-header" [class.selected]="isSelected(cocktail.name)">
+              {{ cocktail.name }}
+            </div>
             <div class="card-body">
               <img src="{{ cocktail.imagePath }}" class="img-fluid" alt="Responsive image">
             </div>
           </div>
         </div>
-      </div>
+    </div>
+
+    </div>
 
     </div>
     <div class="col-md-4">
@@ -117,7 +122,22 @@
         </div>
         <div class="card-body">
           <div class="menu-body d-flex align-items-center justify-content-center">
-            <h5> this is where selected cocktails will go</h5>
+
+            <div class="cocktails-container">
+              <div>
+                <p class="cocktails-count">{{selectedCocktails.length}} Cocktails</p>
+              </div>
+              <div class="cocktails-list">
+                <div *ngFor="let cocktail of selectedCocktails; index as i" class="cocktails-item">
+                  {{ cocktail }}
+                  <i class="bi bi-dash-circle remove-item" (click)="removeCocktail(i)"></i>
+                </div>
+              </div>
+              <div class="container-safe-button">
+                <button type="button" class="btn btn-primary save-btn" (click)="saveCocktails()">Save</button>
+              </div>
+            </div>
+
           </div>
         </div>
 

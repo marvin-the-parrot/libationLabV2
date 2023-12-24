@@ -4,10 +4,16 @@
   transition-duration: 0.25s;
 }
 
-.card:hover .card-header{
+.card:hover .card-header {
   color: white;
   background-color: #6200EE;
 }
+
+.selected {
+  background-color: #6200EE;
+  color: white; 
+}
+
 
 .card{
   box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
@@ -18,6 +24,26 @@
 
 .card:hover{
   cursor: pointer;
+}
+
+.cards-container {
+  width: 99%;
+  height: auto;
+  max-height: 55vh; 
+  overflow-y: auto; 
+}
+
+.cards-container::-webkit-scrollbar {
+  width: 4px; 
+}
+
+.cards-container::-webkit-scrollbar-thumb {
+  background-color: grey; 
+  border-radius: 3px; 
+}
+
+.cards-container::-webkit-scrollbar-track {
+  background-color: #eee; 
 }
 
 .menu-card{
@@ -111,3 +137,83 @@
   position: relative;
   justify-content: end;
 }
+
+
+.cocktails-container {
+  background-color: #D9D9D9;
+  margin-left: 1vw;
+  margin-top: calc(1vh + 27px);
+  display: flex;
+  flex-direction: column;
+  width: 20vw;
+  height: 60vh;
+  text-align: center;
+  border-radius: 10px;
+}
+
+
+.cocktails-count{
+  opacity: 0.5;
+  margin: 10px 1em 5px;
+  padding-bottom: 5px;
+  border-bottom: #333333 solid 1px;
+}
+
+.cocktails-list {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  margin: 0 1em;
+  overflow-y: auto;
+}
+
+.cocktails-list::-webkit-scrollbar {
+  width: 4px; 
+}
+
+.cocktails-list::-webkit-scrollbar-thumb {
+  background-color: grey; 
+  border-radius: 3px; 
+}
+
+.cocktails-list::-webkit-scrollbar-track {
+  background-color: #eee; 
+}
+
+.cocktails-item {
+  display: flex;
+  justify-content: space-between;
+  text-align: left;
+  font-weight: 500;
+  font-size: 20px;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  padding-left: 1vw;
+  padding-right: 1vw;
+  border-bottom: #B0B0B0 solid 1px;
+}
+
+.remove-item {
+  text-align: right;
+  cursor: pointer;
+
+}
+
+.container-safe-button {
+  display: flex;
+  justify-content: right;
+  margin-right: 1em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.save-btn {
+  background-color: #AC6AFE;
+  color: white;
+  border: none;
+}
+
+.save-btn:active {
+  background-color: #6200EE; 
+}
+

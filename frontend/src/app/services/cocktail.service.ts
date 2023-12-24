@@ -113,4 +113,14 @@ export class CocktailService {
       return this.httpClient.get<CocktailListDto[]>(`${this.cocktailBaseUri}/searchCocktails/` + coctail + '/' + ingredient + '/' + preference);
   }
 
+  /**
+     * Adding cocktails menu
+     * 
+     * @param cocktails list of cocktails 
+     * @returns saved cocktails menu
+     */
+  saveCocktails(cocktails: CocktailListDto[]): Observable<CocktailListDto[]> {
+    return this.httpClient.post<CocktailListDto[]>(this.cocktailBaseUri + '/saveMenu', cocktails);
+}
+
 }
