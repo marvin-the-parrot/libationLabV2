@@ -26,6 +26,9 @@
                          name="searchName"
                          placeholder="Search for Cocktail Name"
                          class="form-control"
+                         [(ngModel)]="nameOfCocktail"
+                         (ngModelChange)="searchChanged()"
+                         #groupNameModel="ngModel"
                          required
                          autofocus
                   >
@@ -45,6 +48,9 @@
                      name="searchName"
                      placeholder="Search for Ingredient"
                      class="form-control"
+                     [(ngModel)]="nameOfIngredient"
+                     (ngModelChange)="searchChanged()"
+                     #groupNameModel="ngModel"
                      required
                      autofocus
               >
@@ -64,27 +70,36 @@
                  name="searchName"
                  placeholder="Search for Preference"
                  class="form-control"
+                 [(ngModel)]="nameOfPreference"
+                 (ngModelChange)="searchChanged()"
+                 #groupNameModel="ngModel"
                  required
                  autofocus
           >
         </div>
       </div>
 
-          <div class="align-items-center justify-content-end">
-            <label class="btn-info">
+      
+          <div class="search-container">
+            <div class="wrapper-btn d-flex flex-column align-items-end">
+            <label class="btn-info mb-2">
               Not satisfied with the possible cocktails?
             </label>
-            <button class="btn rounded-button" (click)="openAddIngredientModal()">
-              <i class="bi bi-bag-plus-fill"></i>
-              Add new Ingredients
-            </button>
+            <div class="wrapper-btn">
+              <button class="btn rounded-button" (click)="openAddIngredientModal()">
+                <i class="bi bi-bag-plus-fill"></i>
+                Add new Ingredients
+              </button>
+            </div>
+           </div>
           </div>
         
+          
       </div> 
 
     </div>
 
-        <div *ngFor="let cocktail of cocktails" class="mb-3 col-xxl-2 col-lg-3 col-md-6 col-sm-12">
+        <div *ngFor="let cocktail of cocktails_list" class="mb-3 col-xxl-2 col-lg-3 col-md-6 col-sm-12">
           <div class="card h-100">
             <div class="container-fluid card-header">{{ cocktail.name }}</div>
             <div class="card-body">

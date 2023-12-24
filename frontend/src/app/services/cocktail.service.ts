@@ -39,7 +39,7 @@ export class CocktailService {
   }
 
   /**
-   * Searching for cocktails 
+   * Searching for cocktails by cocktail name
    * 
    * @param name name of cocktail
    * @returns return matched cocktails
@@ -49,7 +49,7 @@ export class CocktailService {
   }
 
   /**
-   * Searching for cocktails 
+   * Searching for cocktails by coctail name and preference
    * 
    * @param name name of cocktail
    * @param preference name of preference
@@ -60,7 +60,7 @@ export class CocktailService {
     }
 
    /**
-   * Searching for cocktails 
+   * Searching for cocktails by ingredient name
    * 
    * @param name name of ingredient
    * @returns return matched cocktails
@@ -70,7 +70,7 @@ export class CocktailService {
     }
 
    /**
-   * Searching for cocktails 
+   * Searching for cocktails by ingredient name and preference
    * 
    * @param name name of ingredient
    * @param preference name of preference
@@ -81,7 +81,7 @@ export class CocktailService {
     }
 
     /**
-   * Searching for cocktails 
+   * Searching for cocktails by preference name
    * 
    * @param name name of preference
    * @returns return matched cocktails
@@ -102,7 +102,7 @@ export class CocktailService {
     }
 
   /**
-   * Searching for cocktails 
+   * Searching for cocktails by cocktail name and ingredient and preference
    * 
    * @param coctail name of cocktail
    * @param ingredient name of ingredient

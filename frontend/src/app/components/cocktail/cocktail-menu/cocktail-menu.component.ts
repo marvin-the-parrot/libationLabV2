@@ -4,10 +4,11 @@ import {GroupsService} from "../../../services/groups.service";
 import {UserService} from "../../../services/user.service";
 import {IngredientService} from "../../../services/ingredient.service";
 import {DialogService} from "../../../services/dialog.service";
+import {CocktailService} from 'src/app/services/cocktail.service';
 import {MessageService} from "../../../services/message.service";
 import {ToastrService} from "ngx-toastr";
 import {ActivatedRoute, Router} from "@angular/router";
-import {CocktailOverviewDto} from "../../../dtos/cocktail";
+import {CocktailListDto, CocktailOverviewDto} from "../../../dtos/cocktail";
 import {ErrorFormatterService} from "../../../services/error-formatter.service";
 
 @Component({
@@ -27,6 +28,11 @@ export class CocktailMenuComponent {
     // Error flag
     error = false;
     errorMessage = '';
+    cocktails_list: CocktailListDto[] = [];
+    nameOfCocktail: string;
+    nameOfIngredient: string;
+    nameOfPreference: string;
+    bannerError: string | null = null;
 
     constructor(
         private groupsService: GroupsService,
@@ -38,6 +44,7 @@ export class CocktailMenuComponent {
         private route: ActivatedRoute,
         private router: Router,
         private errorFormatter: ErrorFormatterService,
+        private cocktailService: CocktailService,
     ) {
     }
 
@@ -80,6 +87,30 @@ export class CocktailMenuComponent {
             }
         });
     }
+
+    
+  searchChanged() {
+
+    if((this.nameOfCocktail && this.nameOfCocktail.length != 0) || (this.nameOfIngredient && this.nameOfIngredient.length != 0) || (this.nameOfPreference && this.nameOfPreference.length != 0)){
+      this.cocktailService.searchCocktails(this.nameOfCocktail, this.nameOfIngredient, this.nameOfPreference)
+      .subscribe({
+        next: data => {
+          this.cocktails_list = data;
+        },
+        error: error => {
+          console.error('Error fetching cocktails', error);
+          this.bannerError = 'Could not fetch cocktails: ' + error.message;
+          const errorMessage = error.status === 0
+            ? 'Is the backend up?'
+            : error.message.message;
+        }
+      });
+    } else {
+      this.cocktails_list = [];
+    }
+
+  }
+  
 }
 
 
