@@ -101,8 +101,8 @@
 
     <div class="row g-0 menu-card cards-container">
         <div *ngFor="let cocktail of cocktails_list" class="mb-3 col-xxl-2 col-lg-3 col-md-6 col-sm-12">
-          <div class="card h-100" (click)="clickOnCocktailImage(cocktail)">
-            <div class="container-fluid card-header" [class.selected]="isSelected(cocktail)">
+          <div class="card h-100" (click)="clickOnCocktailImage(cocktail.name)">
+            <div class="container-fluid card-header" [class.selected]="isSelected(cocktail.name)">
               {{ cocktail.name }}
             </div>
             <div class="card-body">

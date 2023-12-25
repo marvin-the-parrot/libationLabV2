@@ -43,18 +43,32 @@
 
   <div class="grid-item-2 d-flex flex-column" >
     <div class="d-flex flex-column justify-content-center">
-      <h3 class="m-0">Menu</h3>
-      <div>{{group.name}}</div>
+      <h3 class="m-0">The Cocktail Card</h3>
+      <div>of Group {{group.name}}</div>
     </div>
-    <div *ngIf="group.cocktails === null" class="d-flex justify-content-center align-items-center h-100">
+    <div *ngIf="menu.cocktailsList.length === 0" class="d-flex justify-content-center align-items-center h-100">
       <span></span>
-      <button *ngIf="group.cocktails === null" class="btn menu-button" [routerLink]="['../menu']" >Create a Cocktail Menu</button>
+      <button *ngIf="menu.cocktailsList.length === 0" class="btn menu-button" [routerLink]="['../menu']" >Make a Cocktail Card</button>
     </div>
-    <div *ngIf="group.cocktails !== null">
-      <span *ngFor="let cocktail of group.cocktails" >
-      {{ cocktail }}
-      </span>
+
+    <div *ngIf="menu.cocktailsList.length !== 0">
+
+      <div class="cocktails-container">
+        <div>
+          <p class="cocktails-count">{{menu.cocktailsList.length}} Cocktails</p>
+        </div>
+        <div class="cocktails-list">
+          <div *ngFor="let cocktail of menu.cocktailsList; index as i" class="cocktails-item">
+            {{ cocktail.name }}
+          </div>
+        </div>
+        <div class="container-safe-button">
+          <button type="button" class="btn btn-primary save-btn" [routerLink]="['../menu']">Edit</button>
+        </div>
+      </div>
+
     </div>
+
   </div>
 
   <div class="grid-item-3">

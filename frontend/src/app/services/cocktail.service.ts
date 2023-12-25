@@ -125,4 +125,12 @@ export class CocktailService {
     return this.httpClient.post<MenuCocktailsDto>(this.menuBaseUri, cocktails);
 }
 
+    /**
+     * Get cocktail menu of a group 
+     * 
+     */
+    getCocktailMenu(groupId: number): Observable<MenuCocktailsDto> {
+      return this.httpClient.get<MenuCocktailsDto>(this.menuBaseUri + `/${groupId}`);
+  }
+
 }

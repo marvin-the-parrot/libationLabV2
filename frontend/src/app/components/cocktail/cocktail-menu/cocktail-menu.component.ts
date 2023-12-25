@@ -50,6 +50,7 @@ export class CocktailMenuComponent {
     ngOnInit(): void {
         this.groupId = this.route.snapshot.params['id'];
         this.getGroup();
+        this.getCocktailsMenu(this.groupId);
     }
 
     /**
@@ -110,20 +111,26 @@ export class CocktailMenuComponent {
 
   }
 
-  clickOnCocktailImage(cocktail: CocktailListDto): void {
-    const index = this.selectedCocktails.indexOf(cocktail);
+  clickOnCocktailImage(cocktailName: string): void {
+    const isSelected = this.isSelected(cocktailName);
   
-    if (index !== -1) {
+    if (isSelected) {
       // The cocktail is already selected, remove it from the list
-      this.selectedCocktails.splice(index, 1);
+      const index = this.selectedCocktails.findIndex(cocktail => cocktail.name === cocktailName);
+      if (index !== -1) {
+        this.selectedCocktails.splice(index, 1);
+      }
     } else {
       // The cocktail was not selected, add it to the list
-      this.selectedCocktails.push(cocktail);
+      const selectedCocktail = this.cocktails_list.find(cocktail => cocktail.name === cocktailName);
+      if (selectedCocktail) {
+        this.selectedCocktails.push(selectedCocktail);
+      }
     }
   }
-
-  isSelected(cocktail: CocktailListDto): boolean {
-    return this.selectedCocktails.includes(cocktail);
+  
+  isSelected(cocktailName: string): boolean {
+    return this.selectedCocktails.some(cocktail => cocktail.name === cocktailName);
   }
 
   removeCocktail(index: number) {
@@ -137,13 +144,24 @@ export class CocktailMenuComponent {
     };
     this.cocktailService.saveCocktails(newMenuCocktails).subscribe({
       next: () => {
-        this.notification.success('Cocktails saved successfully.');
+        this.notification.success('Cocktail Card saved successfully.');
         this.router.navigate(['/groups/' + newMenuCocktails.groupId +'/detail']);
       },
       error: error => {
-        this.notification.error('Could not save cocktails.');
-        console.log('Could not save cocktails due to:');
+        this.notification.error('Could not save cocktail card.');
+        console.log('Could not save cocktail card due to:');
         console.log(error);
+      }
+    });
+  }
+
+  private getCocktailsMenu(groupId: number): void {
+    this.cocktailService.getCocktailMenu(groupId).subscribe({
+      next: (menu: MenuCocktailsDto) => {
+        this.selectedCocktails = menu.cocktailsList;
+      },
+      error: error => {
+        console.error('Could not fetch cocktails menu due to:');
       }
     });
   }

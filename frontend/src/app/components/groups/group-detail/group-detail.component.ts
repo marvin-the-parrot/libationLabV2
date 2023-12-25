@@ -12,6 +12,8 @@ import {DialogService} from 'src/app/services/dialog.service';
 import {ConfirmationDialogMode} from "../../../confirmation-dialog/confirmation-dialog.component";
 import {IngredientGroupDto} from "../../../dtos/ingredient";
 import {IngredientService} from "../../../services/ingredient.service";
+import { CocktailService } from 'src/app/services/cocktail.service';
+import { MenuCocktailsDto } from 'src/app/dtos/menu';
 
 @Component({
   selector: 'app-group-detail',
@@ -25,6 +27,11 @@ export class GroupDetailComponent {
     name: null,
     cocktails: [],
     members: [],
+  }
+
+  menu: MenuCocktailsDto = {
+    groupId: null,
+    cocktailsList: [],
   }
 
   username: string = JSON.parse(localStorage.getItem('user')).name;
@@ -50,6 +57,7 @@ export class GroupDetailComponent {
     private messageService: MessageService,
     private notification: ToastrService,
     private route: ActivatedRoute,
+    private cocktailService: CocktailService,
   ) {
   }
 
@@ -57,6 +65,7 @@ export class GroupDetailComponent {
     const groupId = this.route.snapshot.params['id'];
     this.getGroup(groupId);
     this.getIngredients(groupId);
+    this.getCocktailsMenu(groupId);
     console.log(this.group.cocktails);
   }
 
@@ -177,6 +186,17 @@ export class GroupDetailComponent {
       },
       error: error => {
         console.error('Could not fetch ingredients due to:');
+      }
+    });
+  }
+
+  private getCocktailsMenu(groupId: number): void {
+    this.cocktailService.getCocktailMenu(groupId).subscribe({
+      next: (menu: MenuCocktailsDto) => {
+        this.menu = menu;
+      },
+      error: error => {
+        console.error('Could not fetch cocktails menu due to:');
       }
     });
   }
