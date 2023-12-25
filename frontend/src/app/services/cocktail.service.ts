@@ -4,6 +4,7 @@ import {HttpClient} from "@angular/common/http";
 import {CocktailListDto} from "../dtos/cocktail";
 import {Observable} from "rxjs";
 import {environment} from "../../environments/environment";
+import { MenuCocktailsDto } from '../dtos/menu';
 
 const baseUri = environment.backendUrl + "/cocktails";
 
@@ -13,6 +14,7 @@ const baseUri = environment.backendUrl + "/cocktails";
 export class CocktailService {
 
   private cocktailBaseUri: string = this.globals.backendUri + '/cocktails';
+  private menuBaseUri: string = this.globals.backendUri + '/menu';
 
   constructor(
     private httpClient: HttpClient, 
@@ -119,8 +121,8 @@ export class CocktailService {
      * @param cocktails list of cocktails 
      * @returns saved cocktails menu
      */
-  saveCocktails(cocktails: CocktailListDto[]): Observable<CocktailListDto[]> {
-    return this.httpClient.post<CocktailListDto[]>(this.cocktailBaseUri + '/saveMenu', cocktails);
+  saveCocktails(cocktails: MenuCocktailsDto): Observable<MenuCocktailsDto> {
+    return this.httpClient.post<MenuCocktailsDto>(this.menuBaseUri, cocktails);
 }
 
 }
