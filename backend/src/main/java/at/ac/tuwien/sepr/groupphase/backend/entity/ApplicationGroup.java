@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,6 +25,17 @@ public class ApplicationGroup {
 
     @OneToMany(mappedBy = "applicationGroup")
     private Set<UserGroup> userGroups;
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
+    private Set<Menu> menu;
+
+    public Set<Menu> getMenu() {
+        return menu;
+    }
+
+    public void setMenu(Set<Menu> menu) {
+        this.menu = menu;
+    }
 
     public Long getId() {
         return id;

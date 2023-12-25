@@ -34,6 +34,9 @@ public class Cocktail {
     @OneToMany(mappedBy = "cocktail")
     private Set<CocktailPreference> cocktailPreference;
 
+    @OneToMany(mappedBy = "cocktail")
+    private Set<Menu> menu;
+
     public Cocktail() {
     }
 
@@ -41,6 +44,14 @@ public class Cocktail {
         this.id = id;
         this.name = name;
         this.imagePath = imagePath;
+    }
+
+    public Set<Menu> getMenu() {
+        return menu;
+    }
+
+    public void setMenu(Set<Menu> menu) {
+        this.menu = menu;
     }
 
     public Long getId() {

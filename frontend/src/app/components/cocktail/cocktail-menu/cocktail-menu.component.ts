@@ -10,6 +10,7 @@ import {ToastrService} from "ngx-toastr";
 import {ActivatedRoute, Router} from "@angular/router";
 import {CocktailListDto, CocktailOverviewDto} from "../../../dtos/cocktail";
 import {ErrorFormatterService} from "../../../services/error-formatter.service";
+import { MenuCocktailsDto } from 'src/app/dtos/menu';
 
 @Component({
     selector: 'app-cocktail-card',
@@ -30,7 +31,7 @@ export class CocktailMenuComponent {
     nameOfIngredient: string;
     nameOfPreference: string;
     bannerError: string | null = null;
-    selectedCocktails: string[] = [];
+    selectedCocktails: CocktailListDto[] = [];
 
     constructor(
         private groupsService: GroupsService,
@@ -109,20 +110,20 @@ export class CocktailMenuComponent {
 
   }
 
-  clickOnCocktailImage(name: string): void {
-    const index = this.selectedCocktails.indexOf(name);
+  clickOnCocktailImage(cocktail: CocktailListDto): void {
+    const index = this.selectedCocktails.indexOf(cocktail);
   
     if (index !== -1) {
       // The cocktail is already selected, remove it from the list
       this.selectedCocktails.splice(index, 1);
     } else {
       // The cocktail was not selected, add it to the list
-      this.selectedCocktails.push(name);
+      this.selectedCocktails.push(cocktail);
     }
   }
 
-  isSelected(name: string): boolean {
-    return this.selectedCocktails.includes(name);
+  isSelected(cocktail: CocktailListDto): boolean {
+    return this.selectedCocktails.includes(cocktail);
   }
 
   removeCocktail(index: number) {
@@ -130,9 +131,14 @@ export class CocktailMenuComponent {
   }
 
   saveCocktails() {
-    this.cocktailService.saveCocktails(this.cocktails_list).subscribe({
+    const newMenuCocktails: MenuCocktailsDto = {
+      groupId: this.groupId,
+      cocktailsList: this.selectedCocktails
+    };
+    this.cocktailService.saveCocktails(newMenuCocktails).subscribe({
       next: () => {
         this.notification.success('Cocktails saved successfully.');
+        this.router.navigate(['/groups/' + newMenuCocktails.groupId +'/detail']);
       },
       error: error => {
         this.notification.error('Could not save cocktails.');

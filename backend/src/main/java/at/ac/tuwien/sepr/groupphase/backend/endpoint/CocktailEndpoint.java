@@ -3,7 +3,6 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.service.CocktailIngredientService;
-import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
 
 /**
  * Cocktail endpoint controller.
@@ -55,7 +52,7 @@ public class CocktailEndpoint {
         return cocktailService.searchCocktailByCocktailNameAndIngredientName(cocktailName, ingredientsName, null);
     }
 
-    // @Secured("ROLE_USER")
+    @Secured("ROLE_USER")
     @GetMapping("searchCocktails/cocktail/{cocktailName}")
     @ResponseStatus(HttpStatus.OK)
     public List<CocktailListDto> searchCoctailsByCocktail(@PathVariable String cocktailName) throws JsonProcessingException {
