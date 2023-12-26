@@ -47,9 +47,13 @@
       <div>of Group {{group.name}}</div>
     </div>
     <div *ngIf="menu.cocktailsList.length === 0" class="d-flex justify-content-center align-items-center h-100">
-      <span></span>
-      <button *ngIf="menu.cocktailsList.length === 0" class="btn menu-button" [routerLink]="['../menu']" >Make a Cocktail Card</button>
+      <span *ngIf="group?.host?.name === username; else noHost"></span>
+      <button *ngIf="group?.host?.name === username" class="btn menu-button" [routerLink]="['../menu']">Make a Cocktail Card</button>
+      <ng-template #noHost>
+        <p>There is currently no cocktail card created.</p>
+      </ng-template>
     </div>
+    
 
     <div *ngIf="menu.cocktailsList.length !== 0">
 
@@ -62,7 +66,7 @@
             {{ cocktail.name }}
           </div>
         </div>
-        <div class="container-safe-button">
+        <div *ngIf="group?.host?.name === username" class="container-safe-button">
           <button type="button" class="btn btn-primary save-btn" [routerLink]="['../menu']">Edit</button>
         </div>
       </div>
