@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PreferenceListDto;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.service.PreferenceService;
 import org.slf4j.Logger;
@@ -9,10 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.invoke.MethodHandles;
@@ -43,6 +40,36 @@ public class PreferenceEndpoint {
             return preferenceService.searchUserPreferences(preferenceName);
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Failed to search preferences", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/user-preferences")
+    @Secured("ROLE_USER")
+    public List<PreferenceListDto> getUserIngredients() {
+        LOGGER.info("GET " + BASE_PATH + "user-preferences");
+        try {
+            return preferenceService.getUserPreferences();
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Failed to search preferences", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+    @PostMapping("/user-preferences")
+    @Secured("ROLE_USER")
+    public List<PreferenceListDto> addUserPreferences(@RequestBody PreferenceListDto[] preferences) {
+        LOGGER.info("POST " + BASE_PATH + "user-preferences");
+        try {
+            return preferenceService.addPreferencesToUser(preferences);
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Failed to search preferences", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        } catch (ConflictException e) {
+            HttpStatus status = HttpStatus.CONFLICT;
             logClientError(status, "Failed to search preferences", e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
