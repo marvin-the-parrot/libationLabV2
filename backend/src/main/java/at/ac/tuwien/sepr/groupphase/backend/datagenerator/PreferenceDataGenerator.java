@@ -34,8 +34,11 @@ public class PreferenceDataGenerator {
             LOGGER.debug("preference already generated");
         } else {
             LOGGER.debug("generating {} preference entries", NUMBER_OF_PREFERENCES_TO_GENERATE);
-            for (long i = 0; i < NUMBER_OF_PREFERENCES_TO_GENERATE; i++) {
-                Preference preference = new Preference(i, "Preference" + i);
+            for (int i = 0; i < NUMBER_OF_PREFERENCES_TO_GENERATE; i++) {
+                Preference preference = Preference.PreferencesBuilder.preferences()
+                    .withId((long) i)
+                    .withName("Preference" + i)
+                    .build();
                 preferenceRepository.save(preference);
             }
         }

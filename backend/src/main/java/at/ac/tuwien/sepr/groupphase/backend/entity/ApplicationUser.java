@@ -46,6 +46,13 @@ public class ApplicationUser {
         inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
     Set<Ingredient> ingredients;
 
+    @ManyToMany
+    @JoinTable(
+        name = "user_preferences",
+        joinColumns = @JoinColumn(name = "applicationUser_id"),
+        inverseJoinColumns = @JoinColumn(name = "preference_id"))
+    Set<Preference> preferences;
+
     private Boolean admin;
 
     public ApplicationUser() {
@@ -114,6 +121,13 @@ public class ApplicationUser {
         this.ingredients = ingredients;
     }
 
+    public Set<Preference> getPreferences() {
+        return preferences;
+    }
+
+    public void setPreferences(Set<Preference> preferences) {
+        this.preferences = preferences;
+    }
     public Boolean getAdmin() {
         return admin;
     }
@@ -137,6 +151,7 @@ public class ApplicationUser {
             && Objects.equals(userGroups, applicationUser.userGroups)
             && Objects.equals(applicationMessages, applicationUser.applicationMessages)
             && Objects.equals(ingredients, applicationUser.ingredients)
+            && Objects.equals(preferences, applicationUser.preferences)
             && Objects.equals(admin, applicationUser.admin);
     }
 
@@ -147,6 +162,7 @@ public class ApplicationUser {
         private String email;
         private String password;
         private Set<Ingredient> ingredients;
+        private Set<Preference> preferences;
 
         private ApplicationUserBuilder() {
         }
@@ -180,6 +196,11 @@ public class ApplicationUser {
             return this;
         }
 
+        public ApplicationUserBuilder withPreferences(Set<Preference> preferences) {
+            this.preferences = preferences;
+            return this;
+        }
+
         public ApplicationUser build() {
             ApplicationUser applicationUser = new ApplicationUser();
             applicationUser.setId(id);
@@ -187,6 +208,7 @@ public class ApplicationUser {
             applicationUser.setEmail(email);
             applicationUser.setPassword(password);
             applicationUser.setIngredients(ingredients);
+            applicationUser.setPreferences(preferences);
             applicationUser.setAdmin(false);
             return applicationUser;
         }
