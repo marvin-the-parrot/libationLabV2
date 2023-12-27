@@ -19,4 +19,6 @@ public interface PreferenceRepository extends JpaRepository<Preference, Long> {
     List<Preference> findAllByApplicationUser(ApplicationUser applicationUser);
 
     List<Preference> findFirst5ByNameNotInAndNameIgnoreCaseContaining(List<String> names, String ingredientName);
+
+    List<Preference> findByNameContainingIgnoreCase(String name);
 }

@@ -3,6 +3,7 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailSerachDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,12 @@ public class CocktailEndpoint {
     }
 
     @Secured("ROLE_USER")
+    @GetMapping
+    public List<CocktailListDto> searchCocktails(CocktailSerachDto searchParameters) {
+        return null;
+    }
+
+    /*@Secured("ROLE_USER")
     @GetMapping("searchCocktails/{cocktailName}/{ingredientsName}/{preference}")
     @ResponseStatus(HttpStatus.OK)
     public List<CocktailListDto> searchCoctails(@PathVariable String cocktailName, @PathVariable String ingredientsName, @PathVariable String preference) throws JsonProcessingException {
@@ -90,6 +97,6 @@ public class CocktailEndpoint {
     public List<CocktailListDto> searchCocktailsByPreference(@PathVariable String preference) throws JsonProcessingException {
         LOGGER.info("GET " + BASE_PATH + "searchCocktails/preference/{}", preference);
         return cocktailService.searchCocktailByCocktailNameAndIngredientName(null, null, preference);
-    }
+    }*/
 
 }

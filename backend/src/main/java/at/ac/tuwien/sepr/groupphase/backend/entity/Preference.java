@@ -20,8 +20,8 @@ public class Preference {
     @ManyToMany(mappedBy = "preferences")
     Set<ApplicationUser> applicationUser;
 
-    @OneToMany(mappedBy = "preference", cascade = CascadeType.REMOVE)
-    private Set<CocktailPreference> cocktailPreference;
+    @ManyToMany(cascade = CascadeType.REMOVE)
+    private Set<Cocktail> cocktails;
 
     public Preference() {
     }
@@ -53,12 +53,12 @@ public class Preference {
         this.applicationUser = applicationUser;
     }
 
-    public Set<CocktailPreference> getCocktailPreference() {
-        return cocktailPreference;
+    public Set<Cocktail> getCocktails() {
+        return cocktails;
     }
 
-    public void setCocktailPreference(Set<CocktailPreference> cocktailPreference) {
-        this.cocktailPreference = cocktailPreference;
+    public void setCocktails(Set<Cocktail> cocktails) {
+        this.cocktails = cocktails;
     }
 
     public static final class PreferencesBuilder {

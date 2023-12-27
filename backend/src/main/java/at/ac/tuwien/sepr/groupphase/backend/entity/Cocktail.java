@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 
 /**
@@ -31,8 +32,8 @@ public class Cocktail {
     @OneToMany(mappedBy = "cocktail")
     private Set<CocktailIngredients> cocktailIngredients;
 
-    @OneToMany(mappedBy = "cocktail")
-    private Set<CocktailPreference> cocktailPreference;
+    @ManyToMany
+    private Set<Preference> preferences;
 
     @OneToMany(mappedBy = "cocktail")
     private Set<Menu> menu;
@@ -94,11 +95,11 @@ public class Cocktail {
         this.cocktailIngredients = cocktailIngredients;
     }
 
-    public Set<CocktailPreference> getCocktailPreference() {
-        return cocktailPreference;
+    public Set<Preference> getPreferences() {
+        return preferences;
     }
 
-    public void setCocktailPreference(Set<CocktailPreference> cocktailPreference) {
-        this.cocktailPreference = cocktailPreference;
+    public void setPreferences(Set<Preference> preferences) {
+        this.preferences = preferences;
     }
 }

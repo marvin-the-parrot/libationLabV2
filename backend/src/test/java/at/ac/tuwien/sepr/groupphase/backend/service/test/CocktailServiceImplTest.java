@@ -33,7 +33,7 @@ public class CocktailServiceImplTest {
     @Autowired
     private IngredientsRepository ingredientsRepository;
 
-    @Test
+    /*@Test
     public void searchCocktailByCocktailNameAndIngredientName_searchByIngredientAndCocktailName_Expected1() {
         int expected = 1;
         int result = cocktailIngredientService.searchCocktailByCocktailNameAndIngredientName("Mojito", "Lime", null).size();
@@ -55,6 +55,6 @@ public class CocktailServiceImplTest {
         int result = cocktailIngredientService.searchCocktailByCocktailNameAndIngredientName(null, "Lime", null).size();
 
         assertEquals(expected, result);
-    }
+    }*/
 
 }

@@ -17,4 +17,10 @@ export interface CocktailOverviewDto {
   instructions: string;
 }
 
+export interface CocktailSearch {
+  cocktailName?: string;
+  ingredientName?: string;
+  preferenceName?: string;
+}
+
 
