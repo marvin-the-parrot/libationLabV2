@@ -88,15 +88,15 @@
         <i class="bi bi-info-circle info" data-tooltip="In your preferences list you can add all the preferences for your cocktails"></i>
         <div class="wrapper">
           <app-autocomplete
-            name="ingredientsSelection"
+            name="preferenceSelection"
             textInputClass="form-control"
-            [suggestions]="ingredientSuggestions"
-            [formatModel]="formatIngredient"
+            [suggestions]="preferenceSuggestion"
+            [formatModel]="formatPreference"
             valueNeedsToMatchSuggestion="true"
-            [(ngModel)]="ingredient"
+            [(ngModel)]="preference"
           >
           </app-autocomplete>
-          <button type="button" class="btn rounded-button" (click)="addIngredient(ingredient)">
+          <button type="button" class="btn rounded-button" (click)="addPreference(preference)">
             <i class="bi bi-plus-circle"></i>
           </button>
         </div>
@@ -109,16 +109,16 @@
 
     <div *ngIf="currentMode === Modes.Ingredients" class="right-container col-lg-4 col-md-4 col-sm-4 col-4">
 
-      <div class="ingredients-container">
+      <div class="ingredients-preference-container">
 
-        <div class="test">
-          <p class="ingredient-count">{{userIngredients.length}} Ingredients</p>
+        <div>
+          <p class="ingredient-preference-count">{{userIngredients.length}} Ingredients</p>
         </div>
 
 
 
-        <div class="ingredient-list">
-          <div *ngFor="let ingredient of userIngredients; index as i" class="ingredient-item">
+        <div class="ingredient-preference-list">
+          <div *ngFor="let ingredient of userIngredients; index as i" class="ingredient-preference-item">
             {{ ingredient.name }}
             <i class="bi bi-dash-circle remove-item" (click)="removeIngredient(i)"></i>
           </div>
@@ -133,23 +133,23 @@
 
   <div *ngIf="currentMode === Modes.Preferences" class="right-container col-lg-4 col-md-4 col-sm-4 col-4">
 
-    <div class="ingredients-container">
+    <div class="ingredients-preference-container">
 
-      <div class="test">
-        <p class="ingredient-count">{{userIngredients.length}} Preferences</p>
+      <div>
+        <p class="ingredient-preference-count">{{userPreferences.length}} Preferences</p>
       </div>
 
 
 
-      <div class="ingredient-list">
-        <div *ngFor="let ingredient of userIngredients; index as i" class="ingredient-item">
-          {{ ingredient.name }}
-          <i class="bi bi-dash-circle remove-item" (click)="removeIngredient(i)"></i>
+      <div class="ingredient-preference-list">
+        <div *ngFor="let preference of userPreferences; index as i" class="ingredient-preference-item">
+          {{ preference.name }}
+          <i class="bi bi-dash-circle remove-item" (click)="removePreference(i)"></i>
         </div>
       </div>
 
       <div class="container-safe-button">
-        <button type="button" class="btn btn-primary save-btn" (click)="saveIngredients()">Save</button>
+        <button type="button" class="btn btn-primary save-btn" (click)="savePreference()">Save</button>
       </div>
 
     </div>

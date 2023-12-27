@@ -183,7 +183,7 @@
 
 
 
-.ingredients-container {
+.ingredients-preference-container {
   background-color: #D9D9D9;
   margin-left: 7vw;
   margin-top: calc(10vh + 27px);
@@ -197,7 +197,7 @@
 }
 
 
-.ingredient-count{
+.ingredient-preference-count{
   opacity: 0.5;
   margin: 10px 1em 5px;
   padding-bottom: 5px;
@@ -206,7 +206,7 @@
 
 }
 
-.ingredient-list {
+.ingredient-preference-list {
   flex-grow: 1; /* Fill the remaining space */
   display: flex;
   flex-direction: column;
@@ -217,7 +217,7 @@
 
 
 
-.ingredient-item {
+.ingredient-preference-item {
   display: flex;
   justify-content: space-between;
   text-align: left;

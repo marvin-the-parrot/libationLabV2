@@ -57,7 +57,7 @@ export class IngredientService {
     /**
      * Loads all fitting ingredients for autocomplete
      */
-    public searchIngredientsUserExisting(name: string, id: number): Observable<IngredientListDto[]> {
+    public searchIngredientsUserExisting(name: string): Observable<IngredientListDto[]> {
         let params = new HttpParams();
         params = params.append("name", name);
 
@@ -72,7 +72,7 @@ export class IngredientService {
     }
 
     /**
-     * Adds an ingredient to the backend wich a user had set
+     * Adds ingredients to the backend which the user had set
      */
     saveUserIngredients(ingredients: IngredientListDto[]): Observable<IngredientListDto[]> {
         return this.httpClient.post<IngredientListDto[]>(this.ingredientBaseUri + '/user-ingredients', ingredients);

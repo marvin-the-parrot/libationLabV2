@@ -8,7 +8,9 @@ import {UserListDto} from "../../dtos/user";
 import {IngredientListDto} from "../../dtos/ingredient";
 import {Observable, of} from "rxjs";
 import {IngredientService} from "../../services/ingredient.service";
+import {PreferenceService} from "../../services/preference.service";
 import {ToastrService} from "ngx-toastr";
+import {PreferenceListDto} from "../../dtos/preference";
 export enum Modes {
   AccountSettings = 'AccountSettings',
   Ingredients = 'Ingredients',
@@ -30,6 +32,7 @@ export class UserSettingsComponent {
     private authService: AuthService,
     private userService: UserService,
     private ingredientService: IngredientService,
+    private preferenceService: PreferenceService,
     private router: Router,
     private dialogService: DialogService,
     private notification: ToastrService,
@@ -38,24 +41,39 @@ export class UserSettingsComponent {
 
   protected readonly username = JSON.parse(localStorage.getItem('user')).name;
   protected readonly email = JSON.parse(localStorage.getItem('user')).email;
-  protected readonly userId = JSON.parse(localStorage.getItem('user')).id;
+  //protected readonly userId = JSON.parse(localStorage.getItem('user')).id;
 
   ingredient: IngredientListDto = {
     id: null,
     name: ''
   };
 
+  preference: PreferenceListDto = {
+    id: null,
+    name: ''
+  };
+
   userIngredients: IngredientListDto[] = [];
+  userPreferences: PreferenceListDto[] = [];
 
   ingredientSuggestions = (input: string): Observable<UserListDto[]> => (input === '')
     ? of([])
-    : this.ingredientService.searchIngredientsUserExisting(input, this.userId);
+    : this.ingredientService.searchIngredientsUserExisting(input);
+
+  preferenceSuggestion = (input: string): Observable<UserListDto[]> => (input === '')
+    ? of([])
+    : this.preferenceService.searchPreferencesUserExisting(input);
 
   public formatIngredient(ingredient: IngredientListDto | null): string {
     return ingredient?.name ?? '';
   }
 
+  public formatPreference(preference: PreferenceListDto | null): string {
+    return preference?.name ?? '';
+  }
+
   ngOnInit(): void {
+    this.getUserIngredients();
     this.getUserIngredients();
   }
 
@@ -74,8 +92,27 @@ export class UserSettingsComponent {
     this.ingredient = null;
   }
 
+  addPreference(preference: PreferenceListDto): void {
+    if (preference == null || preference.id == null)
+      return;
+
+    for (let i = 0; i < this.userPreferences.length; i++) {
+      if (this.userPreferences[i].id === preference.id) {
+        this.notification.error(`Preference "${preference.name}" is already in your list.`);
+        return;
+      }
+
+    }
+    this.userPreferences.push(preference);
+    this.preference = null;
+  }
+
   removeIngredient(index: number) {
     this.userIngredients.splice(index, 1);
+  }
+
+  removePreference(index: number) {
+    this.userPreferences.splice(index, 1);
   }
 
   saveIngredients() {
@@ -91,6 +128,19 @@ export class UserSettingsComponent {
     });
   }
 
+  savePreference() {
+    this.preferenceService.saveUserPreferences(this.userPreferences).subscribe({
+      next: () => {
+        this.notification.success('Preferences saved successfully.');
+      },
+      error: error => {
+        this.notification.error('Could not save preferences.');
+        console.log('Could not save preferences due to:');
+        console.log(error);
+      }
+    });
+  }
+
 
 
   getUserIngredients(): void {
@@ -100,6 +150,18 @@ export class UserSettingsComponent {
       },
       error: error => {
         console.log('Could not load ingredients due to:');
+        console.log(error);
+      }
+    });
+  }
+
+  getUserPreferences(): void {
+    this.preferenceService.getUserPreferences().subscribe({
+      next: preferences => {
+        this.userIngredients = preferences;
+      },
+      error: error => {
+        console.log('Could not load preferences due to:');
         console.log(error);
       }
     });
