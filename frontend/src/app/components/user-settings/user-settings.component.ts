@@ -22,7 +22,7 @@ export enum Modes {
   styleUrls: ['./user-settings.component.scss']
 })
 export class UserSettingsComponent {
-  currentMode: Modes = Modes.Ingredients; // Initializing to AccountSettings by default
+  currentMode: Modes = Modes.Preferences; // Initializing to AccountSettings by default
   protected readonly Modes = Modes;
 
 

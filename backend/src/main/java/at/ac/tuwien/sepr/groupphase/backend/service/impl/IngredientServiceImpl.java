@@ -6,7 +6,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientSuggestionDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailIngredientMapperImpl;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailIngredientMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.IngredientMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
@@ -52,12 +52,12 @@ public class IngredientServiceImpl implements IngredientService {
     private final UserMapper userMapper;
     private final RestTemplate restTemplate;
     private final CocktailRepository cocktailRepository;
-    private final CocktailIngredientMapperImpl cocktailIngredientMapper;
+    private final CocktailIngredientMapper cocktailIngredientMapper;
 
     @Autowired
     public IngredientServiceImpl(IngredientsRepository ingredientsRepository, UserGroupRepository userGroupRepository, UserRepository userRepository,
                                  GroupRepository groupRepository, IngredientMapper ingredientMapper, UserMapper userMapper, RestTemplate restTemplate,
-                                 CocktailRepository cocktailRepository, CocktailIngredientMapperImpl cocktailIngredientMapper) {
+                                 CocktailRepository cocktailRepository, CocktailIngredientMapper cocktailIngredientMapper) {
         this.ingredientsRepository = ingredientsRepository;
         this.userGroupRepository = userGroupRepository;
         this.userRepository = userRepository;
