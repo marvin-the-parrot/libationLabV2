@@ -74,7 +74,7 @@ export class UserSettingsComponent {
 
   ngOnInit(): void {
     this.getUserIngredients();
-    this.getUserIngredients();
+    this.getUserPreferences();
   }
 
   addIngredient(ingredient: IngredientListDto): void {

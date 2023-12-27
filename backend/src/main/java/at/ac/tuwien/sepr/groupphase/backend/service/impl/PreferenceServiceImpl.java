@@ -47,7 +47,12 @@ public class PreferenceServiceImpl implements PreferenceService {
         for (Preference preference : userPreferences) {
             names.add(preference.getName());
         }
-        return preferenceMapper.preferenceToPreferenceListDto(preferenceRepository.findFirst5ByNameNotInAndNameIgnoreCaseContaining(names, searchParams));
+        if (names.isEmpty()) {
+            return preferenceMapper.preferenceToPreferenceListDto(preferenceRepository.findFirst5ByNameIgnoreCaseContaining(searchParams));
+        } else {
+            return preferenceMapper.preferenceToPreferenceListDto(preferenceRepository.findFirst5ByNameNotInAndNameIgnoreCaseContaining(names, searchParams));
+        }
+
     }
 
     @Override

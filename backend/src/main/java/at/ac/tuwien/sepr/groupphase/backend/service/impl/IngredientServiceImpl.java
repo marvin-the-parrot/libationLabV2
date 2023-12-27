@@ -128,7 +128,11 @@ public class IngredientServiceImpl implements IngredientService {
         for (Ingredient ingredient : userIngredients) {
             names.add(ingredient.getName());
         }
-        return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst5ByNameNotInAndNameIgnoreCaseContaining(names, searchParams));
+        if (names.isEmpty()) {
+            return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst5ByNameIgnoreCaseContaining(searchParams));
+        } else {
+            return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst5ByNameNotInAndNameIgnoreCaseContaining(names, searchParams));
+        }
     }
 
     @Override

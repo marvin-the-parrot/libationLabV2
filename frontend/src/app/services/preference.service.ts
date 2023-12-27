@@ -33,14 +33,14 @@ export class PreferenceService {
    * Loads all preferences of a user from the backend
    */
   getUserPreferences(): Observable<PreferenceListDto[]> {
-    return this.httpClient.get<IngredientListDto[]>(this.preferenceBaseUri + '/user-preference');
+    return this.httpClient.get<IngredientListDto[]>(this.preferenceBaseUri + '/user-preferences');
   }
 
   /**
    * Adds preferences to the backend which the user had set
    */
   saveUserPreferences(preferences: PreferenceListDto[]): Observable<PreferenceListDto[]> {
-    return this.httpClient.post<PreferenceListDto[]>(this.preferenceBaseUri + '/user-ingredients', preferences);
+    return this.httpClient.post<PreferenceListDto[]>(this.preferenceBaseUri + '/user-preferences', preferences);
   }
 
 
