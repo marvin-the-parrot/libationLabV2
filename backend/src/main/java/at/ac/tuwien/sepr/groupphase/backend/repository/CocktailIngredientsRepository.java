@@ -17,10 +17,12 @@ public interface CocktailIngredientsRepository extends JpaRepository<CocktailIng
 
     List<CocktailIngredients> findByIngredientNameContainingIgnoreCaseAndCocktailNameContainingIgnoreCase(String ingredientName, String cocktailName);
 
-    List<CocktailIngredients> findDistinctByIngredientNameContainingIgnoreCase(String ingredientName);
+    List<CocktailIngredients> findByIngredientNameContainingIgnoreCase(String ingredientName);
 
     List<CocktailIngredients> findByCocktailNameContainingIgnoreCase(String cocktailName);
 
     List<CocktailIngredients> findAllByCocktail(Cocktail cocktail);
+
+    List<CocktailIngredients> findAllByCocktailIn(List<Cocktail> cocktails);
 
 }

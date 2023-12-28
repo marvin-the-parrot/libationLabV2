@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.transaction.Transactional;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -19,15 +20,18 @@ public interface CocktailIngredientMapper {
     @Mapping(source = "cocktail.id", target = "id")
     @Mapping(source = "cocktail.name", target = "name")
     @Mapping(source = "cocktail.imagePath", target = "imagePath")
-    default List<CocktailListDto> cocktailIngredientToCocktailListDto(List<CocktailIngredients> cocktailIngredientsList) {
+    default List<CocktailListDto> cocktailIngredientToCocktailListDto(List<Cocktail> cocktails) {
         Map<String, CocktailListDto> cocktailMap = new HashMap<>();
-        for (CocktailIngredients eachCocktailIngredients : cocktailIngredientsList) {
-            String cocktailName = eachCocktailIngredients.getCocktail().getName();
-            String ingredientName = eachCocktailIngredients.getIngredient().getName();
+        for (Cocktail cocktail : cocktails) {
+            String cocktailName = cocktail.getName();
+            List<String> ingredientNames = new ArrayList<>();
+            for (CocktailIngredients cocktailIngredient : cocktail.getCocktailIngredients()) {
+                ingredientNames.add(cocktailIngredient.getIngredient().getName());
+            }
             CocktailListDto dto = cocktailMap.computeIfAbsent(cocktailName, key ->
-                new CocktailListDto(eachCocktailIngredients.getCocktail().getId(),
-                    cocktailName, eachCocktailIngredients.getCocktail().getImagePath(), new ArrayList<>(), new ArrayList<>()));
-            dto.getIngredientsName().add(ingredientName);
+                new CocktailListDto(cocktail.getId(),
+                    cocktailName, cocktail.getImagePath(), new ArrayList<>(), new ArrayList<>()));
+            dto.getIngredientsName().addAll(ingredientNames);
         }
         return new ArrayList<>(cocktailMap.values());
     }
