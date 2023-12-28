@@ -4,6 +4,7 @@ import {IngredientService} from 'src/app/services/ingredient.service';
 import {IngredientListDto} from '../../dtos/ingredient';
 import {ToastrService} from 'ngx-toastr';
 import { Router } from '@angular/router';
+import {Modes} from "../user-settings/user-settings.component";
 
 @Component({
   selector: 'app-ingredient',
@@ -58,16 +59,16 @@ export class IngredientComponent implements OnInit {
     }
 
   }
-  
+
   showImage(name: String) : void {
     this.isToShowImg = true;
-    this.imageUrl = this.firstImageUrlPart + name + "-Medium.png"; 
+    this.imageUrl = this.firstImageUrlPart + name + "-Medium.png";
     this.imageName = name;
     this.selectedIngredient = name;
   }
 
   navigateToMyIngredients(): void {
-    this.router.navigate(['/settings']);
+    this.router.navigate(['/settings'], { queryParams: { mode: Modes.Ingredients } });
   }
-  
+
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {AuthService} from "../../services/auth.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {UserService} from "../../services/user.service";
 import {DialogService} from "../../services/dialog.service";
 import {ConfirmationDialogMode} from "../../confirmation-dialog/confirmation-dialog.component";
@@ -24,7 +24,7 @@ export enum Modes {
   styleUrls: ['./user-settings.component.scss']
 })
 export class UserSettingsComponent {
-  currentMode: Modes = Modes.Preferences; // Initializing to AccountSettings by default
+  currentMode: Modes = Modes.AccountSettings; // Initializing to AccountSettings by default
   protected readonly Modes = Modes;
 
 
@@ -36,12 +36,12 @@ export class UserSettingsComponent {
     private router: Router,
     private dialogService: DialogService,
     private notification: ToastrService,
+    private route: ActivatedRoute
   ) {
   }
 
   protected readonly username = JSON.parse(localStorage.getItem('user')).name;
   protected readonly email = JSON.parse(localStorage.getItem('user')).email;
-  //protected readonly userId = JSON.parse(localStorage.getItem('user')).id;
 
   ingredient: IngredientListDto = {
     id: null,
@@ -73,6 +73,11 @@ export class UserSettingsComponent {
   }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['mode']) {
+        this.currentMode = params['mode'];
+      }
+    });
     this.getUserIngredients();
     this.getUserPreferences();
   }
