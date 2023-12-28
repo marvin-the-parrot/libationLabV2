@@ -26,14 +26,14 @@ export class PreferenceService {
     let params = new HttpParams();
     params = params.append("name", name);
 
-    return this.httpClient.get<IngredientListDto[]>(this.preferenceBaseUri + '/user-preference-auto/' + name);
+    return this.httpClient.get<PreferenceListDto[]>(this.preferenceBaseUri + '/user-preference-auto/' + name);
   }
 
   /**
    * Loads all preferences of a user from the backend
    */
   getUserPreferences(): Observable<PreferenceListDto[]> {
-    return this.httpClient.get<IngredientListDto[]>(this.preferenceBaseUri + '/user-preferences');
+    return this.httpClient.get<PreferenceListDto[]>(this.preferenceBaseUri + '/user-preferences');
   }
 
   /**

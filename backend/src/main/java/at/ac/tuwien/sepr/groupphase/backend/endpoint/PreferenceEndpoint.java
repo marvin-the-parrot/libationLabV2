@@ -47,7 +47,7 @@ public class PreferenceEndpoint {
 
     @GetMapping("/user-preferences")
     @Secured("ROLE_USER")
-    public List<PreferenceListDto> getUserIngredients() {
+    public List<PreferenceListDto> getUserPreferences() {
         LOGGER.info("GET " + BASE_PATH + "user-preferences");
         try {
             return preferenceService.getUserPreferences();

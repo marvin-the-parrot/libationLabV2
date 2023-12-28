@@ -84,6 +84,7 @@ export class UserSettingsComponent {
     for (let i = 0; i < this.userIngredients.length; i++) {
       if (this.userIngredients[i].id === ingredient.id) {
         this.notification.error(`Ingredient "${ingredient.name}" is already in your list.`);
+        this.ingredient = null;
         return;
       }
 
@@ -99,6 +100,7 @@ export class UserSettingsComponent {
     for (let i = 0; i < this.userPreferences.length; i++) {
       if (this.userPreferences[i].id === preference.id) {
         this.notification.error(`Preference "${preference.name}" is already in your list.`);
+        this.preference = null;
         return;
       }
 
@@ -158,7 +160,7 @@ export class UserSettingsComponent {
   getUserPreferences(): void {
     this.preferenceService.getUserPreferences().subscribe({
       next: preferences => {
-        this.userIngredients = preferences;
+        this.userPreferences = preferences;
       },
       error: error => {
         console.log('Could not load preferences due to:');
