@@ -28,15 +28,15 @@ export class CocktailService {
     }
     let params = new HttpParams();
     if (searchParams.cocktailName) {
-      params = params.append('name', searchParams.cocktailName);
+      params = params.append('cocktailName', searchParams.cocktailName);
     }
-    if (searchParams.ingredientName) {
-      params = params.append('ingredient', searchParams.ingredientName);
+    if (searchParams.ingredientsName) {
+      params = params.append('ingredientsName', searchParams.ingredientsName);
     }
     if (searchParams.preferenceName) {
-      params = params.append('preference', searchParams.preferenceName);
+      params = params.append('preferenceName', searchParams.preferenceName);
     }
-    return this.httpClient.get<CocktailListDto[]>(baseUri, { params });
+    return this.httpClient.get<CocktailListDto[]>(this.cocktailBaseUri, { params });
   }
 
   /*searchCocktails(cocktailName: String, ingredient: String, preference: String): Observable<CocktailListDto[]> {

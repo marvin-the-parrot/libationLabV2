@@ -40,7 +40,8 @@ public class CocktailEndpoint {
     @Secured("ROLE_USER")
     @GetMapping
     public List<CocktailListDto> searchCocktails(CocktailSerachDto searchParameters) {
-        return null;
+        LOGGER.info("GET " + BASE_PATH + "searchCocktails/{}", searchParameters);
+        return cocktailService.searchCocktails(searchParameters);
     }
 
     /*@Secured("ROLE_USER")

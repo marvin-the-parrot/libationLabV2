@@ -54,9 +54,6 @@ public class CocktailServiceImpl implements CocktailIngredientService {
     @Autowired
     private PreferenceRepository preferenceRepository;
 
-    //@Autowired
-    //private CocktailPreferenceRepository cocktailPreferenceRepository;
-
     @Autowired
     private CocktailIngredientMapper cocktailIngredientMapper;
 
@@ -76,7 +73,8 @@ public class CocktailServiceImpl implements CocktailIngredientService {
         if (searchParameters.getCocktailName() != null) {
             cocktails = cocktailRepository.findByNameContainingIgnoreCase(searchParameters.getCocktailName());
         } else if (searchParameters.getIngredientsName() != null) {
-            List<CocktailIngredients> cocktailIngredients = cocktailIngredientsRepository.findByIngredientNameContainingIgnoreCase(searchParameters.getIngredientsName());
+            //TODO duplicated cocktail entries
+            List<CocktailIngredients> cocktailIngredients = cocktailIngredientsRepository.findDistinctByIngredientNameContainingIgnoreCase(searchParameters.getIngredientsName());
             for (CocktailIngredients cocktailIngredient : cocktailIngredients) {
                 cocktails.add(cocktailIngredient.getCocktail());
             }

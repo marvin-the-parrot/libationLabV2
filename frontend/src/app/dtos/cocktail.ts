@@ -19,7 +19,7 @@ export interface CocktailOverviewDto {
 
 export interface CocktailSearch {
   cocktailName?: string;
-  ingredientName?: string;
+  ingredientsName?: string;
   preferenceName?: string;
 }
 

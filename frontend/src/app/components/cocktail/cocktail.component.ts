@@ -37,7 +37,7 @@ export class CocktailComponent {
       this.isToShowImg = false;
       this.selectedCocktail = "";
       this.searchParams.cocktailName = this.nameOfCocktail;
-      this.searchParams.ingredientName = this.nameOfIngredient;
+      this.searchParams.ingredientsName = this.nameOfIngredient;
       this.searchParams.preferenceName = this.nameOfPreference;
       this.service.searchCocktails(this.searchParams)
       .subscribe({

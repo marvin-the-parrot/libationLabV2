@@ -18,4 +18,6 @@ public interface CocktailRepository extends JpaRepository<Cocktail, Long> {
     List<Cocktail> findByNameContainingIgnoreCase(String name);
 
     List<Cocktail> findByPreferencesIn(List<Preference> preferences);
+
+    List<Cocktail> findByCocktailIngredientsIn(List<CocktailIngredients> ingredients);
 }
