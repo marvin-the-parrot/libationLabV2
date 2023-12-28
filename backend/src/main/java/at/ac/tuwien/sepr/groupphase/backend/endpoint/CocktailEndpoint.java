@@ -3,6 +3,9 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PreferenceListDto;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListDto;
-import at.ac.tuwien.sepr.groupphase.backend.service.CocktailIngredientService;
+import at.ac.tuwien.sepr.groupphase.backend.service.CocktailService;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Cocktail endpoint controller.
@@ -29,10 +33,10 @@ public class CocktailEndpoint {
     private static final Logger LOGGER =
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     static final String BASE_PATH = "/api/v1/cocktails";
-    private final CocktailIngredientService cocktailService;
+    private final CocktailService cocktailService;
 
     @Autowired
-    public CocktailEndpoint(CocktailIngredientService cocktailService) {
+    public CocktailEndpoint(CocktailService cocktailService) {
         this.cocktailService = cocktailService;
     }
 
@@ -90,6 +94,40 @@ public class CocktailEndpoint {
     public List<CocktailListDto> searchCocktailsByPreference(@PathVariable String preference) throws JsonProcessingException {
         LOGGER.info("GET " + BASE_PATH + "searchCocktails/preference/{}", preference);
         return cocktailService.searchCocktailByCocktailNameAndIngredientName(null, null, preference);
+    }
+
+    @Secured("ROLE_USER")
+    @GetMapping("cocktail-ingredients-auto/{ingredientsName}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<IngredientListDto> searchIngredientsAuto(@PathVariable String ingredientsName) {
+        LOGGER.info("GET " + BASE_PATH + "cocktail-ingredients-auto");
+        LOGGER.debug("Request Params: {}", ingredientsName);
+        try {
+            return cocktailService.searchAutoIngredients(ingredientsName);
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Failed to search ingredients", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/cocktail-preferences-auto/{preferenceName}")
+    @Secured("ROLE_USER")
+    public List<PreferenceListDto> searchPreferencesAuto(@PathVariable String preferenceName) {
+        LOGGER.info("GET " + BASE_PATH + "cocktail-preference-auto");
+        LOGGER.debug("Request Params: {}", preferenceName);
+        try {
+            return cocktailService.searchAutoPreferences(preferenceName);
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Failed to search preferences", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+    private void logClientError(HttpStatus status, String message, Exception e) {
+        LOGGER.warn("{} {}: {}: {}", status.value(), message,
+            e.getClass().getSimpleName(), e.getMessage());
     }
 
 }

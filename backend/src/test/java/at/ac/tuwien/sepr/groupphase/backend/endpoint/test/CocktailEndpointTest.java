@@ -21,14 +21,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListDto;
-import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
-import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
-import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredientsKey;
-import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailIngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
-import at.ac.tuwien.sepr.groupphase.backend.service.CocktailIngredientService;
+import at.ac.tuwien.sepr.groupphase.backend.service.CocktailService;
 
 @ActiveProfiles("generateData")
 @SpringBootTest
@@ -43,7 +39,7 @@ public class CocktailEndpointTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private CocktailIngredientService cocktailIngredientService;
+    private CocktailService cocktailIngredientService;
 
     @Autowired
     private CocktailIngredientsRepository cocktailIngredientsRepository;

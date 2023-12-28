@@ -12,7 +12,7 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
-import at.ac.tuwien.sepr.groupphase.backend.service.CocktailIngredientService;
+import at.ac.tuwien.sepr.groupphase.backend.service.CocktailService;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -53,11 +53,11 @@ public class GroupEndpoint {
     private final GroupMapper groupMapper;
     private final UserService userService;
     private final UserMapper userMapper;
-    private final CocktailIngredientService cocktailService;
+    private final CocktailService cocktailService;
 
     @Autowired
     public GroupEndpoint(GroupService groupService, GroupMapper groupMapper, UserService userService, UserMapper userMapper,
-                         CocktailIngredientService cocktailService) {
+                         CocktailService cocktailService) {
         this.groupService = groupService;
         this.groupMapper = groupMapper;
         this.userService = userService;
