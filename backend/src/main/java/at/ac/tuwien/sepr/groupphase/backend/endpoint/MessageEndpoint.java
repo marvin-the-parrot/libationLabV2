@@ -104,8 +104,7 @@ public class MessageEndpoint {
     public void create(@Valid @RequestBody MessageCreateDto message) {
         LOGGER.info("POST /api/v1/messages body: {}", message);
         if (message == null) {
-            //TODO send bad request
-            return;
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Message is null");
         }
         try {
             messageMapper.from(messageService.create(message), groupMapper.groupToGroupDetailDto(groupService.findOne((message.getGroupId()))));
