@@ -63,6 +63,7 @@
             <app-autocomplete
               name="ingredientsSelection"
               textInputClass="form-control"
+              [placeholderText]="'search for ingredients'"
               [suggestions]="ingredientSuggestions"
               [formatModel]="formatIngredient"
               valueNeedsToMatchSuggestion="true"
@@ -90,6 +91,7 @@
           <app-autocomplete
             name="preferenceSelection"
             textInputClass="form-control"
+            [placeholderText]="'search for preferences'"
             [suggestions]="preferenceSuggestion"
             [formatModel]="formatPreference"
             valueNeedsToMatchSuggestion="true"

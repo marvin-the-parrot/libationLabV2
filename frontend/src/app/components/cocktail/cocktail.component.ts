@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import {debounceTime, Subject} from 'rxjs';
+import {debounceTime, Observable, of, Subject} from 'rxjs';
 import {CocktailService} from 'src/app/services/cocktail.service';
 import {CocktailListDto, CocktailSearch} from '../../dtos/cocktail';
 import {ToastrService} from 'ngx-toastr';
 import { List } from 'lodash';
+import {IngredientListDto} from "../../dtos/ingredient";
+import {PreferenceListDto} from "../../dtos/preference";
 
 @Component({
   selector: 'app-cocktail',
@@ -27,19 +29,60 @@ export class CocktailComponent {
   searchParams: CocktailSearch = {};
 
   constructor(
-    private service: CocktailService,
+    private cocktailService: CocktailService,
     private notification: ToastrService,
   ) { }
 
+  ingredient: IngredientListDto = {
+    id: null,
+    name: ''
+  };
+
+  preference: PreferenceListDto = {
+    id: null,
+    name: ''
+  };
+
+  ingredientSuggestions = (input: string): Observable<IngredientListDto[]> => (input === '')
+    ? of([])
+    : this.cocktailService.searchIngredientsAuto(input);
+
+  preferenceSuggestion = (input: string): Observable<PreferenceListDto[]> => (input === '')
+    ? of([])
+    : this.cocktailService.searchPreferencesAuto(input);
+
+  public formatIngredient(ingredient: IngredientListDto | null): string {
+    return ingredient?.name ?? '';
+  }
+
+  public formatPreference(preference: PreferenceListDto | null): string {
+    return preference?.name ?? '';
+  }
+
+  ngOnInit(): void {
+    this.searchChanged();
+  }
+
 
   searchChanged() {
+    console.log("searchChanged")
+    if (this.ingredient != null) {
+      this.nameOfIngredient = this.ingredient.name;
+    } else {
+      this.nameOfIngredient = "";
+    }
+    if (this.preference != null) {
+      this.nameOfPreference = this.preference.name;
+    } else {
+      this.nameOfPreference = "";
+    }
     if((this.nameOfCocktail && this.nameOfCocktail.length != 0) || (this.nameOfIngredient && this.nameOfIngredient.length != 0) || (this.nameOfPreference && this.nameOfPreference.length != 0)){
       this.isToShowImg = false;
       this.selectedCocktail = "";
       this.searchParams.cocktailName = this.nameOfCocktail;
       this.searchParams.ingredientsName = this.nameOfIngredient;
       this.searchParams.preferenceName = this.nameOfPreference;
-      this.service.searchCocktails(this.searchParams)
+      this.cocktailService.searchCocktails(this.searchParams)
       .subscribe({
         next: data => {
           this.cocktails = data;
@@ -56,7 +99,25 @@ export class CocktailComponent {
         }
       });
     } else {
-      this.cocktails = [];
+      this.searchParams.cocktailName = "";
+      this.searchParams.ingredientsName = "";
+      this.searchParams.preferenceName = "";
+      this.cocktailService.searchCocktails(this.searchParams)
+        .subscribe({
+          next: data => {
+            this.cocktails = data;
+            if (data == null) {
+              this.isToShowImg = false;
+            }
+          },
+          error: error => {
+            console.error('Error fetching cocktails', error);
+            this.bannerError = 'Could not fetch cocktails: ' + error.message;
+            const errorMessage = error.status === 0
+              ? 'Is the backend up?'
+              : error.message.message;
+          }
+        })
       this.isToShowImg = false;
       this.selectedCocktail = "";
     }

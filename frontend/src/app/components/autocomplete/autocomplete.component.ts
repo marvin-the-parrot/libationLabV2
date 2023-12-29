@@ -46,6 +46,10 @@ export class AutocompleteComponent<T> implements OnInit, ControlValueAccessor {
     this.dataListId = `app-autocomplete-candidates-${autocompleteId}`;
   }
 
+  @Input()
+  placeholderText: string = 'Enter text...'; // Set a default placeholder text if none is provided
+
+
   /** If this is `true`, only inputs that match an option from the suggestion list are considered valid
    * and are assigned to the model variable `value`.
    * Setting this to  `false`, only makes sense, if the type `T` of  the model is `string`.

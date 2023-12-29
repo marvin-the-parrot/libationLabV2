@@ -229,17 +229,13 @@ public class CocktailServiceImpl implements CocktailService {
     @Transactional
     @Override
     public List<IngredientListDto> searchAutoIngredients(String searchParams) {
-
         return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst5ByNameIgnoreCaseContaining(searchParams));
-
     }
 
     @Transactional
     @Override
     public List<PreferenceListDto> searchAutoPreferences(String searchParams) {
-
         return preferenceMapper.preferenceToPreferenceListDto(preferenceRepository.findFirst5ByNameIgnoreCaseContaining(searchParams));
-
     }
 
 }

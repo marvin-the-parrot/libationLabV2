@@ -56,11 +56,11 @@ export class UserSettingsComponent {
   userIngredients: IngredientListDto[] = [];
   userPreferences: PreferenceListDto[] = [];
 
-  ingredientSuggestions = (input: string): Observable<UserListDto[]> => (input === '')
+  ingredientSuggestions = (input: string): Observable<IngredientListDto[]> => (input === '')
     ? of([])
     : this.ingredientService.searchIngredientsUserExisting(input);
 
-  preferenceSuggestion = (input: string): Observable<UserListDto[]> => (input === '')
+  preferenceSuggestion = (input: string): Observable<PreferenceListDto[]> => (input === '')
     ? of([])
     : this.preferenceService.searchPreferencesUserExisting(input);
 

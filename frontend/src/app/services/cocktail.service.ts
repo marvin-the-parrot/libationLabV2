@@ -5,6 +5,8 @@ import {CocktailListDto, CocktailSearch} from "../dtos/cocktail";
 import {Observable} from "rxjs";
 import {environment} from "../../environments/environment";
 import {MenuCocktailsDto} from '../dtos/menu';
+import {IngredientListDto} from "../dtos/ingredient";
+import {PreferenceListDto} from "../dtos/preference";
 
 const baseUri = environment.backendUrl + "/cocktails";
 
@@ -148,6 +150,26 @@ export class CocktailService {
    */
   getCocktailMenu(groupId: number): Observable<MenuCocktailsDto> {
     return this.httpClient.get<MenuCocktailsDto>(this.menuBaseUri + `/${groupId}`);
+  }
+
+  /**
+   * Loads all fitting ingredients for autocomplete
+   */
+  searchIngredientsAuto(name: string): Observable<IngredientListDto[]> {
+    let params = new HttpParams();
+    params = params.append("name", name);
+
+    return this.httpClient.get<IngredientListDto[]>(this.cocktailBaseUri + '/cocktail-ingredients-auto/' + name);
+  }
+
+  /**
+   * Loads all fitting preferences for autocomplete
+   */
+  searchPreferencesAuto(name: string): Observable<PreferenceListDto[]> {
+    let params = new HttpParams();
+    params = params.append("name", name);
+
+    return this.httpClient.get<PreferenceListDto[]>(this.cocktailBaseUri + '/cocktail-preferences-auto/' + name);
   }
 
 }

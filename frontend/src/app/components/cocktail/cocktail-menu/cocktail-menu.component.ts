@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {IngredientGroupDto} from "../../../dtos/ingredient";
+import {IngredientGroupDto, IngredientListDto} from "../../../dtos/ingredient";
 import {GroupsService} from "../../../services/groups.service";
 import {UserService} from "../../../services/user.service";
 import {IngredientService} from "../../../services/ingredient.service";
@@ -11,6 +11,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {CocktailListDto, CocktailOverviewDto, CocktailSearch} from "../../../dtos/cocktail";
 import {ErrorFormatterService} from "../../../services/error-formatter.service";
 import {MenuCocktailsDto} from 'src/app/dtos/menu';
+import {PreferenceListDto} from "../../../dtos/preference";
+import {Observable, of} from "rxjs";
 
 @Component({
   selector: 'app-cocktail-card',
@@ -46,6 +48,32 @@ export class CocktailMenuComponent {
     private errorFormatter: ErrorFormatterService,
     private cocktailService: CocktailService,
   ) {
+  }
+
+  ingredient: IngredientListDto = {
+    id: null,
+    name: ''
+  };
+
+  preference: PreferenceListDto = {
+    id: null,
+    name: ''
+  };
+
+  ingredientSuggestions = (input: string): Observable<IngredientListDto[]> => (input === '')
+    ? of([])
+    : this.cocktailService.searchIngredientsAuto(input);
+
+  preferenceSuggestion = (input: string): Observable<PreferenceListDto[]> => (input === '')
+    ? of([])
+    : this.cocktailService.searchPreferencesAuto(input);
+
+  public formatIngredient(ingredient: IngredientListDto | null): string {
+    return ingredient?.name ?? '';
+  }
+
+  public formatPreference(preference: PreferenceListDto | null): string {
+    return preference?.name ?? '';
   }
 
   ngOnInit(): void {
@@ -91,7 +119,16 @@ export class CocktailMenuComponent {
 
 
   searchChanged() {
-
+    if (this.ingredient != null) {
+      this.nameOfIngredient = this.ingredient.name;
+    } else {
+      this.nameOfIngredient = "";
+    }
+    if (this.preference != null) {
+      this.nameOfPreference = this.preference.name;
+    } else {
+      this.nameOfPreference = "";
+    }
     if ((this.nameOfCocktail && this.nameOfCocktail.length != 0) || (this.nameOfIngredient && this.nameOfIngredient.length != 0) || (this.nameOfPreference && this.nameOfPreference.length != 0)) {
       this.searchParams.cocktailName = this.nameOfCocktail;
       this.searchParams.ingredientsName = this.nameOfIngredient;
@@ -110,7 +147,22 @@ export class CocktailMenuComponent {
           }
         });
     } else {
-      this.cocktails_list = [];
+      this.searchParams.cocktailName = "";
+      this.searchParams.ingredientsName = "";
+      this.searchParams.preferenceName = "";
+      this.cocktailService.searchCocktails(this.searchParams)
+        .subscribe({
+          next: data => {
+            this.cocktails_list = data;
+          },
+          error: error => {
+            console.error('Error fetching cocktails', error);
+            this.bannerError = 'Could not fetch cocktails: ' + error.message;
+            const errorMessage = error.status === 0
+              ? 'Is the backend up?'
+              : error.message.message;
+          }
+        });
     }
 
   }
