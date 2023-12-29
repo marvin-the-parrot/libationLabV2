@@ -16,15 +16,12 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailIngredientMapper;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailPreferenceMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
 import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailIngredientsRepository;
-//import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailPreferenceRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailRepository;
-import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.CocktailIngredientService;
@@ -58,19 +55,17 @@ public class CocktailServiceImpl implements CocktailIngredientService {
     private CocktailIngredientMapper cocktailIngredientMapper;
 
     @Autowired
-    private CocktailPreferenceMapper cocktailPreferenceMapper;
-
-    @Autowired
     private IngredientService ingredientService;
 
     @Override
+    @Transactional
     public List<CocktailListDto> searchCocktails(CocktailSerachDto searchParameters) {
         if (searchParameters == null) {
-            return cocktailPreferenceMapper.cocktailToCocktailListDto(cocktailRepository.findAll());
+            return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailRepository.findAll());
         }
 
         List<Cocktail> resultCocktails = new ArrayList<>();
-        List<Cocktail> cocktails = new ArrayList<>();
+        List<Cocktail> cocktails;
         if (searchParameters.getCocktailName() != null) {
             cocktails = cocktailRepository.findByNameContainingIgnoreCase(searchParameters.getCocktailName());
         } else {

@@ -128,6 +128,7 @@ public class ApplicationUser {
     public void setPreferences(Set<Preference> preferences) {
         this.preferences = preferences;
     }
+
     public Boolean getAdmin() {
         return admin;
     }

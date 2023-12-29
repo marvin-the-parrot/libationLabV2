@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PreferenceListDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.service.PreferenceService;
@@ -28,11 +27,11 @@ public class PreferenceEndpoint {
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     static final String BASE_PATH = "/api/v1/preferences";
     private final PreferenceService preferenceService;
+
     @Autowired
     public PreferenceEndpoint(PreferenceService preferenceService) {
         this.preferenceService = preferenceService;
     }
-
 
     @GetMapping("/user-preference-auto/{preferenceName}")
     @Secured("ROLE_USER")
