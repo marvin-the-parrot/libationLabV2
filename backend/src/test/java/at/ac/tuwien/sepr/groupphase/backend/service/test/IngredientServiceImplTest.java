@@ -28,7 +28,7 @@ public class IngredientServiceImplTest {
 
     @Test
     public void findByNameContainingIgnoreCase_searchingForIngredientVery_findingTwoResult() throws JsonProcessingException {
-        int expected = 7;
+        int expected = 4;
         int result = ingredientServiceImpl.searchIngredients("Lemon").size();
 
         assertEquals(expected, result);
@@ -74,7 +74,7 @@ public class IngredientServiceImplTest {
     @Test
     public void getAllGroupIngredients_withValidGroupId_expectedSuccess() {
         var ingredients = assertDoesNotThrow(() -> ingredientServiceImpl.getAllGroupIngredients(1L));
-        assertEquals(86, ingredients.size());
+        assertEquals(65, ingredients.size());
 
     }
 

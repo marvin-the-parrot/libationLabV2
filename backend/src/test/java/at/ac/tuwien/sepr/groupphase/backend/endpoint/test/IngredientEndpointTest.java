@@ -79,14 +79,9 @@ public class IngredientEndpointTest {
     public void getIngredientSuggestions_getSuggestionsForGroup1_expectedSuccess() throws Exception {
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/ingredients/suggestions/{groupId}", 1)).andExpect(status().isOk()).andReturn();
         var contentResult = mvcResult.getResponse().getContentAsString();
-        assertTrue(contentResult.contains("Lime"));
-        assertTrue(contentResult.contains("Sweet Vermouth"));
-        assertTrue(contentResult.contains("Triple sec"));
-        assertTrue(contentResult.contains("Tequila"));
-        assertTrue(contentResult.contains("Creme de Cassis"));
-        assertTrue(contentResult.contains("Green Chartreuse"));
+        assertTrue(contentResult.contains("Lemon Juice"));
+        assertTrue(contentResult.contains("Triple Sec"));
         assertTrue(contentResult.contains("Orange"));
-        assertTrue(contentResult.contains("Grenadine"));
     }
 
     @Test
@@ -133,7 +128,7 @@ public class IngredientEndpointTest {
         });
 
         assertAll(
-            () -> assertEquals(41, result.size())
+            () -> assertEquals(20, result.size())
         );
     }
 
@@ -154,12 +149,12 @@ public class IngredientEndpointTest {
     public void addUserIngredients_addingIngredientsPositive_expectedSize() throws Exception {
         IngredientListDto[] ingredients = new IngredientListDto[2];
         IngredientListDto darkRum = new IngredientListDto();
-        darkRum.setId(1L);
+        darkRum.setId(42L);
         darkRum.setName("Dark Rum");
         ingredients[0] = darkRum;
         IngredientListDto spicedRum = new IngredientListDto();
-        spicedRum.setId(2L);
-        spicedRum.setName("Spiced rum");
+        spicedRum.setId(15L);
+        spicedRum.setName("Spiced Rum");
         ingredients[1] = spicedRum;
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/ingredients/user-ingredients")
@@ -173,8 +168,8 @@ public class IngredientEndpointTest {
 
         assertAll(
             () -> assertEquals(2, result.size()),
-            () -> assertEquals("Dark Rum", result.get(0).getName()),
-            () -> assertEquals("Spiced rum", result.get(1).getName())
+            () -> assertEquals("Spiced Rum", result.get(0).getName()),
+            () -> assertEquals("Dark Rum", result.get(1).getName())
         );
     }
 
