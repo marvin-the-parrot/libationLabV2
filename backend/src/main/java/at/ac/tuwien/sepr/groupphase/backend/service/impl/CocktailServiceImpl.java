@@ -4,11 +4,19 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.*;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailSerachDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PreferenceListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.IngredientMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.PreferenceMapper;
-import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepr.groupphase.backend.repository.*;
+import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.PreferenceRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailIngredientsRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +27,6 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailIngredientMa
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
 import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
-import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailPreference;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.service.CocktailService;
 import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
@@ -35,11 +42,8 @@ public class CocktailServiceImpl implements CocktailService {
     private final CocktailIngredientsRepository cocktailIngredientsRepository;
     private final CocktailRepository cocktailRepository;
     private final UserRepository userRepository;
-    private final GroupRepository groupRepository;
     private final IngredientsRepository ingredientsRepository;
-    private final CocktailPreferenceRepository cocktailPreferenceRepository;
     private final CocktailIngredientMapper cocktailIngredientMapper;
-    private final CocktailPreferenceMapper cocktailPreferenceMapper;
     private final IngredientService ingredientService;
     private final IngredientMapper ingredientMapper;
     private final PreferenceRepository preferenceRepository;
@@ -47,28 +51,21 @@ public class CocktailServiceImpl implements CocktailService {
 
     @Autowired
     public CocktailServiceImpl(CocktailIngredientsRepository cocktailIngredientsRepository,
-                               CocktailRepository cocktailRepository, UserRepository userRepository,
-                               GroupRepository groupRepository, IngredientsRepository ingredientsRepository,
-                               CocktailPreferenceRepository cocktailPreferenceRepository,
-                               CocktailIngredientMapper cocktailIngredientMapper, CocktailPreferenceMapper cocktailPreferenceMapper,
+                               CocktailRepository cocktailRepository, UserRepository userRepository, IngredientsRepository ingredientsRepository,
+                               CocktailIngredientMapper cocktailIngredientMapper,
                                IngredientService ingredientService, IngredientMapper ingredientMapper,
                                PreferenceRepository preferenceRepository, PreferenceMapper preferenceMapper) {
 
         this.cocktailIngredientsRepository = cocktailIngredientsRepository;
         this.cocktailRepository = cocktailRepository;
         this.userRepository = userRepository;
-        this.groupRepository = groupRepository;
         this.ingredientsRepository = ingredientsRepository;
-        this.cocktailPreferenceRepository = cocktailPreferenceRepository;
         this.cocktailIngredientMapper = cocktailIngredientMapper;
-        this.cocktailPreferenceMapper = cocktailPreferenceMapper;
         this.ingredientService = ingredientService;
         this.ingredientMapper = ingredientMapper;
         this.preferenceRepository = preferenceRepository;
         this.preferenceMapper = preferenceMapper;
     }
-
-
 
     @Override
     @Transactional

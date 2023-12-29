@@ -4,6 +4,7 @@ import java.util.List;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailSerachDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PreferenceListDto;
 
@@ -15,12 +16,10 @@ public interface CocktailService {
     /**
      * Searching for cocktail by cocktails name and ingredients name.
      *
-     * @param cocktailsName   name of cocktail
-     * @param ingredientsName name of ingredients
-     * @param preferenceName  name of preference
+     * @param searchParameters the search parameters
      * @return cocktails
      */
-    List<CocktailListDto> searchCocktailByCocktailNameAndIngredientName(String cocktailsName, String ingredientsName, String preferenceName);
+    List<CocktailListDto> searchCocktails(CocktailSerachDto searchParameters);
 
     /**
      * Searching for cocktails that can be mixed with the given ingredients.
