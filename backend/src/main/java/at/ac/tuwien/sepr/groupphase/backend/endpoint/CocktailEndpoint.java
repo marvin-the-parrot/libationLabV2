@@ -103,7 +103,7 @@ public class CocktailEndpoint {
     }*/
 
     @Secured("ROLE_USER")
-    @GetMapping("cocktail-ingredients-auto/{ingredientsName}")
+    @GetMapping("/cocktail-ingredients-auto/{ingredientsName}")
     @ResponseStatus(HttpStatus.OK)
     public List<IngredientListDto> searchIngredientsAuto(@PathVariable String ingredientsName) {
         LOGGER.info("GET " + BASE_PATH + "cocktail-ingredients-auto");
@@ -119,6 +119,7 @@ public class CocktailEndpoint {
 
     @GetMapping("/cocktail-preferences-auto/{preferenceName}")
     @Secured("ROLE_USER")
+    @ResponseStatus(HttpStatus.OK)
     public List<PreferenceListDto> searchPreferencesAuto(@PathVariable String preferenceName) {
         LOGGER.info("GET " + BASE_PATH + "cocktail-preference-auto");
         LOGGER.debug("Request Params: {}", preferenceName);
@@ -130,6 +131,7 @@ public class CocktailEndpoint {
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
+
 
     private void logClientError(HttpStatus status, String message, Exception e) {
         LOGGER.warn("{} {}: {}: {}", status.value(), message,

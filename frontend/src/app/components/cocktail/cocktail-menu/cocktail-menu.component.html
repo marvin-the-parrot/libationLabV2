@@ -9,11 +9,11 @@
         </div>
 
         <div class="m-2 d-flex justify-content-sm-between p-3">
-          
+
           <!-- Search fields for cocktails -->
-    
+
         <div class="flex-container">
-    
+
           <div class="search-container">
                <label class="label-search-name">
                    Name
@@ -34,52 +34,50 @@
                   >
           </div>
           </div>
-          
-      
+
+
          <div class="search-container">
               <label class="label-search-ing-pref">
                 Ingredients
               </label>
                   <!-- Search field for cocktails by ingredients -->
             <div class="wrapper-ing-pref col-md-6 col-lg-6">
-              <input matInput
-                     type="text"
-                     id="searchName"
-                     name="searchName"
-                     placeholder="Search for Ingredient"
-                     class="form-control"
-                     [(ngModel)]="nameOfIngredient"
-                     (ngModelChange)="searchChanged()"
-                     #groupNameModel="ngModel"
-                     required
-                     autofocus
+              <app-autocomplete
+                name="ingredientsSelection"
+                textInputClass="form-control"
+                [placeholderText] = "'Search for Ingredients'"
+                [suggestions]="ingredientSuggestions"
+                [formatModel]="formatIngredient"
+                valueNeedsToMatchSuggestion="true"
+                [(ngModel)]="ingredient"
+                (ngModelChange)="searchChanged()"
               >
+              </app-autocomplete>
             </div>
          </div>
-      
-      
+
+
          <div class="search-container">
           <label class="label-search-ing-pref">
             Preferences
           </label>
               <!-- Search field for cocktails by preferences -->
         <div class="wrapper-ing-pref col-md-6 col-lg-6">
-          <input matInput
-                 type="text"
-                 id="searchName"
-                 name="searchName"
-                 placeholder="Search for Preference"
-                 class="form-control"
-                 [(ngModel)]="nameOfPreference"
-                 (ngModelChange)="searchChanged()"
-                 #groupNameModel="ngModel"
-                 required
-                 autofocus
+          <app-autocomplete
+            name="preferencesSelection"
+            textInputClass="form-control"
+            [placeholderText] = "'Search for Preferences'"
+            [suggestions]="preferenceSuggestion"
+            [formatModel]="formatPreference"
+            valueNeedsToMatchSuggestion="true"
+            [(ngModel)]="preference"
+            (ngModelChange)="searchChanged()"
           >
+          </app-autocomplete>
         </div>
       </div>
 
-      
+
           <div class="search-container d-flex justify-content-right">
             <div class="wrapper-btn d-flex flex-column align-items-end">
             <label class="btn-info mb-2">
@@ -93,9 +91,9 @@
             </div>
            </div>
           </div>
-        
-          
-      </div> 
+
+
+      </div>
 
     </div>
 

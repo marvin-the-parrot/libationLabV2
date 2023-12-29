@@ -13,6 +13,7 @@
             class="autocomplete"
             name="memberSelection"
             textInputClass="form-control"
+            [placeholderText]="'Search for users'"
             [suggestions]="memberSuggestions"
             [formatModel]="formatMember"
             valueNeedsToMatchSuggestion="true"
@@ -53,7 +54,7 @@
         <p>There is currently no cocktail card created.</p>
       </ng-template>
     </div>
-    
+
 
     <div *ngIf="menu.cocktailsList.length !== 0">
 
