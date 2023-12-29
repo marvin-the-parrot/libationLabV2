@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {debounceTime, Subject} from 'rxjs';
 import {CocktailService} from 'src/app/services/cocktail.service';
-import {CocktailListDto} from '../../dtos/cocktail';
+import {CocktailListDto, CocktailSearch} from '../../dtos/cocktail';
 import {ToastrService} from 'ngx-toastr';
 import { List } from 'lodash';
 
@@ -24,18 +24,22 @@ export class CocktailComponent {
   isToShowImg: boolean = false;
   imageName: String = "";
   selectedCocktail: String = ""
+  searchParams: CocktailSearch = {};
 
   constructor(
     private service: CocktailService,
     private notification: ToastrService,
   ) { }
 
-  
+
   searchChanged() {
     if((this.nameOfCocktail && this.nameOfCocktail.length != 0) || (this.nameOfIngredient && this.nameOfIngredient.length != 0) || (this.nameOfPreference && this.nameOfPreference.length != 0)){
       this.isToShowImg = false;
-      this.selectedCocktail = ""; 
-      this.service.searchCocktails(this.nameOfCocktail, this.nameOfIngredient, this.nameOfPreference)
+      this.selectedCocktail = "";
+      this.searchParams.cocktailName = this.nameOfCocktail;
+      this.searchParams.ingredientsName = this.nameOfIngredient;
+      this.searchParams.preferenceName = this.nameOfPreference;
+      this.service.searchCocktails(this.searchParams)
       .subscribe({
         next: data => {
           this.cocktails = data;
@@ -58,7 +62,7 @@ export class CocktailComponent {
     }
 
   }
-  
+
   showImage(name: String) : void {
     this.isToShowImg = true;
     this.imageUrl = this.getCocktailImageByName(name).imagePath;

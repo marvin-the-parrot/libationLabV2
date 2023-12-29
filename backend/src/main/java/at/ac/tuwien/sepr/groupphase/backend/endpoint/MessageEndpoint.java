@@ -104,6 +104,7 @@ public class MessageEndpoint {
     public void create(@Valid @RequestBody MessageCreateDto message) {
         LOGGER.info("POST /api/v1/messages body: {}", message);
         if (message == null) {
+            //TODO send bad request
             return;
         }
         try {

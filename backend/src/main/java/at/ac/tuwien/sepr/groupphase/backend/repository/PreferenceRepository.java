@@ -22,4 +22,6 @@ public interface PreferenceRepository extends JpaRepository<Preference, Long> {
 
 
     List<Preference> findFirst5ByNameNotInAndNameIgnoreCaseContaining(List<String> names, String preferenceName);
+
+    List<Preference> findByNameContainingIgnoreCase(String name);
 }

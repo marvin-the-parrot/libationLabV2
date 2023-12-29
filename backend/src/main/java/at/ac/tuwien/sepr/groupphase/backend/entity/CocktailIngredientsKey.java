@@ -3,11 +3,13 @@ package at.ac.tuwien.sepr.groupphase.backend.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
+import java.io.Serializable;
+
 /**
  * Embedded Id of entity CocktailIngredients.
  */
 @Embeddable
-public class CocktailIngredientsKey {
+public class CocktailIngredientsKey implements Serializable {
 
     @Column(name = "cocktail_id")
     public Long cocktail;

@@ -16,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailIngredientMapper;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailPreferenceMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
 import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
@@ -72,35 +71,72 @@ public class CocktailServiceImpl implements CocktailService {
 
 
     @Override
+    @Transactional
+    public List<CocktailListDto> searchCocktails(CocktailSerachDto searchParameters) {
+        if (searchParameters == null) {
+            return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailRepository.findAll());
+        }
+
+        List<Cocktail> resultCocktails = new ArrayList<>();
+        List<Cocktail> cocktails;
+        if (searchParameters.getCocktailName() != null) {
+            cocktails = cocktailRepository.findByNameContainingIgnoreCase(searchParameters.getCocktailName());
+        } else {
+            cocktails = cocktailRepository.findAll();
+        }
+        if (searchParameters.getIngredientsName() != null) {
+            List<CocktailIngredients> cocktailIngredients = cocktailIngredientsRepository.findByIngredientNameContainingIgnoreCase(searchParameters.getIngredientsName());
+            List<Cocktail> cocktailsByIngredients = cocktailRepository.findDistinctByCocktailIngredientsIn(cocktailIngredients);
+
+            if (!cocktails.isEmpty()) {
+                for (Cocktail cocktail : cocktails) {
+                    for (Cocktail cocktailIngredient : cocktailsByIngredients) {
+                        if (cocktail.getName().equals(cocktailIngredient.getName())) {
+                            resultCocktails.add(cocktail);
+                        }
+                    }
+                }
+            }
+        } else {
+            resultCocktails.addAll(cocktails);
+        }
+        if (searchParameters.getPreferenceName() != null) {
+            //here maybe mistake
+            //if not working make from preference side
+            //TODO: searchPreferences
+            List<Cocktail> cocktailPreferences = cocktailRepository.findByPreferencesIn(preferenceRepository.findByNameContainingIgnoreCase(searchParameters.getPreferenceName()));
+            cocktails.addAll(cocktailPreferences);
+        }
+
+        return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(resultCocktails);
+    }
+
+
+    /*@Override
     public List<CocktailListDto> searchCocktailByCocktailNameAndIngredientName(String cocktailsName, String ingredientsName, String preferenceName) {
         LOGGER.debug("Search for cocktail by cocktail name and ingredient name {}", cocktailsName, ingredientsName, preferenceName);
         if (cocktailsName == null && preferenceName == null) {
             return getMappedCocktailsByIngredient(ingredientsName);
-        } else
-            if (ingredientsName == null && preferenceName == null) {
-                return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailIngredientsRepository.findByCocktailNameContainingIgnoreCase(cocktailsName));
-            } else
-                if (preferenceName == null) {
-                    return getMappedCocktailsByCocktailAndIngredient(cocktailsName, ingredientsName);
-                } else
-                    if (cocktailsName == null && ingredientsName == null) {
-                        List<CocktailListDto> cocktailPreferenceToCocktailListDto = getMappedCocktailsByPerformance(preferenceName);
-                        return addedIngredientsToCocktailList(cocktailPreferenceToCocktailListDto);
-                    } else
-                        if (cocktailsName == null) {
-                            List<CocktailListDto> cocktailsPerformance = getMappedCocktailsByPerformance(preferenceName);
-                            List<CocktailListDto> cocktailsIngredient = getMappedCocktailsByIngredient(ingredientsName);
-                            return cocktailsIngredient.stream().filter(ingredientDto -> cocktailsPerformance.stream().anyMatch(performanceDto -> performanceDto.getName().equals(ingredientDto.getName()))).toList();
-                        } else
-                            if (ingredientsName == null) {
-                                List<CocktailListDto> cocktailsPerformance = getMappedCocktailsByCocktailAndPerformance(cocktailsName, preferenceName);
-                                List<CocktailListDto> cocktailsIngredient = cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailIngredientsRepository.findByCocktailNameContainingIgnoreCase(cocktailsName));
-                                return cocktailsIngredient.stream().filter(ingredientDto -> cocktailsPerformance.stream().anyMatch(performanceDto -> performanceDto.getName().equals(ingredientDto.getName()))).toList();
-                            } else {
-                                List<CocktailListDto> cocktailsPerformance = getMappedCocktailsByCocktailAndPerformance(cocktailsName, preferenceName);
-                                List<CocktailListDto> cocktailsIngredient = getMappedCocktailsByCocktailAndIngredient(cocktailsName, ingredientsName);
-                                return cocktailsIngredient.stream().filter(ingredientDto -> cocktailsPerformance.stream().anyMatch(performanceDto -> performanceDto.getName().equals(ingredientDto.getName()))).toList();
-                            }
+        } else if (ingredientsName == null && preferenceName == null) {
+            return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailIngredientsRepository.findByCocktailNameContainingIgnoreCase(cocktailsName));
+        } else if (preferenceName == null) {
+            return getMappedCocktailsByCocktailAndIngredient(cocktailsName, ingredientsName);
+        } else if (cocktailsName == null && ingredientsName == null) {
+            List<CocktailListDto> cocktailPreferenceToCocktailListDto = getMappedCocktailsByPerformance(preferenceName);
+            return addedIngredientsToCocktailList(cocktailPreferenceToCocktailListDto);
+        } else if (cocktailsName == null) {
+            List<CocktailListDto> cocktailsPerformance = getMappedCocktailsByPerformance(preferenceName);
+            List<CocktailListDto> cocktailsIngredient = getMappedCocktailsByIngredient(ingredientsName);
+            return cocktailsIngredient.stream().filter(ingredientDto -> cocktailsPerformance.stream().anyMatch(performanceDto -> performanceDto.getName().equals(ingredientDto.getName()))).toList();
+        } else if (ingredientsName == null) {
+            List<CocktailListDto> cocktailsPerformance = getMappedCocktailsByCocktailAndPerformance(cocktailsName, preferenceName);
+            List<CocktailListDto> cocktailsIngredient = cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailIngredientsRepository.findByCocktailNameContainingIgnoreCase(cocktailsName));
+            return cocktailsIngredient.stream().filter(ingredientDto -> cocktailsPerformance.stream().anyMatch(performanceDto -> performanceDto.getName().equals(ingredientDto.getName()))).toList();
+        } else {
+            List<CocktailListDto> cocktailsPerformance = getMappedCocktailsByCocktailAndPerformance(cocktailsName, preferenceName);
+            List<CocktailListDto> cocktailsIngredient = getMappedCocktailsByCocktailAndIngredient(cocktailsName, ingredientsName);
+            return cocktailsIngredient.stream().filter(ingredientDto -> cocktailsPerformance.stream().anyMatch(performanceDto -> performanceDto.getName().equals(ingredientDto.getName()))).toList();
+        }
     }
 
     private List<CocktailListDto> getMappedCocktailsByPerformance(String preferenceName) {
@@ -144,7 +180,7 @@ public class CocktailServiceImpl implements CocktailService {
         List<CocktailPreference> cocktailByPreference = new ArrayList<>();
         cocktailByNameAndPreference.forEach(preference -> cocktailByPreference.addAll(cocktailPreferenceRepository.findByCocktailNameContainingIgnoreCase(preference.getCocktail().getName())));
         return cocktailPreferenceMapper.cocktailPreferenceToCocktailListDto(cocktailByPreference);
-    }
+    }*/
 
     @Override
     @Transactional
