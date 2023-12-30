@@ -14,17 +14,14 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.IngredientMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.PreferenceMapper;
 import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.PreferenceRepository;
-import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailIngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailIngredientMapper;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
 import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
@@ -41,7 +38,6 @@ public class CocktailServiceImpl implements CocktailService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final CocktailIngredientsRepository cocktailIngredientsRepository;
     private final CocktailRepository cocktailRepository;
-    private final UserRepository userRepository;
     private final IngredientsRepository ingredientsRepository;
     private final CocktailIngredientMapper cocktailIngredientMapper;
     private final IngredientService ingredientService;
@@ -51,14 +47,13 @@ public class CocktailServiceImpl implements CocktailService {
 
     @Autowired
     public CocktailServiceImpl(CocktailIngredientsRepository cocktailIngredientsRepository,
-                               CocktailRepository cocktailRepository, UserRepository userRepository, IngredientsRepository ingredientsRepository,
+                               CocktailRepository cocktailRepository, IngredientsRepository ingredientsRepository,
                                CocktailIngredientMapper cocktailIngredientMapper,
                                IngredientService ingredientService, IngredientMapper ingredientMapper,
                                PreferenceRepository preferenceRepository, PreferenceMapper preferenceMapper) {
 
         this.cocktailIngredientsRepository = cocktailIngredientsRepository;
         this.cocktailRepository = cocktailRepository;
-        this.userRepository = userRepository;
         this.ingredientsRepository = ingredientsRepository;
         this.cocktailIngredientMapper = cocktailIngredientMapper;
         this.ingredientService = ingredientService;
@@ -70,7 +65,7 @@ public class CocktailServiceImpl implements CocktailService {
     @Override
     @Transactional
     public List<CocktailListDto> searchCocktails(CocktailSerachDto searchParameters) {
-        if (searchParameters == null) {
+        if (searchParameters.getCocktailName() == null && searchParameters.getIngredientsName() == null && searchParameters.getPreferenceName() == null) {
             return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailRepository.findAll());
         }
 
@@ -187,7 +182,7 @@ public class CocktailServiceImpl implements CocktailService {
         // get all ingredients
 
         // get all ingredients from user
-        ApplicationUser host = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        //ApplicationUser host = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         // Todo: implement get all ingredients from group members
 
         List<IngredientGroupDto> availableIngredients = ingredientService.getAllGroupIngredients(groupId);
