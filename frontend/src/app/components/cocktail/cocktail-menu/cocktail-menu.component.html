@@ -102,6 +102,11 @@
           <div class="card h-100" (click)="clickOnCocktailImage(cocktail.name)">
             <div class="container-fluid card-header" [class.selected]="isSelected(cocktail.name)">
               {{ cocktail.name }}
+
+
+              <i class="bi bi-info-circle info" [attr.data-tooltip]="getIngredientsString(cocktail.ingredientsName)"></i>
+
+
             </div>
             <div class="card-body">
               <img src="{{ cocktail.imagePath }}" class="img-fluid" alt="Responsive image">

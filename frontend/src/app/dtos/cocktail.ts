@@ -1,5 +1,5 @@
 import {IngredientDto, IngredientListDto} from "./ingredient";
-import { List } from "lodash";
+import { List } from 'immutable'; // Import List from Immutable.js
 
 export interface CocktailListDto {
   id: number;

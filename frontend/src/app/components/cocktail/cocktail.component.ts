@@ -3,7 +3,7 @@ import {debounceTime, Observable, of, Subject} from 'rxjs';
 import {CocktailService} from 'src/app/services/cocktail.service';
 import {CocktailListDto, CocktailSearch} from '../../dtos/cocktail';
 import {ToastrService} from 'ngx-toastr';
-import { List } from 'lodash';
+import { List } from 'immutable'; // Import List from Immutable.js
 import {IngredientListDto} from "../../dtos/ingredient";
 import {PreferenceListDto} from "../../dtos/preference";
 

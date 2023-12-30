@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {IngredientGroupDto, IngredientListDto} from "../../../dtos/ingredient";
+import {IngredientDto, IngredientGroupDto, IngredientListDto} from "../../../dtos/ingredient";
 import {GroupsService} from "../../../services/groups.service";
 import {UserService} from "../../../services/user.service";
 import {IngredientService} from "../../../services/ingredient.service";
@@ -13,6 +13,7 @@ import {ErrorFormatterService} from "../../../services/error-formatter.service";
 import {MenuCocktailsDto} from 'src/app/dtos/menu';
 import {PreferenceListDto} from "../../../dtos/preference";
 import {Observable, of} from "rxjs";
+import { List } from 'immutable'; // Import List from Immutable.js
 
 @Component({
   selector: 'app-cocktail-card',
@@ -221,6 +222,16 @@ export class CocktailMenuComponent {
       }
     });
   }
+
+  getIngredientsString(ingredients: List<string>): string {
+    if (!ingredients || ingredients.size === 0) {
+      return 'No ingredients listed';
+    }
+
+    const ingredientNames = ingredients.join(', ');
+    return `Ingredients: ${ingredientNames}`;
+  }
+
 
 }
 

@@ -11,14 +11,13 @@
 
 .selected {
   background-color: #6200EE;
-  color: white; 
+  color: white;
 }
 
 
 .card{
   box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
-  margin: 0.25rem;
-  margin-bottom: 1rem;
+  margin: 0.25rem 0.25rem 1rem;
   padding: 0;
 }
 
@@ -29,27 +28,27 @@
 .cards-container {
   width: 99%;
   height: auto;
-  max-height: 55vh; 
-  overflow-y: auto; 
+  max-height: 55vh;
+  overflow-y: auto;
 }
 
 .cards-container::-webkit-scrollbar {
-  width: 4px; 
+  width: 4px;
 }
 
 .cards-container::-webkit-scrollbar-thumb {
-  background-color: grey; 
-  border-radius: 3px; 
+  background-color: grey;
+  border-radius: 3px;
 }
 
 .cards-container::-webkit-scrollbar-track {
-  background-color: #eee; 
+  background-color: #eee;
 }
 
 .menu-card{
+  position: relative;
   box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
-  margin: 0.25rem;
-  margin-bottom: 1rem;
+  margin: 0.25rem 0.25rem 1rem;
   padding: 0;
   background-color: white;
   border-radius: 0.25rem;
@@ -86,7 +85,7 @@
   width: auto;
   height: auto;
   min-height: 36px;
-  margin-top: 0vh;
+  margin-top: 0;
   margin-left: 6vw;
 }
 .btn.rounded-button:active {
@@ -129,7 +128,7 @@
 .wrapper-ing-pref {
   position: relative;
   width: 12vw;
-  margin-top: 0vh;
+  margin-top: 0;
   margin-left: -1vw;
 }
 
@@ -168,16 +167,16 @@
 }
 
 .cocktails-list::-webkit-scrollbar {
-  width: 4px; 
+  width: 4px;
 }
 
 .cocktails-list::-webkit-scrollbar-thumb {
-  background-color: grey; 
-  border-radius: 3px; 
+  background-color: grey;
+  border-radius: 3px;
 }
 
 .cocktails-list::-webkit-scrollbar-track {
-  background-color: #eee; 
+  background-color: #eee;
 }
 
 .cocktails-item {
@@ -214,6 +213,45 @@
 }
 
 .save-btn:active {
-  background-color: #6200EE; 
+  background-color: #6200EE;
+}
+
+.info {
+  margin-right: 5px;
+  font-size: 20px;
+  cursor: pointer;
+  position:relative;
+}
+
+.info::after {
+  content: attr(data-tooltip);
+  background-color: #AC6AFE;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+
+  /* Positioning */
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  pointer-events: none;
+  z-index: 999;
+  width: 200px;
+  max-width: 300px;
+  white-space: normal;
+
+  text-overflow: ellipsis;
+
+
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  border: 1px solid #D9D9D9;
+}
+
+.info:hover::after {
+  opacity: 1;
 }
 
