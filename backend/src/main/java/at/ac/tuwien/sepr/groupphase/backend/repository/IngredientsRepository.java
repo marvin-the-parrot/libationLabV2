@@ -26,6 +26,7 @@ public interface IngredientsRepository extends JpaRepository<Ingredient, Long> {
     List<Ingredient> findFirst5ByNameNotInAndNameIgnoreCaseContainingOrderByName(List<String> names, String ingredientName);
 
     List<Ingredient> findFirst5ByNameIgnoreCaseContaining(String ingredientName);
+
     List<Ingredient> findFirst5ByNameIgnoreCaseContainingOrderByName(String ingredientName);
 
     Ingredient findByName(String name);

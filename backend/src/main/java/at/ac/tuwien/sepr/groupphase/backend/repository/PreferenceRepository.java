@@ -19,6 +19,7 @@ import java.util.Set;
 public interface PreferenceRepository extends JpaRepository<Preference, Long> {
 
     List<Preference> findAllByApplicationUser(ApplicationUser applicationUser);
+
     List<Preference> findAllByApplicationUserInOrderByName(List<ApplicationUser> applicationUser);
 
     List<Preference> findFirst5ByNameIgnoreCaseContainingOrderByName(String preferenceName);
