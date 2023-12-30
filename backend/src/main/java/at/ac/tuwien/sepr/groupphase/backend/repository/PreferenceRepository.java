@@ -19,14 +19,15 @@ import java.util.Set;
 public interface PreferenceRepository extends JpaRepository<Preference, Long> {
 
     List<Preference> findAllByApplicationUser(ApplicationUser applicationUser);
+    List<Preference> findAllByApplicationUserInOrderByName(List<ApplicationUser> applicationUser);
 
-    List<Preference> findFirst5ByNameIgnoreCaseContaining(String preferenceName);
+    List<Preference> findFirst5ByNameIgnoreCaseContainingOrderByName(String preferenceName);
 
     Preference findByName(String name);
 
     Set<Preference> findAllByName(String name);
 
-    List<Preference> findFirst5ByNameNotInAndNameIgnoreCaseContaining(List<String> names, String preferenceName);
+    List<Preference> findFirst5ByNameNotInAndNameIgnoreCaseContainingOrderByName(List<String> names, String preferenceName);
 
     List<Preference> findByNameContainingIgnoreCase(String name);
 }

@@ -129,20 +129,22 @@ public class IngredientServiceImpl implements IngredientService {
             names.add(ingredient.getName());
         }
         if (names.isEmpty()) {
-            return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst5ByNameIgnoreCaseContaining(searchParams));
+            return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst5ByNameIgnoreCaseContainingOrderByName(searchParams));
         } else {
-            return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst5ByNameNotInAndNameIgnoreCaseContaining(names, searchParams));
+            return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst5ByNameNotInAndNameIgnoreCaseContainingOrderByName(names, searchParams));
         }
     }
 
     @Override
     public List<IngredientListDto> getUserIngredients() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        ApplicationUser user = userRepository.findByEmail(email);
-        if (user == null) {
+        List<ApplicationUser> user = new ArrayList<>();
+        ApplicationUser userToAdd = userRepository.findByEmail(email);
+        if (userToAdd == null) {
             throw new NotFoundException("User not found");
         }
-        List<Ingredient> userIngredients = ingredientsRepository.findAllByApplicationUser(user);
+        user.add(userToAdd);
+        List<Ingredient> userIngredients = ingredientsRepository.findAllByApplicationUserInOrderByName(user);
         return ingredientMapper.ingredientToIngredientListDto(userIngredients);
     }
 

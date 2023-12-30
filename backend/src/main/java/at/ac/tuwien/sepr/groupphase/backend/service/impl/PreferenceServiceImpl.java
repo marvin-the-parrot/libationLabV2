@@ -52,9 +52,9 @@ public class PreferenceServiceImpl implements PreferenceService {
             names.add(preference.getName());
         }
         if (names.isEmpty()) {
-            return preferenceMapper.preferenceToPreferenceListDto(preferenceRepository.findFirst5ByNameIgnoreCaseContaining(searchParams));
+            return preferenceMapper.preferenceToPreferenceListDto(preferenceRepository.findFirst5ByNameIgnoreCaseContainingOrderByName(searchParams));
         } else {
-            return preferenceMapper.preferenceToPreferenceListDto(preferenceRepository.findFirst5ByNameNotInAndNameIgnoreCaseContaining(names, searchParams));
+            return preferenceMapper.preferenceToPreferenceListDto(preferenceRepository.findFirst5ByNameNotInAndNameIgnoreCaseContainingOrderByName(names, searchParams));
         }
 
     }
@@ -62,11 +62,14 @@ public class PreferenceServiceImpl implements PreferenceService {
     @Override
     public List<PreferenceListDto> getUserPreferences() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        ApplicationUser user = userRepository.findByEmail(email);
-        if (user == null) {
+        List<ApplicationUser> user = new ArrayList<>();
+        ApplicationUser userToAdd = userRepository.findByEmail(email);
+        if (userToAdd == null) {
             throw new NotFoundException("User not found");
         }
-        List<Preference> userPreferences = preferenceRepository.findAllByApplicationUser(user);
+        user.add(userToAdd);
+
+        List<Preference> userPreferences = preferenceRepository.findAllByApplicationUserInOrderByName(user);
         return preferenceMapper.preferenceToPreferenceListDto(userPreferences);
     }
 

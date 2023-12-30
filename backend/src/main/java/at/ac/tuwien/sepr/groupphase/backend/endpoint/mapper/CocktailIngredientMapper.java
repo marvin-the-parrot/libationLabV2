@@ -1,9 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import jakarta.transaction.Transactional;
 import org.mapstruct.Mapper;
@@ -33,7 +30,12 @@ public interface CocktailIngredientMapper {
                     cocktailName, cocktail.getImagePath(), new ArrayList<>(), new ArrayList<>()));
             dto.getIngredientsName().addAll(ingredientNames);
         }
-        return new ArrayList<>(cocktailMap.values());
+        List<CocktailListDto> result = new ArrayList<>(cocktailMap.values());
+
+        // Sorting the result list by name
+        result.sort(Comparator.comparing(CocktailListDto::getName));
+
+        return result;
     }
 
     CocktailOverviewDto cocktailToCocktailOverviewDto(Cocktail cocktail);
