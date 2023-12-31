@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Repository of ApplicationUser entity.
@@ -46,7 +47,14 @@ public interface UserRepository extends JpaRepository<ApplicationUser, Long> {
      */
     List<ApplicationUser> findFirst5ByEmailNotAndNameIgnoreCaseContaining(String email, String username);
 
-    ApplicationUser findByIngredientsAndUserGroups(Ingredient ingredients, UserGroup userGroups);
+    /**
+     * Find users by ingredients and userGroups.
+     *
+     * @param ingredients Set of ingredients
+     * @param userGroups Set of userGroups
+     * @return List of ApplicationUser found by ingredients and userGroups
+     */
+    List<ApplicationUser> findByIngredientsInAndUserGroupsIn(Set<Ingredient> ingredients, Set<UserGroup> userGroups);
 
     ApplicationUser findApplicationUsersByUserGroups(UserGroup userGroups);
 

@@ -97,20 +97,18 @@ public class IngredientServiceImpl implements IngredientService {
         List<IngredientGroupDto> ingredientGroupDtos = new ArrayList<>();
         List<Ingredient> ingredients = ingredientsRepository.findAllByApplicationUserInOrderByName(applicationUser);
 
-        //List<Ingredient> ingredientsToAdd = new ArrayList<>();
-        //List<UserGroup> userGroupsToAdd = new ArrayList<>();
         for (Ingredient ingredient : ingredients) {
-            List<ApplicationUser> ingredientUsers = new ArrayList<>();
+            Set<Ingredient> ingredientsToAdd = new HashSet<>();
+            Set<UserGroup> userGroupsToAdd = new HashSet<>();
             for (UserGroup userGroup : userGroups) {
                 for (ApplicationUser user : ingredient.getApplicationUser()) {
                     if (user.equals(userGroup.getUser())) {
-                        //ingredientsToAdd.add(ingredient);
-                        //userGroupsToAdd.add(userGroup);
-                        ingredientUsers.add(userRepository.findByIngredientsAndUserGroups(ingredient, userGroup));
+                        ingredientsToAdd.add(ingredient);
+                        userGroupsToAdd.add(userGroup);
                     }
                 }
             }
-            //ingredientUsers.add(userRepository.findByIngredientsAndUserGroups(ingredientsToAdd, userGroupsToAdd));
+            List<ApplicationUser> ingredientUsers = new ArrayList<>(userRepository.findByIngredientsInAndUserGroupsIn(ingredientsToAdd, userGroupsToAdd));
             List<UserListDto> users = userMapper.userToUserListDto(ingredientUsers);
             UserListDto[] usersArray = new UserListDto[users.size()];
             users.toArray(usersArray);
