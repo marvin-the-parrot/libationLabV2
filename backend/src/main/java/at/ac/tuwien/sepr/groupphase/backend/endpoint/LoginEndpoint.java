@@ -23,7 +23,6 @@ import java.lang.invoke.MethodHandles;
 public class LoginEndpoint {
 
     private final UserService userService;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public LoginEndpoint(UserService userService) {

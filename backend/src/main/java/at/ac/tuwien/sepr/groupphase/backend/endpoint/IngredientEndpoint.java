@@ -5,6 +5,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientSuggestionDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
 import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ public class  IngredientEndpoint {
     private static final Logger LOGGER =
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     static final String BASE_PATH = "/api/v1/ingredients";
+    private static final String ROLE_USER = SecurityRolesEnum.Roles.ROLE_USER;
     private final IngredientService ingredientService;
 
     @Autowired
@@ -41,7 +43,7 @@ public class  IngredientEndpoint {
         this.ingredientService = ingredientService;
     }
 
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @GetMapping("searchIngredients/{ingredientsName}")
     @ResponseStatus(HttpStatus.OK)
     public List<IngredientListDto> searchIngredients(@PathVariable String ingredientsName) throws JsonProcessingException {
@@ -49,7 +51,7 @@ public class  IngredientEndpoint {
         return ingredientService.searchIngredients(ingredientsName);
     }
 
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @GetMapping("/{groupId}")
     public List<IngredientGroupDto> getAllGroupIngredients(@PathVariable Long groupId) {
         LOGGER.info("GET " + BASE_PATH + "getAllGroupIngredients/{}", groupId);
@@ -62,7 +64,7 @@ public class  IngredientEndpoint {
         }
     }
 
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @GetMapping("/suggestions/{groupId}")
     public List<IngredientSuggestionDto> getIngredientSuggestions(@PathVariable Long groupId) throws ConflictException {
         LOGGER.info("GET " + BASE_PATH + "getIngredientSuggestions/{}", groupId);
@@ -77,7 +79,7 @@ public class  IngredientEndpoint {
 
 
     @GetMapping("/user-ingredients-auto/{ingredientsName}")
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     public List<IngredientListDto> searchAutocomplete(@PathVariable String ingredientsName) {
         LOGGER.info("GET " + BASE_PATH + "user-ingredients-auto");
         LOGGER.debug("Request Params: {}", ingredientsName);
@@ -91,7 +93,7 @@ public class  IngredientEndpoint {
     }
 
     @GetMapping("/user-ingredients")
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     public List<IngredientListDto> getUserIngredients() {
         LOGGER.info("GET " + BASE_PATH + "user-ingredients");
         try {
@@ -104,7 +106,7 @@ public class  IngredientEndpoint {
     }
 
     @PostMapping("/user-ingredients")
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     public List<IngredientListDto> addUserIngredients(@RequestBody IngredientListDto[] ingredients) {
         LOGGER.info("POST " + BASE_PATH + "user-ingredients");
         try {

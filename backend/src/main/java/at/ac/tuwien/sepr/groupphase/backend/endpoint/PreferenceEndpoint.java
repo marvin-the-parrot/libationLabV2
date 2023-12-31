@@ -3,6 +3,7 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PreferenceListDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
 import at.ac.tuwien.sepr.groupphase.backend.service.PreferenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,7 @@ public class PreferenceEndpoint {
     private static final Logger LOGGER =
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     static final String BASE_PATH = "/api/v1/preferences";
+    private static final String ROLE_USER = SecurityRolesEnum.Roles.ROLE_USER;
     private final PreferenceService preferenceService;
 
     @Autowired
@@ -37,7 +39,7 @@ public class PreferenceEndpoint {
     }
 
     @GetMapping("/user-preference-auto/{preferenceName}")
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     public List<PreferenceListDto> searchAutocomplete(@PathVariable String preferenceName) {
         LOGGER.info("GET " + BASE_PATH + "user-preference-auto");
         LOGGER.debug("Request Params: {}", preferenceName);
@@ -51,7 +53,7 @@ public class PreferenceEndpoint {
     }
 
     @GetMapping("/user-preferences")
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     public List<PreferenceListDto> getUserPreferences() {
         LOGGER.info("GET " + BASE_PATH + "user-preferences");
         try {
@@ -64,7 +66,7 @@ public class PreferenceEndpoint {
     }
 
     @PostMapping("/user-preferences")
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     public List<PreferenceListDto> addUserPreferences(@RequestBody PreferenceListDto[] preferences) {
         LOGGER.info("POST " + BASE_PATH + "user-preferences");
         try {

@@ -2,6 +2,7 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
 import java.lang.invoke.MethodHandles;
 
+import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,8 @@ public class MenuEndpoint {
 
     static final String BASE_PATH = "/api/v1/menu";
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private MenuServiceImpl menuServiceImpl;
+    private static final String ROLE_USER = SecurityRolesEnum.Roles.ROLE_USER;
+    private final MenuServiceImpl menuServiceImpl;
 
     @Autowired
     public MenuEndpoint(MenuServiceImpl menuServiceImpl) {
@@ -47,7 +49,7 @@ public class MenuEndpoint {
      * @throws ValidationException if the data is not valid
      * @throws ConflictException   if the data conflicts with existing data
      */
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @PostMapping()
     @Operation(security = @SecurityRequirement(name = "apiKey"))
     @ResponseStatus(HttpStatus.CREATED)
@@ -57,7 +59,7 @@ public class MenuEndpoint {
         return menuServiceImpl.create(toCreate);
     }
 
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @GetMapping(value = "/{id}")
     @Transactional
     @Operation(summary = "Get cocktails menu of specific group", security = @SecurityRequirement(name = "apiKey"))

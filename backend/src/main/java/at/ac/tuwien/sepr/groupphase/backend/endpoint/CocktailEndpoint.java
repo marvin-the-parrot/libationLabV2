@@ -7,6 +7,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailSerachDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PreferenceListDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ public class CocktailEndpoint {
     private static final Logger LOGGER =
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     static final String BASE_PATH = "/api/v1/cocktails";
+    private static final String ROLE_USER = SecurityRolesEnum.Roles.ROLE_USER;
     private final CocktailService cocktailService;
 
     @Autowired
@@ -39,7 +41,7 @@ public class CocktailEndpoint {
         this.cocktailService = cocktailService;
     }
 
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @GetMapping
     public List<CocktailListDto> searchCocktails(CocktailSerachDto searchParameters) {
         LOGGER.info("GET " + BASE_PATH + "searchCocktails/{}", searchParameters);
@@ -102,7 +104,7 @@ public class CocktailEndpoint {
         return cocktailService.searchCocktailByCocktailNameAndIngredientName(null, null, preference);
     }*/
 
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @GetMapping("/cocktail-ingredients-auto/{ingredientsName}")
     @ResponseStatus(HttpStatus.OK)
     public List<IngredientListDto> searchIngredientsAuto(@PathVariable String ingredientsName) {
@@ -118,7 +120,7 @@ public class CocktailEndpoint {
     }
 
     @GetMapping("/cocktail-preferences-auto/{preferenceName}")
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @ResponseStatus(HttpStatus.OK)
     public List<PreferenceListDto> searchPreferencesAuto(@PathVariable String preferenceName) {
         LOGGER.info("GET " + BASE_PATH + "cocktail-preference-auto");

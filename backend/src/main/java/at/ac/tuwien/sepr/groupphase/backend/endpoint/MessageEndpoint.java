@@ -9,6 +9,7 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.MessageService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserGroupService;
@@ -45,6 +46,7 @@ public class MessageEndpoint {
     static final String BASE_PATH = "/api/v1/messages";
     private static final Logger LOGGER =
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final String ROLE_USER = SecurityRolesEnum.Roles.ROLE_USER;
     private final MessageService messageService;
     private final GroupService groupService;
     private final UserGroupService userGroupService;
@@ -65,7 +67,7 @@ public class MessageEndpoint {
      *
      * @return number of unread messages
      */
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @GetMapping("/count")
     @Operation(summary = "Get number of unread messages")
     public MessageCountDto getUnreadMessageCount() {
@@ -78,7 +80,7 @@ public class MessageEndpoint {
      *
      * @return published messages
      */
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @GetMapping
     @Operation(summary = "Get list of messages without details")
     public List<MessageDetailDto> findAll() {
@@ -128,7 +130,7 @@ public class MessageEndpoint {
      *
      * @param message - messageCreateDto
      */
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/accept")
     @Operation(summary = "Accept a group invation")
@@ -157,7 +159,7 @@ public class MessageEndpoint {
      * @throws ValidationException if the data is not valid
      * @throws ConflictException   if the data conflicts with existing data
      */
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @PutMapping("{id}")
     @Operation(summary = "Update Message")
     public MessageDetailDto update(@PathVariable long id, @RequestBody MessageDetailDto toUpdate)

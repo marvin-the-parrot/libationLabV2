@@ -8,6 +8,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLocalStorageDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchExistingGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
@@ -36,8 +37,8 @@ import java.util.List;
 public class UserEndpoint {
 
     static final String BASE_PATH = "/api/v1/users";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final String ROLE_USER = SecurityRolesEnum.Roles.ROLE_USER;
     private final UserService userService;
 
     @Autowired
@@ -45,7 +46,7 @@ public class UserEndpoint {
         this.userService = userService;
     }
 
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @GetMapping
     public List<UserListDto> search(@Valid UserSearchExistingGroupDto searchParams) {
         LOGGER.info("GET " + BASE_PATH);
@@ -128,7 +129,7 @@ public class UserEndpoint {
     }
 
     @DeleteMapping("/delete")
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @ResponseStatus(HttpStatus.OK)
     public void deleteUser() {
         LOGGER.info("DELETE /api/v1/user/delete");
