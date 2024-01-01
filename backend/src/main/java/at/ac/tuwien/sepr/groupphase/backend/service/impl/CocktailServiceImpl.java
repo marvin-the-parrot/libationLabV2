@@ -3,6 +3,7 @@ package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailSerachDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
@@ -93,11 +94,11 @@ public class CocktailServiceImpl implements CocktailService {
             resultCocktails.addAll(cocktails);
         }
         if (searchParameters.getPreferenceName() != null) {
-            //here maybe mistake
-            //if not working make from preference side
-            //TODO: searchPreferences
             List<Cocktail> cocktailPreferences = cocktailRepository.findByPreferencesIn(preferenceRepository.findByNameContainingIgnoreCase(searchParameters.getPreferenceName()));
-            cocktails.addAll(cocktailPreferences);
+
+            resultCocktails = resultCocktails.stream()
+                .filter(cocktailPreferences::contains)
+                .collect(Collectors.toList());
         }
 
         return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(resultCocktails);
