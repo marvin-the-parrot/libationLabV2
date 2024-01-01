@@ -1,11 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Globals} from '../global/globals';
-import {HttpClient, HttpParams} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {IngredientGroupDto, IngredientListDto, IngredientSuggestionDto} from "../dtos/ingredient";
 import {Observable, switchMap} from "rxjs";
-import {environment} from "../../environments/environment";
-
-const baseUri = environment.backendUrl + "/ingredients";
 
 @Injectable({
     providedIn: 'root'
@@ -24,9 +21,6 @@ export class IngredientService {
      * Loads all ingredients of a group from the backend
      */
     getAllGroupIngredients(groupId: number): Observable<IngredientGroupDto[]> {
-        let params = new HttpParams();
-        params = params.append("groupId", groupId);
-
         return this.httpClient.get<IngredientGroupDto[]>(this.ingredientBaseUri + `/${groupId}`);
     }
 
@@ -58,9 +52,6 @@ export class IngredientService {
      * Loads all fitting ingredients for autocomplete
      */
     public searchIngredientsUserExisting(name: string): Observable<IngredientListDto[]> {
-        let params = new HttpParams();
-        params = params.append("name", name);
-
         return this.httpClient.get<IngredientListDto[]>(this.ingredientBaseUri + '/user-ingredients-auto/' + name);
     }
 
@@ -85,7 +76,11 @@ export class IngredientService {
      * @returns return matched ingredients
      */
     search(name: String): Observable<IngredientListDto[]> {
-        return this.httpClient.get<IngredientListDto[]>(`${this.ingredientBaseUri}/searchIngredients/` + name);
+        if (name == "") {
+          return this.httpClient.get<IngredientListDto[]>(`${this.ingredientBaseUri}/searchIngredients/` + "null");
+        } else {
+          return this.httpClient.get<IngredientListDto[]>(`${this.ingredientBaseUri}/searchIngredients/` + name);
+        }
     }
 
 }

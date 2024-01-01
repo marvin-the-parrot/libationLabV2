@@ -1,5 +1,5 @@
 import {Component, OnInit } from '@angular/core';
-import {debounceTime, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {IngredientService} from 'src/app/services/ingredient.service';
 import {IngredientListDto} from '../../dtos/ingredient';
 import {ToastrService} from 'ngx-toastr';
@@ -14,7 +14,7 @@ import {Modes} from "../user-settings/user-settings.component";
 export class IngredientComponent implements OnInit {
   ingredients: IngredientListDto[] = [];
   searchChangedObservable = new Subject<void>();
-  nameOfIngredient: String;
+  nameOfIngredient: String = "";
   bannerError: string | null = null;
   firstImageUrlPart:string = "https://www.thecocktaildb.com/images/ingredients/";
   imageUrl: string = "";
@@ -29,6 +29,7 @@ export class IngredientComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.searchChanged();
   }
 
   searchChanged() {
@@ -56,6 +57,25 @@ export class IngredientComponent implements OnInit {
       this.ingredients = []
       this.isToShowImg = false;
       this.selectedIngredient = null;
+      this.nameOfIngredient = "";
+
+      this.service.search(this.nameOfIngredient)
+        .subscribe({
+          next: data => {
+            this.ingredients = data;
+            if (data == null) {
+              this.isToShowImg = false;
+            }
+          },
+          error: error => {
+            console.error('Error fetching ingredients', error);
+            this.bannerError = 'Could not fetch ingredients: ' + error.message;
+            const errorMessage = error.status === 0
+              ? 'Is the backend up?'
+              : error.message.message;
+            this.notification.error(errorMessage, 'Could Not Fetch Ingredients');
+          }
+        })
     }
 
   }

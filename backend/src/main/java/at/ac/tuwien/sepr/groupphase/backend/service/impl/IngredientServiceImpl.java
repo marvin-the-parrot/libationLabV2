@@ -71,7 +71,10 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public List<IngredientListDto> searchIngredients(String ingredientsName) throws JsonProcessingException {
-        List<Ingredient> searchIngredientsFromDb = ingredientsRepository.findByNameContainingIgnoreCase(ingredientsName);
+        if (ingredientsName.equals("null")) {
+            return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findAllByOrderByName());
+        }
+        List<Ingredient> searchIngredientsFromDb = ingredientsRepository.findByNameContainingIgnoreCaseOrderByName(ingredientsName);
         if (!searchIngredientsFromDb.isEmpty()) {
             return ingredientMapper.ingredientToIngredientListDto(searchIngredientsFromDb);
         }

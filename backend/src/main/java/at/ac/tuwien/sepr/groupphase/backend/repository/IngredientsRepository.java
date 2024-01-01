@@ -17,7 +17,9 @@ import jakarta.transaction.Transactional;
 @Transactional
 public interface IngredientsRepository extends JpaRepository<Ingredient, Long> {
 
-    List<Ingredient> findByNameContainingIgnoreCase(String name);
+    List<Ingredient> findByNameContainingIgnoreCaseOrderByName(String name);
+
+    List<Ingredient> findAllByOrderByName();
 
     List<Ingredient> findAllByApplicationUserInOrderByName(List<ApplicationUser> applicationUser);
 
