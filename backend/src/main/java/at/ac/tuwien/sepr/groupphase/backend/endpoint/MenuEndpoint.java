@@ -67,4 +67,14 @@ public class MenuEndpoint {
         LOGGER.info("GET " + BASE_PATH + "/{}", id);
         return menuServiceImpl.findMenuOfGroup(id);
     }
+
+    @Secured(ROLE_USER)
+    @GetMapping(value = "/{id}/recommendation")
+    @Transactional
+    public MenuCocktailsDto getAutomatedMenu(@PathVariable Long id) {
+        LOGGER.info("GET " + BASE_PATH + "recommendation/{}", id);
+        return menuServiceImpl.createRecommendation(id, 1L, 8);
+    }
+
+
 }

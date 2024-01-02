@@ -20,4 +20,13 @@ public interface MenuService {
      * @return the created or updated menu
      */
     MenuCocktailsDto create(MenuCocktailsDto toCreate) throws ConflictException;
+
+    /**
+     * Creates a new recommendation for the given group.
+     *
+     * @param groupId of the group for which the recommendation should be created
+     * @param seed    the seed for the random generator to generate different recommendations
+     * @return the created recommendation
+     */
+    MenuCocktailsDto createRecommendation(Long groupId, Long seed, Integer numberOfCocktails);
 }
