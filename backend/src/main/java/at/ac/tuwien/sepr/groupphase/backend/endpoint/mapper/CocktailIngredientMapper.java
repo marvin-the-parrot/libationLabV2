@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.transaction.Transactional;
+import at.ac.tuwien.sepr.groupphase.backend.entity.Preference;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -25,14 +25,19 @@ public interface CocktailIngredientMapper {
         Map<String, CocktailListDto> cocktailMap = new HashMap<>();
         for (Cocktail cocktail : cocktails) {
             String cocktailName = cocktail.getName();
-            List<String> ingredientNames = new ArrayList<>();
+            HashMap<String, String> ingredients = new HashMap<>();
+            List<String> preferenceName = new ArrayList<>();
+            for (Preference preference : cocktail.getPreferences()) {
+                preferenceName.add(preference.getName());
+            }
             for (CocktailIngredients cocktailIngredient : cocktail.getCocktailIngredients()) {
-                ingredientNames.add(cocktailIngredient.getIngredient().getName());
+                ingredients.put(cocktailIngredient.getIngredient().getName(), cocktailIngredient.getQuantity());
             }
             CocktailListDto dto = cocktailMap.computeIfAbsent(cocktailName, key ->
                 new CocktailListDto(cocktail.getId(),
-                    cocktailName, cocktail.getImagePath(), new ArrayList<>(), new ArrayList<>()));
-            dto.getIngredientsName().addAll(ingredientNames);
+                    cocktailName, cocktail.getImagePath(), new HashMap<>(), new ArrayList<>()));
+            dto.setIngredients(ingredients);
+            dto.setPreferenceName(preferenceName);
         }
         List<CocktailListDto> result = new ArrayList<>(cocktailMap.values());
 

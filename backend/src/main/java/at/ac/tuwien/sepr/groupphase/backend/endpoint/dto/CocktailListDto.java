@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class CocktailListDto {
@@ -7,17 +8,14 @@ public class CocktailListDto {
     private Long id;
     private String name;
     private String imagePath;
-    private List<String> ingredientsName;
+    private HashMap<String, String> ingredients;
     private List<String> preferenceName;
 
-    public CocktailListDto() {
-    }
-
-    public CocktailListDto(Long id, String name, String imagePath, List<String> ingredientsName, List<String> preferenceName) {
+    public CocktailListDto(Long id, String name, String imagePath, HashMap<String, String> ingredients, List<String> preferenceName) {
         this.id = id;
         this.name = name;
         this.imagePath = imagePath;
-        this.ingredientsName = ingredientsName;
+        this.ingredients = ingredients;
         this.preferenceName = preferenceName;
     }
 
@@ -45,12 +43,12 @@ public class CocktailListDto {
         this.imagePath = imagePath;
     }
 
-    public List<String> getIngredientsName() {
-        return ingredientsName;
+    public HashMap<String, String> getIngredients() {
+        return ingredients;
     }
 
-    public void setIngredientsName(List<String> ingredientsName) {
-        this.ingredientsName = ingredientsName;
+    public void setIngredients(HashMap<String, String> ingredients) {
+        this.ingredients = ingredients;
     }
 
     public List<String> getPreferenceName() {

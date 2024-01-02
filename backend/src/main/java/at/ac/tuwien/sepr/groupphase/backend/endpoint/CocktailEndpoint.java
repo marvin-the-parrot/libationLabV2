@@ -134,7 +134,6 @@ public class CocktailEndpoint {
         }
     }
 
-
     private void logClientError(HttpStatus status, String message, Exception e) {
         LOGGER.warn("{} {}: {}: {}", status.value(), message,
             e.getClass().getSimpleName(), e.getMessage());

@@ -163,6 +163,7 @@ public class CocktailDataGenerator {
                     cocktailIngredients.setCocktailIngredientsKey(new CocktailIngredientsKey(cocktail.getId(), ingredient.getId()));
                     cocktailIngredients.setCocktail(cocktail);
                     cocktailIngredients.setIngredient(ingredient);
+                    cocktailIngredients.setQuantity(ingredients.get(ingredientName));
                     cocktailIngredeintsRepository.save(cocktailIngredients);
                 }
 

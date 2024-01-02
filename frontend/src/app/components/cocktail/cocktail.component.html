@@ -101,7 +101,7 @@
     <div class="info-ing-container" *ngIf="isToShowImg">
       <p class="info-ing">Ingredients:</p>
       <ul class="info-ings">
-        <li *ngFor="let ingredient of cocktailIngredients">{{ ingredient }}</li>
+        <li *ngFor="let ingredient of cocktailIngredients|keyvalue">{{ ingredient.key }} - {{ ingredient.value }}</li>
       </ul>
     </div>
   </div>

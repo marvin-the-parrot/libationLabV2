@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {debounceTime, Observable, of, Subject} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 import {CocktailService} from 'src/app/services/cocktail.service';
 import {CocktailListDto, CocktailSearch} from '../../dtos/cocktail';
 import {ToastrService} from 'ngx-toastr';
@@ -15,7 +15,7 @@ import {PreferenceListDto} from "../../dtos/preference";
 export class CocktailComponent {
 
   cocktails: CocktailListDto[] = [];
-  cocktailIngredients: List<String>;
+  cocktailIngredients: Map<string, string>;
   userPreferences: List<String>;
   searchChangedObservable = new Subject<void>();
   nameOfCocktail: string;
@@ -29,8 +29,7 @@ export class CocktailComponent {
   searchParams: CocktailSearch = {};
 
   constructor(
-    private cocktailService: CocktailService,
-    private notification: ToastrService,
+    private cocktailService: CocktailService
   ) { }
 
   ingredient: IngredientListDto = {
@@ -127,8 +126,9 @@ export class CocktailComponent {
   showImage(name: String) : void {
     this.isToShowImg = true;
     this.imageUrl = this.getCocktailImageByName(name).imagePath;
-    this.cocktailIngredients = this.getCocktailImageByName(name).ingredientsName;
-    console.log(this.imageUrl)
+    this.cocktailIngredients = this.getCocktailImageByName(name).ingredients;
+    console.log(this.cocktailIngredients);
+    console.log(this.imageUrl);
     this.imageName = name;
     this.selectedCocktail = name;
   }
