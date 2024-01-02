@@ -17,6 +17,10 @@ export class DialogService {
 
   constructor(private dialog: MatDialog) {}
 
+  /**
+   * Opens a dialog that lets the user confirm an action
+   * @param mode an enum that determines the type of confirmation dialog that should be opened
+   */
   openConfirmationDialog(mode: ConfirmationDialogMode): Observable<boolean> {
     const dialogRef = this.dialog.open<ConfirmationDialogComponent, any, boolean>(
       ConfirmationDialogComponent,
@@ -28,14 +32,26 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  openOptionDialog(): Observable<Boolean> {
+  /**
+   * Opens a dialog that lets the host choose between the options "Make Host" and "Remove from Group" for a given user
+   *
+   * @param position the position of the dialog
+   * @return true if the user should be removed from the group, false if the user should be made host, undefined if the dialog was closed
+   */
+  openOptionDialog(position: { top: string; left: string; }): Observable<Boolean> {
     const dialogRef = this.dialog.open<OptionDialogComponent, any, boolean>(
-      OptionDialogComponent
+      OptionDialogComponent, {
+        position: position
+      }
     );
 
     return dialogRef.afterClosed();
   }
 
+  /**
+   * Opens a dialog that shows the user ingredients with which the group would be able to mix more cocktails, and lets the user add one of them to the group
+   * @param groupId the id of the group for which the best ingredient should be searched
+   */
   openAddIngredientDialog(groupId: number): Observable<boolean> {
     const dialogRef = this.dialog.open<AddIngredientDialogComponent, any, boolean>(
       AddIngredientDialogComponent,

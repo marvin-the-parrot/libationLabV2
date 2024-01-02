@@ -98,11 +98,13 @@ export class GroupDetailComponent {
     return userIngredientString.slice(0, -2);
   }
 
-  public openMemberOptions(member: UserListDto): void {
-    this.dialogService.openOptionDialog().subscribe((deleteOption) => {
+  public openMemberOptions(member: UserListDto, event: MouseEvent): void {
+    let position = {top: event.clientY + 'px', left: event.clientX + 'px'}; // open dialog at mouse position
+    this.dialogService.openOptionDialog(position).subscribe((deleteOption) => {
+      // if true -> remove member, if false -> make member host, if undefined -> do nothing (dialog was closed)
       if (deleteOption) {
         this.removeMemberFromGroup(member);
-      } else {
+      } else if (deleteOption === false) {
         this.makeMemberHost(member);
       }
     });

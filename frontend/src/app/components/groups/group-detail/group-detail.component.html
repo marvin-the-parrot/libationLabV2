@@ -35,7 +35,7 @@
           <div class="list-name">{{ member.name }} <span *ngIf="member.name===username"> (You)</span></div>
         <div *ngIf="group?.host?.name === member?.name" class="list-action">👑</div>
         <div *ngIf="member?.name !== username && group?.host?.name === username" class="list-action">
-          <button class="btn btn-light" (click)="openMemberOptions(member)">...</button>
+          <button class="btn btn-light" (click)="openMemberOptions(member, $event)"><i class="bi bi-three-dots"></i></button>
         </div>
       </div>
 
