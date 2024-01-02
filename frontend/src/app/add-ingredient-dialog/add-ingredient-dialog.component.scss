@@ -3,16 +3,20 @@
   max-height: 100%;
 }
 
+.grid-container {
+  height: 100%;
+}
+
 // header:
 .grid-container > div:first-child {
   background-color: #AC6AFE;
   width: 100%;
+  height: 10%;
   padding: 1.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
   color: white;
-  border-radius: 15px 15px 0 0;
 }
 
 .grid-container {
@@ -20,12 +24,13 @@
 }
 
 
-  // a grid layout to display the content of the ingredient dialog
+// a grid layout to display the content of the ingredient dialog
 .content-grid {
   display: grid;
   grid-template-columns: 1fr 2fr;
   grid-gap: 5%;
   padding: 0;
+  height: 90%;
 }
 
 // grid column to display list of ingredients in
@@ -36,7 +41,7 @@
 
 // list of ingredients:
 .table-container {
-  max-height: 500px; /* Set a fixed height for the container */
+  max-height: 50vh; /* Set a fixed height for the container */
   min-height: 200px;
   background-color: white;
   overflow-y: auto; /* Enable vertical scrolling when content exceeds height */
@@ -59,16 +64,18 @@
   margin-bottom: 20px;
   margin-top: 20px;
   width: 90%;
-
-
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .cocktail-container-grid {
-  max-height: 500px;
+  max-height: 59vh;
   overflow-y: auto; /* Enable vertical scrolling when content exceeds height */
   display: grid;
   justify-content: space-between;
-  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(175px, 0.5fr));
   gap: 2px;
 }
 
