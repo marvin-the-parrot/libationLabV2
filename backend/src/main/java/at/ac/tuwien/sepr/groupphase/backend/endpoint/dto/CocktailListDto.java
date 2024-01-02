@@ -19,6 +19,9 @@ public class CocktailListDto {
         this.preferenceName = preferenceName;
     }
 
+    public CocktailListDto() {
+    }
+
     public Long getId() {
         return id;
     }
