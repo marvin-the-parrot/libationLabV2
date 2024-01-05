@@ -7,13 +7,13 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NavigableMap;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuRecommendationDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Preference;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
@@ -22,7 +22,6 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.PreferenceRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.CocktailService;
-import io.swagger.v3.oas.models.links.Link;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,11 +102,8 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public MenuCocktailsDto createRecommendation(Long groupId, Long seed, Integer size) {
+    public MenuRecommendationDto createRecommendation(Long groupId, Long seed, Integer size) {
         LOGGER.info("Create recommendation for group {}", groupId);
-
-        //List<Preference> preferences = preferenceRepository.findAllByGroup(groupId).orElse(null);
-
 
         // fetch preferences of group from db
         Set<UserGroup> group = userGroupRepository.findAllByIdGroup(groupId);
@@ -119,6 +115,68 @@ public class MenuServiceImpl implements MenuService {
 
         List<Preference> preferences = preferenceRepository.findAllByApplicationUserIsIn(users);
 
+        LinkedHashMap<String, Integer> orderedPreferenceMap = orderedPreferences(preferences);
+
+        List<CocktailOverviewDto> mixableCocktails = cocktailService.getMixableCocktails(groupId);
+
+        // fetch cocktials from db that fulfill atleast one of the listed preferences
+        List<Cocktail> cocktails = cocktailRepository.findByPreferencesInAndIdIn(preferences, mixableCocktails.stream().map(CocktailOverviewDto::getId).collect(
+            Collectors.toList()));
+
+        List<Cocktail> selectedCocktails = new ArrayList<>();
+
+        // select preference with highest value and select a random cocktail from the list of cocktails that fulfill this preference
+        LinkedHashMap<String, Integer> nonFulfilledPreferences = orderedPreferenceMap;
+        Set<String> fulfilledPreferences = new HashSet<>();
+
+        while (selectedCocktails.size() < size) {
+
+            // save size so we can check if we are making progress
+            int countPrevLoop = selectedCocktails.size();
+
+            for (String stringPreference : nonFulfilledPreferences.keySet()) {
+                if (selectedCocktails.size() == size) {
+                    break;
+                }
+                for (Cocktail cocktail : cocktails) {
+                    if (cocktail.getPreferences().stream().anyMatch(preference -> preference.getName().equals(stringPreference))) {
+                        for (Preference preference : cocktail.getPreferences()) {
+                            if (preference.getName().equals(stringPreference)) {
+                                fulfilledPreferences.add(preference.getName());
+                            }
+                        }
+                        selectedCocktails.add(cocktail);
+                        cocktails.remove(cocktail);
+                        break;
+
+                    }
+                }
+            }
+            // if no progress is made to complete the list of cocktails, abort
+            if (countPrevLoop == cocktails.size()) {
+                throw new NotFoundException("Not enough cocktails found for the given preferences to fulfill the menu size");
+            }
+        }
+
+        //libation value
+        float lv;
+        if (fulfilledPreferences.size() == 0) {
+            lv = 0;
+        } else {
+            lv = (float) fulfilledPreferences.size() / (float) nonFulfilledPreferences.size();
+        }
+
+        List<CocktailOverviewDto> cocktailOverviewDtoList = cocktailIngredientMapper.cocktailToCocktailOverviewDtoList(selectedCocktails);
+
+        return new MenuRecommendationDto(cocktailOverviewDtoList,1F);
+
+        // calculate LibationValue for the List of cocktails (how many of the preferences are fulfilled by the whole menu)
+
+
+    }
+
+    // creates a sorted list of the groups preferences from most to least occuring
+    private LinkedHashMap<String, Integer> orderedPreferences(List<Preference> preferences) {
         // create a sorted list with the groups preferences
         TreeMap<String, Integer> preferenceMap = new TreeMap<>();
 
@@ -141,54 +199,7 @@ public class MenuServiceImpl implements MenuService {
         for (Map.Entry<String, Integer> entry : sortedSet) {
             orderedPreferenceMap.put(entry.getKey(), entry.getValue());
         }
-
-
-        List<CocktailOverviewDto> mixableCocktails = cocktailService.getMixableCocktails(groupId);
-
-        // fetch cocktials from db that fulfill atleast one of the listed preferences
-        List<Cocktail> cocktails = cocktailRepository.findByPreferencesInAndIdIn(preferences, mixableCocktails.stream().map(CocktailOverviewDto::getId).collect(
-            Collectors.toList()));
-
-        List<Cocktail> selectedCocktails = new ArrayList<>();
-
-        // select preference with highest value and select a random cocktail from the list of cocktails that fulfill this preference
-        LinkedHashMap<String, Integer> nonFulfilledPreferences = orderedPreferenceMap;
-        Set<String> fulfilledPreferences = new HashSet<>();
-
-        while (selectedCocktails.size() < size) {
-            int countPrevLoop = selectedCocktails.size();
-            for (String stringPreference : nonFulfilledPreferences.keySet()) {
-                if (selectedCocktails.size() == size) {
-                    break;
-                }
-                for (Cocktail cocktail : cocktails) {
-                    if (cocktail.getPreferences().stream().anyMatch(preference -> preference.getName().equals(stringPreference))) {
-                        for (Preference p1 : cocktail.getPreferences()) {
-                            if (p1.getName().equals(stringPreference)) {
-                                fulfilledPreferences.add(p1.getName());
-                            }
-                        }
-                        selectedCocktails.add(cocktail);
-                        cocktails.remove(cocktail);
-                        break;
-
-                    }
-                }
-            }
-            if (countPrevLoop == cocktails.size()) {
-                throw new NotFoundException("Not enough cocktails found for the given preferences to fulfill the menu size");
-            }
-        }
-
-        List<CocktailOverviewDto> cocktailOverviewDtoList = cocktailIngredientMapper.cocktailToCocktailOverviewDtoList(selectedCocktails);
-        MenuCocktailsDto menuCocktailsDto = new MenuCocktailsDto(groupId, cocktailOverviewDtoList);
-        return menuCocktailsDto;
-
-        // if we finish adding all preferences before having enough cocktials start the preference selection again
-        // if we have enough cocktails, return the list of cocktails
-        // calculate LibationValue for the List of cocktails (how many of the preferences are fulfilled by the whole menu)
-
-
+        return orderedPreferenceMap;
     }
 
 

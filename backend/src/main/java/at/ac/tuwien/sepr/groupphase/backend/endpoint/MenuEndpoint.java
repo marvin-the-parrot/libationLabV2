@@ -1,7 +1,11 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
 import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
+import java.util.List;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuRecommendationDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.RecommendedMenuesDto;
 import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,11 +73,17 @@ public class MenuEndpoint {
     }
 
     @Secured(ROLE_USER)
-    @GetMapping(value = "/{id}/recommendation")
     @Transactional
-    public MenuCocktailsDto getAutomatedMenu(@PathVariable Long id) {
+    @GetMapping(value = "/{id}/recommendation")
+    public RecommendedMenuesDto getAutomatedMenu(@PathVariable Long id) {
         LOGGER.info("GET " + BASE_PATH + "recommendation/{}", id);
-        return menuServiceImpl.createRecommendation(id, 1L, 8);
+        List<MenuRecommendationDto> menuRecommendations = new ArrayList<>();
+
+        for (int i = 0; i < 3; i++) {
+            menuRecommendations.add(menuServiceImpl.createRecommendation(id, (long)3, 3));
+        }
+
+        return new RecommendedMenuesDto(id,menuRecommendations);
     }
 
 

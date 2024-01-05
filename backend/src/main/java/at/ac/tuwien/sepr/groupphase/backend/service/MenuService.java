@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuRecommendationDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 
@@ -26,7 +27,8 @@ public interface MenuService {
      *
      * @param groupId of the group for which the recommendation should be created
      * @param seed    the seed for the random generator to generate different recommendations
+     * @param numberOfCocktails the number of cocktails to be recommended
      * @return the created recommendation
      */
-    MenuCocktailsDto createRecommendation(Long groupId, Long seed, Integer numberOfCocktails);
+    MenuRecommendationDto createRecommendation(Long groupId, Long seed, Integer numberOfCocktails);
 }
