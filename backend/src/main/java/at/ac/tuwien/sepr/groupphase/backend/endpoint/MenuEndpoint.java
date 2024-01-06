@@ -1,10 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
 import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
-import java.util.List;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuRecommendationDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.RecommendedMenuesDto;
 import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
 import org.slf4j.Logger;
@@ -17,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -75,15 +73,11 @@ public class MenuEndpoint {
     @Secured(ROLE_USER)
     @Transactional
     @GetMapping(value = "/{id}/recommendation")
-    public RecommendedMenuesDto getAutomatedMenu(@PathVariable Long id) {
+    public RecommendedMenuesDto getAutomatedMenu(@PathVariable Long id,
+    @RequestParam(name = "numberOfCocktails", required = false, defaultValue = "5") Integer numberOfCocktails) {
         LOGGER.info("GET " + BASE_PATH + "recommendation/{}", id);
-        List<MenuRecommendationDto> menuRecommendations = new ArrayList<>();
 
-        for (int i = 0; i < 3; i++) {
-            menuRecommendations.add(menuServiceImpl.createRecommendation(id, (long)3, 3));
-        }
-
-        return new RecommendedMenuesDto(id,menuRecommendations);
+        return menuServiceImpl.createRecommendation(id, numberOfCocktails,3);
     }
 
 

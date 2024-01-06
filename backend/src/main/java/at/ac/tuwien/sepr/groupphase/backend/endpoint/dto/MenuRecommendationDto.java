@@ -4,11 +4,11 @@ import java.util.List;
 
 public class MenuRecommendationDto {
 
-    List<CocktailOverviewDto> cocktailMenus;
+    List<CocktailListDto> cocktailMenu;
     Float lv;
 
-    public MenuRecommendationDto( List<CocktailOverviewDto> cocktailMenus, Float lv) {
-        this.cocktailMenus = cocktailMenus;
+    public MenuRecommendationDto( List<CocktailListDto> cocktailMenus, Float lv) {
+        this.cocktailMenu = cocktailMenus;
         this.lv = lv;
     }
 
@@ -20,11 +20,11 @@ public class MenuRecommendationDto {
         this.lv = lv;
     }
 
-    public List<CocktailOverviewDto> getCocktailMenus() {
-        return cocktailMenus;
+    public List<CocktailListDto> getCocktailMenu() {
+        return cocktailMenu;
     }
 
-    public void setCocktailMenus(List<CocktailOverviewDto> cocktailMenus) {
-        this.cocktailMenus = cocktailMenus;
+    public void setCocktailMenu(List<CocktailListDto> cocktailMenu) {
+        this.cocktailMenu = cocktailMenu;
     }
 }

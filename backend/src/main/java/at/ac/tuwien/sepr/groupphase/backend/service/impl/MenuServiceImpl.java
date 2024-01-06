@@ -2,18 +2,22 @@ package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuRecommendationDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.RecommendedMenuesDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Preference;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
@@ -102,7 +106,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public MenuRecommendationDto createRecommendation(Long groupId, Long seed, Integer size) {
+    public RecommendedMenuesDto createRecommendation(Long groupId, Integer size, Integer numberOfMenues) {
         LOGGER.info("Create recommendation for group {}", groupId);
 
         // fetch preferences of group from db
@@ -123,25 +127,47 @@ public class MenuServiceImpl implements MenuService {
         List<Cocktail> cocktails = cocktailRepository.findByPreferencesInAndIdIn(preferences, mixableCocktails.stream().map(CocktailOverviewDto::getId).collect(
             Collectors.toList()));
 
-        List<Cocktail> selectedCocktails = new ArrayList<>();
 
         // select preference with highest value and select a random cocktail from the list of cocktails that fulfill this preference
         LinkedHashMap<String, Integer> nonFulfilledPreferences = orderedPreferenceMap;
+
+        List<MenuRecommendationDto> recommendations = new ArrayList<>();
+        for (int i = 0; i < numberOfMenues; i++) {
+            Collections.shuffle(cocktails,new Random(i*groupId));
+            List<Cocktail> shufflesCocktails = new ArrayList<>(cocktails);
+            recommendations.add(pickCocktailMenu(size, shufflesCocktails, nonFulfilledPreferences));
+        }
+
+
+        return new RecommendedMenuesDto(groupId, recommendations);
+
+        // calculate LibationValue for the List of cocktails (how many of the preferences are fulfilled by the whole menu)
+
+
+    }
+
+    private MenuRecommendationDto pickCocktailMenu(Integer size, List<Cocktail> cocktails, LinkedHashMap<String, Integer> nonFulfilledPreferences) {
+        List<Cocktail> selectedCocktails = new ArrayList<>();
         Set<String> fulfilledPreferences = new HashSet<>();
+        int countFullfilledPreferences = 0;
 
         while (selectedCocktails.size() < size) {
-
+            countFullfilledPreferences += fulfilledPreferences.size();
+            fulfilledPreferences.clear();
             // save size so we can check if we are making progress
             int countPrevLoop = selectedCocktails.size();
 
             for (String stringPreference : nonFulfilledPreferences.keySet()) {
+                if (fulfilledPreferences.contains(stringPreference)) {
+                    continue;
+                }
                 if (selectedCocktails.size() == size) {
                     break;
                 }
                 for (Cocktail cocktail : cocktails) {
                     if (cocktail.getPreferences().stream().anyMatch(preference -> preference.getName().equals(stringPreference))) {
                         for (Preference preference : cocktail.getPreferences()) {
-                            if (preference.getName().equals(stringPreference)) {
+                            if (nonFulfilledPreferences.containsKey(preference.getName())) {
                                 fulfilledPreferences.add(preference.getName());
                             }
                         }
@@ -153,8 +179,8 @@ public class MenuServiceImpl implements MenuService {
                 }
             }
             // if no progress is made to complete the list of cocktails, abort
-            if (countPrevLoop == cocktails.size()) {
-                throw new NotFoundException("Not enough cocktails found for the given preferences to fulfill the menu size");
+            if (countPrevLoop == selectedCocktails.size()) {
+                throw new NotFoundException("Not enough cocktails found for the given preferences to fulfill the menu size. Try decreasing menu size or adding ingredients to the bar.");
             }
         }
 
@@ -163,15 +189,10 @@ public class MenuServiceImpl implements MenuService {
         if (fulfilledPreferences.size() == 0) {
             lv = 0;
         } else {
-            lv = (float) fulfilledPreferences.size() / (float) nonFulfilledPreferences.size();
+            lv = (float) countFullfilledPreferences / (float) nonFulfilledPreferences.size();
         }
-
-        List<CocktailOverviewDto> cocktailOverviewDtoList = cocktailIngredientMapper.cocktailToCocktailOverviewDtoList(selectedCocktails);
-
-        return new MenuRecommendationDto(cocktailOverviewDtoList,1F);
-
-        // calculate LibationValue for the List of cocktails (how many of the preferences are fulfilled by the whole menu)
-
+        List<CocktailListDto> cocktailList = cocktailIngredientMapper.cocktailIngredientToCocktailListDto(selectedCocktails);
+        return new MenuRecommendationDto(cocktailList, lv);
 
     }
 
@@ -199,6 +220,7 @@ public class MenuServiceImpl implements MenuService {
         for (Map.Entry<String, Integer> entry : sortedSet) {
             orderedPreferenceMap.put(entry.getKey(), entry.getValue());
         }
+
         return orderedPreferenceMap;
     }
 

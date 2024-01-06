@@ -7,6 +7,7 @@ import {environment} from "../../environments/environment";
 import {MenuCocktailsDto} from '../dtos/menu';
 import {IngredientListDto} from "../dtos/ingredient";
 import {PreferenceListDto} from "../dtos/preference";
+import {RecommendedMenues} from "../dtos/recommendedMenues";
 
 const baseUri = environment.backendUrl + "/cocktails";
 
@@ -38,7 +39,7 @@ export class CocktailService {
     if (searchParams.preferenceName) {
       params = params.append('preferenceName', searchParams.preferenceName);
     }
-    return this.httpClient.get<CocktailListDto[]>(this.cocktailBaseUri, { params });
+    return this.httpClient.get<CocktailListDto[]>(this.cocktailBaseUri, {params});
   }
 
   /*searchCocktails(cocktailName: String, ingredient: String, preference: String): Observable<CocktailListDto[]> {
@@ -172,4 +173,15 @@ export class CocktailService {
     return this.httpClient.get<PreferenceListDto[]>(this.cocktailBaseUri + '/cocktail-preferences-auto/' + name);
   }
 
+  /**
+   * Generates a selection of 3 cocktail menus for a group
+   * @param groupId
+   * @param numberOfCocktails
+   */
+  generateCocktailMenu(groupId: number, numberOfCocktails: number) {
+    let params = new HttpParams();
+    params = params.append("numberOfCocktails", numberOfCocktails.toString());
+
+    return this.httpClient.get<RecommendedMenues>(this.menuBaseUri + '/' + groupId + '/recommendation', {params});
+  }
 }

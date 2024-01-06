@@ -5,11 +5,11 @@ import java.util.List;
 public class RecommendedMenuesDto {
 
     Long id;
-    List<MenuRecommendationDto> cocktailsList;
+    List<MenuRecommendationDto> menuList;
 
     public RecommendedMenuesDto(Long id, List<MenuRecommendationDto> cocktailsList) {
         this.id = id;
-        this.cocktailsList = cocktailsList;
+        this.menuList = cocktailsList;
     }
 
     public Long getId() {
@@ -20,11 +20,11 @@ public class RecommendedMenuesDto {
         this.id = id;
     }
 
-    public List<MenuRecommendationDto> getCocktailsList() {
-        return cocktailsList;
+    public List<MenuRecommendationDto> getMenuList() {
+        return menuList;
     }
 
-    public void setCocktailsList(List<MenuRecommendationDto> cocktailsList) {
-        this.cocktailsList = cocktailsList;
+    public void setMenuList(List<MenuRecommendationDto> menuList) {
+        this.menuList = menuList;
     }
 }
