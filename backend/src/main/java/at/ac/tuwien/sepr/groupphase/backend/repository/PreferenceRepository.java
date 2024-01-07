@@ -4,6 +4,7 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import at.ac.tuwien.sepr.groupphase.backend.entity.Preference;
@@ -24,11 +25,10 @@ public interface PreferenceRepository extends JpaRepository<Preference, Long> {
 
     List<Preference> findFirst5ByNameIgnoreCaseContainingOrderByName(String preferenceName);
 
-    Preference findByName(String name);
-
-    Set<Preference> findAllByName(String name);
-
     List<Preference> findFirst5ByNameNotInAndNameIgnoreCaseContainingOrderByName(List<String> names, String preferenceName);
 
     List<Preference> findByNameContainingIgnoreCase(String name);
+
+    List<Preference> findAllByApplicationUserIsIn(List<ApplicationUser> applicationUsers);
+
 }

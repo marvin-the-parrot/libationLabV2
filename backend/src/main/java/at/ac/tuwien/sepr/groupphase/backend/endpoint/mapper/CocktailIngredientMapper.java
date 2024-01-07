@@ -41,9 +41,6 @@ public interface CocktailIngredientMapper {
         }
         List<CocktailListDto> result = new ArrayList<>(cocktailMap.values());
 
-        // Sorting the result list by name
-        result.sort(Comparator.comparing(CocktailListDto::getName));
-
         return result;
     }
 

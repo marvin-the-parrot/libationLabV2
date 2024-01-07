@@ -58,4 +58,6 @@ public interface UserRepository extends JpaRepository<ApplicationUser, Long> {
 
     ApplicationUser findApplicationUsersByUserGroups(UserGroup userGroups);
 
+    List<ApplicationUser> findByUserGroupsIn(Set<UserGroup> userGroup);
+
 }

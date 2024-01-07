@@ -2,6 +2,7 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
 import java.lang.invoke.MethodHandles;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.RecommendedMenuesDto;
 import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -67,4 +69,16 @@ public class MenuEndpoint {
         LOGGER.info("GET " + BASE_PATH + "/{}", id);
         return menuServiceImpl.findMenuOfGroup(id);
     }
+
+    @Secured(ROLE_USER)
+    @Transactional
+    @GetMapping(value = "/{id}/recommendation")
+    public RecommendedMenuesDto getAutomatedMenu(@PathVariable Long id,
+                                                 @RequestParam(name = "numberOfCocktails", required = false, defaultValue = "5") Integer numberOfCocktails) {
+        LOGGER.info("GET " + BASE_PATH + "recommendation/{}", id);
+
+        return menuServiceImpl.createRecommendation(id, numberOfCocktails, 3);
+    }
+
+
 }

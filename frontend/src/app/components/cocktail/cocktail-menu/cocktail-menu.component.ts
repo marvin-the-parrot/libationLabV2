@@ -13,7 +13,8 @@ import {ErrorFormatterService} from "../../../services/error-formatter.service";
 import {MenuCocktailsDto} from 'src/app/dtos/menu';
 import {PreferenceListDto} from "../../../dtos/preference";
 import {Observable, of} from "rxjs";
-import { List } from 'immutable'; // Import List from Immutable.js
+import {List} from 'immutable';
+import {RecommendedMenues} from "../../../dtos/recommendedMenues"; // Import List from Immutable.js
 
 @Component({
   selector: 'app-cocktail-card',
@@ -24,6 +25,8 @@ export class CocktailMenuComponent {
   cocktails: CocktailOverviewDto[] = []
   ingredients: IngredientGroupDto[] = [];
   groupId: number;
+  numberOfCocktails =  4;
+  lv: number;
   dummyMemberSelectionModel: unknown; // Just needed for the autocomplete
   submitted = false;
   // Error flag
@@ -233,6 +236,19 @@ export class CocktailMenuComponent {
   }
 
 
+  generateCocktails() {
+    this.cocktailService.generateCocktailMenu(this.groupId, this.numberOfCocktails).subscribe({
+      next: (menu: RecommendedMenues) => {
+        this.selectedCocktails = menu.menuList[0].cocktailMenu;
+        this.lv = menu.menuList[0].lv;
+      },
+      error: error => {
+        this.notification.error('Could not generate cocktails.');
+        console.log('Could not generate cocktails due to:');
+        console.log(error);
+      }
+    });
+  }
 }
 
 

@@ -2,6 +2,7 @@ package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,7 +68,10 @@ public class CocktailServiceImpl implements CocktailService {
     @Transactional
     public List<CocktailListDto> searchCocktails(CocktailSerachDto searchParameters) {
         if (searchParameters.getCocktailName() == null && searchParameters.getIngredientsName() == null && searchParameters.getPreferenceName() == null) {
-            return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailRepository.findAll());
+            List<CocktailListDto> results = cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailRepository.findAll());
+            // Sorting the result list by name
+            results.sort(Comparator.comparing(CocktailListDto::getName));
+            return results;
         }
 
         List<Cocktail> resultCocktails = new ArrayList<>();
