@@ -26,6 +26,7 @@ export class CocktailMenuComponent {
   ingredients: IngredientGroupDto[] = [];
   groupId: number;
   numberOfCocktails =  4;
+  lv: number;
   dummyMemberSelectionModel: unknown; // Just needed for the autocomplete
   submitted = false;
   // Error flag
@@ -238,9 +239,8 @@ export class CocktailMenuComponent {
   generateCocktails() {
     this.cocktailService.generateCocktailMenu(this.groupId, this.numberOfCocktails).subscribe({
       next: (menu: RecommendedMenues) => {
-        console.log(menu.menuList[0].cocktailMenu);
         this.selectedCocktails = menu.menuList[0].cocktailMenu;
-        // this.selectedCocktails = menu.menuList[0].cocktailMenu;
+        this.lv = menu.menuList[0].lv;
       },
       error: error => {
         this.notification.error('Could not generate cocktails.');

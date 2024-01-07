@@ -125,13 +125,14 @@
           <h2>Selected Menu</h2>
         </div>
         <div class="card-body">
-          <div class="menu-body d-flex align-items-center justify-content-center" >
+          <div class="menu-body d-flex align-items-center justify-content-center">
 
             <div class="cocktails-container" *ngIf="selectedCocktails.length!==0">
               <div>
                 <p class="cocktails-count">{{selectedCocktails.length}} Cocktails</p>
+                <p *ngIf="lv">LibationValue: {{lv}}</p>
               </div>
-              <div class="cocktails-list" >
+              <div class="cocktails-list">
                 <div *ngFor="let cocktail of selectedCocktails; index as i" class="cocktails-item">
                   {{ cocktail.name }}
                   <i class="bi bi-dash-circle remove-item" (click)="removeCocktail(i)"></i>
@@ -146,13 +147,17 @@
 
             <div class="cocktails-container justify-content-center" *ngIf="selectedCocktails.length===0">
               <div class="align-self-center" *ngIf="selectedCocktails.length===0">
-                <div class="card" >
-                  <div class="card-body purple">
-                    <h3>Auto Generate Menu</h3>
-
-                    <p class="card-text">Generate</p>
-
-                    <button type="button" class="btn btn-primary save-btn" (click)="generateCocktails()">Generate</button>
+                <div class="card">
+                  <div class="card-body purple row" style="margin:0">
+                    <div class="col-8">
+                      <p class="mb-0">How many cocktails?</p>
+                    </div>
+                    <div class="col-4">
+                      <input [(ngModel)]="numberOfCocktails" type="number" class="form-control p-1 mb-1" />
+                    </div>
+                    <button type="button" class="btn generate-cocktails-button" (click)="generateCocktails()">Generate
+                      Cocktails
+                    </button>
                   </div>
                 </div>
               </div>

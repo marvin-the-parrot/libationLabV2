@@ -74,10 +74,10 @@ public class MenuEndpoint {
     @Transactional
     @GetMapping(value = "/{id}/recommendation")
     public RecommendedMenuesDto getAutomatedMenu(@PathVariable Long id,
-    @RequestParam(name = "numberOfCocktails", required = false, defaultValue = "5") Integer numberOfCocktails) {
+                                                 @RequestParam(name = "numberOfCocktails", required = false, defaultValue = "5") Integer numberOfCocktails) {
         LOGGER.info("GET " + BASE_PATH + "recommendation/{}", id);
 
-        return menuServiceImpl.createRecommendation(id, numberOfCocktails,3);
+        return menuServiceImpl.createRecommendation(id, numberOfCocktails, 3);
     }
 
 

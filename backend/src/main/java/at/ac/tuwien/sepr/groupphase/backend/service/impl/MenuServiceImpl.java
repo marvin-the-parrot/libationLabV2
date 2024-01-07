@@ -131,9 +131,13 @@ public class MenuServiceImpl implements MenuService {
         // select preference with highest value and select a random cocktail from the list of cocktails that fulfill this preference
         LinkedHashMap<String, Integer> nonFulfilledPreferences = orderedPreferenceMap;
 
+        if (orderedPreferenceMap.size() == 0) {
+            throw new IllegalArgumentException("No preferences found for group with id " + groupId);
+        }
+
         List<MenuRecommendationDto> recommendations = new ArrayList<>();
         for (int i = 0; i < numberOfMenues; i++) {
-            Collections.shuffle(cocktails,new Random(i*groupId));
+            Collections.shuffle(cocktails, new Random());
             List<Cocktail> shufflesCocktails = new ArrayList<>(cocktails);
             recommendations.add(pickCocktailMenu(size, shufflesCocktails, nonFulfilledPreferences));
         }
@@ -180,19 +184,20 @@ public class MenuServiceImpl implements MenuService {
             }
             // if no progress is made to complete the list of cocktails, abort
             if (countPrevLoop == selectedCocktails.size()) {
-                throw new NotFoundException("Not enough cocktails found for the given preferences to fulfill the menu size. Try decreasing menu size or adding ingredients to the bar.");
+                throw new NotFoundException(
+                    "Not enough cocktails found for the given preferences to fulfill the menu size. Try decreasing menu size or adding ingredients to the bar.");
             }
         }
 
         //libation value
         float lv;
-        if (fulfilledPreferences.size() == 0) {
+        if (countFullfilledPreferences == 0 && fulfilledPreferences.size() == 0) {
             lv = 0;
         } else {
-            lv = (float) countFullfilledPreferences / (float) nonFulfilledPreferences.size();
+            lv = Math.max((float) countFullfilledPreferences, fulfilledPreferences.size()) / (float) nonFulfilledPreferences.size();
         }
         List<CocktailListDto> cocktailList = cocktailIngredientMapper.cocktailIngredientToCocktailListDto(selectedCocktails);
-        return new MenuRecommendationDto(cocktailList, lv);
+        return new MenuRecommendationDto(cocktailList, Math.min(lv,1L));
 
     }
 

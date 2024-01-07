@@ -7,7 +7,7 @@ public class MenuRecommendationDto {
     List<CocktailListDto> cocktailMenu;
     Float lv;
 
-    public MenuRecommendationDto( List<CocktailListDto> cocktailMenus, Float lv) {
+    public MenuRecommendationDto(List<CocktailListDto> cocktailMenus, Float lv) {
         this.cocktailMenu = cocktailMenus;
         this.lv = lv;
     }
