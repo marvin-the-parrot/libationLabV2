@@ -197,7 +197,7 @@ public class MenuServiceImpl implements MenuService {
             lv = Math.max((float) countFullfilledPreferences, fulfilledPreferences.size()) / (float) nonFulfilledPreferences.size();
         }
         List<CocktailListDto> cocktailList = cocktailIngredientMapper.cocktailIngredientToCocktailListDto(selectedCocktails);
-        return new MenuRecommendationDto(cocktailList, Math.min(lv,1L));
+        return new MenuRecommendationDto(cocktailList, Math.min(lv, 1L));
 
     }
 
