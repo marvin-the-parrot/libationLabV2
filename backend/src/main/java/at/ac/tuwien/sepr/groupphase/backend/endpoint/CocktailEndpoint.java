@@ -3,6 +3,7 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailSerachDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PreferenceListDto;
@@ -30,15 +31,27 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping(path = CocktailEndpoint.BASE_PATH)
 public class CocktailEndpoint {
 
-    private static final Logger LOGGER =
-        LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     static final String BASE_PATH = "/api/v1/cocktails";
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final String ROLE_USER = SecurityRolesEnum.Roles.ROLE_USER;
     private final CocktailService cocktailService;
 
     @Autowired
     public CocktailEndpoint(CocktailService cocktailService) {
         this.cocktailService = cocktailService;
+    }
+
+    @Secured(ROLE_USER)
+    @GetMapping("/{id}")
+    public CocktailDetailDto getCocktailById(@PathVariable Long id) {
+        LOGGER.info("GET " + BASE_PATH + "/{}", id);
+        try {
+            return cocktailService.getCocktailById(id);
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Failed to get cocktail", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
     }
 
     @Secured(ROLE_USER)
@@ -135,8 +148,7 @@ public class CocktailEndpoint {
     }
 
     private void logClientError(HttpStatus status, String message, Exception e) {
-        LOGGER.warn("{} {}: {}: {}", status.value(), message,
-            e.getClass().getSimpleName(), e.getMessage());
+        LOGGER.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
     }
 
 }

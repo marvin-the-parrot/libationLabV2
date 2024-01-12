@@ -1,35 +1,36 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
-import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailDetailDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailSerachDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PreferenceListDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailIngredientMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.IngredientMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.PreferenceMapper;
-import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
-import at.ac.tuwien.sepr.groupphase.backend.repository.PreferenceRepository;
+import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
+import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
+import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailIngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.PreferenceRepository;
+import at.ac.tuwien.sepr.groupphase.backend.service.CocktailService;
+import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailIngredientMapper;
-import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
-import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
-import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
-import at.ac.tuwien.sepr.groupphase.backend.service.CocktailService;
-import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
-import jakarta.transaction.Transactional;
+import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Cocktail service implementation.
@@ -48,11 +49,10 @@ public class CocktailServiceImpl implements CocktailService {
     private final PreferenceMapper preferenceMapper;
 
     @Autowired
-    public CocktailServiceImpl(CocktailIngredientsRepository cocktailIngredientsRepository,
-                               CocktailRepository cocktailRepository, IngredientsRepository ingredientsRepository,
-                               CocktailIngredientMapper cocktailIngredientMapper,
-                               IngredientService ingredientService, IngredientMapper ingredientMapper,
-                               PreferenceRepository preferenceRepository, PreferenceMapper preferenceMapper) {
+    public CocktailServiceImpl(CocktailIngredientsRepository cocktailIngredientsRepository, CocktailRepository cocktailRepository,
+                               IngredientsRepository ingredientsRepository, CocktailIngredientMapper cocktailIngredientMapper,
+                               IngredientService ingredientService, IngredientMapper ingredientMapper, PreferenceRepository preferenceRepository,
+                               PreferenceMapper preferenceMapper) {
 
         this.cocktailIngredientsRepository = cocktailIngredientsRepository;
         this.cocktailRepository = cocktailRepository;
@@ -82,7 +82,8 @@ public class CocktailServiceImpl implements CocktailService {
             cocktails = cocktailRepository.findAll();
         }
         if (searchParameters.getIngredientsName() != null) {
-            List<CocktailIngredients> cocktailIngredients = cocktailIngredientsRepository.findByIngredientNameContainingIgnoreCase(searchParameters.getIngredientsName());
+            List<CocktailIngredients> cocktailIngredients =
+                cocktailIngredientsRepository.findByIngredientNameContainingIgnoreCase(searchParameters.getIngredientsName());
             List<Cocktail> cocktailsByIngredients = cocktailRepository.findDistinctByCocktailIngredientsIn(cocktailIngredients);
 
             if (!cocktails.isEmpty()) {
@@ -98,11 +99,10 @@ public class CocktailServiceImpl implements CocktailService {
             resultCocktails.addAll(cocktails);
         }
         if (searchParameters.getPreferenceName() != null) {
-            List<Cocktail> cocktailPreferences = cocktailRepository.findByPreferencesIn(preferenceRepository.findByNameContainingIgnoreCase(searchParameters.getPreferenceName()));
+            List<Cocktail> cocktailPreferences =
+                cocktailRepository.findByPreferencesIn(preferenceRepository.findByNameContainingIgnoreCase(searchParameters.getPreferenceName()));
 
-            resultCocktails = resultCocktails.stream()
-                .filter(cocktailPreferences::contains)
-                .collect(Collectors.toList());
+            resultCocktails = resultCocktails.stream().filter(cocktailPreferences::contains).collect(Collectors.toList());
         }
 
         return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(resultCocktails);
@@ -236,6 +236,17 @@ public class CocktailServiceImpl implements CocktailService {
     @Override
     public List<PreferenceListDto> searchAutoPreferences(String searchParams) {
         return preferenceMapper.preferenceToPreferenceListDto(preferenceRepository.findFirst5ByNameIgnoreCaseContainingOrderByName(searchParams));
+    }
+
+    @Override
+    @Transactional
+    public CocktailDetailDto getCocktailById(Long id) throws NotFoundException {
+        LOGGER.debug("Get cocktail by id {}", id);
+        Cocktail cocktail = cocktailRepository.findById(id).orElse(null);
+        if (cocktail == null) {
+            throw new NotFoundException("Cocktail with id " + id + " not found");
+        }
+        return cocktailIngredientMapper.cocktailToCocktailDetailDto(cocktail);
     }
 
 }

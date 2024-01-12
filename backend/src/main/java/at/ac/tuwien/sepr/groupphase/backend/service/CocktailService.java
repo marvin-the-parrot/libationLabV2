@@ -2,11 +2,13 @@ package at.ac.tuwien.sepr.groupphase.backend.service;
 
 import java.util.List;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailSerachDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PreferenceListDto;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 
 /**
  * Service for Cocktail and CocktailIngredient Entity.
@@ -46,4 +48,11 @@ public interface CocktailService {
      */
     List<PreferenceListDto> searchAutoPreferences(String searchParams);
 
+    /**
+     * Retrieve a cocktail by its id from the database.
+     *
+     * @param id the id of the cocktail to retrieve
+     * @return the cocktail with the given id
+     */
+    CocktailDetailDto getCocktailById(Long id) throws NotFoundException;
 }
