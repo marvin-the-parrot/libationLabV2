@@ -17,6 +17,15 @@ export interface CocktailOverviewDto {
   instructions: string;
 }
 
+export interface CocktailDetailDto {
+  id: number;
+  name: string;
+  imagePath: string;
+  ingredients: Map<string, string>;
+  instructions: string;
+  preferenceName: string[];
+}
+
 export interface CocktailSearch {
   cocktailName?: string;
   ingredientsName?: string;

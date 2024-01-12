@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Globals} from '../global/globals';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {CocktailListDto, CocktailSearch} from "../dtos/cocktail";
+import {CocktailDetailDto, CocktailListDto, CocktailSearch} from "../dtos/cocktail";
 import {Observable} from "rxjs";
 import {environment} from "../../environments/environment";
 import {MenuCocktailsDto} from '../dtos/menu';
@@ -40,6 +40,10 @@ export class CocktailService {
       params = params.append('preferenceName', searchParams.preferenceName);
     }
     return this.httpClient.get<CocktailListDto[]>(this.cocktailBaseUri, {params});
+  }
+
+  getCocktailById(id: number): Observable<CocktailDetailDto> {
+    return this.httpClient.get<CocktailDetailDto>(`${this.cocktailBaseUri}/${id}`);
   }
 
   /*searchCocktails(cocktailName: String, ingredient: String, preference: String): Observable<CocktailListDto[]> {

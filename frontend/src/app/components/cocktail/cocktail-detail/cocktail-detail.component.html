@@ -1,1 +1,56 @@
-<p>cocktail-detail works!</p>
+<app-header></app-header>
+
+<div class="grid-container">
+
+  <div class="left-container col-lg-9 col-md-9 col-sm-9 col-9">
+
+    <div class="header-left-container">
+      <h2> {{cocktail.name}} </h2>
+    </div>
+
+    <div class="prefs">
+      <span class="preference" *ngFor="let preference of cocktail.preferenceName">{{preference}}</span>
+    </div>
+
+
+    <div class="inner-grid-container">
+
+      <div class="grid-item">
+        <div class="d-flex flex-column justify-content-center">
+          <h3 class="m-0">Ingredients</h3>
+        </div>
+        <div class="grid-item-content">
+          <ul>
+            <li *ngFor="let ingredient of cocktail.ingredients|keyvalue">
+              {{ingredient.value}} {{ingredient.key}}
+            </li>
+          </ul>
+        </div>
+        <div>
+
+        </div>
+      </div>
+
+      <div class="grid-item">
+        <div class="d-flex flex-column justify-content-center">
+          <h3 class="m-0">Instructions</h3>
+        </div>
+        <div class="grid-item-content">
+          <p>{{cocktail.instructions}}</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+  <div class="right-container col-lg-3 col-md-3 col-sm-3 col-3">
+    <figure>
+      <img class="image-style" [src]="cocktail.imagePath" alt="{{cocktail.name}} cocktail">
+      <figcaption class="image-name">{{cocktail.name}}</figcaption>
+    </figure>
+  </div>
+
+</div>
