@@ -34,6 +34,7 @@ import { CocktailComponent } from './components/cocktail/cocktail.component';
 import { CocktailMenuComponent } from './components/cocktail/cocktail-menu/cocktail-menu.component';
 import { AddIngredientDialogComponent } from './add-ingredient-dialog/add-ingredient-dialog.component';
 import {NgOptimizedImage} from "@angular/common";
+import { CocktailDetailComponent } from './components/cocktail/cocktail-detail/cocktail-detail.component';
 
 
 @NgModule({
@@ -59,6 +60,7 @@ import {NgOptimizedImage} from "@angular/common";
     CocktailComponent,
     CocktailMenuComponent,
     AddIngredientDialogComponent,
+    CocktailDetailComponent,
   ],
     imports: [
         MatIconModule,
