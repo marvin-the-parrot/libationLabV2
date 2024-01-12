@@ -10,91 +10,98 @@
 
     <div class="flex-container">
 
-    <div class="search-container">
-         <label class="label-search-name">
-             Name
-         </label>
-          <!-- Suchfeld für Name -->
-          <div class="wrapper-name col-md-6 col-lg-6">
-            <input matInput
-                   type="text"
-                   id="searchName"
-                   name="searchName"
-                   placeholder="Search for Cocktail Name"
-                   class="form-control"
-                   [(ngModel)]="nameOfCocktail"
-                   (ngModelChange)="searchChanged()"
-                   #groupNameModel="ngModel"
-                   required
-                   autofocus
-            >
-    </div>
-    </div>
+      <div class="search-container">
+        <label class="label-search-name">
+          Name
+        </label>
+        <!-- Suchfeld für Name -->
+        <div class="wrapper-name col-md-6 col-lg-6">
+          <input matInput
+                 type="text"
+                 id="searchName"
+                 name="searchName"
+                 placeholder="Search for Cocktail Name"
+                 class="form-control"
+                 [(ngModel)]="nameOfCocktail"
+                 (ngModelChange)="searchChanged()"
+                 #groupNameModel="ngModel"
+                 required
+                 autofocus
+          >
+        </div>
+      </div>
 
 
-   <div class="search-container">
+      <div class="search-container">
         <label class="label-search-ing-pref">
           Ingredients
         </label>
-            <!-- Suchfeld für Zutaten -->
-      <div class="wrapper-ing-pref col-md-6 col-lg-6">
-        <app-autocomplete
-          name="ingredientsSelection"
-          textInputClass="form-control"
-          [placeholderText] = "'Search for Ingredients'"
-          [suggestions]="ingredientSuggestions"
-          [formatModel]="formatIngredient"
-          valueNeedsToMatchSuggestion="true"
-          [(ngModel)]="ingredient"
-          (ngModelChange)="searchChanged()"
-        >
-        </app-autocomplete>
+        <!-- Suchfeld für Zutaten -->
+        <div class="wrapper-ing-pref col-md-6 col-lg-6">
+          <app-autocomplete
+            name="ingredientsSelection"
+            textInputClass="form-control"
+            [placeholderText]="'Search for Ingredients'"
+            [suggestions]="ingredientSuggestions"
+            [formatModel]="formatIngredient"
+            valueNeedsToMatchSuggestion="true"
+            [(ngModel)]="ingredient"
+            (ngModelChange)="searchChanged()"
+          >
+          </app-autocomplete>
+        </div>
       </div>
-   </div>
 
 
-   <div class="search-container">
-    <label class="label-search-ing-pref">
-      Preferences
-    </label>
+      <div class="search-container">
+        <label class="label-search-ing-pref">
+          Preferences
+        </label>
         <!-- Suchfeld für Präferenzen -->
-  <div class="wrapper-ing-pref col-md-6 col-lg-6">
-    <app-autocomplete
-      name="preferencesSelection"
-      textInputClass="form-control"
-      [placeholderText] = "'Search for Preferences'"
-      [suggestions]="preferenceSuggestion"
-      [formatModel]="formatPreference"
-      valueNeedsToMatchSuggestion="true"
-      [(ngModel)]="preference"
-      (ngModelChange)="searchChanged()"
-    >
-    </app-autocomplete>
+        <div class="wrapper-ing-pref col-md-6 col-lg-6">
+          <app-autocomplete
+            name="preferencesSelection"
+            textInputClass="form-control"
+            [placeholderText]="'Search for Preferences'"
+            [suggestions]="preferenceSuggestion"
+            [formatModel]="formatPreference"
+            valueNeedsToMatchSuggestion="true"
+            [(ngModel)]="preference"
+            (ngModelChange)="searchChanged()"
+          >
+          </app-autocomplete>
+        </div>
+      </div>
+
+    </div>
+
+    <br><br>
+
+    <div class="label-table" *ngIf="cocktails?.length > 0">
+      <p class="result-style"> &nbsp;&nbsp;&nbsp;{{cocktails.length}} Result</p>
+      <table>
+        <tbody>
+        <tr *ngFor="let cocktail of cocktails"
+            [style.background]="selectedCocktail === cocktail.name ? '#D9D9D9' : '#ECECEC'">
+          <td class="td-style"
+              (click)="showImage(cocktail.name)">
+            {{cocktail.name}}
+            <button class="btn rounded-button"
+                    [routerLink]="[cocktail.id, 'detail']">
+              <i class="bi bi-book"></i>
+              see cocktail details
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
-</div>
 
-    </div>
-
-     <br><br>
-
-     <div class="label-table" *ngIf = "cocktails?.length > 0">
-       <p class="result-style"> &nbsp;&nbsp;&nbsp;{{cocktails.length}} Result</p>
-       <table >
-         <tbody>
-           <tr *ngFor="let cocktail of cocktails" [style.background]="selectedCocktail === cocktail.name ? '#D9D9D9' : '#ECECEC'">
-             <td class="td-style"
-             (click)="showImage(cocktail.name)">
-             {{cocktail.name}}</td>
-           </tr>
-         </tbody>
-       </table>
-    </div>
-
-   </div>
-
-  <div class="right-container col-lg-3 col-md-3 col-sm-3 col-3" >
+  <div class="right-container col-lg-3 col-md-3 col-sm-3 col-3">
     <figure *ngIf="isToShowImg">
-      <img class="image-style" [src]="imageUrl" >
+      <img class="image-style" [src]="imageUrl">
       <figcaption class="image-name">{{imageName}}</figcaption>
     </figure>
     <br> <br>

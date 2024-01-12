@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {Observable, of, Subject} from 'rxjs';
 import {CocktailService} from 'src/app/services/cocktail.service';
 import {CocktailListDto, CocktailSearch} from '../../dtos/cocktail';
 import {ToastrService} from 'ngx-toastr';
-import { List } from 'immutable'; // Import List from Immutable.js
+import {List} from 'immutable'; // Import List from Immutable.js
 import {IngredientListDto} from "../../dtos/ingredient";
 import {PreferenceListDto} from "../../dtos/preference";
 
@@ -30,7 +30,8 @@ export class CocktailComponent {
 
   constructor(
     private cocktailService: CocktailService
-  ) { }
+  ) {
+  }
 
   ingredient: IngredientListDto = {
     id: null,
@@ -62,7 +63,9 @@ export class CocktailComponent {
     this.searchChanged();
   }
 
-
+  /**
+   * This method is called when the page is loaded or when the user changes the search parameters.
+   */
   searchChanged() {
     console.log("searchChanged")
     if (this.ingredient != null) {
@@ -75,19 +78,37 @@ export class CocktailComponent {
     } else {
       this.nameOfPreference = "";
     }
-    if((this.nameOfCocktail && this.nameOfCocktail.length != 0) || (this.nameOfIngredient && this.nameOfIngredient.length != 0) || (this.nameOfPreference && this.nameOfPreference.length != 0)){
+    if ((this.nameOfCocktail && this.nameOfCocktail.length != 0) || (this.nameOfIngredient && this.nameOfIngredient.length != 0) || (this.nameOfPreference && this.nameOfPreference.length != 0)) {
       this.isToShowImg = false;
       this.selectedCocktail = "";
       this.searchParams.cocktailName = this.nameOfCocktail;
       this.searchParams.ingredientsName = this.nameOfIngredient;
       this.searchParams.preferenceName = this.nameOfPreference;
-      this.cocktailService.searchCocktails(this.searchParams)
+      this.searchCocktails();
+    } else {
+      this.searchParams.cocktailName = "";
+      this.searchParams.ingredientsName = "";
+      this.searchParams.preferenceName = "";
+      this.searchCocktails();
+      this.isToShowImg = false;
+      this.selectedCocktail = "";
+    }
+
+  }
+
+  /**
+   * This method requests the cocktails from the backend, updates the cocktails array and shows the first cocktail.
+   * It is called from the {@link searchChanged} method, when the user changes the search parameters.
+   */
+  private searchCocktails(): void {
+    this.cocktailService.searchCocktails(this.searchParams)
       .subscribe({
         next: data => {
           this.cocktails = data;
           if (data == null) {
             this.isToShowImg = false;
           }
+          this.showImage(this.cocktails[0].name);
         },
         error: error => {
           console.error('Error fetching cocktails', error);
@@ -97,33 +118,9 @@ export class CocktailComponent {
             : error.message.message;
         }
       });
-    } else {
-      this.searchParams.cocktailName = "";
-      this.searchParams.ingredientsName = "";
-      this.searchParams.preferenceName = "";
-      this.cocktailService.searchCocktails(this.searchParams)
-        .subscribe({
-          next: data => {
-            this.cocktails = data;
-            if (data == null) {
-              this.isToShowImg = false;
-            }
-          },
-          error: error => {
-            console.error('Error fetching cocktails', error);
-            this.bannerError = 'Could not fetch cocktails: ' + error.message;
-            const errorMessage = error.status === 0
-              ? 'Is the backend up?'
-              : error.message.message;
-          }
-        })
-      this.isToShowImg = false;
-      this.selectedCocktail = "";
-    }
-
   }
 
-  showImage(name: String) : void {
+  showImage(name: String): void {
     this.isToShowImg = true;
     this.imageUrl = this.getCocktailImageByName(name).imagePath;
     this.cocktailIngredients = this.getCocktailImageByName(name).ingredients;
