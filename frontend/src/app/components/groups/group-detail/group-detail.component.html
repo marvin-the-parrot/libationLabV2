@@ -65,6 +65,10 @@
         <div class="cocktails-list">
           <div *ngFor="let cocktail of menu.cocktailsList; index as i" class="cocktails-item">
             {{ cocktail.name }}
+            <button class="btn see-detail-button"
+                    [routerLink]="['/cocktail', cocktail.id, 'detail']">
+              <i class="bi bi-book"></i>
+            </button>
           </div>
         </div>
         <div *ngIf="group?.host?.name === username" class="container-safe-button">
