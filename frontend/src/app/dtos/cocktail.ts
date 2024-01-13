@@ -32,4 +32,10 @@ export interface CocktailSearch {
   preferenceName?: string;
 }
 
+export interface CocktailTagSearchDto {
+  cocktailName?: string;
+  selectedIngredients?: string[];
+  preferenceName?: string;
+}
+
 

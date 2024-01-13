@@ -35,6 +35,7 @@ import { CocktailMenuComponent } from './components/cocktail/cocktail-menu/cockt
 import { AddIngredientDialogComponent } from './add-ingredient-dialog/add-ingredient-dialog.component';
 import {NgOptimizedImage} from "@angular/common";
 import { CocktailDetailComponent } from './components/cocktail/cocktail-detail/cocktail-detail.component';
+import {MatChipsModule} from "@angular/material/chips";
 
 
 @NgModule({
@@ -62,21 +63,22 @@ import { CocktailDetailComponent } from './components/cocktail/cocktail-detail/c
     AddIngredientDialogComponent,
     CocktailDetailComponent,
   ],
-    imports: [
-        MatIconModule,
-        MatInputModule,
-        BrowserModule,
-        AppRoutingModule,
-        ReactiveFormsModule,
-        HttpClientModule,
-        NgbModule,
-        FormsModule,
-        ToastrModule.forRoot(),
-        BrowserAnimationsModule,
-        MatDialogModule,
-        MatCheckboxModule,
-        NgOptimizedImage,
-    ],
+  imports: [
+    MatIconModule,
+    MatInputModule,
+    BrowserModule,
+    AppRoutingModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    NgbModule,
+    FormsModule,
+    ToastrModule.forRoot(),
+    BrowserAnimationsModule,
+    MatDialogModule,
+    MatCheckboxModule,
+    NgOptimizedImage,
+    MatChipsModule,
+  ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]
 })

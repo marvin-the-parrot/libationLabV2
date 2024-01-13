@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {debounceTime, of, Subject, switchMap, tap} from 'rxjs';
 
@@ -154,5 +154,9 @@ export class AutocompleteComponent<T> implements OnInit, ControlValueAccessor {
       this.touched = true;
       this.onTouched();
     }
+  }
+
+  resetAutocompleteInput(): void {
+    this.inputText = null;
   }
 }

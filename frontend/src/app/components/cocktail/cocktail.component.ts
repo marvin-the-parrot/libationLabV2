@@ -1,11 +1,14 @@
-import {Component} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {Observable, of, Subject} from 'rxjs';
 import {CocktailService} from 'src/app/services/cocktail.service';
-import {CocktailListDto, CocktailSearch} from '../../dtos/cocktail';
+import {CocktailListDto, CocktailSearch, CocktailTagSearchDto} from '../../dtos/cocktail';
 import {ToastrService} from 'ngx-toastr';
 import {List} from 'immutable'; // Import List from Immutable.js
 import {IngredientListDto} from "../../dtos/ingredient";
 import {PreferenceListDto} from "../../dtos/preference";
+import { AutocompleteComponent } from '../autocomplete/autocomplete.component';
+
+
 
 @Component({
   selector: 'app-cocktail',
@@ -13,6 +16,9 @@ import {PreferenceListDto} from "../../dtos/preference";
   styleUrls: ['./cocktail.component.scss']
 })
 export class CocktailComponent {
+
+  @ViewChild(AutocompleteComponent)
+  private autocompleteComponent!: AutocompleteComponent<any>;
 
   cocktails: CocktailListDto[] = [];
   cocktailIngredients: Map<string, string>;
@@ -26,11 +32,14 @@ export class CocktailComponent {
   isToShowImg: boolean = false;
   imageName: String = "";
   selectedCocktail: String = ""
-  searchParams: CocktailSearch = {};
+  selectedIngredients: string[] = []; // List of selected ingredients (tags)
+  searchParams: CocktailTagSearchDto = {};
 
   constructor(
-    private cocktailService: CocktailService
-  ) {
+    private cocktailService: CocktailService,
+    private notification: ToastrService,
+
+) {
   }
 
   ingredient: IngredientListDto = {
@@ -68,8 +77,18 @@ export class CocktailComponent {
    */
   searchChanged() {
     console.log("searchChanged")
-    if (this.ingredient != null) {
-      this.nameOfIngredient = this.ingredient.name;
+    if (this.ingredient != null && this.ingredient.name !== "") {
+
+      if (this.selectedIngredients.includes(this.ingredient.name)) {
+        this.notification.info("You already added this ingredient!");
+        this.autocompleteComponent.resetAutocompleteInput(); // Reset autocomplete input
+        this.ingredient.name = "";
+        return;
+      }
+      this.selectedIngredients.push(this.ingredient.name);
+      this.autocompleteComponent.resetAutocompleteInput(); // Reset autocomplete input
+      this.ingredient.name = "";
+
     } else {
       this.nameOfIngredient = "";
     }
@@ -78,16 +97,17 @@ export class CocktailComponent {
     } else {
       this.nameOfPreference = "";
     }
-    if ((this.nameOfCocktail && this.nameOfCocktail.length != 0) || (this.nameOfIngredient && this.nameOfIngredient.length != 0) || (this.nameOfPreference && this.nameOfPreference.length != 0)) {
+    if ((this.nameOfCocktail && this.nameOfCocktail.length != 0) || (this.selectedIngredients && this.selectedIngredients.length != 0) || (this.nameOfPreference && this.nameOfPreference.length != 0)) {
       this.isToShowImg = false;
       this.selectedCocktail = "";
       this.searchParams.cocktailName = this.nameOfCocktail;
-      this.searchParams.ingredientsName = this.nameOfIngredient;
+      this.searchParams.selectedIngredients = this.selectedIngredients;
       this.searchParams.preferenceName = this.nameOfPreference;
+      console.log(this.searchParams);
       this.searchCocktails();
     } else {
       this.searchParams.cocktailName = "";
-      this.searchParams.ingredientsName = "";
+      this.searchParams.selectedIngredients = [];
       this.searchParams.preferenceName = "";
       this.searchCocktails();
       this.isToShowImg = false;
@@ -124,8 +144,6 @@ export class CocktailComponent {
     this.isToShowImg = true;
     this.imageUrl = this.getCocktailImageByName(name).imagePath;
     this.cocktailIngredients = this.getCocktailImageByName(name).ingredients;
-    console.log(this.cocktailIngredients);
-    console.log(this.imageUrl);
     this.imageName = name;
     this.selectedCocktail = name;
   }
@@ -134,4 +152,12 @@ export class CocktailComponent {
     return this.cocktails.find((cocktail) => cocktail.name === cocktailName);
   }
 
+
+  removeTag(tag: string): void {
+    const index = this.selectedIngredients.indexOf(tag);
+    if (index !== -1) {
+      this.selectedIngredients.splice(index, 1);
+    }
+    this.searchChanged();
+  }
 }

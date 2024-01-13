@@ -11,9 +11,7 @@
     <div class="flex-container">
 
       <div class="search-container">
-        <label class="label-search-name">
-          Name
-        </label>
+        <label class="label-search-name">Name</label>
         <!-- Suchfeld für Name -->
         <div class="wrapper-name col-md-6 col-lg-6">
           <input matInput
@@ -33,9 +31,7 @@
 
 
       <div class="search-container">
-        <label class="label-search-ing-pref">
-          Ingredients
-        </label>
+        <label class="label-search-ing-pref">Ingredients</label>
         <!-- Suchfeld für Zutaten -->
         <div class="wrapper-ing-pref col-md-6 col-lg-6">
           <app-autocomplete
@@ -49,8 +45,20 @@
             (ngModelChange)="searchChanged()"
           >
           </app-autocomplete>
+
+          <!-- Selected Ingredients (Tags) -->
+          <div class="selected-ingredients">
+            <div *ngFor="let selected of selectedIngredients" class="tag">
+              {{ selected }}
+              <button (click)="removeTag(selected)" class="remove-tag-btn">
+                <i class="bi bi-x-circle"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
+
+
 
 
       <div class="search-container">
