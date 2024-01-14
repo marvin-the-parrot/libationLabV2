@@ -53,6 +53,15 @@
                   (ngModelChange)="searchChanged()"
                 >
                 </app-autocomplete>
+                <!-- Selected Ingredients (Tags) -->
+                <div class="selected-ingredients">
+                  <div *ngFor="let selected of selectedIngredients" class="tag">
+                    {{ selected }}
+                    <button (click)="removeTag(selected)" class="remove-tag-btn">
+                      <i class="bi bi-x-circle"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 

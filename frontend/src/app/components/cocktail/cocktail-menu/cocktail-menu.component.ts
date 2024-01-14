@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {IngredientDto, IngredientGroupDto, IngredientListDto} from "../../../dtos/ingredient";
 import {GroupsService} from "../../../services/groups.service";
 import {UserService} from "../../../services/user.service";
@@ -8,13 +8,14 @@ import {CocktailService} from 'src/app/services/cocktail.service';
 import {MessageService} from "../../../services/message.service";
 import {ToastrService} from "ngx-toastr";
 import {ActivatedRoute, Router} from "@angular/router";
-import {CocktailListDto, CocktailOverviewDto, CocktailSearch} from "../../../dtos/cocktail";
+import {CocktailListDto, CocktailOverviewDto, CocktailSearch, CocktailTagSearchDto} from "../../../dtos/cocktail";
 import {ErrorFormatterService} from "../../../services/error-formatter.service";
 import {MenuCocktailsDto} from 'src/app/dtos/menu';
 import {PreferenceListDto} from "../../../dtos/preference";
 import {Observable, of} from "rxjs";
 import {List} from 'immutable';
-import {RecommendedMenues} from "../../../dtos/recommendedMenues"; // Import List from Immutable.js
+import {RecommendedMenues} from "../../../dtos/recommendedMenues";
+import {AutocompleteComponent} from "../../autocomplete/autocomplete.component"; // Import List from Immutable.js
 
 @Component({
   selector: 'app-cocktail-card',
@@ -22,6 +23,10 @@ import {RecommendedMenues} from "../../../dtos/recommendedMenues"; // Import Lis
   styleUrls: ['./cocktail-menu.component.scss']
 })
 export class CocktailMenuComponent {
+
+  @ViewChild(AutocompleteComponent)
+  private autocompleteComponent!: AutocompleteComponent<any>;
+
   cocktails: CocktailOverviewDto[] = []
   ingredients: IngredientGroupDto[] = [];
   groupId: number;
@@ -38,7 +43,8 @@ export class CocktailMenuComponent {
   nameOfPreference: string;
   bannerError: string | null = null;
   selectedCocktails: CocktailListDto[] = [];
-  searchParams: CocktailSearch = {};
+  searchParams: CocktailTagSearchDto = {};
+  selectedIngredients: string[] = []; // List of selected ingredients (tags)
 
   constructor(
     private groupsService: GroupsService,
@@ -123,8 +129,16 @@ export class CocktailMenuComponent {
 
 
   searchChanged() {
-    if (this.ingredient != null) {
-      this.nameOfIngredient = this.ingredient.name;
+    if (this.ingredient != null && this.ingredient.name !== "") {
+      if (this.selectedIngredients.includes(this.ingredient.name)) {
+        this.notification.info("You already added this ingredient!");
+        this.autocompleteComponent.resetAutocompleteInput(); // Reset autocomplete input
+        this.ingredient.name = "";
+        return;
+      }
+      this.selectedIngredients.push(this.ingredient.name);
+      this.autocompleteComponent.resetAutocompleteInput(); // Reset autocomplete input
+      this.ingredient.name = "";
     } else {
       this.nameOfIngredient = "";
     }
@@ -133,9 +147,9 @@ export class CocktailMenuComponent {
     } else {
       this.nameOfPreference = "";
     }
-    if ((this.nameOfCocktail && this.nameOfCocktail.length != 0) || (this.nameOfIngredient && this.nameOfIngredient.length != 0) || (this.nameOfPreference && this.nameOfPreference.length != 0)) {
+    if ((this.nameOfCocktail && this.nameOfCocktail.length != 0) || (this.selectedIngredients && this.selectedIngredients.length != 0) || (this.nameOfPreference && this.nameOfPreference.length != 0)) {
       this.searchParams.cocktailName = this.nameOfCocktail;
-      this.searchParams.ingredientsName = this.nameOfIngredient;
+      this.searchParams.selectedIngredients = this.selectedIngredients;
       this.searchParams.preferenceName = this.nameOfPreference;
       this.cocktailService.searchCocktails(this.searchParams)
         .subscribe({
@@ -152,7 +166,7 @@ export class CocktailMenuComponent {
         });
     } else {
       this.searchParams.cocktailName = "";
-      this.searchParams.ingredientsName = "";
+      this.searchParams.selectedIngredients = [];
       this.searchParams.preferenceName = "";
       this.cocktailService.searchCocktails(this.searchParams)
         .subscribe({
@@ -248,6 +262,14 @@ export class CocktailMenuComponent {
         console.log(error);
       }
     });
+  }
+
+  removeTag(tag: string): void {
+    const index = this.selectedIngredients.indexOf(tag);
+    if (index !== -1) {
+      this.selectedIngredients.splice(index, 1);
+    }
+    this.searchChanged();
   }
 }
 

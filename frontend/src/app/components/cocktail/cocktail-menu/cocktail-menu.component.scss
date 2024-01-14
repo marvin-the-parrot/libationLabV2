@@ -118,6 +118,7 @@
 .search-container {
   margin-left: 3vw;
   margin-top: -1vh;
+  align-self: flex-start;
 }
 
 .label-search-name {
@@ -263,5 +264,32 @@
 
 .info:hover::after {
   opacity: 1;
+}
+
+.selected-ingredients {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  background-color: #AC6AFE;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 8px;
+  margin-right: 4px;
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.remove-tag-btn {
+  padding: 4px;
+  margin-left: 4px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: white;
+  font-size: 14px;
 }
 
