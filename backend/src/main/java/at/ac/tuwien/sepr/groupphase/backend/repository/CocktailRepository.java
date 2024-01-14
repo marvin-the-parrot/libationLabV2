@@ -3,6 +3,8 @@ package at.ac.tuwien.sepr.groupphase.backend.repository;
 import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Preference;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
@@ -21,5 +23,6 @@ public interface CocktailRepository extends JpaRepository<Cocktail, Long> {
 
     List<Cocktail> findDistinctByCocktailIngredientsIn(List<CocktailIngredients> ingredients);
 
-    List<Cocktail> findByPreferencesInAndIdIn(List<Preference> preferences, List<Long> ids);
+    List<Cocktail> findAllByPreferencesInAndIdIn(List<Preference> preferences, List<Long> ids);
+
 }

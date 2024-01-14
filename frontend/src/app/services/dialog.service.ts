@@ -7,6 +7,7 @@ import {
 import { Observable, Subject } from 'rxjs';
 import { OptionDialogComponent } from '../option-dialog/option-dialog.component';
 import {AddIngredientDialogComponent} from "../add-ingredient-dialog/add-ingredient-dialog.component";
+import {GenerateMenuDialogComponent} from "../generate-menu-dialog/generate-menu-dialog.component";
 
 @Injectable({
   providedIn: 'root',
@@ -58,6 +59,26 @@ export class DialogService {
       {
         height: '80%', // makes sure the dialog is big enough
         data: { groupId }
+      }
+    );
+
+    dialogRef.componentInstance.result.subscribe((res: boolean) => {
+      dialogRef.close(res);
+    });
+
+    return dialogRef.afterClosed();
+  }
+
+  /**
+   * Opens a dialog that shows the user menues and lets the user add one of them to the group
+   * @param groupId the id of the group for which the menues should be generated
+   */
+  openGenerateMenuDialog(groupId: number, numberOfCocktails: number): Observable<boolean> {
+    const dialogRef = this.dialog.open<GenerateMenuDialogComponent, any, boolean>(
+      GenerateMenuDialogComponent,
+      {
+        height: '80%', // makes sure the dialog is big enough
+        data: { groupId, numberOfCocktails }
       }
     );
 

@@ -182,7 +182,7 @@ export class CocktailService {
    * @param groupId
    * @param numberOfCocktails
    */
-  generateCocktailMenu(groupId: number, numberOfCocktails: number) {
+  generateCocktailMenu(groupId: number, numberOfCocktails: number): Observable<RecommendedMenues> {
     let params = new HttpParams();
     params = params.append("numberOfCocktails", numberOfCocktails.toString());
 

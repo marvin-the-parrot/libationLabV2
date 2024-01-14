@@ -23,6 +23,5 @@ public interface CocktailIngredientsRepository extends JpaRepository<CocktailIng
 
     List<CocktailIngredients> findAllByCocktail(Cocktail cocktail);
 
-    List<CocktailIngredients> findAllByCocktailIn(List<Cocktail> cocktails);
 
 }

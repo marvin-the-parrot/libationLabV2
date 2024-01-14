@@ -14,7 +14,7 @@ import jakarta.persistence.OneToMany;
  * Entity of table Cocktail.
  */
 @Entity
-public class Cocktail {
+public class Cocktail implements Comparable<Cocktail> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -101,5 +101,10 @@ public class Cocktail {
 
     public void setPreferences(Set<Preference> preferences) {
         this.preferences = preferences;
+    }
+
+    @Override
+    public int compareTo(Cocktail o) {
+        return this.getName().compareTo(o.getName());
     }
 }

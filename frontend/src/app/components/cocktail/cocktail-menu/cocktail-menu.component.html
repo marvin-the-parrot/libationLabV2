@@ -103,10 +103,8 @@
               <div class="container-fluid card-header" [class.selected]="isSelected(cocktail.name)">
                 {{ cocktail.name }}
 
-
                 <i class="bi bi-info-circle info"
                    [attr.data-tooltip]="getIngredientsString(cocktail.ingredientsName)"></i>
-
 
               </div>
               <div class="card-body">
@@ -130,7 +128,7 @@
             <div class="cocktails-container" *ngIf="selectedCocktails.length!==0">
               <div>
                 <p class="cocktails-count">{{selectedCocktails.length}} Cocktails</p>
-                <p *ngIf="lv">LibationValue: {{lv}}</p>
+                <p *ngIf="lv && selectedCocktails.length !== 0">LibationValue: {{lv}}</p>
               </div>
               <div class="cocktails-list">
                 <div *ngFor="let cocktail of selectedCocktails; index as i" class="cocktails-item">
@@ -153,9 +151,9 @@
                       <p class="mb-0">How many cocktails?</p>
                     </div>
                     <div class="col-4">
-                      <input [(ngModel)]="numberOfCocktails" type="number" class="form-control p-1 mb-1" />
+                      <input [(ngModel)]="numberOfCocktails" type="number" class="form-control p-1 mb-1"/>
                     </div>
-                    <button type="button" class="btn generate-cocktails-button" (click)="generateCocktails()">Generate
+                    <button type="button" class="btn generate-cocktails-button" (click)="openSelectMenuModal()">Generate
                       Cocktails
                     </button>
                   </div>

@@ -25,7 +25,7 @@ export class CocktailMenuComponent {
   cocktails: CocktailOverviewDto[] = []
   ingredients: IngredientGroupDto[] = [];
   groupId: number;
-  numberOfCocktails =  4;
+  numberOfCocktails = 4;
   lv: number;
   dummyMemberSelectionModel: unknown; // Just needed for the autocomplete
   submitted = false;
@@ -235,17 +235,10 @@ export class CocktailMenuComponent {
     return `Ingredients: ${ingredientNames}`;
   }
 
-
-  generateCocktails() {
-    this.cocktailService.generateCocktailMenu(this.groupId, this.numberOfCocktails).subscribe({
-      next: (menu: RecommendedMenues) => {
-        this.selectedCocktails = menu.menuList[0].cocktailMenu;
-        this.lv = menu.menuList[0].lv;
-      },
-      error: error => {
-        this.notification.error('Could not generate cocktails.');
-        console.log('Could not generate cocktails due to:');
-        console.log(error);
+  openSelectMenuModal() {
+    this.dialogService.openGenerateMenuDialog(this.groupId, this.numberOfCocktails).subscribe((result: boolean) => {
+      if (result === true) {
+        this.getGroup();
       }
     });
   }

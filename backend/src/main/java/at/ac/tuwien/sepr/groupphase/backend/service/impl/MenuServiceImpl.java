@@ -106,7 +106,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public RecommendedMenuesDto createRecommendation(Long groupId, Integer size, Integer numberOfMenues) {
+    public RecommendedMenuesDto createRecommendation(Long groupId, Integer size, Integer numberOfRandomMenues) {
         LOGGER.info("Create recommendation for group {}", groupId);
 
         // fetch preferences of group from db
@@ -116,40 +116,87 @@ public class MenuServiceImpl implements MenuService {
         }
 
         List<ApplicationUser> users = userRepository.findByUserGroupsIn(group);
-
         List<Preference> preferences = preferenceRepository.findAllByApplicationUserIsIn(users);
 
+        // order preferences by how many users have them
         LinkedHashMap<String, Integer> orderedPreferenceMap = orderedPreferences(preferences);
 
         List<CocktailOverviewDto> mixableCocktails = cocktailService.getMixableCocktails(groupId);
 
         // fetch cocktials from db that fulfill atleast one of the listed preferences
-        List<Cocktail> cocktails = cocktailRepository.findByPreferencesInAndIdIn(preferences, mixableCocktails.stream().map(CocktailOverviewDto::getId).collect(
+        List<Cocktail> cocktails = cocktailRepository.findAllByPreferencesInAndIdIn(preferences, mixableCocktails.stream().map(CocktailOverviewDto::getId).collect(
             Collectors.toList()));
 
-
-        // select preference with highest value and select a random cocktail from the list of cocktails that fulfill this preference
-        LinkedHashMap<String, Integer> nonFulfilledPreferences = orderedPreferenceMap;
+        // order cocktails by which ones fulfill the most preferences
+        List<Cocktail> orderedCocktails = orderCocktails(cocktails, orderedPreferenceMap);
 
         if (orderedPreferenceMap.size() == 0) {
             throw new IllegalArgumentException("No preferences found for group with id " + groupId);
         }
 
+        // generate a optimal menu
         List<MenuRecommendationDto> recommendations = new ArrayList<>();
-        for (int i = 0; i < numberOfMenues; i++) {
+        recommendations.add(pickCocktailMenu(size, orderedCocktails, orderedPreferenceMap));
+
+        // generate a more randomized less optimal menu
+        for (int i = 0; i < numberOfRandomMenues; i++) {
             Collections.shuffle(cocktails, new Random());
             List<Cocktail> shufflesCocktails = new ArrayList<>(cocktails);
-            recommendations.add(pickCocktailMenu(size, shufflesCocktails, nonFulfilledPreferences));
+            recommendations.add(pickCocktailMenu(size, shufflesCocktails, orderedPreferenceMap));
         }
-
 
         return new RecommendedMenuesDto(groupId, recommendations);
 
-        // calculate LibationValue for the List of cocktails (how many of the preferences are fulfilled by the whole menu)
-
-
     }
 
+    /**
+     * Orderes cocktails from most occurences of preferences to least
+     * @param cocktails list of cocktails that fulfill atleast one of the preferences
+     * @param orderedPreferenceMap map of preferences ordered by most wanted to least
+     * @return list of cocktails
+     */
+    private List<Cocktail> orderCocktails(List<Cocktail> cocktails, LinkedHashMap<String, Integer> orderedPreferenceMap) {
+
+        TreeMap<Cocktail, Integer> cocktailPreferenceMap = new TreeMap<>();
+
+        SortedSet<Map.Entry<Cocktail, Integer>> sortedCocktails = new TreeSet<>(new Comparator<Map.Entry<Cocktail, Integer>>() {
+            public int compare(Map.Entry<Cocktail, Integer> o1, Map.Entry<Cocktail, Integer> o2) {
+                if (o1.getValue().equals(o2.getValue())) {
+                    return o1.getKey().compareTo(o2.getKey());
+                } else {
+                    return o2.getValue().compareTo(o1.getValue());
+                }
+            }
+        });
+
+        for (Cocktail cocktail : cocktails) {
+            int satisfiesPreferences = 0;
+
+            for (Preference preference : cocktail.getPreferences()) {
+                if (orderedPreferenceMap.containsKey(preference.getName())) {
+                    satisfiesPreferences++;
+                }
+            }
+            cocktailPreferenceMap.put(cocktail, satisfiesPreferences);
+        }
+
+        sortedCocktails.addAll(cocktailPreferenceMap.entrySet());
+
+        List<Cocktail> orderedCocktails = new ArrayList<>();
+        for (Map.Entry<Cocktail, Integer> entry : sortedCocktails) {
+            orderedCocktails.add(entry.getKey());
+        }
+
+        return orderedCocktails;
+    }
+
+    /**
+     * creates a cocktail menu based on the groups preferences
+     * @param size how many cocktails should be included in the final list
+     * @param cocktails list of cocktails to pick from
+     * @param nonFulfilledPreferences list of preferences
+     * @return A cocktail Menu
+     */
     private MenuRecommendationDto pickCocktailMenu(Integer size, List<Cocktail> cocktails, LinkedHashMap<String, Integer> nonFulfilledPreferences) {
         List<Cocktail> selectedCocktails = new ArrayList<>();
         Set<String> fulfilledPreferences = new HashSet<>();
@@ -201,7 +248,11 @@ public class MenuServiceImpl implements MenuService {
 
     }
 
-    // creates a sorted list of the groups preferences from most to least occuring
+    /**
+     * Orders the preferences by most wanted to least
+     * @param preferences list of preferences
+     * @return ordered list of preferences
+     */
     private LinkedHashMap<String, Integer> orderedPreferences(List<Preference> preferences) {
         // create a sorted list with the groups preferences
         TreeMap<String, Integer> preferenceMap = new TreeMap<>();
