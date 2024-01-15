@@ -35,7 +35,7 @@ export interface CocktailSearch {
 export interface CocktailTagSearchDto {
   cocktailName?: string;
   selectedIngredients?: string[];
-  preferenceName?: string;
+  selectedPreferences?: string[];
 }
 
 

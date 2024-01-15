@@ -52,9 +52,9 @@ public class PreferenceServiceImpl implements PreferenceService {
             names.add(preference.getName());
         }
         if (names.isEmpty()) {
-            return preferenceMapper.preferenceToPreferenceListDto(preferenceRepository.findFirst5ByNameIgnoreCaseContainingOrderByName(searchParams));
+            return preferenceMapper.preferenceToPreferenceListDto(preferenceRepository.findFirst10ByNameIgnoreCaseContainingOrderByName(searchParams));
         } else {
-            return preferenceMapper.preferenceToPreferenceListDto(preferenceRepository.findFirst5ByNameNotInAndNameIgnoreCaseContainingOrderByName(names, searchParams));
+            return preferenceMapper.preferenceToPreferenceListDto(preferenceRepository.findFirst10ByNameNotInAndNameIgnoreCaseContainingOrderByName(names, searchParams));
         }
 
     }

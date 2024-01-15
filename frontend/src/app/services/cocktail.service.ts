@@ -36,8 +36,8 @@ export class CocktailService {
     if (searchParams.selectedIngredients.length > 0) {
       params = params.append('ingredientsName', searchParams.selectedIngredients.join(','));
     }
-    if (searchParams.preferenceName) {
-      params = params.append('preferenceName', searchParams.preferenceName);
+    if (searchParams.selectedPreferences.length > 0) {
+      params = params.append('preferenceName', searchParams.selectedPreferences.join(','));
     }
     return this.httpClient.get<CocktailListDto[]>(this.cocktailBaseUri, {params});
   }

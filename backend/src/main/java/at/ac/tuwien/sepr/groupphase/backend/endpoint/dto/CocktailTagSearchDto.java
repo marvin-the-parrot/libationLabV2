@@ -5,7 +5,7 @@ import java.util.List;
 public class CocktailTagSearchDto {
     String cocktailName;
     List<String> ingredientsName;
-    String preferenceName;
+    List<String> preferenceName;
 
     public String getCocktailName() {
         return cocktailName;
@@ -23,11 +23,11 @@ public class CocktailTagSearchDto {
         this.ingredientsName = ingredientsName;
     }
 
-    public String getPreferenceName() {
+    public List<String> getPreferenceName() {
         return preferenceName;
     }
 
-    public void setPreferenceName(String preferenceName) {
+    public void setPreferenceName(List<String> preferenceName) {
         this.preferenceName = preferenceName;
     }
 }

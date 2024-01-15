@@ -17,8 +17,11 @@ import { AutocompleteComponent } from '../autocomplete/autocomplete.component';
 })
 export class CocktailComponent {
 
-  @ViewChild(AutocompleteComponent)
-  private autocompleteComponent!: AutocompleteComponent<any>;
+  @ViewChild('ingredientAutocomplete', { static: false })
+  private ingredientAutocompleteComponent!: AutocompleteComponent<any>;
+
+  @ViewChild('preferenceAutocomplete', { static: false })
+  private preferenceAutocompleteComponent!: AutocompleteComponent<any>;
 
   cocktails: CocktailListDto[] = [];
   cocktailIngredients: Map<string, string>;
@@ -33,6 +36,7 @@ export class CocktailComponent {
   imageName: String = "";
   selectedCocktail: String = ""
   selectedIngredients: string[] = []; // List of selected ingredients (tags)
+  selectedPreferences: string[] = []; // List of selected preferences (tags)
   searchParams: CocktailTagSearchDto = {};
 
   constructor(
@@ -81,34 +85,42 @@ export class CocktailComponent {
 
       if (this.selectedIngredients.includes(this.ingredient.name)) {
         this.notification.info("You already added this ingredient!");
-        this.autocompleteComponent.resetAutocompleteInput(); // Reset autocomplete input
+        this.ingredientAutocompleteComponent.resetAutocompleteInput(); // Reset autocomplete input
         this.ingredient.name = "";
         return;
       }
       this.selectedIngredients.push(this.ingredient.name);
-      this.autocompleteComponent.resetAutocompleteInput(); // Reset autocomplete input
+      this.ingredientAutocompleteComponent.resetAutocompleteInput(); // Reset autocomplete input
       this.ingredient.name = "";
 
     } else {
       this.nameOfIngredient = "";
     }
-    if (this.preference != null) {
-      this.nameOfPreference = this.preference.name;
+    if (this.preference != null && this.preference.name !== "") {
+      if (this.selectedPreferences.includes(this.preference.name)) {
+        this.notification.info("You already added this preference!");
+        this.preferenceAutocompleteComponent.resetAutocompleteInput(); // Reset autocomplete input
+        this.preference.name = "";
+        return;
+      }
+      this.selectedPreferences.push(this.preference.name);
+      this.preferenceAutocompleteComponent.resetAutocompleteInput(); // Reset autocomplete input
+      this.preference.name = "";
     } else {
       this.nameOfPreference = "";
     }
-    if ((this.nameOfCocktail && this.nameOfCocktail.length != 0) || (this.selectedIngredients && this.selectedIngredients.length != 0) || (this.nameOfPreference && this.nameOfPreference.length != 0)) {
+    if ((this.nameOfCocktail && this.nameOfCocktail.length != 0) || (this.selectedIngredients && this.selectedIngredients.length != 0) || (this.selectedPreferences && this.selectedPreferences.length != 0)) {
       this.isToShowImg = false;
       this.selectedCocktail = "";
       this.searchParams.cocktailName = this.nameOfCocktail;
       this.searchParams.selectedIngredients = this.selectedIngredients;
-      this.searchParams.preferenceName = this.nameOfPreference;
+      this.searchParams.selectedPreferences = this.selectedPreferences;
       console.log(this.searchParams);
       this.searchCocktails();
     } else {
       this.searchParams.cocktailName = "";
       this.searchParams.selectedIngredients = [];
-      this.searchParams.preferenceName = "";
+      this.searchParams.selectedPreferences = [];
       this.searchCocktails();
       this.isToShowImg = false;
       this.selectedCocktail = "";
@@ -153,10 +165,28 @@ export class CocktailComponent {
   }
 
 
-  removeTag(tag: string): void {
+  /**
+   * This method is called when the user clicks on a 'X' from tag in the ingredients list.
+   * It removes the tag from the list of selected ingredients and calls the {@link searchChanged} method.
+   * @param tag
+   */
+  removeTagIngredients(tag: string): void {
     const index = this.selectedIngredients.indexOf(tag);
     if (index !== -1) {
       this.selectedIngredients.splice(index, 1);
+    }
+    this.searchChanged();
+  }
+
+  /**
+   * This method is called when the user clicks on a 'X' from tag in the preferences list.
+   * It removes the tag from the list of selected preferences and calls the {@link searchChanged} method.
+   * @param tag
+   */
+  removeTagPreferences(tag: string): void {
+    const index = this.selectedPreferences.indexOf(tag);
+    if (index !== -1) {
+      this.selectedPreferences.splice(index, 1);
     }
     this.searchChanged();
   }

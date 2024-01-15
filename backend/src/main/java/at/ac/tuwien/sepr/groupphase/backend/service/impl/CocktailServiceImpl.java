@@ -75,29 +75,35 @@ public class CocktailServiceImpl implements CocktailService {
             results.sort(Comparator.comparing(CocktailListDto::getName));
             return results;
         }
+        //TODO: maybe use a Mapper for this
+        //Transform CocktailSerachDto to CocktailTagSearchDto (for easier handling)
+        CocktailTagSearchDto searchTagParameters = new CocktailTagSearchDto();
+        searchTagParameters.setCocktailName(searchParameters.getCocktailName());
+
+        if (searchParameters.getIngredientsName() != null && !searchParameters.getIngredientsName().isEmpty()) {
+            List<String> ingredientsList = Arrays.asList(searchParameters.getIngredientsName().split(","));
+            searchTagParameters.setIngredientsName(ingredientsList);
+        }
+        if (searchParameters.getPreferenceName() != null && !searchParameters.getPreferenceName().isEmpty()) {
+            List<String> preferencesList = Arrays.asList(searchParameters.getPreferenceName().split(","));
+            searchTagParameters.setPreferenceName(preferencesList);
+        }
+
 
         List<Cocktail> resultCocktails = new ArrayList<>();
         List<Cocktail> cocktails;
+        //Search for cocktails by name
         if (searchParameters.getCocktailName() != null) {
             cocktails = cocktailRepository.findByNameContainingIgnoreCase(searchParameters.getCocktailName());
         } else {
             cocktails = cocktailRepository.findAll();
         }
+        //Search for cocktails by ingredients
         if (searchParameters.getIngredientsName() != null && !searchParameters.getIngredientsName().isEmpty()) {
-            //TODO: maybe use a Mapper for this
-            System.out.println(searchParameters.getIngredientsName());
-            CocktailTagSearchDto newSearchParameters = new CocktailTagSearchDto();
-            newSearchParameters.setCocktailName(searchParameters.getCocktailName());
-            newSearchParameters.setPreferenceName(searchParameters.getPreferenceName());
-
-            if (searchParameters.getIngredientsName() != null && !searchParameters.getIngredientsName().isEmpty()) {
-                List<String> ingredientsList = Arrays.asList(searchParameters.getIngredientsName().split(","));
-                newSearchParameters.setIngredientsName(ingredientsList);
-            }
 
             //TODO: i dont know how to do it differently
             List<Cocktail> cocktailsByIngredients1 = null;
-            for (String ingredient : newSearchParameters.getIngredientsName()) {
+            for (String ingredient : searchTagParameters.getIngredientsName()) {
                 List<CocktailIngredients> cocktailIngredients =
                     cocktailIngredientsRepository.findByIngredientNameEqualsIgnoreCase(ingredient);
                 List<Cocktail> cocktailsByIngredients2 = cocktailRepository.findDistinctByCocktailIngredientsIn(cocktailIngredients);
@@ -116,7 +122,8 @@ public class CocktailServiceImpl implements CocktailService {
             //Cocktails added to List which match name and ingredients
             if (!cocktails.isEmpty()) {
                 for (Cocktail cocktail : cocktails) {
-                    for (Cocktail cocktailIngredient : cocktailsByIngredients1) {
+                  assert cocktailsByIngredients1 != null;
+                  for (Cocktail cocktailIngredient : cocktailsByIngredients1) {
                         if (cocktail.getName().equals(cocktailIngredient.getName())) {
                             resultCocktails.add(cocktail);
                         }
@@ -124,13 +131,16 @@ public class CocktailServiceImpl implements CocktailService {
                 }
             }
         } else {
+            //Add all cocktails from name search to result list if no ingredients are given
             resultCocktails.addAll(cocktails);
         }
-        if (searchParameters.getPreferenceName() != null) {
-            List<Cocktail> cocktailPreferences =
-                cocktailRepository.findByPreferencesIn(preferenceRepository.findByNameContainingIgnoreCase(searchParameters.getPreferenceName()));
-
-            resultCocktails = resultCocktails.stream().filter(cocktailPreferences::contains).collect(Collectors.toList());
+        //Search for cocktails by every preference
+        if (searchParameters.getPreferenceName() != null && !searchParameters.getPreferenceName().isEmpty()) {
+            for (String preference : searchTagParameters.getPreferenceName()) {
+                List<Cocktail> cocktailsByPreferences = cocktailRepository.findByPreferencesIn(preferenceRepository.findByNameEqualsIgnoreCase(preference));
+                //Filter out cocktails which do not have specific preference
+                resultCocktails = resultCocktails.stream().filter(cocktailsByPreferences::contains).collect(Collectors.toList());
+            }
         }
 
         return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(resultCocktails);
@@ -189,13 +199,13 @@ public class CocktailServiceImpl implements CocktailService {
     @Transactional
     @Override
     public List<IngredientListDto> searchAutoIngredients(String searchParams) {
-        return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst5ByNameIgnoreCaseContainingOrderByName(searchParams));
+        return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst10ByNameIgnoreCaseContainingOrderByName(searchParams));
     }
 
     @Transactional
     @Override
     public List<PreferenceListDto> searchAutoPreferences(String searchParams) {
-        return preferenceMapper.preferenceToPreferenceListDto(preferenceRepository.findFirst5ByNameIgnoreCaseContainingOrderByName(searchParams));
+        return preferenceMapper.preferenceToPreferenceListDto(preferenceRepository.findFirst10ByNameIgnoreCaseContainingOrderByName(searchParams));
     }
 
     @Override

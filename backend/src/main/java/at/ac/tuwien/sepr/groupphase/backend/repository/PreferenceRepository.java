@@ -23,11 +23,11 @@ public interface PreferenceRepository extends JpaRepository<Preference, Long> {
 
     List<Preference> findAllByApplicationUserInOrderByName(List<ApplicationUser> applicationUser);
 
-    List<Preference> findFirst5ByNameIgnoreCaseContainingOrderByName(String preferenceName);
+    List<Preference> findFirst10ByNameIgnoreCaseContainingOrderByName(String preferenceName);
 
-    List<Preference> findFirst5ByNameNotInAndNameIgnoreCaseContainingOrderByName(List<String> names, String preferenceName);
+    List<Preference> findFirst10ByNameNotInAndNameIgnoreCaseContainingOrderByName(List<String> names, String preferenceName);
 
-    List<Preference> findByNameContainingIgnoreCase(String name);
+    List<Preference> findByNameEqualsIgnoreCase(String name);
 
     List<Preference> findAllByApplicationUserIsIn(List<ApplicationUser> applicationUsers);
 
