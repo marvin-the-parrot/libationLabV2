@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {IngredientDto, IngredientGroupDto, IngredientListDto} from "../../../dtos/ingredient";
+import {IngredientGroupDto, IngredientListDto} from "../../../dtos/ingredient";
 import {GroupsService} from "../../../services/groups.service";
 import {UserService} from "../../../services/user.service";
 import {IngredientService} from "../../../services/ingredient.service";
@@ -14,7 +14,6 @@ import {MenuCocktailsDto} from 'src/app/dtos/menu';
 import {PreferenceListDto} from "../../../dtos/preference";
 import {Observable, of} from "rxjs";
 import {List} from 'immutable';
-import {RecommendedMenues} from "../../../dtos/recommendedMenues"; // Import List from Immutable.js
 
 @Component({
   selector: 'app-cocktail-card',
@@ -93,7 +92,6 @@ export class CocktailMenuComponent {
     this.groupsService.getMixables(this.groupId).subscribe({
       next: (cocktails: CocktailOverviewDto[]) => {
         this.cocktails = cocktails;
-        console.log(this.cocktails)
       },
       error: error => {
         console.error('Could not fetch cocktails due to:');
@@ -238,7 +236,7 @@ export class CocktailMenuComponent {
   openSelectMenuModal() {
     this.dialogService.openGenerateMenuDialog(this.groupId, this.numberOfCocktails).subscribe((result: boolean) => {
       if (result === true) {
-        this.getGroup();
+        this.getCocktailsMenu(this.groupId);
       }
     });
   }

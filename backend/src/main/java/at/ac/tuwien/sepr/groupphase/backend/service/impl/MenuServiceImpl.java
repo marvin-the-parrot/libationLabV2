@@ -124,8 +124,9 @@ public class MenuServiceImpl implements MenuService {
         List<CocktailOverviewDto> mixableCocktails = cocktailService.getMixableCocktails(groupId);
 
         // fetch cocktials from db that fulfill atleast one of the listed preferences
-        List<Cocktail> cocktails = cocktailRepository.findAllByPreferencesInAndIdIn(preferences, mixableCocktails.stream().map(CocktailOverviewDto::getId).collect(
-            Collectors.toList()));
+        List<Cocktail> cocktails =
+            cocktailRepository.findAllByPreferencesInAndIdIn(preferences, mixableCocktails.stream().map(CocktailOverviewDto::getId).collect(
+                Collectors.toList()));
 
         // order cocktails by which ones fulfill the most preferences
         List<Cocktail> orderedCocktails = orderCocktails(cocktails, orderedPreferenceMap);
@@ -150,8 +151,9 @@ public class MenuServiceImpl implements MenuService {
     }
 
     /**
-     * Orderes cocktails from most occurences of preferences to least
-     * @param cocktails list of cocktails that fulfill atleast one of the preferences
+     * Orderes cocktails from most occurences of preferences to least.
+     *
+     * @param cocktails            list of cocktails that fulfill atleast one of the preferences
      * @param orderedPreferenceMap map of preferences ordered by most wanted to least
      * @return list of cocktails
      */
@@ -191,9 +193,10 @@ public class MenuServiceImpl implements MenuService {
     }
 
     /**
-     * creates a cocktail menu based on the groups preferences
-     * @param size how many cocktails should be included in the final list
-     * @param cocktails list of cocktails to pick from
+     * creates a cocktail menu based on the groups preferences.
+     *
+     * @param size                    how many cocktails should be included in the final list
+     * @param cocktails               list of cocktails to pick from
      * @param nonFulfilledPreferences list of preferences
      * @return A cocktail Menu
      */
@@ -203,7 +206,6 @@ public class MenuServiceImpl implements MenuService {
         int countFullfilledPreferences = 0;
 
         while (selectedCocktails.size() < size) {
-            countFullfilledPreferences += fulfilledPreferences.size();
             fulfilledPreferences.clear();
             // save size so we can check if we are making progress
             int countPrevLoop = selectedCocktails.size();
@@ -220,6 +222,7 @@ public class MenuServiceImpl implements MenuService {
                         for (Preference preference : cocktail.getPreferences()) {
                             if (nonFulfilledPreferences.containsKey(preference.getName())) {
                                 fulfilledPreferences.add(preference.getName());
+                                countFullfilledPreferences++;
                             }
                         }
                         selectedCocktails.add(cocktail);
@@ -244,12 +247,13 @@ public class MenuServiceImpl implements MenuService {
             lv = Math.max((float) countFullfilledPreferences, fulfilledPreferences.size()) / (float) nonFulfilledPreferences.size();
         }
         List<CocktailListDto> cocktailList = cocktailIngredientMapper.cocktailIngredientToCocktailListDto(selectedCocktails);
-        return new MenuRecommendationDto(cocktailList, Math.min(lv, 1L));
+        return new MenuRecommendationDto(cocktailList, lv);
 
     }
 
     /**
-     * Orders the preferences by most wanted to least
+     * Orders the preferences by most wanted to least.
+     *
      * @param preferences list of preferences
      * @return ordered list of preferences
      */
