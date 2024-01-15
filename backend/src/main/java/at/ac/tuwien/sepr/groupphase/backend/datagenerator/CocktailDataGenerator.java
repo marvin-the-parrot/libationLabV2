@@ -35,6 +35,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -78,12 +79,38 @@ public class CocktailDataGenerator {
 
             ingestIngredients();
             ingestPreferences();
-
             giveUsersIngredients();
-
             ingestCocktailsWithIngredientsAndPreferences();
+            giveUsersPreferences();
 
         }
+    }
+
+    private void giveUsersPreferences() {
+        ApplicationUser user = userRepository.findById(1L).orElse(null);
+        List<String> preferenceNames1 = List.of("Sweet", "Tequila", "Whiskey", "Rum", "Alcoholic", "Martini glass");
+        Set<Preference> updatedPreferences = new HashSet<>();
+
+
+        for (String preferenceName : preferenceNames1) {
+            List<Preference> preference = preferenceRepository.findByNameEqualsIgnoreCase(preferenceName);
+            updatedPreferences.add(preference.get(0));
+        }
+        user.setPreferences(updatedPreferences);
+        userRepository.save(user);
+
+        user = userRepository.findById(3L).orElse(null);
+        List<String> preferenceNames2 = List.of("Sweet", "Whiskey", "Lillet");
+
+        updatedPreferences.clear();
+
+        for (String preferenceName : preferenceNames2) {
+            List<Preference> preference = preferenceRepository.findByNameEqualsIgnoreCase(preferenceName);
+            updatedPreferences.add(preference.get(0));
+        }
+        user.setPreferences(updatedPreferences);
+        userRepository.save(user);
+
     }
 
     private void giveUsersIngredients() {

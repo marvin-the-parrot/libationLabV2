@@ -155,11 +155,6 @@ public class CocktailServiceImpl implements CocktailService {
         LOGGER.debug("Get all mixable cocktails");
 
         // get all ingredients
-
-        // get all ingredients from user
-        //ApplicationUser host = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        // Todo: implement get all ingredients from group members
-
         List<IngredientGroupDto> availableIngredients = ingredientService.getAllGroupIngredients(groupId);
         // TODO: use one function for both cases
         List<String> availableIngredientsList = new ArrayList<>();
