@@ -123,7 +123,7 @@ public class CocktailServiceImpl implements CocktailService {
             if (!cocktails.isEmpty()) {
                 for (Cocktail cocktail : cocktails) {
                   assert cocktailsByIngredients1 != null;
-                  for (Cocktail cocktailIngredient : cocktailsByIngredients1) {
+                    for (Cocktail cocktailIngredient : cocktailsByIngredients1) {
                         if (cocktail.getName().equals(cocktailIngredient.getName())) {
                             resultCocktails.add(cocktail);
                         }
