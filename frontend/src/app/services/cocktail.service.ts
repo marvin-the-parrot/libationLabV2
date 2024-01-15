@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Globals} from '../global/globals';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {CocktailDetailDto, CocktailListDto, CocktailSearch} from "../dtos/cocktail";
+import {CocktailDetailDto, CocktailListDto, CocktailSearch, CocktailTagSearchDto} from "../dtos/cocktail";
 import {Observable} from "rxjs";
 import {environment} from "../../environments/environment";
 import {MenuCocktailsDto} from '../dtos/menu';
@@ -25,7 +25,7 @@ export class CocktailService {
   ) {
   }
 
-  searchCocktails(searchParams: CocktailSearch): Observable<CocktailListDto[]> {
+  searchCocktails(searchParams: CocktailTagSearchDto): Observable<CocktailListDto[]> {
     if (searchParams.cocktailName === '') {
       delete searchParams.cocktailName;
     }
@@ -33,11 +33,11 @@ export class CocktailService {
     if (searchParams.cocktailName) {
       params = params.append('cocktailName', searchParams.cocktailName);
     }
-    if (searchParams.ingredientsName) {
-      params = params.append('ingredientsName', searchParams.ingredientsName);
+    if (searchParams.selectedIngredients.length > 0) {
+      params = params.append('ingredientsName', searchParams.selectedIngredients.join(','));
     }
-    if (searchParams.preferenceName) {
-      params = params.append('preferenceName', searchParams.preferenceName);
+    if (searchParams.selectedPreferences.length > 0) {
+      params = params.append('preferenceName', searchParams.selectedPreferences.join(','));
     }
     return this.httpClient.get<CocktailListDto[]>(this.cocktailBaseUri, {params});
   }

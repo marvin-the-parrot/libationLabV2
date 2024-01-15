@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {IngredientGroupDto, IngredientListDto} from "../../../dtos/ingredient";
 import {GroupsService} from "../../../services/groups.service";
 import {UserService} from "../../../services/user.service";
@@ -8,12 +8,14 @@ import {CocktailService} from 'src/app/services/cocktail.service';
 import {MessageService} from "../../../services/message.service";
 import {ToastrService} from "ngx-toastr";
 import {ActivatedRoute, Router} from "@angular/router";
-import {CocktailListDto, CocktailOverviewDto, CocktailSearch} from "../../../dtos/cocktail";
+import {CocktailListDto, CocktailOverviewDto, CocktailSearch, CocktailTagSearchDto} from "../../../dtos/cocktail";
 import {ErrorFormatterService} from "../../../services/error-formatter.service";
 import {MenuCocktailsDto} from 'src/app/dtos/menu';
 import {PreferenceListDto} from "../../../dtos/preference";
 import {Observable, of} from "rxjs";
 import {List} from 'immutable';
+import {RecommendedMenues} from "../../../dtos/recommendedMenues";
+import {AutocompleteComponent} from "../../autocomplete/autocomplete.component"; // Import List from Immutable.js
 
 @Component({
   selector: 'app-cocktail-card',
@@ -21,6 +23,13 @@ import {List} from 'immutable';
   styleUrls: ['./cocktail-menu.component.scss']
 })
 export class CocktailMenuComponent {
+
+  @ViewChild('ingredientAutocomplete', { static: false })
+  private ingredientAutocompleteComponent!: AutocompleteComponent<any>;
+
+  @ViewChild('preferenceAutocomplete', { static: false })
+  private preferenceAutocompleteComponent!: AutocompleteComponent<any>;
+
   cocktails: CocktailOverviewDto[] = []
   ingredients: IngredientGroupDto[] = [];
   groupId: number;
@@ -37,7 +46,9 @@ export class CocktailMenuComponent {
   nameOfPreference: string;
   bannerError: string | null = null;
   selectedCocktails: CocktailListDto[] = [];
-  searchParams: CocktailSearch = {};
+  searchParams: CocktailTagSearchDto = {};
+  selectedIngredients: string[] = []; // List of selected ingredients (tags)
+  selectedPreferences: string[] = []; // List of selected preferences (tags)
 
   constructor(
     private groupsService: GroupsService,
@@ -121,20 +132,36 @@ export class CocktailMenuComponent {
 
 
   searchChanged() {
-    if (this.ingredient != null) {
-      this.nameOfIngredient = this.ingredient.name;
+    if (this.ingredient != null && this.ingredient.name !== "") {
+      if (this.selectedIngredients.includes(this.ingredient.name)) {
+        this.notification.info("You already added this ingredient!");
+        this.ingredientAutocompleteComponent.resetAutocompleteInput(); // Reset autocomplete input
+        this.ingredient.name = "";
+        return;
+      }
+      this.selectedIngredients.push(this.ingredient.name);
+      this.ingredientAutocompleteComponent.resetAutocompleteInput(); // Reset autocomplete input
+      this.ingredient.name = "";
     } else {
       this.nameOfIngredient = "";
     }
-    if (this.preference != null) {
-      this.nameOfPreference = this.preference.name;
+    if (this.preference != null && this.preference.name !== "") {
+      if (this.selectedPreferences.includes(this.preference.name)) {
+        this.notification.info("You already added this preference!");
+        this.preferenceAutocompleteComponent.resetAutocompleteInput(); // Reset autocomplete input
+        this.preference.name = "";
+        return;
+      }
+      this.selectedPreferences.push(this.preference.name);
+      this.preferenceAutocompleteComponent.resetAutocompleteInput(); // Reset autocomplete input
+      this.preference.name = "";
     } else {
       this.nameOfPreference = "";
     }
-    if ((this.nameOfCocktail && this.nameOfCocktail.length != 0) || (this.nameOfIngredient && this.nameOfIngredient.length != 0) || (this.nameOfPreference && this.nameOfPreference.length != 0)) {
+    if ((this.nameOfCocktail && this.nameOfCocktail.length != 0) || (this.selectedIngredients && this.selectedIngredients.length != 0) || (this.selectedPreferences && this.selectedPreferences.length != 0)) {
       this.searchParams.cocktailName = this.nameOfCocktail;
-      this.searchParams.ingredientsName = this.nameOfIngredient;
-      this.searchParams.preferenceName = this.nameOfPreference;
+      this.searchParams.selectedIngredients = this.selectedIngredients;
+      this.searchParams.selectedPreferences = this.selectedPreferences;
       this.cocktailService.searchCocktails(this.searchParams)
         .subscribe({
           next: data => {
@@ -150,8 +177,8 @@ export class CocktailMenuComponent {
         });
     } else {
       this.searchParams.cocktailName = "";
-      this.searchParams.ingredientsName = "";
-      this.searchParams.preferenceName = "";
+      this.searchParams.selectedIngredients = [];
+      this.searchParams.selectedPreferences = [];
       this.cocktailService.searchCocktails(this.searchParams)
         .subscribe({
           next: data => {
@@ -239,6 +266,32 @@ export class CocktailMenuComponent {
         this.getCocktailsMenu(this.groupId);
       }
     });
+  }
+
+  /**
+   * This method is called when the user clicks on a 'X' from tag in the ingredients list.
+   * It removes the tag from the list of selected ingredients and calls the {@link searchChanged} method.
+   * @param tag
+   */
+  removeTagIngredients(tag: string): void {
+    const index = this.selectedIngredients.indexOf(tag);
+    if (index !== -1) {
+      this.selectedIngredients.splice(index, 1);
+    }
+    this.searchChanged();
+  }
+
+  /**
+   * This method is called when the user clicks on a 'X' from tag in the preferences list.
+   * It removes the tag from the list of selected preferences and calls the {@link searchChanged} method.
+   * @param tag
+   */
+  removeTagPreferences(tag: string): void {
+    const index = this.selectedPreferences.indexOf(tag);
+    if (index !== -1) {
+      this.selectedPreferences.splice(index, 1);
+    }
+    this.searchChanged();
   }
 }
 

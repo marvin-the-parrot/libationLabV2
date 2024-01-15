@@ -101,7 +101,7 @@ public class IngredientEndpointTest {
         });
 
         assertAll(
-            () -> assertTrue(result.size() <= 5),
+            () -> assertTrue(result.size() <= 10),
             () -> assertFalse(result.isEmpty())
         );
         for (int i = 0; i < result.size(); i++) {

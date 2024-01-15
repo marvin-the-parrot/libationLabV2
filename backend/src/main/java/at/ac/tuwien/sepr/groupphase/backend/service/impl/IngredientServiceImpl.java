@@ -135,9 +135,9 @@ public class IngredientServiceImpl implements IngredientService {
             names.add(ingredient.getName());
         }
         if (names.isEmpty()) {
-            return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst5ByNameIgnoreCaseContainingOrderByName(searchParams));
+            return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst10ByNameIgnoreCaseContainingOrderByName(searchParams));
         } else {
-            return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst5ByNameNotInAndNameIgnoreCaseContainingOrderByName(names, searchParams));
+            return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst10ByNameNotInAndNameIgnoreCaseContainingOrderByName(names, searchParams));
         }
     }
 

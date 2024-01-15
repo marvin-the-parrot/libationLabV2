@@ -42,7 +42,7 @@
               </label>
               <!-- Search field for cocktails by ingredients -->
               <div class="wrapper-ing-pref col-md-6 col-lg-6">
-                <app-autocomplete
+                <app-autocomplete #ingredientAutocomplete
                   name="ingredientsSelection"
                   textInputClass="form-control"
                   [placeholderText]="'Search for Ingredients'"
@@ -53,6 +53,16 @@
                   (ngModelChange)="searchChanged()"
                 >
                 </app-autocomplete>
+
+                <!-- Selected Ingredients (Tags) -->
+                <div class="selected-ingredients-preferences">
+                  <div *ngFor="let selected of selectedIngredients" class="tag">
+                    {{ selected }}
+                    <button (click)="removeTagIngredients(selected)" class="remove-tag-btn">
+                      <i class="bi bi-x-circle"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -63,7 +73,7 @@
               </label>
               <!-- Search field for cocktails by preferences -->
               <div class="wrapper-ing-pref col-md-6 col-lg-6">
-                <app-autocomplete
+                <app-autocomplete #preferenceAutocomplete
                   name="preferencesSelection"
                   textInputClass="form-control"
                   [placeholderText]="'Search for Preferences'"
@@ -74,6 +84,16 @@
                   (ngModelChange)="searchChanged()"
                 >
                 </app-autocomplete>
+
+                <!-- Selected Preferences (Tags) -->
+                <div class="selected-ingredients-preferences">
+                  <div *ngFor="let selected of selectedPreferences" class="tag">
+                    {{ selected }}
+                    <button (click)="removeTagPreferences(selected)" class="remove-tag-btn">
+                      <i class="bi bi-x-circle"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 

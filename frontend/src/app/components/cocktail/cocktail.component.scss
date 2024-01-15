@@ -65,6 +65,7 @@
 .search-container {
   margin-left: 5.7vw;
   margin-top: 2vh;
+  align-self: flex-start;
 }
 
 .label-search-name {
@@ -80,6 +81,7 @@
 .flex-container {
   margin-left: -1vw;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
 }
 
@@ -89,6 +91,8 @@
 }
 
 .wrapper-ing-pref {
+  display: grid;
+  grid-template-rows: 1fr auto;
   position: relative;
   width: 17vw;
   margin-top: 0vh;
@@ -158,4 +162,31 @@
 .btn.rounded-button:active {
   background-color: white; /* Set background color to transparent */
   box-shadow: none;
+}
+
+.selected-ingredients-preferences {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  background-color: #AC6AFE;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 8px;
+  margin-right: 4px;
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.remove-tag-btn {
+  padding: 4px;
+  margin-left: 4px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: white;
+  font-size: 14px;
 }

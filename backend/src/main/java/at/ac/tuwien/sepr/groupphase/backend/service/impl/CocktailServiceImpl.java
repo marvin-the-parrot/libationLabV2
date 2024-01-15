@@ -4,6 +4,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailSerachDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailTagSearchDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PreferenceListDto;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -73,22 +75,55 @@ public class CocktailServiceImpl implements CocktailService {
             results.sort(Comparator.comparing(CocktailListDto::getName));
             return results;
         }
+        //TODO: maybe use a Mapper for this
+        //Transform CocktailSerachDto to CocktailTagSearchDto (for easier handling)
+        CocktailTagSearchDto searchTagParameters = new CocktailTagSearchDto();
+        searchTagParameters.setCocktailName(searchParameters.getCocktailName());
+
+        if (searchParameters.getIngredientsName() != null && !searchParameters.getIngredientsName().isEmpty()) {
+            List<String> ingredientsList = Arrays.asList(searchParameters.getIngredientsName().split(","));
+            searchTagParameters.setIngredientsName(ingredientsList);
+        }
+        if (searchParameters.getPreferenceName() != null && !searchParameters.getPreferenceName().isEmpty()) {
+            List<String> preferencesList = Arrays.asList(searchParameters.getPreferenceName().split(","));
+            searchTagParameters.setPreferenceName(preferencesList);
+        }
+
 
         List<Cocktail> resultCocktails = new ArrayList<>();
         List<Cocktail> cocktails;
+        //Search for cocktails by name
         if (searchParameters.getCocktailName() != null) {
             cocktails = cocktailRepository.findByNameContainingIgnoreCase(searchParameters.getCocktailName());
         } else {
             cocktails = cocktailRepository.findAll();
         }
-        if (searchParameters.getIngredientsName() != null) {
-            List<CocktailIngredients> cocktailIngredients =
-                cocktailIngredientsRepository.findByIngredientNameContainingIgnoreCase(searchParameters.getIngredientsName());
-            List<Cocktail> cocktailsByIngredients = cocktailRepository.findDistinctByCocktailIngredientsIn(cocktailIngredients);
+        //Search for cocktails by ingredients
+        if (searchParameters.getIngredientsName() != null && !searchParameters.getIngredientsName().isEmpty()) {
 
+            //TODO: i dont know how to do it differently
+            List<Cocktail> cocktailsByIngredients1 = null;
+            for (String ingredient : searchTagParameters.getIngredientsName()) {
+                List<CocktailIngredients> cocktailIngredients =
+                    cocktailIngredientsRepository.findByIngredientNameEqualsIgnoreCase(ingredient);
+                List<Cocktail> cocktailsByIngredients2 = cocktailRepository.findDistinctByCocktailIngredientsIn(cocktailIngredients);
+
+                if (cocktailsByIngredients1 == null) {
+                    cocktailsByIngredients1 = new ArrayList<>(cocktailsByIngredients2);
+                } else {
+                    cocktailsByIngredients1.retainAll(cocktailsByIngredients2);
+                }
+
+                if (cocktailsByIngredients1.isEmpty()) {
+                    break;
+                }
+            }
+
+            //Cocktails added to List which match name and ingredients
             if (!cocktails.isEmpty()) {
                 for (Cocktail cocktail : cocktails) {
-                    for (Cocktail cocktailIngredient : cocktailsByIngredients) {
+                  assert cocktailsByIngredients1 != null;
+                    for (Cocktail cocktailIngredient : cocktailsByIngredients1) {
                         if (cocktail.getName().equals(cocktailIngredient.getName())) {
                             resultCocktails.add(cocktail);
                         }
@@ -96,88 +131,23 @@ public class CocktailServiceImpl implements CocktailService {
                 }
             }
         } else {
+            //Add all cocktails from name search to result list if no ingredients are given
             resultCocktails.addAll(cocktails);
         }
-        if (searchParameters.getPreferenceName() != null) {
-            List<Cocktail> cocktailPreferences =
-                cocktailRepository.findByPreferencesIn(preferenceRepository.findByNameContainingIgnoreCase(searchParameters.getPreferenceName()));
-
-            resultCocktails = resultCocktails.stream().filter(cocktailPreferences::contains).collect(Collectors.toList());
+        //Search for cocktails by every preference
+        if (searchParameters.getPreferenceName() != null && !searchParameters.getPreferenceName().isEmpty()) {
+            for (String preference : searchTagParameters.getPreferenceName()) {
+                List<Cocktail> cocktailsByPreferences = cocktailRepository.findByPreferencesIn(preferenceRepository.findByNameEqualsIgnoreCase(preference));
+                //Filter out cocktails which do not have specific preference
+                resultCocktails = resultCocktails.stream().filter(cocktailsByPreferences::contains).collect(Collectors.toList());
+            }
         }
 
         return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(resultCocktails);
     }
 
 
-    /*@Override
-    public List<CocktailListDto> searchCocktailByCocktailNameAndIngredientName(String cocktailsName, String ingredientsName, String preferenceName) {
-        LOGGER.debug("Search for cocktail by cocktail name and ingredient name {}", cocktailsName, ingredientsName, preferenceName);
-        if (cocktailsName == null && preferenceName == null) {
-            return getMappedCocktailsByIngredient(ingredientsName);
-        } else if (ingredientsName == null && preferenceName == null) {
-            return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailIngredientsRepository.findByCocktailNameContainingIgnoreCase(cocktailsName));
-        } else if (preferenceName == null) {
-            return getMappedCocktailsByCocktailAndIngredient(cocktailsName, ingredientsName);
-        } else if (cocktailsName == null && ingredientsName == null) {
-            List<CocktailListDto> cocktailPreferenceToCocktailListDto = getMappedCocktailsByPerformance(preferenceName);
-            return addedIngredientsToCocktailList(cocktailPreferenceToCocktailListDto);
-        } else if (cocktailsName == null) {
-            List<CocktailListDto> cocktailsPerformance = getMappedCocktailsByPerformance(preferenceName);
-            List<CocktailListDto> cocktailsIngredient = getMappedCocktailsByIngredient(ingredientsName);
-            return cocktailsIngredient.stream().filter(ingredientDto -> cocktailsPerformance.stream().anyMatch(performanceDto -> performanceDto.getName().equals(ingredientDto.getName()))).toList();
-        } else if (ingredientsName == null) {
-            List<CocktailListDto> cocktailsPerformance = getMappedCocktailsByCocktailAndPerformance(cocktailsName, preferenceName);
-            List<CocktailListDto> cocktailsIngredient = cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailIngredientsRepository.findByCocktailNameContainingIgnoreCase(cocktailsName));
-            return cocktailsIngredient.stream().filter(ingredientDto -> cocktailsPerformance.stream().anyMatch(performanceDto -> performanceDto.getName().equals(ingredientDto.getName()))).toList();
-        } else {
-            List<CocktailListDto> cocktailsPerformance = getMappedCocktailsByCocktailAndPerformance(cocktailsName, preferenceName);
-            List<CocktailListDto> cocktailsIngredient = getMappedCocktailsByCocktailAndIngredient(cocktailsName, ingredientsName);
-            return cocktailsIngredient.stream().filter(ingredientDto -> cocktailsPerformance.stream().anyMatch(performanceDto -> performanceDto.getName().equals(ingredientDto.getName()))).toList();
-        }
-    }
 
-    private List<CocktailListDto> getMappedCocktailsByPerformance(String preferenceName) {
-        List<CocktailPreference> preferenceByName = cocktailPreferenceRepository.findByPreferenceNameContainingIgnoreCase(preferenceName);
-        List<CocktailPreference> cocktailByPreference = new ArrayList<>();
-        preferenceByName.forEach(preference -> cocktailByPreference.addAll(cocktailPreferenceRepository.findByCocktailNameContainingIgnoreCase(preference.getCocktail().getName())));
-        List<CocktailListDto> cocktailPreferenceToCocktailListDto = cocktailPreferenceMapper.cocktailPreferenceToCocktailListDto(cocktailByPreference);
-        return cocktailPreferenceToCocktailListDto;
-    }
-
-    private List<CocktailListDto> getMappedCocktailsByIngredient(String ingredientsName) {
-        List<CocktailIngredients> ingredientsByName = cocktailIngredientsRepository.findByIngredientNameContainingIgnoreCase(ingredientsName);
-        List<CocktailIngredients> cocktailsByIngredientsName = new ArrayList<>();
-        ingredientsByName.forEach(ingredient -> cocktailsByIngredientsName.addAll(cocktailIngredientsRepository.findByCocktailNameContainingIgnoreCase(ingredient.getCocktail().getName())));
-        return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailsByIngredientsName);
-    }
-
-    private List<CocktailListDto> addedIngredientsToCocktailList(List<CocktailListDto> cocktailsList) {
-        List<CocktailListDto> cocktailListDtos = new ArrayList<>();
-        for (CocktailListDto eachCocktail : cocktailsList) {
-            List<CocktailIngredients> cocktailsIngredinets = this.cocktailIngredientsRepository.findByCocktailNameContainingIgnoreCase(eachCocktail.getName());
-            for (CocktailIngredients eachCocktailIngredients : cocktailsIngredinets) {
-                List<String> ingredientsName = eachCocktail.getIngredientsName();
-                ingredientsName.add(eachCocktailIngredients.getIngredient().getName());
-                eachCocktail.setIngredientsName(ingredientsName);
-            }
-            cocktailListDtos.add(eachCocktail);
-        }
-        return cocktailListDtos;
-    }
-
-    private List<CocktailListDto> getMappedCocktailsByCocktailAndIngredient(String cocktailsName, String ingredientsName) {
-        List<CocktailIngredients> cocktailsAndIngredients = cocktailIngredientsRepository.findByIngredientNameContainingIgnoreCaseAndCocktailNameContainingIgnoreCase(ingredientsName, cocktailsName);
-        List<CocktailIngredients> cocktailsByIngredientsName = new ArrayList<>();
-        cocktailsAndIngredients.forEach(ingredient -> cocktailsByIngredientsName.addAll(cocktailIngredientsRepository.findByCocktailNameContainingIgnoreCase(ingredient.getCocktail().getName())));
-        return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailsByIngredientsName);
-    }
-
-    private List<CocktailListDto> getMappedCocktailsByCocktailAndPerformance(String cocktailsName, String preferenceName) {
-        List<CocktailPreference> cocktailByNameAndPreference = cocktailPreferenceRepository.findByPreferenceNameContainingIgnoreCaseAndCocktailNameContainingIgnoreCase(preferenceName, cocktailsName);
-        List<CocktailPreference> cocktailByPreference = new ArrayList<>();
-        cocktailByNameAndPreference.forEach(preference -> cocktailByPreference.addAll(cocktailPreferenceRepository.findByCocktailNameContainingIgnoreCase(preference.getCocktail().getName())));
-        return cocktailPreferenceMapper.cocktailPreferenceToCocktailListDto(cocktailByPreference);
-    }*/
 
     @Override
     @Transactional
@@ -229,13 +199,13 @@ public class CocktailServiceImpl implements CocktailService {
     @Transactional
     @Override
     public List<IngredientListDto> searchAutoIngredients(String searchParams) {
-        return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst5ByNameIgnoreCaseContainingOrderByName(searchParams));
+        return ingredientMapper.ingredientToIngredientListDto(ingredientsRepository.findFirst10ByNameIgnoreCaseContainingOrderByName(searchParams));
     }
 
     @Transactional
     @Override
     public List<PreferenceListDto> searchAutoPreferences(String searchParams) {
-        return preferenceMapper.preferenceToPreferenceListDto(preferenceRepository.findFirst5ByNameIgnoreCaseContainingOrderByName(searchParams));
+        return preferenceMapper.preferenceToPreferenceListDto(preferenceRepository.findFirst10ByNameIgnoreCaseContainingOrderByName(searchParams));
     }
 
     @Override
