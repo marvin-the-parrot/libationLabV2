@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
@@ -77,8 +78,8 @@ public class GroupEndpoint {
         List<GroupOverviewDto> groupOverviewDtos = new ArrayList<>();
         for (UserGroup group : userGroupMatchings) {
             GroupOverviewDto groupOverviewDto;
-            groupOverviewDto = groupMapper.grouptToGroupOverviewDto(group.getGroups());
-            List<UserListGroupDto> users = userService.findUsersByGroup(group.getGroups());
+            groupOverviewDto = groupMapper.grouptToGroupOverviewDto(group.getGroup());
+            List<UserListGroupDto> users = userService.findUsersByGroup(group.getGroup());
             groupOverviewDto.setMembers(users.toArray(new UserListGroupDto[0]));
 
             //set host
@@ -237,7 +238,7 @@ public class GroupEndpoint {
     @Secured(ROLE_USER)
     @GetMapping("{groupId}/mixables")
     @ResponseStatus(HttpStatus.OK)
-    public List<CocktailOverviewDto> getMixableCocktails(@PathVariable Long groupId) throws JsonProcessingException {
+    public List<CocktailDetailDto> getMixableCocktails(@PathVariable Long groupId) throws JsonProcessingException {
         LOGGER.info("GET " + BASE_PATH + groupId + "mixable");
         return cocktailService.getMixableCocktails(groupId);
     }

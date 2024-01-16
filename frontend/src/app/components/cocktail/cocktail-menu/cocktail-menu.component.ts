@@ -8,7 +8,13 @@ import {CocktailService} from 'src/app/services/cocktail.service';
 import {MessageService} from "../../../services/message.service";
 import {ToastrService} from "ngx-toastr";
 import {ActivatedRoute, Router} from "@angular/router";
-import {CocktailListDto, CocktailOverviewDto, CocktailSearch, CocktailTagSearchDto} from "../../../dtos/cocktail";
+import {
+  CocktailDetailDto,
+  CocktailListDto,
+  CocktailOverviewDto,
+  CocktailSearch,
+  CocktailTagSearchDto
+} from "../../../dtos/cocktail";
 import {ErrorFormatterService} from "../../../services/error-formatter.service";
 import {MenuCocktailsDto} from 'src/app/dtos/menu';
 import {PreferenceListDto} from "../../../dtos/preference";
@@ -30,7 +36,8 @@ export class CocktailMenuComponent {
   @ViewChild('preferenceAutocomplete', { static: false })
   private preferenceAutocompleteComponent!: AutocompleteComponent<any>;
 
-  cocktails: CocktailOverviewDto[] = []
+  cocktails: CocktailDetailDto[] = [];
+  persistendCocktails: CocktailDetailDto[] = [];
   ingredients: IngredientGroupDto[] = [];
   groupId: number;
   numberOfCocktails = 4;
@@ -93,7 +100,6 @@ export class CocktailMenuComponent {
   ngOnInit(): void {
     this.groupId = this.route.snapshot.params['id'];
     this.getGroup();
-    this.getCocktailsMenu(this.groupId);
   }
 
   /**
@@ -101,8 +107,9 @@ export class CocktailMenuComponent {
    */
   private getGroup() {
     this.groupsService.getMixables(this.groupId).subscribe({
-      next: (cocktails: CocktailOverviewDto[]) => {
+      next: (cocktails: CocktailDetailDto[]) => {
         this.cocktails = cocktails;
+        this.persistendCocktails = cocktails;
       },
       error: error => {
         console.error('Could not fetch cocktails due to:');
@@ -166,6 +173,7 @@ export class CocktailMenuComponent {
         .subscribe({
           next: data => {
             this.cocktails_list = data;
+            this.matchCocktailSearch();
           },
           error: error => {
             console.error('Error fetching cocktails', error);
@@ -183,6 +191,7 @@ export class CocktailMenuComponent {
         .subscribe({
           next: data => {
             this.cocktails_list = data;
+            this.matchCocktailSearch();
           },
           error: error => {
             console.error('Error fetching cocktails', error);
@@ -194,6 +203,12 @@ export class CocktailMenuComponent {
         });
     }
 
+  }
+
+  matchCocktailSearch(): void {
+    for (let i = 0; i < this.persistendCocktails.length; i++) {
+      this.cocktails = this.persistendCocktails.filter(cocktail => this.cocktails_list.some(cocktail_list => cocktail_list.name === cocktail.name));
+    }
   }
 
   clickOnCocktailImage(cocktailName: string): void {
@@ -251,13 +266,20 @@ export class CocktailMenuComponent {
     });
   }
 
-  getIngredientsString(ingredients: List<string>): string {
+  getIngredientsString(ingredients: Map<string, string>): string {
     if (!ingredients || ingredients.size === 0) {
       return 'No ingredients listed';
     }
 
-    const ingredientNames = ingredients.join(', ');
-    return `Ingredients: ${ingredientNames}`;
+    let result = 'Ingredients: ';
+    console.log(ingredients);
+    console.log(Array.from(Object.keys(ingredients)));
+    let ingredientNames = Array.from(Object.keys(ingredients))
+    ingredientNames.forEach((name, index) => {
+      result += name + ', ';
+    });
+    result = result.substring(0, result.length - 2);
+    return result;
   }
 
   openSelectMenuModal() {

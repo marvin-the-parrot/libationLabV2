@@ -3,7 +3,6 @@ package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
@@ -16,13 +15,12 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
+import at.ac.tuwien.sepr.groupphase.backend.service.MenuService;
 import at.ac.tuwien.sepr.groupphase.backend.service.MessageService;
-import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import at.ac.tuwien.sepr.groupphase.backend.service.validators.GroupValidator;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -38,25 +36,23 @@ public class GroupServiceImpl implements GroupService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private final UserService userService;
+    private final MenuService menuService;
     private final MessageService messageService;
-    @Autowired
     private final GroupRepository groupRepository;
     private final GroupValidator validator;
-    @Autowired
-    private GroupMapper groupMapper;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private UserGroupRepository userGroupRepository;
-    @Autowired
-    private UserMapper userMapper;
+    private final UserRepository userRepository;
+    private final UserGroupRepository userGroupRepository;
+    private final UserMapper userMapper;
 
-    public GroupServiceImpl(UserService userService, GroupRepository groupRepository, GroupValidator validator, MessageService messageService) {
-        this.userService = userService;
+    public GroupServiceImpl(GroupRepository groupRepository, GroupValidator validator, MessageService messageService,
+                            MenuService menuService, UserRepository userRepository, UserGroupRepository userGroupRepository, UserMapper userMapper) {
+        this.menuService = menuService;
         this.groupRepository = groupRepository;
         this.validator = validator;
         this.messageService = messageService;
+        this.userRepository = userRepository;
+        this.userGroupRepository = userGroupRepository;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -240,6 +236,9 @@ public class GroupServiceImpl implements GroupService {
         LOGGER.trace("findGroupsByUser({})", email);
         // find groups in database
         List<UserGroup> groups = userGroupRepository.findAllByApplicationUser(userRepository.findByEmail(email));
+        for (UserGroup userGroup : groups) {
+            menuService.mixableCocktailsByUpdatingUserIngredients(userGroup.getGroup().getId());
+        }
         return groups;
     }
 

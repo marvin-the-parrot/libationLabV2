@@ -24,7 +24,7 @@ public class Preference {
     private String name;
 
     @ManyToMany(mappedBy = "preferences")
-    Set<ApplicationUser> applicationUser;
+    private Set<ApplicationUser> applicationUser;
 
     @ManyToMany(cascade = CascadeType.REMOVE)
     private Set<Cocktail> cocktails;

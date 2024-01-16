@@ -2,8 +2,11 @@ package at.ac.tuwien.sepr.groupphase.backend.service;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.RecommendedMenuesDto;
+import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+
+import java.util.List;
 
 public interface MenuService {
     /**
@@ -31,4 +34,6 @@ public interface MenuService {
      * @return the created recommendation
      */
     RecommendedMenuesDto createRecommendation(Long groupId, Integer numberOfCocktails, Integer numberOfMenues);
+
+    List<Cocktail> mixableCocktailsByUpdatingUserIngredients(Long groupId);
 }

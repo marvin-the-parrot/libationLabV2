@@ -119,24 +119,24 @@ export class CocktailService {
   /**
    * Searching for cocktails
    *
-   * @param coctail name of cocktail
+   * @param cocktail name of cocktail
    * @param ingredient name of ingredient
    * @returns return matched cocktails
    */
-  search(coctail: String, ingredient: String): Observable<CocktailListDto[]> {
-    return this.httpClient.get<CocktailListDto[]>(`${this.cocktailBaseUri}/searchCocktails/` + coctail + '/' + ingredient);
+  search(cocktail: String, ingredient: String): Observable<CocktailListDto[]> {
+    return this.httpClient.get<CocktailListDto[]>(`${this.cocktailBaseUri}/searchCocktails/` + cocktail + '/' + ingredient);
   }
 
   /**
    * Searching for cocktails by cocktail name and ingredient and preference
    *
-   * @param coctail name of cocktail
+   * @param cocktail name of cocktail
    * @param ingredient name of ingredient
    * @param preference name of preference
    * @returns return matched cocktails
    */
-  searchByCocktailNameAndIngredientAndPreference(coctail: String, ingredient: String, preference): Observable<CocktailListDto[]> {
-    return this.httpClient.get<CocktailListDto[]>(`${this.cocktailBaseUri}/searchCocktails/` + coctail + '/' + ingredient + '/' + preference);
+  searchByCocktailNameAndIngredientAndPreference(cocktail: String, ingredient: String, preference): Observable<CocktailListDto[]> {
+    return this.httpClient.get<CocktailListDto[]>(`${this.cocktailBaseUri}/searchCocktails/` + cocktail + '/' + ingredient + '/' + preference);
   }
 
   /**

@@ -3,13 +3,10 @@ package at.ac.tuwien.sepr.groupphase.backend.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
-
-import java.util.Set;
 
 /**
  * Entity of table UserGroups.
@@ -50,7 +47,7 @@ public class UserGroup {
         this.applicationUser = user;
     }
 
-    public ApplicationGroup getGroups() {
+    public ApplicationGroup getGroup() {
         return applicationGroup;
     }
 

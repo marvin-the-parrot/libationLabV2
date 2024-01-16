@@ -4,7 +4,7 @@ import {GroupOverview} from "../dtos/group-overview";
 import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
 import { UserListDto } from "../dtos/user";
-import {CocktailOverviewDto} from "../dtos/cocktail";
+import {CocktailDetailDto, CocktailOverviewDto} from "../dtos/cocktail";
 
 @Injectable({
   providedIn: 'root'
@@ -99,6 +99,6 @@ export class GroupsService {
    * @param id
    */
   getMixables(id: number) {
-    return this.httpClient.get<CocktailOverviewDto[]>(`${this.baseUri}/${id}/mixables`);
+    return this.httpClient.get<CocktailDetailDto[]>(`${this.baseUri}/${id}/mixables`);
   }
 }

@@ -151,7 +151,7 @@ public class CocktailServiceImpl implements CocktailService {
 
     @Override
     @Transactional
-    public List<CocktailOverviewDto> getMixableCocktails(Long groupId) {
+    public List<CocktailDetailDto> getMixableCocktails(Long groupId) {
         LOGGER.debug("Get all mixable cocktails");
 
         // get all ingredients
@@ -184,9 +184,9 @@ public class CocktailServiceImpl implements CocktailService {
             }
         }
 
-        List<CocktailOverviewDto> cocktailOverviewDto = new ArrayList<>();
+        List<CocktailDetailDto> cocktailOverviewDto = new ArrayList<>();
         for (Cocktail cocktail : cocktailsWithAllIngredients) {
-            cocktailOverviewDto.add(cocktailIngredientMapper.cocktailToCocktailOverviewDto(cocktail));
+            cocktailOverviewDto.add(cocktailIngredientMapper.cocktailToCocktailDetailDto(cocktail));
         }
         return cocktailOverviewDto;
     }

@@ -269,7 +269,7 @@ public class CustomUserDetailService implements UserService {
             for (UserGroup userGroup1 : userGroups) {
                 if (userGroup1.isHost()) {
 
-                    ApplicationGroup group = userGroup1.getGroups();
+                    ApplicationGroup group = userGroup1.getGroup();
                     List<UserGroup> userGroupList = userGroupRepository.findAllByApplicationGroup(group);
                     //If user is only member of group
                     if (userGroupList.size() == 1) {

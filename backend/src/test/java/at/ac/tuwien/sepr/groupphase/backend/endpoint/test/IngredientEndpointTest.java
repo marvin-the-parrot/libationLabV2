@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -11,9 +10,6 @@ import java.util.List;
 import java.util.UUID;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
-import com.sun.tools.jconsole.JConsoleContext;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +32,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
-import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 
 @ActiveProfiles("generateData")
@@ -104,6 +99,7 @@ public class IngredientEndpointTest {
             () -> assertTrue(result.size() <= 10),
             () -> assertFalse(result.isEmpty())
         );
+        //TODO no loop
         for (int i = 0; i < result.size(); i++) {
             assertTrue(result.get(i).getName().contains("r"), "Name at index " + i + " should contain 'r'");
         }

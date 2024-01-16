@@ -24,4 +24,6 @@ public interface CocktailRepository extends JpaRepository<Cocktail, Long> {
     List<Cocktail> findDistinctByCocktailIngredientsIn(List<CocktailIngredients> ingredients);
 
     List<Cocktail> findAllByPreferencesInAndIdIn(List<Preference> preferences, List<Long> ids);
+
+    Set<Cocktail> findByIdIn(List<Long> ids);
 }
