@@ -17,13 +17,12 @@ import {MenuCocktailsDto} from "../dtos/menu"; // Import List from Immutable.js
 export class GenerateMenuDialogComponent implements OnInit {
   ingredients: IngredientSuggestionDto[] = [];
   currentMenu: number = 1; // the index of the ingredient that is currently selected, to show its cocktails
-  numberOfCocktails: number = 4;
   menus: RecommendedMenues = null;
   @Output() result = new EventEmitter<boolean>(); // emits true if a ingredient was added, false if not (undefined if the dialog was closed)
 
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public groupId: { groupId: number, numberOfCocktails: number },
+    @Inject(MAT_DIALOG_DATA) public props: { groupId: number ,numberOfCocktails: number},
     private cocktailService: CocktailService,
     private errorFormatter: ErrorFormatterService,
     private notification: ToastrService,
@@ -32,7 +31,7 @@ export class GenerateMenuDialogComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.getGeneratedMenu(this.groupId.groupId, this.numberOfCocktails);
+    this.getGeneratedMenu(this.props.groupId, this.props.numberOfCocktails);
 
   }
 
@@ -54,8 +53,7 @@ export class GenerateMenuDialogComponent implements OnInit {
         this.menus = menu;
       },
       error: error => {
-        console.error('Could not fetch ingredients due to:' + error.message);
-        this.notification.error(this.errorFormatter.format(error), `Error fetching ingredients.`, {
+        this.notification.error(error.details, error.error.detail, {
           enableHtml: true,
           timeOut: 10000,
         });
