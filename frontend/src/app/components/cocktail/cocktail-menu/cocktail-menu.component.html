@@ -123,8 +123,10 @@
               <div class="container-fluid card-header" [class.selected]="isSelected(cocktail.name)">
                 {{ cocktail.name }}
 
-                <i class="bi bi-info-circle info"
-                   [attr.data-tooltip]="getIngredientsString(cocktail.ingredientsName)"></i>
+                <span class="bi bi-info-circle"
+                   ngbPopover= "{{ getIngredientsString(cocktail.ingredientsName) }}"
+                   triggers="mouseenter:mouseleave">
+                </span>
 
               </div>
               <div class="card-body">
@@ -157,7 +159,6 @@
                 </div>
               </div>
 
-
               <div class="container-safe-button">
                 <button type="button" class="btn btn-primary save-btn" (click)="saveCocktails()">Save</button>
               </div>
@@ -178,6 +179,9 @@
                     </button>
                   </div>
                 </div>
+              </div>
+              <div class="container-safe-button">
+                <button type="button" class="btn btn-primary save-btn" (click)="saveCocktails()">Save</button>
               </div>
             </div>
 
