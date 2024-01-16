@@ -40,6 +40,8 @@ export class IngredientComponent implements OnInit {
       .subscribe({
         next: data => {
           this.ingredients = data;
+          this.selectedIngredient = this.ingredients[0].name;
+          this.showImage(this.selectedIngredient)
           if (data == null) {
             this.isToShowImg = false;
           }
@@ -63,6 +65,8 @@ export class IngredientComponent implements OnInit {
         .subscribe({
           next: data => {
             this.ingredients = data;
+            this.selectedIngredient = this.ingredients[0].name;
+            this.showImage(this.selectedIngredient)
             if (data == null) {
               this.isToShowImg = false;
             }
