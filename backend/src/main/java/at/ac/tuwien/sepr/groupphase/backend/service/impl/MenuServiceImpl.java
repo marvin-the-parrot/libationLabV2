@@ -106,7 +106,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public RecommendedMenuesDto createRecommendation(Long groupId, Integer size, Integer numberOfRandomMenues) {
+    public RecommendedMenuesDto createRecommendation(Long groupId, Integer size, Integer numberOfRandomMenues) throws IllegalArgumentException {
         LOGGER.info("Create recommendation for group {}", groupId);
 
         // fetch preferences of group from db

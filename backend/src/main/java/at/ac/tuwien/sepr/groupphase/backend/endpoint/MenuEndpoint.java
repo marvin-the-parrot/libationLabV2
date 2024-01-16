@@ -25,6 +25,7 @@ import at.ac.tuwien.sepr.groupphase.backend.service.impl.MenuServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Menu endpoint.
@@ -76,8 +77,18 @@ public class MenuEndpoint {
     public RecommendedMenuesDto getAutomatedMenu(@PathVariable Long id,
                                                  @RequestParam(name = "numberOfCocktails", required = false, defaultValue = "5") Integer numberOfCocktails) {
         LOGGER.info("GET " + BASE_PATH + "recommendation/{}", id);
+        try {
+            return menuServiceImpl.createRecommendation(id, numberOfCocktails, 1);
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Error while creating recommendation", e);
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        } catch (Exception e) {
+            LOGGER.error("Error while creating recommendation", e);
+            HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
 
-        return menuServiceImpl.createRecommendation(id, numberOfCocktails, 3);
     }
 
 
