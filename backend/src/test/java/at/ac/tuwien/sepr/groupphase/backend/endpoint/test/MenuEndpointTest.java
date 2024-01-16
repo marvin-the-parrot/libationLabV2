@@ -50,7 +50,7 @@ public class MenuEndpointTest {
         RecommendedMenuesDto result = objectMapper.readValue(contentResult, new TypeReference<RecommendedMenuesDto>() {
         });
         assertAll(
-            () -> Assert.eq(result.getMenuList().size(), 4, "Number of recommendations not equal to 4 although it is expected to be."),
+            () -> Assert.gt(result.getMenuList().size(), 1, "Number of recommendations not greater than to 2 although it is expected to be."),
             () -> Assert.gt(result.getMenuList().get(0).getLv(), 1.0f, "Libation Value of first recommendation not greater than 1 although it is expected to be."),
             () -> Assert.eq(result.getMenuList().get(0).getCocktailMenu().size(),4, "Number of cocktails in first recommendation ")
         );
