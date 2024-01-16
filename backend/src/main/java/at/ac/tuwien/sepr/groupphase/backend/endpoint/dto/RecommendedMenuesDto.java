@@ -12,6 +12,9 @@ public class RecommendedMenuesDto {
         this.menuList = cocktailsList;
     }
 
+    public RecommendedMenuesDto() {
+    }
+
     public Long getId() {
         return id;
     }

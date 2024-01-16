@@ -12,6 +12,9 @@ public class MenuRecommendationDto {
         this.lv = lv;
     }
 
+    public MenuRecommendationDto() {
+    }
+
     public Float getLv() {
         return lv;
     }
