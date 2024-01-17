@@ -1,7 +1,22 @@
 .card-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   color: white;
   background-color: #AC6AFE;
   transition-duration: 0.25s;
+}
+
+.cocktail-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bi-info-circle {
+  margin-left: 5px;
+  font-size: 20px;
+  cursor: pointer;
 }
 
 .card:hover .card-header {
