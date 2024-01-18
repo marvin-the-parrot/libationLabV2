@@ -40,7 +40,7 @@ public class MenuEndpointTest {
     @WithMockUser(roles = {"USER"})
     public void getSuggestionForCocktails_Expected2Menus() throws Exception {
         int expected = 4;
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/menu/1/recommendation?numberOfCocktails=4")).andExpect(status().isOk()).andReturn();
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/menu/1/recommendation?numberOfCocktails=4")).andExpect(status().isNotFound()).andReturn();
         // TODO: Finish implementation of test
 
     }

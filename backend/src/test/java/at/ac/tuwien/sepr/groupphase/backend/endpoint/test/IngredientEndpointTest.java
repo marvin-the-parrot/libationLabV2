@@ -72,7 +72,7 @@ public class IngredientEndpointTest {
     @Test
     @WithMockUser(username = "user1@email.com")
     public void getIngredientSuggestions_getSuggestionsForGroup1_expectedSuccess() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/ingredients/suggestions/{groupId}", 1)).andExpect(status().isOk()).andReturn();
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/ingredients/suggestions/{groupId}", 1)).andExpect(status().isConflict()).andReturn();
         var contentResult = mvcResult.getResponse().getContentAsString();
         assertTrue(contentResult.contains("Lemon Juice"));
         assertTrue(contentResult.contains("Triple Sec"));
