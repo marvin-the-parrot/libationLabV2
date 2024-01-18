@@ -32,7 +32,7 @@ public class ApplicationGroup {
     @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(
         name = "menu",
-        joinColumns = @JoinColumn(name = "applicationGroup_id"),
+        joinColumns = @JoinColumn(name = "application_group_id"),
         inverseJoinColumns = @JoinColumn(name = "cocktail_id"))
     private Set<Cocktail> cocktails;
 
