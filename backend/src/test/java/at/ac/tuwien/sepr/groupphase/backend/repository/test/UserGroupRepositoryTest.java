@@ -81,7 +81,7 @@ public class UserGroupRepositoryTest {
         userGroupRepository.deleteById(new UserGroupKey());
         UserGroup result = userGroupRepository.findById(userGroupKey).get();
 
-        assertEquals(expected.getGroups().getId(), result.getGroups().getId());
+        assertEquals(expected.getGroup().getId(), result.getGroup().getId());
         assertEquals(expected.getUser().getId(), result.getUser().getId());
     }
 

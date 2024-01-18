@@ -5,6 +5,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.RecommendedMenuesDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 
+
 public interface MenuService {
     /**
      * Find menu by group id.
@@ -20,7 +21,7 @@ public interface MenuService {
      * @param toCreate the data of the menu to create
      * @return the created or updated menu
      */
-    MenuCocktailsDto create(MenuCocktailsDto toCreate) throws ConflictException;
+    MenuCocktailsDto create(MenuCocktailsDto toCreate) throws NotFoundException, ConflictException;
 
     /**
      * Creates a new recommendation for the given group.
@@ -31,4 +32,6 @@ public interface MenuService {
      * @return the created recommendation
      */
     RecommendedMenuesDto createRecommendation(Long groupId, Integer numberOfCocktails, Integer numberOfMenues);
+
+    void updateMixableCocktails();
 }

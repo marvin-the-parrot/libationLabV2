@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 
@@ -35,8 +37,8 @@ public class Cocktail implements Comparable<Cocktail> {
     @ManyToMany
     private Set<Preference> preferences;
 
-    @OneToMany(mappedBy = "cocktail")
-    private Set<Menu> menu;
+    @ManyToMany
+    private Set<ApplicationGroup> groups;
 
     public Cocktail() {
     }
@@ -47,12 +49,12 @@ public class Cocktail implements Comparable<Cocktail> {
         this.imagePath = imagePath;
     }
 
-    public Set<Menu> getMenu() {
-        return menu;
+    public Set<ApplicationGroup> getGroups() {
+        return groups;
     }
 
-    public void setMenu(Set<Menu> menu) {
-        this.menu = menu;
+    public void setGroups(Set<ApplicationGroup> groups) {
+        this.groups = groups;
     }
 
     public Long getId() {

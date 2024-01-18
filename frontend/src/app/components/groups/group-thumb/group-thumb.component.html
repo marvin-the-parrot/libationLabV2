@@ -11,12 +11,13 @@
     <div class="p-2">
       <h5>Selected Cocktails:</h5>
       <ul *ngIf="group.cocktails && group.cocktails.length > 0; else noCocktails" class="cocktails-list">
-        <li *ngFor="let cocktail of group.cocktails">{{cocktail}}</li>
+        <!-- TODO: cocktail.name is not defined -->
+        <li *ngFor="let cocktail of group.cocktails">{{cocktail.name}}</li>
       </ul>
       <ng-template #noCocktails>
         <p>There are currently no selected cocktails. <br><br></p>
       </ng-template>
-    </div>    
+    </div>
   </a>
   <div class="d-flex justify-content-between align-items-end">
     <button *ngIf="group.host.name !== username" class="badge custom-button-del" (click)="leaveGroup()">Leave</button>

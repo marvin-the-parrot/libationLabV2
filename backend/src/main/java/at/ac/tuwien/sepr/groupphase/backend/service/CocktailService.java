@@ -29,7 +29,7 @@ public interface CocktailService {
      *
      * @return cocktails
      */
-    List<CocktailOverviewDto> getMixableCocktails(Long groupId);
+    List<CocktailDetailDto> getMixableCocktails(Long groupId);
 
     /**
      * Retrieve all stored ingredients, that match the given parameters.

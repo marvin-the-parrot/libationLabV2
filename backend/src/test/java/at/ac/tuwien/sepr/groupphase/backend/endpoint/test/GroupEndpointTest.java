@@ -8,13 +8,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLoginDto;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -131,7 +128,7 @@ public class GroupEndpointTest {
 		mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{groupId}/{userId}", -60L, applicationUser.getId(), applicationUserMember.getId())).andExpect(status().isNotFound());
 		Optional<UserGroup> result = userGroupRepository.findById(userGroupKey);
 
-		assertEquals(expected.get().getGroups().getId(), result.get().getGroups().getId());
+		assertEquals(expected.get().getGroup().getId(), result.get().getGroup().getId());
 		assertEquals(expected.get().getUser().getId(), result.get().getUser().getId());
 	  }
 
@@ -141,9 +138,9 @@ public class GroupEndpointTest {
 		prepareUserGroupAndMember();
 		applicationUser.setAdmin(false);
 		userRepository.save(applicationUser);
-		List<UserGroup> expected = userGroupRepository.findAllByApplicationGroup(userGroup.getGroups());
+		List<UserGroup> expected = userGroupRepository.findAllByApplicationGroup(userGroup.getGroup());
 	    mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{userId}", applicationGroup.getId(), applicationUser.getId())).andExpect(status().isNotFound());
-		List<UserGroup> result = userGroupRepository.findAllByApplicationGroup(userGroup.getGroups());
+		List<UserGroup> result = userGroupRepository.findAllByApplicationGroup(userGroup.getGroup());
 		assertEquals(expected.size(), result.size());
 	  }
 
