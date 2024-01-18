@@ -153,7 +153,6 @@ public class MessageEndpoint {
     /**
      * Update an existing message entry.
      *
-     * @param id       the id of the message
      * @param toUpdate the message entry to update
      * @return the updated message entry
      * @throws ValidationException if the data is not valid
@@ -162,7 +161,7 @@ public class MessageEndpoint {
     @Secured(ROLE_USER)
     @PutMapping("{id}")
     @Operation(summary = "Update Message")
-    public MessageDetailDto update(@PathVariable long id, @RequestBody MessageDetailDto toUpdate)
+    public MessageDetailDto update(@RequestBody MessageDetailDto toUpdate)
         throws ValidationException, ConflictException {
         LOGGER.info("PUT " + BASE_PATH + "/{}", toUpdate);
         LOGGER.debug("Body of request:\n{}", toUpdate);

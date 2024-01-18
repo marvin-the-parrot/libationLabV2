@@ -2,6 +2,7 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
 import java.lang.invoke.MethodHandles;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.RecommendedMenuesDto;
 import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -68,6 +70,15 @@ public class MenuEndpoint {
     public MenuCocktailsDto getMenu(@PathVariable Long id) {
         LOGGER.info("GET " + BASE_PATH + "/{}", id);
         return menuServiceImpl.findMenuOfGroup(id);
+    }
+
+    @Secured(ROLE_USER)
+    @PutMapping()
+    @Transactional
+    @Operation(summary = "Update mixable cocktails of groups when changing ingredients")
+    public void updateMixableCocktails(@RequestBody IngredientListDto[] userIngredients) {
+        LOGGER.info("POST " + BASE_PATH + "/updateMixableCocktails");
+        menuServiceImpl.updateMixableCocktails();
     }
 
     @Secured(ROLE_USER)

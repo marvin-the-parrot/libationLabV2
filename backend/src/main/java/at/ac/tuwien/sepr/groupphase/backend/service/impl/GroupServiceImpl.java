@@ -15,7 +15,6 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
-import at.ac.tuwien.sepr.groupphase.backend.service.MenuService;
 import at.ac.tuwien.sepr.groupphase.backend.service.MessageService;
 import at.ac.tuwien.sepr.groupphase.backend.service.validators.GroupValidator;
 import jakarta.transaction.Transactional;
@@ -36,7 +35,6 @@ public class GroupServiceImpl implements GroupService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private final MenuService menuService;
     private final MessageService messageService;
     private final GroupRepository groupRepository;
     private final GroupValidator validator;
@@ -45,8 +43,7 @@ public class GroupServiceImpl implements GroupService {
     private final UserMapper userMapper;
 
     public GroupServiceImpl(GroupRepository groupRepository, GroupValidator validator, MessageService messageService,
-                            MenuService menuService, UserRepository userRepository, UserGroupRepository userGroupRepository, UserMapper userMapper) {
-        this.menuService = menuService;
+                            UserRepository userRepository, UserGroupRepository userGroupRepository, UserMapper userMapper) {
         this.groupRepository = groupRepository;
         this.validator = validator;
         this.messageService = messageService;
@@ -235,11 +232,7 @@ public class GroupServiceImpl implements GroupService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         LOGGER.trace("findGroupsByUser({})", email);
         // find groups in database
-        List<UserGroup> groups = userGroupRepository.findAllByApplicationUser(userRepository.findByEmail(email));
-        for (UserGroup userGroup : groups) {
-            menuService.mixableCocktailsByUpdatingUserIngredients(userGroup.getGroup().getId());
-        }
-        return groups;
+        return userGroupRepository.findAllByApplicationUser(userRepository.findByEmail(email));
     }
 
     @Override

@@ -33,6 +33,7 @@ import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
@@ -75,23 +76,40 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public MenuCocktailsDto findMenuOfGroup(Long groupId) throws NotFoundException {
-        List<Cocktail> cocktailsMenu = mixableCocktailsByUpdatingUserIngredients(groupId);
+        ApplicationGroup applicationGroup = groupRepository.findById(groupId).orElse(null);
+        if (applicationGroup == null) {
+            throw new NotFoundException("Group with id " + groupId + " not found");
+        }
+        List<Cocktail> cocktailsMenu = new ArrayList<>(applicationGroup.getCocktails().stream().toList());
+
+        applicationGroup.setCocktails(new HashSet<>(cocktailsMenu));
+        groupRepository.save(applicationGroup);
+
         List<CocktailOverviewDto> cocktailOverviewDtoList = cocktailIngredientMapper.cocktailToCocktailOverviewDtoList(cocktailsMenu);
 
         return new MenuCocktailsDto(groupId, cocktailOverviewDtoList);
     }
 
     @Override
-    public MenuCocktailsDto create(MenuCocktailsDto toCreate) throws ConflictException {
+    public MenuCocktailsDto create(MenuCocktailsDto toCreate) throws NotFoundException, ConflictException {
         LOGGER.debug("Create menu {}", toCreate);
 
         Long groupId = toCreate.getGroupId();
         ApplicationGroup applicationGroup = groupRepository.findById(groupId).orElse(null);
 
+        if (applicationGroup == null) {
+            throw new NotFoundException("Group with id " + groupId + " not found");
+        }
+
         List<Long> cocktailIds = toCreate.getCocktailsList().stream().map(CocktailOverviewDto::getId).toList();
         Set<Cocktail> cocktails = cocktailRepository.findByIdIn(cocktailIds);
 
-        //TODO validation
+        if (cocktails == null) {
+            throw new NotFoundException("Cocktails with ids " + cocktailIds + " not found");
+        }
+        if (cocktails.size() != cocktailIds.size()) {
+            throw new ConflictException("CONFLICT: Not all cocktails found", List.of("the given cocktails do not match the ones found"));
+        }
 
         applicationGroup.setCocktails(cocktails);
         groupRepository.save(applicationGroup);
@@ -145,30 +163,33 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public List<Cocktail> mixableCocktailsByUpdatingUserIngredients(Long groupId) {
-        ApplicationGroup applicationGroup = groupRepository.findById(groupId).orElse(null);
-        if (applicationGroup == null) {
-            throw new NotFoundException("Group with id " + groupId + " not found");
+    public void updateMixableCocktails() {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        ApplicationUser user = userRepository.findByEmail(userEmail);
+        ApplicationGroup[] groups = groupRepository.getGroupsOfUser(user.getId());
+        if (groups == null) {
+            throw new NotFoundException("No Groups found");
         }
-        List<Cocktail> cocktailsMenu = new ArrayList<>(applicationGroup.getCocktails().stream().toList());
-        List<IngredientGroupDto> groupIngredients = ingredientService.getAllGroupIngredients(groupId);
 
-        if (!cocktailsMenu.isEmpty()) {
-            List<Cocktail> tempCocktailMenu = List.copyOf(cocktailsMenu);
-            for (Cocktail cocktail : tempCocktailMenu) {
-                for (CocktailIngredients cocktailIngredient : cocktail.getCocktailIngredients()) {
-                    if (groupIngredients.stream().noneMatch(ingredientGroupDto -> groupIngredients.stream().anyMatch(
-                        ingredientListDto -> ingredientListDto.getName().equals(cocktailIngredient.getIngredient().getName())))) {
-                        cocktailsMenu.remove(cocktail);
+        for (ApplicationGroup group : groups) {
+            List<Cocktail> cocktailsMenu = new ArrayList<>(group.getCocktails().stream().toList());
+            List<IngredientGroupDto> groupIngredients = ingredientService.getAllGroupIngredients(group.getId());
+
+            if (!cocktailsMenu.isEmpty()) {
+                List<Cocktail> tempCocktailMenu = List.copyOf(cocktailsMenu);
+                for (Cocktail cocktail : tempCocktailMenu) {
+                    for (CocktailIngredients cocktailIngredient : cocktail.getCocktailIngredients()) {
+                        if (groupIngredients.stream().noneMatch(ingredientGroupDto -> groupIngredients.stream().anyMatch(
+                            ingredientListDto -> ingredientListDto.getName().equals(cocktailIngredient.getIngredient().getName())))) {
+                            cocktailsMenu.remove(cocktail);
+                        }
                     }
                 }
             }
+
+            group.setCocktails(new HashSet<>(cocktailsMenu));
+            groupRepository.save(group);
         }
-
-        applicationGroup.setCocktails(new HashSet<>(cocktailsMenu));
-        groupRepository.save(applicationGroup);
-
-        return cocktailsMenu;
     }
 
     /**

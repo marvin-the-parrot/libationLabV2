@@ -4,13 +4,13 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {UserService} from "../../services/user.service";
 import {DialogService} from "../../services/dialog.service";
 import {ConfirmationDialogMode} from "../../confirmation-dialog/confirmation-dialog.component";
-import {UserListDto} from "../../dtos/user";
 import {IngredientListDto} from "../../dtos/ingredient";
 import {Observable, of} from "rxjs";
 import {IngredientService} from "../../services/ingredient.service";
 import {PreferenceService} from "../../services/preference.service";
 import {ToastrService} from "ngx-toastr";
 import {PreferenceListDto} from "../../dtos/preference";
+import {CocktailService} from "../../services/cocktail.service";
 export enum Modes {
   AccountSettings = 'AccountSettings',
   Ingredients = 'Ingredients',
@@ -33,6 +33,7 @@ export class UserSettingsComponent {
     private userService: UserService,
     private ingredientService: IngredientService,
     private preferenceService: PreferenceService,
+    private cocktailService: CocktailService,
     private router: Router,
     private dialogService: DialogService,
     private notification: ToastrService,
@@ -126,10 +127,24 @@ export class UserSettingsComponent {
     this.ingredientService.saveUserIngredients(this.userIngredients).subscribe({
       next: () => {
         this.notification.success('Ingredients saved successfully.');
+        this.updateMixableCocktails();
       },
       error: error => {
         this.notification.error('Could not save ingredients.');
         console.log('Could not save ingredients due to:');
+        console.log(error);
+      }
+    });
+  }
+
+  updateMixableCocktails() {
+    this.cocktailService.updateCocktailMenu(this.userIngredients).subscribe({
+      next: () => {
+        this.notification.success('Cocktails updated successfully.');
+      },
+      error: error => {
+        this.notification.error('Could not update cocktails.');
+        console.log('Could not update cocktails due to:');
         console.log(error);
       }
     });

@@ -1,15 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Globals} from '../global/globals';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {CocktailDetailDto, CocktailListDto, CocktailSearch, CocktailTagSearchDto} from "../dtos/cocktail";
+import {CocktailDetailDto, CocktailListDto, CocktailTagSearchDto} from "../dtos/cocktail";
 import {Observable} from "rxjs";
-import {environment} from "../../environments/environment";
 import {MenuCocktailsDto} from '../dtos/menu';
 import {IngredientListDto} from "../dtos/ingredient";
 import {PreferenceListDto} from "../dtos/preference";
 import {RecommendedMenues} from "../dtos/recommendedMenues";
-
-const baseUri = environment.backendUrl + "/cocktails";
 
 @Injectable({
   providedIn: 'root'
@@ -158,12 +155,18 @@ export class CocktailService {
   }
 
   /**
+   * Update cocktail menu of groups from a user
+   * when changing ingredients
+   *
+   */
+  updateCocktailMenu(userIngredients: IngredientListDto[]): Observable<MenuCocktailsDto> {
+    return this.httpClient.put<MenuCocktailsDto>(this.menuBaseUri, userIngredients);
+  }
+
+  /**
    * Loads all fitting ingredients for autocomplete
    */
   searchIngredientsAuto(name: string): Observable<IngredientListDto[]> {
-    let params = new HttpParams();
-    params = params.append("name", name);
-
     return this.httpClient.get<IngredientListDto[]>(this.cocktailBaseUri + '/cocktail-ingredients-auto/' + name);
   }
 
@@ -171,9 +174,6 @@ export class CocktailService {
    * Loads all fitting preferences for autocomplete
    */
   searchPreferencesAuto(name: string): Observable<PreferenceListDto[]> {
-    let params = new HttpParams();
-    params = params.append("name", name);
-
     return this.httpClient.get<PreferenceListDto[]>(this.cocktailBaseUri + '/cocktail-preferences-auto/' + name);
   }
 
