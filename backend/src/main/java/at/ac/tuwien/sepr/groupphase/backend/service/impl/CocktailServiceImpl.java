@@ -75,7 +75,6 @@ public class CocktailServiceImpl implements CocktailService {
             results.sort(Comparator.comparing(CocktailListDto::getName));
             return results;
         }
-        //TODO: maybe use a Mapper for this
         //Transform CocktailSerachDto to CocktailTagSearchDto (for easier handling)
         CocktailTagSearchDto searchTagParameters = new CocktailTagSearchDto();
         searchTagParameters.setCocktailName(searchParameters.getCocktailName());

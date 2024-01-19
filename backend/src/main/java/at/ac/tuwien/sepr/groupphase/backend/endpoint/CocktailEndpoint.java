@@ -69,13 +69,8 @@ public class CocktailEndpoint {
     public List<IngredientListDto> searchIngredientsAuto(@PathVariable String ingredientsName) {
         LOGGER.info("GET " + BASE_PATH + "cocktail-ingredients-auto");
         LOGGER.debug("Request Params: {}", ingredientsName);
-        try {
-            return cocktailService.searchAutoIngredients(ingredientsName);
-        } catch (NotFoundException e) {
-            HttpStatus status = HttpStatus.NOT_FOUND;
-            logClientError(status, "Failed to search ingredients", e);
-            throw new ResponseStatusException(status, e.getMessage(), e);
-        }
+        return cocktailService.searchAutoIngredients(ingredientsName);
+
     }
 
     @GetMapping("/cocktail-preferences-auto/{preferenceName}")
@@ -84,13 +79,8 @@ public class CocktailEndpoint {
     public List<PreferenceListDto> searchPreferencesAuto(@PathVariable String preferenceName) {
         LOGGER.info("GET " + BASE_PATH + "cocktail-preference-auto");
         LOGGER.debug("Request Params: {}", preferenceName);
-        try {
-            return cocktailService.searchAutoPreferences(preferenceName);
-        } catch (NotFoundException e) {
-            HttpStatus status = HttpStatus.NOT_FOUND;
-            logClientError(status, "Failed to search preferences", e);
-            throw new ResponseStatusException(status, e.getMessage(), e);
-        }
+        return cocktailService.searchAutoPreferences(preferenceName);
+
     }
 
     private void logClientError(HttpStatus status, String message, Exception e) {
