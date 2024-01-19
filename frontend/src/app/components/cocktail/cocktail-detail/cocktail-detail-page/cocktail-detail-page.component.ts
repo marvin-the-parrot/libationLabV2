@@ -7,10 +7,4 @@ import { Component } from '@angular/core';
 })
 export class CocktailDetailPageComponent {
 
-  /*
-  ngOnInit(): void {
-    const cocktailId = this.route.snapshot.params['id'];
-    this.getCocktail(cocktailId);
-  }
-  */
 }

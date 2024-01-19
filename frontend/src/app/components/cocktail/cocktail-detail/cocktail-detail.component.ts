@@ -1,4 +1,4 @@
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, Optional} from '@angular/core';
 import {CocktailDetailDto} from "../../../dtos/cocktail";
 import {CocktailService} from "../../../services/cocktail.service";
 import {ToastrService} from "ngx-toastr";
@@ -23,10 +23,12 @@ export class CocktailDetailComponent {
     preferenceName: [],
   }
 
-
+  cocktailId: number = null;
+  isModal: boolean = false;
+  shared: boolean = false;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public props: { cocktailId: number },
+    @Optional() @Inject(MAT_DIALOG_DATA) public props: { cocktailId: number|null },
     private cocktailService: CocktailService,
     private notification: ToastrService,
     private errorFormatter: ErrorFormatterService,
@@ -36,8 +38,13 @@ export class CocktailDetailComponent {
   }
 
   ngOnInit(): void {
-    const cocktailId = this.route.snapshot.params['id'];
-    this.getCocktail(this.props.cocktailId);
+    if (this.props != null && this.props.cocktailId != null) {
+      this.cocktailId = this.props.cocktailId;
+      this.isModal = true;
+    } else {
+      this.cocktailId = this.route.snapshot.params['id'];
+    }
+    this.getCocktail(this.cocktailId);
   }
 
 
@@ -63,5 +70,18 @@ export class CocktailDetailComponent {
           this.location.back(); // Go back to the previous page
         }
       });
+  }
+
+  /**
+   * Share the current cocktail by copying its URL to the clipboard.
+   */
+  shareCocktail() {
+    const url = window.location.host + '/#/cocktail/' + this.cocktail.id + '/detail';
+    navigator.clipboard.writeText(url).then(() => {
+      this.shared = true;
+      this.notification.success(`Successfully copied URL to clipboard.`);
+    }, () => {
+      this.notification.error(`Error copying URL to clipboard.`);
+    });
   }
 }

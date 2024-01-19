@@ -191,6 +191,10 @@ export class CocktailComponent {
     this.searchChanged();
   }
 
+  /**
+   * Opens the cocktails details in a modal.
+   * @param id The id of the cocktail to open
+   */
   openCocktailDetails(id: number) {
     this.dialogService.openCocktailDetailDialog(id).subscribe({
       next: () => {
