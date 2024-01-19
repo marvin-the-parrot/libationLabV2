@@ -87,7 +87,7 @@ public class PreferenceServiceImpl implements PreferenceService {
         // Iterate through the received preference IDs
         for (PreferenceListDto preferenceDto : preferenceListDto) {
             // Get the preference from the repository using its ID
-            Preference preference = preferenceRepository.findById(preferenceDto.getId()).orElseThrow(() -> new NotFoundException("Ingredient not found"));
+            Preference preference = preferenceRepository.findById(preferenceDto.getId()).orElseThrow(() -> new NotFoundException("Preference not found"));
 
             if (!Objects.equals(preferenceDto.getName(), preference.getName())) {
                 List<String> conflictException = new ArrayList<>();
