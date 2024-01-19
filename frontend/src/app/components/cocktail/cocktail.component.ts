@@ -1,13 +1,13 @@
 import {Component, ViewChild} from '@angular/core';
 import {Observable, of, Subject} from 'rxjs';
 import {CocktailService} from 'src/app/services/cocktail.service';
-import {CocktailListDto, CocktailSearch, CocktailTagSearchDto} from '../../dtos/cocktail';
+import {CocktailListDto, CocktailTagSearchDto} from '../../dtos/cocktail';
 import {ToastrService} from 'ngx-toastr';
 import {List} from 'immutable'; // Import List from Immutable.js
 import {IngredientListDto} from "../../dtos/ingredient";
 import {PreferenceListDto} from "../../dtos/preference";
-import { AutocompleteComponent } from '../autocomplete/autocomplete.component';
-
+import {AutocompleteComponent} from '../autocomplete/autocomplete.component';
+import {DialogService} from "../../services/dialog.service";
 
 
 @Component({
@@ -17,10 +17,10 @@ import { AutocompleteComponent } from '../autocomplete/autocomplete.component';
 })
 export class CocktailComponent {
 
-  @ViewChild('ingredientAutocomplete', { static: false })
+  @ViewChild('ingredientAutocomplete', {static: false})
   private ingredientAutocompleteComponent!: AutocompleteComponent<any>;
 
-  @ViewChild('preferenceAutocomplete', { static: false })
+  @ViewChild('preferenceAutocomplete', {static: false})
   private preferenceAutocompleteComponent!: AutocompleteComponent<any>;
 
   cocktails: CocktailListDto[] = [];
@@ -42,8 +42,8 @@ export class CocktailComponent {
   constructor(
     private cocktailService: CocktailService,
     private notification: ToastrService,
-
-) {
+    private dialogService: DialogService,
+  ) {
   }
 
   ingredient: IngredientListDto = {
@@ -190,4 +190,21 @@ export class CocktailComponent {
     }
     this.searchChanged();
   }
+
+  /**
+   * Opens the cocktails details in a modal.
+   * @param id The id of the cocktail to open
+   */
+  openCocktailDetails(id: number) {
+    this.dialogService.openCocktailDetailDialog(id).subscribe({
+      next: () => {
+        console.log("Successfully opened cocktail details");
+      },
+      error: error => {
+        console.error('Could not open cocktail details due to:');
+        this.notification.error(error.error.detail);
+      }
+    });
+  }
+
 }

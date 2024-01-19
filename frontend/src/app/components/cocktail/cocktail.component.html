@@ -105,7 +105,7 @@
               (click)="showImage(cocktail.name)">
             {{cocktail.name}}
             <button class="btn rounded-button"
-                    [routerLink]="[cocktail.id, 'detail']">
+                    (click)="openCocktailDetails(cocktail.id)">
               <i class="bi bi-book"></i>
               see details
             </button>

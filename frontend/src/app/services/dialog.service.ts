@@ -1,13 +1,14 @@
-import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {Injectable, numberAttribute} from '@angular/core';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {
-  ConfirmationDialogMode,
-  ConfirmationDialogComponent
+  ConfirmationDialogComponent,
+  ConfirmationDialogMode
 } from '../confirmation-dialog/confirmation-dialog.component';
-import { Observable, Subject } from 'rxjs';
-import { OptionDialogComponent } from '../option-dialog/option-dialog.component';
+import {Observable, Subject} from 'rxjs';
+import {OptionDialogComponent} from '../option-dialog/option-dialog.component';
 import {AddIngredientDialogComponent} from "../add-ingredient-dialog/add-ingredient-dialog.component";
 import {GenerateMenuDialogComponent} from "../generate-menu-dialog/generate-menu-dialog.component";
+import {CocktailDetailComponent} from "../components/cocktail/cocktail-detail/cocktail-detail.component";
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,8 @@ export class DialogService {
   private selectedOptionSubject = new Subject<string>();
   private dialogRef: MatDialogRef<OptionDialogComponent>;
 
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog) {
+  }
 
   /**
    * Opens a dialog that lets the user confirm an action
@@ -26,7 +28,7 @@ export class DialogService {
     const dialogRef = this.dialog.open<ConfirmationDialogComponent, any, boolean>(
       ConfirmationDialogComponent,
       {
-        data: { mode }
+        data: {mode}
       }
     );
 
@@ -58,7 +60,7 @@ export class DialogService {
       AddIngredientDialogComponent,
       {
         height: '80%', // makes sure the dialog is big enough
-        data: { groupId }
+        data: {groupId}
       }
     );
 
@@ -78,7 +80,7 @@ export class DialogService {
       GenerateMenuDialogComponent,
       {
         height: '80%', // makes sure the dialog is big enough
-        data: { groupId, numberOfCocktails }
+        data: {groupId, numberOfCocktails}
       }
     );
 
@@ -88,5 +90,16 @@ export class DialogService {
 
     return dialogRef.afterClosed();
   }
+
+  openCocktailDetailDialog(cocktailId: number): Observable<void | undefined> {
+    const dialogRef = this.dialog.open<CocktailDetailComponent, any, void>(
+      CocktailDetailComponent,
+      {
+        data: { cocktailId }
+      }
+    );
+    return dialogRef.afterClosed();
+  }
+
 
 }

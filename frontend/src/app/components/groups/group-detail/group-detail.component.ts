@@ -1,8 +1,8 @@
 import {Component} from '@angular/core';
 import {GroupOverview} from "../../../dtos/group-overview";
 import {GroupsService} from "../../../services/groups.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {Observable, of, Subject} from "rxjs";
+import {ActivatedRoute} from "@angular/router";
+import {Observable, of} from "rxjs";
 import {UserListDto} from "../../../dtos/user";
 import {UserService} from "../../../services/user.service";
 import {MessageCreate} from "../../../dtos/message";
@@ -207,6 +207,22 @@ export class GroupDetailComponent {
     console.log(error);
     this.error = true;
     this.notification.error(error.error.detail);
+  }
+
+  /**
+   * Opens the cocktails details in a modal.
+   * @param id The id of the cocktail to open
+   */
+  openCocktailDetails(id: number) {
+    this.dialogService.openCocktailDetailDialog(id).subscribe({
+      next: () => {
+        console.log("Successfully opened cocktail details");
+      },
+      error: error => {
+        console.error('Could not open cocktail details due to:');
+        this.notification.error(error.error.detail);
+      }
+    });
   }
 }
 

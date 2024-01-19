@@ -2,24 +2,39 @@
 
 // contains the whole page
 .grid-container {
-  height: calc(100vh - 88px);
-  //min-height: 100vh;
   display: flex;
+}
+
+.modal-height {
+  height: 65dvh;
+}
+.page-height {
+  height: calc(100vh - 88px);
 }
 
 // style for the left container
 .left-container {
 }
 
-.header-left-container {
+.page-header {
   padding-left: 45px;
   padding-top: 30px;
+}
+
+.modal-header {
+  background-color: #AC6AFE;
+  width: 100%;
+  padding: 0.5em 0;
+  align-items: center;
+  justify-content: center;
+  color: white;
 }
 
 // style for the right container (contains the cocktail image)
 .right-container {
   background-color: #D9D9D9;
-  min-height: calc(100vh - 88px);
+  //min-height: calc(100vh - 88px);
+  height: 100%;
   position: relative;
   display: flex;
   margin: auto;
@@ -112,6 +127,26 @@
   font-weight: 550;
   color: black;
 }
+
+.share-btn {
+
+
+}
+
+.rounded-button {
+  background-color: #AC6AFE;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  padding-bottom: 0;
+  padding-top: 0;
+  height: 36px;
+}
+.btn.rounded-button:active {
+  background-color: white; /* Set background color to transparent */
+  box-shadow: none;
+}
+
 
 // change the layout of the inner grid container when the screen is smaller than 900px
 @media (max-width: 900px) {
