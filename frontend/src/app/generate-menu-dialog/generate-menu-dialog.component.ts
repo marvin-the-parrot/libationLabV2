@@ -16,7 +16,7 @@ import {MenuCocktailsDto} from "../dtos/menu"; // Import List from Immutable.js
 })
 export class GenerateMenuDialogComponent implements OnInit {
   ingredients: IngredientSuggestionDto[] = [];
-  currentMenu: number = 1; // the index of the ingredient that is currently selected, to show its cocktails
+  currentMenu: number = 0; // the index of the ingredient that is currently selected, to show its cocktails
   menus: RecommendedMenues = null;
   @Output() result = new EventEmitter<boolean>(); // emits true if a ingredient was added, false if not (undefined if the dialog was closed)
 

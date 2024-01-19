@@ -100,6 +100,7 @@ export class CocktailMenuComponent {
   ngOnInit(): void {
     this.groupId = this.route.snapshot.params['id'];
     this.getGroup();
+    this.getCocktailsMenu(this.groupId);
   }
 
   /**
@@ -272,8 +273,6 @@ export class CocktailMenuComponent {
     }
 
     let result = 'Ingredients: ';
-    console.log(ingredients);
-    console.log(Array.from(Object.keys(ingredients)));
     let ingredientNames = Array.from(Object.keys(ingredients))
     ingredientNames.forEach((name, index) => {
       result += name + ', ';
