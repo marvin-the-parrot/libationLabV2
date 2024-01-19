@@ -1,10 +1,11 @@
-import {Component} from '@angular/core';
+import {Component, Inject} from '@angular/core';
 import {CocktailDetailDto} from "../../../dtos/cocktail";
 import {CocktailService} from "../../../services/cocktail.service";
 import {ToastrService} from "ngx-toastr";
 import {ErrorFormatterService} from "../../../services/error-formatter.service";
 import {ActivatedRoute} from "@angular/router";
 import {Location} from "@angular/common";
+import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-cocktail-detail',
@@ -25,6 +26,7 @@ export class CocktailDetailComponent {
 
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public props: { cocktailId: number },
     private cocktailService: CocktailService,
     private notification: ToastrService,
     private errorFormatter: ErrorFormatterService,
@@ -35,7 +37,7 @@ export class CocktailDetailComponent {
 
   ngOnInit(): void {
     const cocktailId = this.route.snapshot.params['id'];
-    this.getCocktail(cocktailId);
+    this.getCocktail(this.props.cocktailId);
   }
 
 
