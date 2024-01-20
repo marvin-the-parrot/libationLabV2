@@ -2,6 +2,7 @@ package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.FeedbackCreateDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.FeedbackState;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
@@ -11,6 +12,7 @@ import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.FeedbackRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.FeedbackService;
 import jakarta.transaction.Transactional;
@@ -33,13 +35,15 @@ public class FeedbackServiceImpl implements FeedbackService {
     private final UserRepository userRepository;
     private final CocktailRepository cocktailRepository;
     private final GroupRepository groupRepository;
+    private final UserGroupRepository userGroupRepository;
 
     @Autowired
-    public FeedbackServiceImpl(FeedbackRepository feedbackRepository, UserRepository userRepository, CocktailRepository cocktailRepository, GroupRepository groupRepository) {
+    public FeedbackServiceImpl(FeedbackRepository feedbackRepository, UserRepository userRepository, CocktailRepository cocktailRepository, GroupRepository groupRepository, UserGroupRepository userGroupRepository) {
         this.feedbackRepository = feedbackRepository;
         this.userRepository = userRepository;
         this.cocktailRepository = cocktailRepository;
         this.groupRepository = groupRepository;
+        this.userGroupRepository = userGroupRepository;
     }
 
     @Transactional
@@ -50,26 +54,31 @@ public class FeedbackServiceImpl implements FeedbackService {
         //TODO validation
 
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        ApplicationUser user = userRepository.findByEmail(userEmail);
-        if (user == null) {
+        ApplicationUser host = userRepository.findByEmail(userEmail);
+        if (host == null) {
             throw new NotFoundException("User not found");
         }
 
         ApplicationGroup group = groupRepository.findById(feedbackToCreate.getGroupId()).orElseThrow(() -> new NotFoundException("Group not found"));
+        List<ApplicationUser> users = userGroupRepository.findUsersByGroupId(group.getId());
 
         Set<Cocktail> cocktails = cocktailRepository.findByIdIn(List.of(feedbackToCreate.getCocktailIds()));
         for (Cocktail cocktail : cocktails) {
-            Feedback feedback = new Feedback();
+            for (ApplicationUser user : users) {
+                Feedback feedback = new Feedback();
 
-            feedback.setFeedbackKey(new FeedbackKey(user.getId(), group.getId(), cocktail.getId()));
-            feedback.setApplicationUser(user);
-            feedback.setApplicationGroup(group);
-            feedback.setCocktail(cocktail);
+                feedback.setFeedbackKey(new FeedbackKey(user.getId(), group.getId(), cocktail.getId()));
+                feedback.setApplicationUser(user);
+                feedback.setApplicationGroup(group);
+                feedback.setCocktail(cocktail);
+                feedback.setFeedback(FeedbackState.NotVoted.name());
 
-            feedbackRepository.save(feedback);
+                feedbackRepository.save(feedback);
+            }
         }
     }
 
+    @Transactional
     @Override
     public void update(CocktailFeedbackDto feedbackToUpdate) throws NotFoundException {
         LOGGER.debug("Update recommendation {}", feedbackToUpdate);
@@ -89,7 +98,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             throw new NotFoundException("Feedback not found");
         }
 
-        feedback.setFeedback(feedbackToUpdate.getRating().toString());
+        feedback.setFeedback(feedbackToUpdate.getRating());
         feedbackRepository.save(feedback);
     }
 }

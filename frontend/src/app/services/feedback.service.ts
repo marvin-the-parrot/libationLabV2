@@ -20,7 +20,7 @@ export class FeedbackService {
     }
 
     updateCocktailFeedback(feedbackToUpdate: CocktailFeedbackDto) {
-        return this.httpClient.put(this.feedbackBaseUri + `/update`, {feedbackToUpdate});
+        return this.httpClient.put(this.feedbackBaseUri + `/update`, feedbackToUpdate);
     }
 
     createFeedbackRelations(feedbackRelations: FeedbackCreateDto)  {
