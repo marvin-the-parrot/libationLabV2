@@ -1,6 +1,15 @@
-import { CocktailListDto} from "./cocktail";
+import {CocktailFeedbackDto, CocktailListDto, CocktailListMenuDto} from "./cocktail";
 
 export interface MenuCocktailsDto {
-    groupId: number
-    cocktailsList: CocktailListDto[];
-  }
+  groupId: number
+  cocktailsList: CocktailListDto[];
+}
+
+
+/**
+ * A Dto for storing the data of a cocktailCard in Group Detail View which also contains the Rating of the User
+ */
+export interface MenuCocktailsDetailViewDto {
+  groupId: number
+  cocktailsList: CocktailListMenuDto[];
+}

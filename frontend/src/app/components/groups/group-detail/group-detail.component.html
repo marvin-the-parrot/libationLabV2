@@ -65,8 +65,28 @@
         <div class="cocktails-list">
           <div *ngFor="let cocktail of menu.cocktailsList; index as i" class="cocktails-item">
             {{ cocktail.name }}
-            <button class="btn see-detail-button"
-                    (click)="openCocktailDetails(cocktail.id)">
+
+            <!-- Button Group (Show only if not the host) -->
+            <div *ngIf="group?.host?.name !== username" class="btn-group" role="group" aria-label="Cocktail Actions">
+
+              <!-- Like Button -->
+              <button class="btn like-button" (click)="likeCocktail(cocktail.id)">
+                <i class="bi bi-hand-thumbs-up"></i>
+              </button>
+
+              <!-- Dislike Button -->
+              <button class="btn dislike-button" (click)="dislikeCocktail(cocktail.id)">
+                <i class="bi bi-hand-thumbs-down"></i>
+              </button>
+
+              <!-- See Detail Button -->
+              <button class="btn see-detail-button" (click)="openCocktailDetails(cocktail.id)">
+                <i class="bi bi-book"></i>
+              </button>
+
+            </div>
+
+            <button *ngIf="group?.host?.name === username" class="btn see-detail-button" (click)="openCocktailDetails(cocktail.id)">
               <i class="bi bi-book"></i>
             </button>
           </div>
