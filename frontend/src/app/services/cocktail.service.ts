@@ -22,7 +22,7 @@ export class CocktailService {
   ) {
   }
 
-  searchCocktails(searchParams: CocktailTagSearchDto): Observable<CocktailListDto[]> {
+  searchCocktails(searchParams: CocktailTagSearchDto): Observable<CocktailDetailDto[]> {
     if (searchParams.cocktailName === '') {
       delete searchParams.cocktailName;
     }
@@ -36,7 +36,7 @@ export class CocktailService {
     if (searchParams.selectedPreferences.length > 0) {
       params = params.append('preferenceName', searchParams.selectedPreferences.join(','));
     }
-    return this.httpClient.get<CocktailListDto[]>(this.cocktailBaseUri, {params});
+    return this.httpClient.get<CocktailDetailDto[]>(this.cocktailBaseUri, {params});
   }
 
   getCocktailById(id: number): Observable<CocktailDetailDto> {

@@ -29,6 +29,9 @@ public class ApplicationGroup {
     @OneToMany(mappedBy = "applicationGroup")
     private Set<UserGroup> userGroups;
 
+    @OneToMany(mappedBy = "applicationGroup")
+    private Set<Feedback> feedbacks;
+
     @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(
         name = "menu",
@@ -74,6 +77,14 @@ public class ApplicationGroup {
 
     public void setMembers(Set<UserGroup> userGroups) {
         this.userGroups = userGroups;
+    }
+
+    public Set<Feedback> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(Set<Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
     }
 
     /**

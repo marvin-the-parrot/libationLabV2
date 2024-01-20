@@ -47,7 +47,7 @@ export class CocktailMenuComponent {
   // Error flag
   error = false;
   errorMessage = '';
-  cocktails_list: CocktailListDto[] = [];
+  cocktails_list: CocktailDetailDto[] = [];
   nameOfCocktail: string;
   nameOfIngredient: string;
   nameOfPreference: string;

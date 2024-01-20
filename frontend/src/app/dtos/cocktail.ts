@@ -5,8 +5,6 @@ export interface CocktailListDto {
   id: number;
   name: string;
   imagePath: string;
-  ingredients: Map<string, string>;
-  preferenceName: List<string>;
 }
 
 export interface CocktailOverviewDto {
@@ -22,8 +20,8 @@ export interface CocktailDetailDto {
   name: string;
   imagePath: string;
   ingredients: Map<string, string>;
-  instructions: string;
   preferenceName: string[];
+  instructions: string;
 }
 
 export interface CocktailSearch {
