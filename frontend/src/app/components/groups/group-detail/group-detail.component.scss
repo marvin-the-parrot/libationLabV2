@@ -283,3 +283,34 @@ input {
   background-color: #6200EE;
 }
 
+.like-button {
+  background-color: #c497ff;
+  color: white;
+  border: none;
+  margin-left: 1em;
+}
+
+.dislike-button {
+  background-color: #c497ff;
+  color: white;
+  border: none;
+  margin-left: 1em;
+}
+
+.btn-group button {
+  border-right: 1px solid #ccc; /* Adjust the color and width as needed */
+  border-left: 1px solid #ccc; /* Adjust the color and width as needed */
+}
+
+.btn-group button:last-child {
+  border-right: none; /* Remove the border from the last button */
+}
+
+.btn-group button:first-child {
+  border-left: none; /* Remove the border from the first button */
+}
+
+.btn-group button:hover {
+  background-color: #AC6AFE; /* Change the background color on hover */
+}
+

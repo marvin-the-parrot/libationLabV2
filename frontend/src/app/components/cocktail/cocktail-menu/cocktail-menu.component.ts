@@ -9,7 +9,7 @@ import {MessageService} from "../../../services/message.service";
 import {ToastrService} from "ngx-toastr";
 import {ActivatedRoute, Router} from "@angular/router";
 import {
-  CocktailDetailDto,
+  CocktailDetailDto, CocktailFeedbackDto,
   CocktailListDto,
   CocktailOverviewDto,
   CocktailSearch,
@@ -21,7 +21,9 @@ import {PreferenceListDto} from "../../../dtos/preference";
 import {Observable, of} from "rxjs";
 import {List} from 'immutable';
 import {RecommendedMenues} from "../../../dtos/recommendedMenues";
-import {AutocompleteComponent} from "../../autocomplete/autocomplete.component"; // Import List from Immutable.js
+import {AutocompleteComponent} from "../../autocomplete/autocomplete.component";
+import {FeedbackService} from "../../../services/feedback.service";
+import {FeedbackCreateDto} from "../../../dtos/feedback"; // Import List from Immutable.js
 
 @Component({
   selector: 'app-cocktail-card',
@@ -42,11 +44,9 @@ export class CocktailMenuComponent {
   groupId: number;
   numberOfCocktails = 4;
   lv: number;
-  dummyMemberSelectionModel: unknown; // Just needed for the autocomplete
   submitted = false;
   // Error flag
   error = false;
-  errorMessage = '';
   cocktails_list: CocktailListDto[] = [];
   nameOfCocktail: string;
   nameOfIngredient: string;
@@ -57,17 +57,15 @@ export class CocktailMenuComponent {
   selectedIngredients: string[] = []; // List of selected ingredients (tags)
   selectedPreferences: string[] = []; // List of selected preferences (tags)
 
+
   constructor(
     private groupsService: GroupsService,
-    private userService: UserService,
-    private ingredientService: IngredientService,
     private dialogService: DialogService,
-    private messageService: MessageService,
     private notification: ToastrService,
     private route: ActivatedRoute,
     private router: Router,
-    private errorFormatter: ErrorFormatterService,
     private cocktailService: CocktailService,
+    private feedbackService: FeedbackService,
   ) {
   }
 
@@ -243,6 +241,13 @@ export class CocktailMenuComponent {
       groupId: this.groupId,
       cocktailsList: this.selectedCocktails
     };
+
+
+    const newFeedbackRelations: FeedbackCreateDto = {
+      groupId: this.groupId,
+      cocktailIds: this.selectedCocktails.map(cocktail => cocktail.id)
+    };
+
     this.cocktailService.saveCocktails(newMenuCocktails).subscribe({
       next: () => {
         this.notification.success('Cocktail Card saved successfully.');
@@ -253,6 +258,18 @@ export class CocktailMenuComponent {
         console.log('Could not save cocktail card due to:');
         console.log(error);
       }
+    });
+
+    this.feedbackService.createFeedbackRelations(newFeedbackRelations).subscribe({
+      next: () => {
+        this.notification.success('Feedback relations saved successfully.');
+        this.router.navigate(['/groups/' + newFeedbackRelations.groupId + '/detail']);
+      },
+        error: error => {
+            this.notification.error('Could not save feedback relations.');
+            console.log('Could not save feedback relations due to:');
+            console.log(error);
+        }
     });
   }
 
@@ -288,6 +305,7 @@ export class CocktailMenuComponent {
       }
     });
   }
+
 
   /**
    * This method is called when the user clicks on a 'X' from tag in the ingredients list.

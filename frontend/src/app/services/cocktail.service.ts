@@ -3,7 +3,7 @@ import {Globals} from '../global/globals';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {CocktailDetailDto, CocktailListDto, CocktailTagSearchDto} from "../dtos/cocktail";
 import {Observable} from "rxjs";
-import {MenuCocktailsDto} from '../dtos/menu';
+import {MenuCocktailsDetailViewDto, MenuCocktailsDto} from '../dtos/menu';
 import {IngredientListDto} from "../dtos/ingredient";
 import {PreferenceListDto} from "../dtos/preference";
 import {RecommendedMenues} from "../dtos/recommendedMenues";
@@ -154,6 +154,7 @@ export class CocktailService {
     return this.httpClient.get<MenuCocktailsDto>(this.menuBaseUri + `/${groupId}`);
   }
 
+
   /**
    * Update cocktail menu of groups from a user
    * when changing ingredients
@@ -187,5 +188,17 @@ export class CocktailService {
     params = params.append("numberOfCocktails", numberOfCocktails.toString());
 
     return this.httpClient.get<RecommendedMenues>(this.menuBaseUri + '/' + groupId + '/recommendation', {params});
+  }
+
+  /**
+   * Get cocktail menu of a group with rating of user for GroupDetailView
+   *
+   */
+  getCocktailMenuDetailView(groupId: number, cocktailId: number): Observable<MenuCocktailsDetailViewDto> {
+      let params = new HttpParams();
+      params = params.append("groupId", groupId.toString());
+      params = params.append("cocktailId", cocktailId.toString());
+
+      return this.httpClient.get<MenuCocktailsDetailViewDto>(this.menuBaseUri + `/${groupId}/detail`, {params});
   }
 }

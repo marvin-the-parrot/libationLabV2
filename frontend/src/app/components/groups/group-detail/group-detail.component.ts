@@ -13,7 +13,7 @@ import {ConfirmationDialogMode} from "../../../confirmation-dialog/confirmation-
 import {IngredientGroupDto} from "../../../dtos/ingredient";
 import {IngredientService} from "../../../services/ingredient.service";
 import { CocktailService } from 'src/app/services/cocktail.service';
-import { MenuCocktailsDto } from 'src/app/dtos/menu';
+import {MenuCocktailsDetailViewDto, MenuCocktailsDto} from 'src/app/dtos/menu';
 
 @Component({
   selector: 'app-group-detail',
@@ -192,6 +192,7 @@ export class GroupDetailComponent {
     });
   }
 
+  //TODO: change Dto to MenuCocktailsDetailViewDto
   private getCocktailsMenu(groupId: number): void {
     this.cocktailService.getCocktailMenu(groupId).subscribe({
       next: (menu: MenuCocktailsDto) => {
@@ -224,10 +225,21 @@ export class GroupDetailComponent {
       }
     });
   }
+
+  likeCocktail(cocktailId: number) {
+
+  }
+
+  dislikeCocktail(cocktailId: number) {
+
+  }
+
 }
 
 function takeUntil(destroy$: any): any {
   throw new Error('Function not implemented.');
 }
+
+
 
 

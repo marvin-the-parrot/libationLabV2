@@ -9,6 +9,17 @@ export interface CocktailListDto {
   preferenceName: List<string>;
 }
 
+
+/**
+ * A Dto for storing the data of a cocktail in Group Detail View which also contains the Rating of the User
+ */
+export interface CocktailListMenuDto {
+  id: number;
+  name: string;
+  imagePath: string;
+  rating: FeedbackState;
+}
+
 export interface CocktailOverviewDto {
   id: number;
   name: string;
@@ -36,6 +47,18 @@ export interface CocktailTagSearchDto {
   cocktailName?: string;
   selectedIngredients?: string[];
   selectedPreferences?: string[];
+}
+
+export enum FeedbackState {
+  Like = 'like',
+  Dislike = 'dislike',
+  NotVoted = 'notVoted',
+}
+
+export interface CocktailFeedbackDto {
+  cocktailId: number;
+  groupId: number;
+  rating: FeedbackState;
 }
 
 
