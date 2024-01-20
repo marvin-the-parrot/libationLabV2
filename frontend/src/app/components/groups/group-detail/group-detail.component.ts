@@ -14,6 +14,8 @@ import {IngredientGroupDto} from "../../../dtos/ingredient";
 import {IngredientService} from "../../../services/ingredient.service";
 import { CocktailService } from 'src/app/services/cocktail.service';
 import {MenuCocktailsDetailViewDto, MenuCocktailsDto} from 'src/app/dtos/menu';
+import {CocktailFeedbackDto, FeedbackState} from "../../../dtos/cocktail";
+import {FeedbackService} from "../../../services/feedback.service";
 
 @Component({
   selector: 'app-group-detail',
@@ -58,6 +60,7 @@ export class GroupDetailComponent {
     private notification: ToastrService,
     private route: ActivatedRoute,
     private cocktailService: CocktailService,
+    private feedbackService: FeedbackService
   ) {
   }
 
@@ -227,11 +230,38 @@ export class GroupDetailComponent {
   }
 
   likeCocktail(cocktailId: number) {
+    const cocktailFeedback: CocktailFeedbackDto = {
+      cocktailId: cocktailId,
+      groupId: this.group.id,
+      rating: FeedbackState.Like
+    }
+    this.feedbackService.updateCocktailFeedback(cocktailFeedback).subscribe({
+      next: () => {
+        this.notification.success("Successfully liked cocktail");
+      },
+      error: error => {
+        console.error('Like did not work, something went wrong');
+        this.notification.error('Like did not work, something went wrong');
+      }
+    });
 
   }
 
   dislikeCocktail(cocktailId: number) {
-
+    const cocktailFeedback: CocktailFeedbackDto = {
+      cocktailId: cocktailId,
+      groupId: this.group.id,
+      rating: FeedbackState.Dislike
+    }
+    this.feedbackService.updateCocktailFeedback(cocktailFeedback).subscribe({
+      next: () => {
+        this.notification.success("Successfully disliked cocktail");
+      },
+      error: error => {
+        console.error('Dislike did not work, something went wrong');
+        this.notification.error('Like did not work, something went wrong');
+      }
+    });
   }
 
 }

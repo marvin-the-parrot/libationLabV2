@@ -33,11 +33,11 @@ public class Feedback {
     @Column
     private String feedback;
 
-    public FeedbackKey getRecommendationKey() {
+    public FeedbackKey getFeedbackKey() {
         return feedbackKey;
     }
 
-    public void setRecommendationKey(FeedbackKey feedbackKey) {
+    public void setFeedbackKey(FeedbackKey feedbackKey) {
         this.feedbackKey = feedbackKey;
     }
 

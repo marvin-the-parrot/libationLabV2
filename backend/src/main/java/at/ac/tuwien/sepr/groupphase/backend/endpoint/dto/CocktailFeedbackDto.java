@@ -4,7 +4,7 @@ public class CocktailFeedbackDto {
 
     private Long cocktailId;
     private Long groupId;
-    private String feedback;
+    private String rating;
 
     public Long getCocktailId() {
         return cocktailId;
@@ -22,11 +22,11 @@ public class CocktailFeedbackDto {
         this.groupId = groupId;
     }
 
-    public String getFeedback() {
-        return feedback;
+    public String getRating() {
+        return rating;
     }
 
-    public void setFeedback(String feedback) {
-        this.feedback = feedback;
+    public void setRating(String rating) {
+        this.rating = rating;
     }
 }

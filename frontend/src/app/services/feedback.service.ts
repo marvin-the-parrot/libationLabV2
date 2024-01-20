@@ -19,8 +19,8 @@ export class FeedbackService {
     ) {
     }
 
-    updateCocktailFeedback(cocktailWithFeedback:CocktailFeedbackDto): Observable<CocktailFeedbackDto> {
-        return this.httpClient.put<CocktailFeedbackDto>(this.feedbackBaseUri + `/update`, {cocktailWithFeedback});
+    updateCocktailFeedback(feedbackToUpdate: CocktailFeedbackDto) {
+        return this.httpClient.put(this.feedbackBaseUri + `/update`, {feedbackToUpdate});
     }
 
     createFeedbackRelations(feedbackRelations: FeedbackCreateDto)  {

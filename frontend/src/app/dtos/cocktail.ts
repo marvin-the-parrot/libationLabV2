@@ -56,7 +56,7 @@ export enum FeedbackState {
 export interface CocktailFeedbackDto {
   cocktailId: number;
   groupId: number;
-  rating: FeedbackState;
+  rating: string;
 }
 
 

@@ -2,10 +2,12 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.FeedbackCreateDto;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.FeedbackRepository;
 import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
 import at.ac.tuwien.sepr.groupphase.backend.service.FeedbackService;
-import io.swagger.v3.oas.annotations.Operation;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +39,7 @@ public class FeedbackEndpoint {
 
     @Secured(ROLE_USER)
     @PostMapping("/create")
-    @Operation(summary = "Save a feedback")
-    public void create(@RequestBody FeedbackCreateDto feedbackToCreate) {
+    public void create(@Valid @RequestBody FeedbackCreateDto feedbackToCreate) {
         LOGGER.info("POST " + BASE_PATH + "/create: {}", feedbackToCreate);
 
         if (feedbackToCreate == null) {
@@ -47,6 +48,8 @@ public class FeedbackEndpoint {
 
         try {
             feedbackService.create(feedbackToCreate);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -54,7 +57,7 @@ public class FeedbackEndpoint {
 
     @Secured(ROLE_USER)
     @PutMapping("/update")
-    @Operation(summary = "Update a feedback")
+    @Transactional
     public void update(@RequestBody CocktailFeedbackDto feedbackToUpdate) {
         LOGGER.info("PUT " + BASE_PATH + "/update: {}", feedbackToUpdate);
 
@@ -64,6 +67,8 @@ public class FeedbackEndpoint {
 
         try {
             feedbackService.update(feedbackToUpdate);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
