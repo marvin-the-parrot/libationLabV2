@@ -66,29 +66,29 @@
           <div *ngFor="let cocktail of menu.cocktailsList; index as i" class="cocktails-item">
             {{ cocktail.name }}
 
-            <!-- Button Group (Show only if not the host) -->
-            <div *ngIf="group?.host?.name !== username" class="btn-group" role="group" aria-label="Cocktail Actions">
+            <div *ngIf="group?.host?.name !== username" class="button-container">
+              <div class="btn-group" role="group" aria-label="Cocktail Actions">
 
-              <!-- Like Button -->
-              <button class="btn like-button" (click)="likeCocktail(cocktail.id)">
-                <i class="bi bi-hand-thumbs-up"></i>
-              </button>
+                <!-- Like Button -->
+                <button class="btn like-button" (click)="likeCocktail(cocktail.id)" [class.highlighted]="cocktail.rating === 'like'">
+                  <i class="bi bi-hand-thumbs-up"></i>
+                </button>
 
-              <!-- Dislike Button -->
-              <button class="btn dislike-button" (click)="dislikeCocktail(cocktail.id)">
-                <i class="bi bi-hand-thumbs-down"></i>
-              </button>
-
+                <!-- Dislike Button -->
+                <button class="btn dislike-button" (click)="dislikeCocktail(cocktail.id)" [class.highlighted]="cocktail.rating === 'dislike'">
+                  <i class="bi bi-hand-thumbs-down"></i>
+                </button>
+              </div>
               <!-- See Detail Button -->
               <button class="btn see-detail-button" (click)="openCocktailDetails(cocktail.id)">
                 <i class="bi bi-book"></i>
               </button>
-
             </div>
 
             <button *ngIf="group?.host?.name === username" class="btn see-detail-button" (click)="openCocktailDetails(cocktail.id)">
               <i class="bi bi-book"></i>
             </button>
+
           </div>
         </div>
         <div *ngIf="group?.host?.name === username" class="container-safe-button">

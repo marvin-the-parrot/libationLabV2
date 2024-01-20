@@ -209,7 +209,7 @@ public class MenuServiceImpl implements MenuService {
 
         ApplicationGroup group = groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException("Group not found"));
 
-        List<Cocktail> cocktailsMenu = cocktailRepository.findByApplicationGroup(group);
+        Set<Cocktail> cocktailsMenu = group.getCocktails();
         List<Feedback> feedbacks = feedbackRepository.findByApplicationUserAndApplicationGroupAndCocktailIn(user, group, cocktailsMenu);
 
         List<CocktailListMenuDto> cocktailListMenuDtoList = new ArrayList<>();

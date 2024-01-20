@@ -28,5 +28,5 @@ public interface CocktailRepository extends JpaRepository<Cocktail, Long> {
 
     Set<Cocktail> findByIdIn(List<Long> ids);
 
-    List<Cocktail> findByApplicationGroup(ApplicationGroup applicationGroup);
+    List<Cocktail> findByApplicationGroups(ApplicationGroup applicationGroup);
 }

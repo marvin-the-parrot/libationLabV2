@@ -31,7 +31,7 @@ export class GroupDetailComponent {
     members: [],
   }
 
-  menu: MenuCocktailsDto = {
+  menu: MenuCocktailsDetailViewDto = {
     groupId: null,
     cocktailsList: [],
   }
@@ -197,8 +197,8 @@ export class GroupDetailComponent {
 
   //TODO: change Dto to MenuCocktailsDetailViewDto
   private getCocktailsMenu(groupId: number): void {
-    this.cocktailService.getCocktailMenu(groupId).subscribe({
-      next: (menu: MenuCocktailsDto) => {
+    this.cocktailService.getCocktailMenuDetailView(groupId).subscribe({
+      next: (menu: MenuCocktailsDetailViewDto) => {
         this.menu = menu;
       },
       error: error => {
@@ -230,11 +230,19 @@ export class GroupDetailComponent {
   }
 
   likeCocktail(cocktailId: number) {
+
     const cocktailFeedback: CocktailFeedbackDto = {
       cocktailId: cocktailId,
       groupId: this.group.id,
       rating: FeedbackState.Like
     }
+
+    for (let cocktail of this.menu.cocktailsList) {
+        if (cocktail.id == cocktailId) {
+            cocktail.rating = FeedbackState.Like;
+        }
+    }
+
     this.feedbackService.updateCocktailFeedback(cocktailFeedback).subscribe({
       next: () => {
         this.notification.success("Successfully liked cocktail");
@@ -253,6 +261,13 @@ export class GroupDetailComponent {
       groupId: this.group.id,
       rating: FeedbackState.Dislike
     }
+
+    for (let cocktail of this.menu.cocktailsList) {
+      if (cocktail.id == cocktailId) {
+        cocktail.rating = FeedbackState.Dislike;
+      }
+    }
+
     this.feedbackService.updateCocktailFeedback(cocktailFeedback).subscribe({
       next: () => {
         this.notification.success("Successfully disliked cocktail");

@@ -195,7 +195,6 @@ export class CocktailService {
    *
    */
   getCocktailMenuDetailView(groupId: number): Observable<MenuCocktailsDetailViewDto> {
-
       return this.httpClient.get<MenuCocktailsDetailViewDto>(this.menuBaseUri + `/${groupId}/detail`);
   }
 }

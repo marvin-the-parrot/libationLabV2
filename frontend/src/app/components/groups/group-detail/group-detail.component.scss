@@ -202,6 +202,11 @@ input {
   padding-bottom: 0;
   padding-top: 0;
   height: 36px;
+  margin-left: 5px;
+}
+
+.see-detail-button:hover {
+  background-color: #AC6AFE; /* Change the background color on hover */
 }
 
 .see-detail-button:active {
@@ -283,13 +288,7 @@ input {
   background-color: #6200EE;
 }
 
-.like-button {
-  background-color: #c497ff;
-  color: white;
-  border: none;
-  margin-left: 1em;
-}
-
+.like-button,
 .dislike-button {
   background-color: #c497ff;
   color: white;
@@ -312,5 +311,11 @@ input {
 
 .btn-group button:hover {
   background-color: #AC6AFE; /* Change the background color on hover */
+}
+
+.like-button.highlighted,
+.dislike-button.highlighted {
+  background-color: #AC6AFE;
+  color: white;
 }
 
