@@ -14,8 +14,7 @@ export interface CocktailListDto {
 export interface CocktailListMenuDto {
   id: number;
   name: string;
-  imagePath: string;
-  rating: FeedbackState;
+  rating: string;
 }
 
 export interface CocktailOverviewDto {

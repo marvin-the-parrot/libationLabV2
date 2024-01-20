@@ -31,7 +31,7 @@ public class Feedback {
     private Cocktail cocktail;
 
     @Column
-    private String feedback;
+    private String rating;
 
     public FeedbackKey getFeedbackKey() {
         return feedbackKey;
@@ -65,11 +65,11 @@ public class Feedback {
         this.cocktail = cocktail;
     }
 
-    public String getFeedback() {
-        return feedback;
+    public String getRating() {
+        return rating;
     }
 
-    public void setFeedback(String feedback) {
-        this.feedback = feedback;
+    public void setRating(String feedback) {
+        this.rating = feedback;
     }
 }

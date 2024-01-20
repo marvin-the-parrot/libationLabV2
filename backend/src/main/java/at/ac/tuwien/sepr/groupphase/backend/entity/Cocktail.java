@@ -39,7 +39,7 @@ public class Cocktail implements Comparable<Cocktail> {
     private Set<Preference> preferences;
 
     @ManyToMany
-    private Set<ApplicationGroup> groups;
+    private Set<ApplicationGroup> applicationGroups;
 
     public Cocktail() {
     }
@@ -50,12 +50,12 @@ public class Cocktail implements Comparable<Cocktail> {
         this.imagePath = imagePath;
     }
 
-    public Set<ApplicationGroup> getGroups() {
-        return groups;
+    public Set<ApplicationGroup> getApplicationGroups() {
+        return applicationGroups;
     }
 
-    public void setGroups(Set<ApplicationGroup> groups) {
-        this.groups = groups;
+    public void setApplicationGroups(Set<ApplicationGroup> groups) {
+        this.applicationGroups = groups;
     }
 
     public Long getId() {

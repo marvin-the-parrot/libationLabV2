@@ -71,7 +71,7 @@ public class FeedbackServiceImpl implements FeedbackService {
                 feedback.setApplicationUser(user);
                 feedback.setApplicationGroup(group);
                 feedback.setCocktail(cocktail);
-                feedback.setFeedback(FeedbackState.NotVoted.name());
+                feedback.setRating(FeedbackState.NotVoted.name());
 
                 feedbackRepository.save(feedback);
             }
@@ -98,7 +98,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             throw new NotFoundException("Feedback not found");
         }
 
-        feedback.setFeedback(feedbackToUpdate.getRating());
+        feedback.setRating(feedbackToUpdate.getRating());
         feedbackRepository.save(feedback);
     }
 }

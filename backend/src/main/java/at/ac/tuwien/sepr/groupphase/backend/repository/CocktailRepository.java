@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.repository;
 
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Preference;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,4 +27,6 @@ public interface CocktailRepository extends JpaRepository<Cocktail, Long> {
     List<Cocktail> findAllByPreferencesInAndIdIn(List<Preference> preferences, List<Long> ids);
 
     Set<Cocktail> findByIdIn(List<Long> ids);
+
+    List<Cocktail> findByApplicationGroup(ApplicationGroup applicationGroup);
 }

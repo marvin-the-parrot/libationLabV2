@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.RecommendedMenuesDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
@@ -34,4 +35,6 @@ public interface MenuService {
     RecommendedMenuesDto createRecommendation(Long groupId, Integer numberOfCocktails, Integer numberOfMenues);
 
     void updateMixableCocktails();
+
+    MenuCocktailsDetailViewDto findMenuDetailOfGroup(Long groupId) throws NotFoundException;
 }

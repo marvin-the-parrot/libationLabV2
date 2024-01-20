@@ -194,11 +194,8 @@ export class CocktailService {
    * Get cocktail menu of a group with rating of user for GroupDetailView
    *
    */
-  getCocktailMenuDetailView(groupId: number, cocktailId: number): Observable<MenuCocktailsDetailViewDto> {
-      let params = new HttpParams();
-      params = params.append("groupId", groupId.toString());
-      params = params.append("cocktailId", cocktailId.toString());
+  getCocktailMenuDetailView(groupId: number): Observable<MenuCocktailsDetailViewDto> {
 
-      return this.httpClient.get<MenuCocktailsDetailViewDto>(this.menuBaseUri + `/${groupId}/detail`, {params});
+      return this.httpClient.get<MenuCocktailsDetailViewDto>(this.menuBaseUri + `/${groupId}/detail`);
   }
 }
