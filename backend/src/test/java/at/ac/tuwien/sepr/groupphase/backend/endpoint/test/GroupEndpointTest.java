@@ -23,6 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
@@ -153,6 +154,20 @@ public class GroupEndpointTest {
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/groups/searchGroupMember/{groupId}", applicationGroup.getId()+9999)).andExpect(status().isOk()).andReturn();
         String contentResult = mvcResult.getResponse().getContentAsString();
         int result = objectMapper.readValue(contentResult, new TypeReference<List<UserListDto>>() {
+        }).size();
+
+        assertEquals(expected, result );
+    }
+
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void getMixableCocktails_getMixableCocktailsByGroupId_expected0() throws Exception {
+        this.prepareUserGroupAndMember();
+
+        int expected = 0;
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/groups/{groupId}/mixables", applicationGroup.getId())).andExpect(status().isOk()).andReturn();
+        String contentResult = mvcResult.getResponse().getContentAsString();
+        int result = objectMapper.readValue(contentResult, new TypeReference<List<CocktailDetailDto>>() {
         }).size();
 
         assertEquals(expected, result );

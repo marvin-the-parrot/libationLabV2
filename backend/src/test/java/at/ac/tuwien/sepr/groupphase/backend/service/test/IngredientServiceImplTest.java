@@ -21,9 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class IngredientServiceImplTest {
 
     @Autowired
-    private IngredientsRepository ingredientsRepository;
-
-    @Autowired
     private IngredientServiceImpl ingredientServiceImpl;
 
     @Test
