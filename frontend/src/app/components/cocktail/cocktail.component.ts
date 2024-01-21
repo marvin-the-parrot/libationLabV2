@@ -38,6 +38,7 @@ export class CocktailComponent {
   selectedIngredients: string[] = []; // List of selected ingredients (tags)
   selectedPreferences: string[] = []; // List of selected preferences (tags)
   searchParams: CocktailTagSearchDto = {};
+  initialLoad: boolean = true;
 
   constructor(
     private cocktailService: CocktailService,
@@ -73,13 +74,17 @@ export class CocktailComponent {
   }
 
   ngOnInit(): void {
-    this.searchChanged();
+    //this.searchChanged();
   }
 
   /**
    * This method is called when the page is loaded or when the user changes the search parameters.
    */
   searchChanged() {
+    if (this.initialLoad) {
+      this.initialLoad = false;
+      return;
+    }
     console.log("searchChanged")
     if (this.ingredient != null && this.ingredient.name !== "") {
 

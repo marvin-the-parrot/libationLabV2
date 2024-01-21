@@ -7,8 +7,8 @@ export interface IngredientGroupDto {
 }
 
 export interface IngredientListDto {
-  id: number;
-  name: string;
+  id?: number;
+  name?: string;
 }
 
 export interface IngredientDto {

@@ -1,4 +1,4 @@
 export interface PreferenceListDto {
-  id: number;
-  name: string;
+  id?: number;
+  name?: string;
 }
