@@ -47,10 +47,10 @@ public class MenuEndpoint {
     }
 
     /**
-     * Creating a new group entry.
+     * Creating a new menu entry.
      *
-     * @param toCreate the group entry to create
-     * @return the created group entry
+     * @param toCreate the menu entry to create
+     * @return the created menu entry
      * @throws ValidationException if the data is not valid
      * @throws ConflictException   if the data conflicts with existing data
      */

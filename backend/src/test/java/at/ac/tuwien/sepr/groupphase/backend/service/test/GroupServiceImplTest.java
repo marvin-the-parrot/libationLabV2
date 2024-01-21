@@ -332,7 +332,7 @@ public class GroupServiceImplTest {
     @Test
     @WithMockUser(username = "nonexistent@mail.com")
     public void makeMemberHost_makeNonexistentMemberHost_expectedException() {
-        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(1L, 9999L));
+        assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(1L, 9999L));
     }
 
     @Test
@@ -348,19 +348,19 @@ public class GroupServiceImplTest {
     @Test
     @WithMockUser("user1@email.com")
     public void makeMemberHost_makeMemberHostOfNonexistentGroup_expectedException() {
-        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(9999L, 3L));
+        assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(9999L, 3L));
     }
 
     @Test
     @WithMockUser("user1@email.com")
     public void makeMemberHost_makeUserThatIsNoMemberOfGroupHost_expectedException() {
-        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(1L, 2L));
+        assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(1L, 2L));
     }
 
     @Test
     @WithMockUser("nonexistent@mail.com")
     public void makeMemberHost_makeUserHostByNonexistentUser_expectedException() {
-        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(1L, 3L));
+        assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(1L, 3L));
     }
 
     // delete group

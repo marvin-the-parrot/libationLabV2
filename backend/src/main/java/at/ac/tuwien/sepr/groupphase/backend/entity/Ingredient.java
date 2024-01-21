@@ -9,7 +9,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 
-import java.util.Objects;
 import java.util.Set;
 
 /**
