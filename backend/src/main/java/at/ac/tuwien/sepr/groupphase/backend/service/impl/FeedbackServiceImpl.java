@@ -3,6 +3,7 @@ package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.FeedbackCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.FeedbackState;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -76,6 +78,8 @@ public class FeedbackServiceImpl implements FeedbackService {
                 feedbackRepository.save(feedback);
             }
         }
+
+        deleteFeedbackRelationsAtCocktailChange(group, cocktails);
     }
 
     @Transactional
@@ -100,5 +104,32 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         feedback.setRating(feedbackToUpdate.getRating());
         feedbackRepository.save(feedback);
+    }
+
+    @Override
+    public void deleteFeedbackRelationsAtCocktailChange(Long groupId, Long userId) throws NotFoundException {
+        ApplicationGroup group = groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException("Group not found"));
+        ApplicationUser user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
+
+        List<Feedback> feedbacks = feedbackRepository.findByApplicationUserAndApplicationGroup(user, group);
+
+        if (feedbacks.isEmpty()) {
+            return;
+        }
+
+        feedbackRepository.deleteAll(feedbacks);
+    }
+
+    private void deleteFeedbackRelationsAtCocktailChange(ApplicationGroup group, Set<Cocktail> cocktails) throws NotFoundException {
+        LOGGER.debug("delete feedback {}", cocktails);
+
+        List<Feedback> newFeedbacks = feedbackRepository.findByApplicationGroupAndCocktailIn(group, cocktails);
+        List<Feedback> oldFeedbacks = feedbackRepository.findByApplicationGroup(group);
+
+        for (Feedback oldFeedback : oldFeedbacks) {
+            if (!newFeedbacks.contains(oldFeedback)) {
+                feedbackRepository.delete(oldFeedback);
+            }
+        }
     }
 }

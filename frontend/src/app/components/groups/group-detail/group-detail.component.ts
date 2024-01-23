@@ -12,7 +12,7 @@ import {DialogService} from 'src/app/services/dialog.service';
 import {ConfirmationDialogMode} from "../../../confirmation-dialog/confirmation-dialog.component";
 import {IngredientGroupDto} from "../../../dtos/ingredient";
 import {IngredientService} from "../../../services/ingredient.service";
-import { CocktailService } from 'src/app/services/cocktail.service';
+import {CocktailService} from 'src/app/services/cocktail.service';
 import {MenuCocktailsDetailViewDto, MenuCocktailsDto} from 'src/app/dtos/menu';
 import {CocktailFeedbackDto, FeedbackState} from "../../../dtos/cocktail";
 import {FeedbackService} from "../../../services/feedback.service";
@@ -120,6 +120,7 @@ export class GroupDetailComponent {
           next: data => {
             this.notification.success(`Successfully removed '${member.name}' from Group '${this.group.name}'.`);
             this.getGroup(this.group.id); // refresh group
+            this.deleteFeedbackRelationsAtUserLeavingGroup(this.group.id, member.id);
           },
           error: error => {
             console.error(`Error removing member '${member.name}' from group.`, error);
@@ -128,6 +129,18 @@ export class GroupDetailComponent {
         });
       }
     });
+  }
+
+  private deleteFeedbackRelationsAtUserLeavingGroup(groupId: number, memberId: number) {
+    this.feedbackService.deleteFeedbackRelationsAtUserLeavingGroup(groupId, memberId).subscribe({
+      next: data => {
+        this.notification.success('Successfully removed unused feedbacks');
+      },
+      error: error => {
+        console.error(`Error removing unused feedback from user`, error);
+        this.notification.error(`Error removing feedbacks from group.`);
+      }
+    })
   }
 
   private makeMemberHost(member: UserListDto) {
@@ -238,9 +251,9 @@ export class GroupDetailComponent {
     }
 
     for (let cocktail of this.menu.cocktailsList) {
-        if (cocktail.id == cocktailId) {
-            cocktail.rating = FeedbackState.Like;
-        }
+      if (cocktail.id == cocktailId) {
+        cocktail.rating = FeedbackState.Like;
+      }
     }
 
     this.feedbackService.updateCocktailFeedback(cocktailFeedback).subscribe({

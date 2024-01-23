@@ -16,4 +16,10 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
     Feedback findByApplicationUserAndApplicationGroupAndCocktail(ApplicationUser user, ApplicationGroup group, Cocktail cocktail);
 
     List<Feedback> findByApplicationUserAndApplicationGroupAndCocktailIn(ApplicationUser user, ApplicationGroup group, Set<Cocktail> cocktails);
+
+    List<Feedback> findByApplicationGroupAndCocktailIn(ApplicationGroup group, Set<Cocktail> cocktails);
+
+    List<Feedback> findByApplicationGroup(ApplicationGroup group);
+
+    List<Feedback> findByApplicationUserAndApplicationGroup(ApplicationUser user, ApplicationGroup group);
 }

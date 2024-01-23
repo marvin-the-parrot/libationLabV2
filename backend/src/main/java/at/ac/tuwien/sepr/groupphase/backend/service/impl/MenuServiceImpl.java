@@ -4,7 +4,6 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,6 +33,7 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.PreferenceRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.CocktailService;
+import at.ac.tuwien.sepr.groupphase.backend.service.FeedbackService;
 import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,11 +65,12 @@ public class MenuServiceImpl implements MenuService {
     private final CocktailIngredientMapper cocktailIngredientMapper;
     private final CocktailService cocktailService;
     private final IngredientService ingredientService;
+    private final FeedbackService feedbackService;
 
     @Autowired
     public MenuServiceImpl(GroupRepository groupRepository, PreferenceRepository preferenceRepository,
                            CocktailRepository cocktailRepository, UserGroupRepository userGroupRepository, UserRepository userRepository,
-                           FeedbackRepository feedbackRepository, CocktailIngredientMapper cocktailIngredientMapper, CocktailService cocktailService, IngredientService ingredientService) {
+                           FeedbackRepository feedbackRepository, CocktailIngredientMapper cocktailIngredientMapper, CocktailService cocktailService, IngredientService ingredientService, FeedbackService feedbackService) {
         this.groupRepository = groupRepository;
         this.preferenceRepository = preferenceRepository;
         this.cocktailRepository = cocktailRepository;
@@ -79,6 +80,7 @@ public class MenuServiceImpl implements MenuService {
         this.cocktailIngredientMapper = cocktailIngredientMapper;
         this.cocktailService = cocktailService;
         this.ingredientService = ingredientService;
+        this.feedbackService = feedbackService;
     }
 
     @Override

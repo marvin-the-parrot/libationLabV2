@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -73,5 +75,24 @@ public class FeedbackEndpoint {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
+    }
+
+    @Secured(ROLE_USER)
+    @DeleteMapping("/delete/{groupId}/{userId}")
+    public void delete(@PathVariable Long groupId, @PathVariable Long userId) {
+        LOGGER.info("DELETE " + BASE_PATH + "/{}/{}", groupId, userId);
+
+        try {
+            feedbackService.deleteFeedbackRelationsAtCocktailChange(groupId, userId);
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Feedback to delete not found", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+    private void logClientError(HttpStatus status, String message, Exception e) {
+        LOGGER.warn("{} {}: {}: {}", status.value(), message,
+            e.getClass().getSimpleName(), e.getMessage());
     }
 }
