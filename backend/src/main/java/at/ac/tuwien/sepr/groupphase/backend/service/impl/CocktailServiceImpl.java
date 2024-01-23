@@ -14,6 +14,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.PreferenceMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
 import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
+import at.ac.tuwien.sepr.groupphase.backend.entity.Preference;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailIngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailRepository;
@@ -81,53 +82,55 @@ public class CocktailServiceImpl implements CocktailService {
         //Map the search parameters to the CocktailTagSearchDto, for easies filtering
         CocktailTagSearchDto searchTagParameters = cocktailTagSearchDtoMapper.cocktailSearchDtoToCocktailTagSearchDto(searchParameters);
 
-        List<Cocktail> cocktails;
+        List<Cocktail> cocktails = new ArrayList<>();
 
         //Search for cocktails by name
         if (searchParameters.getCocktailName() != null) {
             cocktails = cocktailRepository.findByNameContainingIgnoreCase(searchParameters.getCocktailName());
-        } else {
-            cocktails = cocktailRepository.findAll();
-        }
-        //if no cocktails are found return empty list, no need to search by other parameters
-        if (cocktails.isEmpty()) {
-            return new ArrayList<>();
+            if (cocktails.isEmpty()) {
+                return new ArrayList<>();
+            }
         }
 
-        //Filter Cocktails by ingredients
-        if (searchParameters.getIngredientsName() != null && !searchParameters.getIngredientsName().isEmpty()) {
-            List<String> requiredIngredients = searchTagParameters.getIngredientsName();
-            // Filter the cocktails list based on ingredients
-            cocktails = cocktails.stream()
-                .filter(cocktail ->
-                    requiredIngredients.stream().allMatch(ingredient ->
-                        cocktail.getCocktailIngredients().stream()
-                            .anyMatch(ci ->
-                                ci.getIngredient().getName().equalsIgnoreCase(ingredient)
-                            )
-                    )
-                )
-                .toList();
-        }
-        //if no cocktails are in list, no need to search by other parameters
-        if (cocktails.isEmpty()) {
-            return new ArrayList<>();
+        // Filter Cocktails by ingredients
+        List<String> ingredientsString = searchTagParameters.getIngredientsName();
+        if (cocktails.isEmpty() && searchParameters.getIngredientsName() != null && !searchParameters.getIngredientsName().isEmpty()) {
+            List<CocktailIngredients> cocktailIngredients = cocktailIngredientsRepository.findByIngredientNameIgnoreCase(searchTagParameters.getIngredientsName().get(0));
+            cocktails = cocktailRepository.findDistinctByCocktailIngredientsIn(cocktailIngredients);
+
+            cocktails = filterCocktailsByIngredients(cocktails, ingredientsString);
+
+            if (cocktails.isEmpty()) {
+                return new ArrayList<>();
+            }
+
+        } else if (searchParameters.getIngredientsName() != null && !searchParameters.getIngredientsName().isEmpty()) {
+
+            cocktails = filterCocktailsByIngredients(cocktails, ingredientsString);
+
+            if (cocktails.isEmpty()) {
+                return new ArrayList<>();
+            }
         }
 
-        //Filter Cocktails by preferences
-        if (searchParameters.getPreferenceName() != null && !searchParameters.getPreferenceName().isEmpty()) {
-            List<String> preferences = searchTagParameters.getPreferenceName();
+        // Filter Cocktails by preferences
+        List<String> preferencesString = searchTagParameters.getPreferenceName();
+        if (cocktails.isEmpty() && searchParameters.getPreferenceName() != null && !searchParameters.getPreferenceName().isEmpty()) {
+            Preference preferenceOne = preferenceRepository.findByName(searchTagParameters.getPreferenceName().get(0));
+            cocktails = cocktailRepository.findByPreferences(preferenceOne);
 
-            cocktails = cocktails.stream()
-                .filter(cocktail ->
-                    preferences.stream().allMatch(preference ->
-                        cocktail.getPreferences().stream()
-                            .anyMatch(cocktailPreference ->
-                                cocktailPreference.getName().equalsIgnoreCase(preference)
-                            )
-                    )
-                )
-                .toList();
+            if (searchTagParameters.getPreferenceName().size() > 1) {
+                cocktails = filterCocktailsByPreferences(cocktails, preferencesString);
+            }
+            if (cocktails.isEmpty()) {
+                return new ArrayList<>();
+            }
+        } else if (searchParameters.getPreferenceName() != null && !searchParameters.getPreferenceName().isEmpty()) {
+            cocktails = filterCocktailsByPreferences(cocktails, preferencesString);
+
+            if (cocktails.isEmpty()) {
+                return new ArrayList<>();
+            }
         }
 
         List<CocktailListDto> results = cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktails);
@@ -203,6 +206,32 @@ public class CocktailServiceImpl implements CocktailService {
             throw new NotFoundException("Cocktail with id " + id + " not found");
         }
         return cocktailIngredientMapper.cocktailToCocktailDetailDto(cocktail);
+    }
+
+    private List<Cocktail> filterCocktailsByIngredients(List<Cocktail> cocktails, List<String> ingredients) {
+        return cocktails.stream()
+            .filter(cocktail ->
+                ingredients.stream().allMatch(ingredient ->
+                    cocktail.getCocktailIngredients().stream()
+                        .anyMatch(ci ->
+                            ci.getIngredient().getName().equalsIgnoreCase(ingredient)
+                        )
+                )
+            )
+            .toList();
+    }
+
+    private List<Cocktail> filterCocktailsByPreferences(List<Cocktail> cocktails, List<String> preferences) {
+        return cocktails.stream()
+            .filter(cocktail ->
+                preferences.stream().allMatch(preference ->
+                    cocktail.getPreferences().stream()
+                        .anyMatch(cocktailPreference ->
+                            cocktailPreference.getName().equalsIgnoreCase(preference)
+                        )
+                )
+            )
+            .toList();
     }
 
 }
