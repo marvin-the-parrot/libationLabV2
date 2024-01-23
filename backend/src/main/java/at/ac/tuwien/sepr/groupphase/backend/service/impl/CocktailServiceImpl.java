@@ -167,7 +167,8 @@ public class CocktailServiceImpl implements CocktailService {
         // if yes add cocktail to list
         List<Cocktail> cocktailsWithAllIngredients = new ArrayList<>();
         for (Cocktail cocktail : cocktails) {
-            List<Ingredient> cocktailIngredients = ingredientsRepository.findByCocktailIngredientsIn(cocktailIngredientsRepository.findAllByCocktail(cocktail));
+            // List<Ingredient> cocktailIngredients = ingredientsRepository.findByCocktailIngredientsIn(cocktailIngredientsRepository.findAllByCocktail(cocktail));
+            List<Ingredient> cocktailIngredients = cocktail.getCocktailIngredients().stream().map(CocktailIngredients::getIngredient).toList();
 
             boolean hasAllIngredients = true;
             for (Ingredient ingredient : cocktailIngredients) {

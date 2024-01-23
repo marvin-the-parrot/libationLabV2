@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.entity;
 
+import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -30,7 +31,7 @@ public class Cocktail implements Comparable<Cocktail> {
     private String instructions;
 
     @OneToMany(mappedBy = "cocktail")
-    private Set<CocktailIngredients> cocktailIngredients;
+    private List<CocktailIngredients> cocktailIngredients;
 
     @ManyToMany
     private Set<Preference> preferences;
@@ -87,11 +88,11 @@ public class Cocktail implements Comparable<Cocktail> {
         this.instructions = instructions;
     }
 
-    public Set<CocktailIngredients> getCocktailIngredients() {
+    public List<CocktailIngredients> getCocktailIngredients() {
         return cocktailIngredients;
     }
 
-    public void setCocktailIngredients(Set<CocktailIngredients> cocktailIngredients) {
+    public void setCocktailIngredients(List<CocktailIngredients> cocktailIngredients) {
         this.cocktailIngredients = cocktailIngredients;
     }
 
