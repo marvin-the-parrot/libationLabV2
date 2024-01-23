@@ -2,6 +2,7 @@ package at.ac.tuwien.sepr.groupphase.backend.entity;
 
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,7 +33,7 @@ public class Cocktail implements Comparable<Cocktail> {
     @OneToMany(mappedBy = "cocktail")
     private Set<CocktailIngredients> cocktailIngredients;
 
-    @OneToMany(mappedBy = "cocktail")
+    @OneToMany(mappedBy = "cocktail", cascade = CascadeType.REMOVE)
     private Set<Feedback> feedbacks;
 
     @ManyToMany

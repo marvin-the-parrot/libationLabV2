@@ -71,7 +71,7 @@ public class FeedbackServiceImpl implements FeedbackService {
                 feedback.setApplicationUser(user);
                 feedback.setApplicationGroup(group);
                 feedback.setCocktail(cocktail);
-                feedback.setRating(FeedbackState.NotVoted.name());
+                feedback.setRating(FeedbackState.NotVoted);
 
                 feedbackRepository.save(feedback);
             }

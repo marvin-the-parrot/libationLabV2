@@ -14,7 +14,7 @@ export interface CocktailListDto {
 export interface CocktailListMenuDto {
   id: number;
   name: string;
-  rating: string;
+  rating: FeedbackState;
 }
 
 export interface CocktailOverviewDto {
@@ -47,15 +47,15 @@ export interface CocktailTagSearchDto {
 }
 
 export enum FeedbackState {
-  Like = 'like',
-  Dislike = 'dislike',
-  NotVoted = 'notVoted',
+  Like,
+  Dislike,
+  NotVoted,
 }
 
 export interface CocktailFeedbackDto {
   cocktailId: number;
   groupId: number;
-  rating: string;
+  rating: FeedbackState;
 }
 
 

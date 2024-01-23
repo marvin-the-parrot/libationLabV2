@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.entity;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.FeedbackState;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -30,8 +31,8 @@ public class Feedback {
     @JoinColumn(name = "cocktail_id")
     private Cocktail cocktail;
 
-    @Column
-    private String rating;
+    @Column(nullable = false)
+    private FeedbackState rating;
 
     public FeedbackKey getFeedbackKey() {
         return feedbackKey;
@@ -65,11 +66,11 @@ public class Feedback {
         this.cocktail = cocktail;
     }
 
-    public String getRating() {
+    public FeedbackState getRating() {
         return rating;
     }
 
-    public void setRating(String feedback) {
-        this.rating = feedback;
+    public void setRating(FeedbackState rating) {
+        this.rating = rating;
     }
 }

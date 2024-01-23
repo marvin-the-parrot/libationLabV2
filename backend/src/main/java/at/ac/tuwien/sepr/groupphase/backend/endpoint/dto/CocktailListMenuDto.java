@@ -3,7 +3,7 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 public class CocktailListMenuDto {
     private Long id;
     private String name;
-    private String rating;
+    private FeedbackState rating;
 
     public Long getId() {
         return id;
@@ -21,11 +21,11 @@ public class CocktailListMenuDto {
         this.name = name;
     }
 
-    public String getRating() {
+    public FeedbackState getRating() {
         return rating;
     }
 
-    public void setRating(String rating) {
+    public void setRating(FeedbackState rating) {
         this.rating = rating;
     }
 }

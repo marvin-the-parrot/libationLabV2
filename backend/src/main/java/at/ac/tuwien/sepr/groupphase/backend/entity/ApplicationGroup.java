@@ -29,7 +29,7 @@ public class ApplicationGroup {
     @OneToMany(mappedBy = "applicationGroup")
     private Set<UserGroup> userGroups;
 
-    @OneToMany(mappedBy = "applicationGroup")
+    @OneToMany(mappedBy = "applicationGroup", cascade = CascadeType.REMOVE)
     private Set<Feedback> feedbacks;
 
     @ManyToMany(cascade = CascadeType.REMOVE)
