@@ -8,6 +8,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PreferenceListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailIngredientMapper;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailTagSearchDtoMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.IngredientMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.PreferenceMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
@@ -48,12 +49,13 @@ public class CocktailServiceImpl implements CocktailService {
     private final IngredientMapper ingredientMapper;
     private final PreferenceRepository preferenceRepository;
     private final PreferenceMapper preferenceMapper;
+    private final CocktailTagSearchDtoMapper cocktailTagSearchDtoMapper;
 
     @Autowired
     public CocktailServiceImpl(CocktailIngredientsRepository cocktailIngredientsRepository, CocktailRepository cocktailRepository,
                                IngredientsRepository ingredientsRepository, CocktailIngredientMapper cocktailIngredientMapper,
                                IngredientService ingredientService, IngredientMapper ingredientMapper, PreferenceRepository preferenceRepository,
-                               PreferenceMapper preferenceMapper) {
+                               PreferenceMapper preferenceMapper, CocktailTagSearchDtoMapper cocktailTagSearchDtoMapper) {
 
         this.cocktailIngredientsRepository = cocktailIngredientsRepository;
         this.cocktailRepository = cocktailRepository;
@@ -63,6 +65,7 @@ public class CocktailServiceImpl implements CocktailService {
         this.ingredientMapper = ingredientMapper;
         this.preferenceRepository = preferenceRepository;
         this.preferenceMapper = preferenceMapper;
+        this.cocktailTagSearchDtoMapper = cocktailTagSearchDtoMapper;
     }
 
     @Override
@@ -74,74 +77,63 @@ public class CocktailServiceImpl implements CocktailService {
             results.sort(Comparator.comparing(CocktailListDto::getName));
             return results;
         }
-        //Transform CocktailSerachDto to CocktailTagSearchDto (for easier handling)
-        CocktailTagSearchDto searchTagParameters = new CocktailTagSearchDto();
-        searchTagParameters.setCocktailName(searchParameters.getCocktailName());
 
-        if (searchParameters.getIngredientsName() != null && !searchParameters.getIngredientsName().isEmpty()) {
-            List<String> ingredientsList = Arrays.asList(searchParameters.getIngredientsName().split(","));
-            searchTagParameters.setIngredientsName(ingredientsList);
-        }
-        if (searchParameters.getPreferenceName() != null && !searchParameters.getPreferenceName().isEmpty()) {
-            List<String> preferencesList = Arrays.asList(searchParameters.getPreferenceName().split(","));
-            searchTagParameters.setPreferenceName(preferencesList);
-        }
+        //Map the search parameters to the CocktailTagSearchDto, for easies filtering
+        CocktailTagSearchDto searchTagParameters = cocktailTagSearchDtoMapper.cocktailSearchDtoToCocktailTagSearchDto(searchParameters);
 
-
-        List<Cocktail> resultCocktails = new ArrayList<>();
         List<Cocktail> cocktails;
+
         //Search for cocktails by name
         if (searchParameters.getCocktailName() != null) {
             cocktails = cocktailRepository.findByNameContainingIgnoreCase(searchParameters.getCocktailName());
         } else {
             cocktails = cocktailRepository.findAll();
         }
-        //Search for cocktails by ingredients
+        //if no cocktails are found return empty list, no need to search by other parameters
+        if (cocktails.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        //Filter Cocktails by ingredients
         if (searchParameters.getIngredientsName() != null && !searchParameters.getIngredientsName().isEmpty()) {
-
-            //TODO: i dont know how to do it differently
-            List<Cocktail> cocktailsByIngredients1 = null;
-            for (String ingredient : searchTagParameters.getIngredientsName()) {
-                List<CocktailIngredients> cocktailIngredients =
-                    cocktailIngredientsRepository.findByIngredientNameEqualsIgnoreCase(ingredient);
-                List<Cocktail> cocktailsByIngredients2 = cocktailRepository.findDistinctByCocktailIngredientsIn(cocktailIngredients);
-
-                if (cocktailsByIngredients1 == null) {
-                    cocktailsByIngredients1 = new ArrayList<>(cocktailsByIngredients2);
-                } else {
-                    cocktailsByIngredients1.retainAll(cocktailsByIngredients2);
-                }
-
-                if (cocktailsByIngredients1.isEmpty()) {
-                    break;
-                }
-            }
-
-            //Cocktails added to List which match name and ingredients
-            if (!cocktails.isEmpty()) {
-                for (Cocktail cocktail : cocktails) {
-                  assert cocktailsByIngredients1 != null;
-                    for (Cocktail cocktailIngredient : cocktailsByIngredients1) {
-                        if (cocktail.getName().equals(cocktailIngredient.getName())) {
-                            resultCocktails.add(cocktail);
-                        }
-                    }
-                }
-            }
-        } else {
-            //Add all cocktails from name search to result list if no ingredients are given
-            resultCocktails.addAll(cocktails);
+            List<String> requiredIngredients = searchTagParameters.getIngredientsName();
+            // Filter the cocktails list based on ingredients
+            cocktails = cocktails.stream()
+                .filter(cocktail ->
+                    requiredIngredients.stream().allMatch(ingredient ->
+                        cocktail.getCocktailIngredients().stream()
+                            .anyMatch(ci ->
+                                ci.getIngredient().getName().equalsIgnoreCase(ingredient)
+                            )
+                    )
+                )
+                .toList();
         }
-        //Search for cocktails by every preference
+        //if no cocktails are in list, no need to search by other parameters
+        if (cocktails.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        //Filter Cocktails by preferences
         if (searchParameters.getPreferenceName() != null && !searchParameters.getPreferenceName().isEmpty()) {
-            for (String preference : searchTagParameters.getPreferenceName()) {
-                List<Cocktail> cocktailsByPreferences = cocktailRepository.findByPreferencesIn(preferenceRepository.findByNameEqualsIgnoreCase(preference));
-                //Filter out cocktails which do not have specific preference
-                resultCocktails = resultCocktails.stream().filter(cocktailsByPreferences::contains).collect(Collectors.toList());
-            }
+            List<String> preferences = searchTagParameters.getPreferenceName();
+
+            cocktails = cocktails.stream()
+                .filter(cocktail ->
+                    preferences.stream().allMatch(preference ->
+                        cocktail.getPreferences().stream()
+                            .anyMatch(cocktailPreference ->
+                                cocktailPreference.getName().equalsIgnoreCase(preference)
+                            )
+                    )
+                )
+                .toList();
         }
 
-        return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(resultCocktails);
+        List<CocktailListDto> results = cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktails);
+        // Sorting the result list by name
+        results.sort(Comparator.comparing(CocktailListDto::getName));
+        return results;
     }
 
 
