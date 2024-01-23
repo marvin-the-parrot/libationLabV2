@@ -33,9 +33,9 @@ public class CocktailServiceImplTest {
         List<CocktailListDto> result = cocktailIngredientService.searchCocktails(cocktailSerachDto);
         assertAll(
             () -> assertEquals(result.size(), expected),
-            () -> assertEquals("Moscow Mule", result.get(0).getName()),
-            () -> assertEquals("Army special", result.get(1).getName()),
-            () -> assertEquals("Cosmopolitan", result.get(2).getName())
+            () -> assertEquals("Army special", result.get(0).getName()),
+            () -> assertEquals("Cosmopolitan", result.get(1).getName()),
+            () -> assertEquals("Moscow Mule", result.get(2).getName())
         );
     }
 
