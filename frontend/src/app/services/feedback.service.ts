@@ -7,26 +7,29 @@ import {MenuCocktailsDto} from "../dtos/menu";
 import {FeedbackCreateDto} from "../dtos/feedback";
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class FeedbackService {
 
-    private feedbackBaseUri: string = this.globals.backendUri + '/feedback';
+  private feedbackBaseUri: string = this.globals.backendUri + '/feedback';
 
-    constructor(
-        private httpClient: HttpClient,
-        private globals: Globals
-    ) {
-    }
+  constructor(
+    private httpClient: HttpClient,
+    private globals: Globals
+  ) {
+  }
 
-    updateCocktailFeedback(cocktailWithFeedback:CocktailFeedbackDto): Observable<CocktailFeedbackDto> {
-        return this.httpClient.put<CocktailFeedbackDto>(this.feedbackBaseUri + `/update`, {cocktailWithFeedback});
-    }
+  updateCocktailFeedback(feedbackToUpdate: CocktailFeedbackDto) {
+    return this.httpClient.put(this.feedbackBaseUri + `/update`, feedbackToUpdate);
+  }
 
-    createFeedbackRelations(feedbackRelations: FeedbackCreateDto)  {
-        return this.httpClient.post(this.feedbackBaseUri + '/create', feedbackRelations);
-    }
+  createFeedbackRelations(feedbackRelations: FeedbackCreateDto) {
+    return this.httpClient.post(this.feedbackBaseUri + '/create', feedbackRelations);
+  }
 
+  deleteFeedbackRelationsAtUserLeavingGroup(groupId: number, memberId: number) {
+    return this.httpClient.delete(this.feedbackBaseUri + '/delete' + '/' + groupId + '/' + memberId);
+  }
 
 
 }

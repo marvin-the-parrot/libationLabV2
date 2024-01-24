@@ -3,6 +3,7 @@ package at.ac.tuwien.sepr.groupphase.backend.entity;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,11 +34,14 @@ public class Cocktail implements Comparable<Cocktail> {
     @OneToMany(mappedBy = "cocktail")
     private List<CocktailIngredients> cocktailIngredients;
 
+    @OneToMany(mappedBy = "cocktail", cascade = CascadeType.REMOVE)
+    private Set<Feedback> feedbacks;
+
     @ManyToMany
     private Set<Preference> preferences;
 
     @ManyToMany
-    private Set<ApplicationGroup> groups;
+    private Set<ApplicationGroup> applicationGroups;
 
     public Cocktail() {
     }
@@ -48,12 +52,12 @@ public class Cocktail implements Comparable<Cocktail> {
         this.imagePath = imagePath;
     }
 
-    public Set<ApplicationGroup> getGroups() {
-        return groups;
+    public Set<ApplicationGroup> getApplicationGroups() {
+        return applicationGroups;
     }
 
-    public void setGroups(Set<ApplicationGroup> groups) {
-        this.groups = groups;
+    public void setApplicationGroups(Set<ApplicationGroup> groups) {
+        this.applicationGroups = groups;
     }
 
     public Long getId() {
@@ -86,6 +90,14 @@ public class Cocktail implements Comparable<Cocktail> {
 
     public void setInstructions(String instructions) {
         this.instructions = instructions;
+    }
+
+    public Set<Feedback> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(Set<Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
     }
 
     public List<CocktailIngredients> getCocktailIngredients() {

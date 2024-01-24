@@ -2,9 +2,9 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
 public class CocktailSerachDto {
 
-    String cocktailName;
-    String ingredientsName;
-    String preferenceName;
+    private String  cocktailName;
+    private String ingredientsName;
+    private String preferenceName;
 
     public String getCocktailName() {
         return cocktailName;

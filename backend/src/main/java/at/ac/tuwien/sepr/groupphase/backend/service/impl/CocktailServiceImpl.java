@@ -139,9 +139,6 @@ public class CocktailServiceImpl implements CocktailService {
         return results;
     }
 
-
-
-
     @Override
     @Transactional
     public List<CocktailDetailDto> getMixableCocktails(Long groupId) {

@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewHostDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.RecommendedMenuesDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
@@ -14,6 +16,15 @@ public interface MenuService {
      * @return the menu
      */
     MenuCocktailsDto findMenuOfGroup(Long groupId) throws NotFoundException;
+
+    /**
+     * Find menu by group id with ratings for each cocktail
+     * to display for when you are host.
+     *
+     * @param groupId the id of the group entry
+     * @return the menu
+     */
+    MenuCocktailsDetailViewHostDto getMenuWithRatings(Long groupId) throws NotFoundException;
 
     /**
      * Creates a new or update given menu with the data given in {@code toCreate}.
@@ -34,4 +45,6 @@ public interface MenuService {
     RecommendedMenuesDto createRecommendation(Long groupId, Integer numberOfCocktails, Integer numberOfMenues);
 
     void updateMixableCocktails();
+
+    MenuCocktailsDetailViewDto findMenuDetailOfGroup(Long groupId) throws NotFoundException;
 }

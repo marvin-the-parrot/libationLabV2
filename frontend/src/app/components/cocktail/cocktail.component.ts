@@ -1,7 +1,7 @@
 import {Component, ViewChild} from '@angular/core';
 import {Observable, of, Subject} from 'rxjs';
 import {CocktailService} from 'src/app/services/cocktail.service';
-import {CocktailListDto, CocktailTagSearchDto} from '../../dtos/cocktail';
+import {CocktailDetailDto, CocktailListDto, CocktailTagSearchDto} from '../../dtos/cocktail';
 import {ToastrService} from 'ngx-toastr';
 import {List} from 'immutable'; // Import List from Immutable.js
 import {IngredientListDto} from "../../dtos/ingredient";
@@ -23,7 +23,7 @@ export class CocktailComponent {
   @ViewChild('preferenceAutocomplete', {static: false})
   private preferenceAutocompleteComponent!: AutocompleteComponent<any>;
 
-  cocktails: CocktailListDto[] = [];
+  cocktails: CocktailDetailDto[] = [];
   cocktailIngredients: Map<string, string>;
   userPreferences: List<String>;
   searchChangedObservable = new Subject<void>();
@@ -38,6 +38,7 @@ export class CocktailComponent {
   selectedIngredients: string[] = []; // List of selected ingredients (tags)
   selectedPreferences: string[] = []; // List of selected preferences (tags)
   searchParams: CocktailTagSearchDto = {};
+  initialLoad: boolean = true;
 
   constructor(
     private cocktailService: CocktailService,
@@ -73,13 +74,17 @@ export class CocktailComponent {
   }
 
   ngOnInit(): void {
-    this.searchChanged();
+    //this.searchChanged();
   }
 
   /**
    * This method is called when the page is loaded or when the user changes the search parameters.
    */
   searchChanged() {
+    if (this.initialLoad) {
+      this.initialLoad = false;
+      return;
+    }
     console.log("searchChanged")
     if (this.ingredient != null && this.ingredient.name !== "") {
 
@@ -160,7 +165,7 @@ export class CocktailComponent {
     this.selectedCocktail = name;
   }
 
-  getCocktailImageByName(cocktailName: String): CocktailListDto | undefined {
+  getCocktailImageByName(cocktailName: String): CocktailDetailDto | undefined {
     return this.cocktails.find((cocktail) => cocktail.name === cocktailName);
   }
 

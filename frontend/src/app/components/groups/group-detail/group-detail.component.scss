@@ -159,27 +159,6 @@ input {
   position:relative;
 }
 
-.info::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  background-color: #6200EE;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 14px;
-  bottom: calc(100% + 4px);
-  left: 50%;
-  transform: translateX(-100%);
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-  pointer-events: none;
-  width: 300px;
-}
-
-.info:hover::after {
-  opacity: 1;
-}
-
 .custom-button-edit {
   margin: 3rem 5rem 3rem 5rem;
   border-radius: 10px;
@@ -202,6 +181,11 @@ input {
   padding-bottom: 0;
   padding-top: 0;
   height: 36px;
+  margin-left: 5px;
+}
+
+.see-detail-button:hover {
+  background-color: #AC6AFE; /* Change the background color on hover */
 }
 
 .see-detail-button:active {
@@ -283,13 +267,7 @@ input {
   background-color: #6200EE;
 }
 
-.like-button {
-  background-color: #c497ff;
-  color: white;
-  border: none;
-  margin-left: 1em;
-}
-
+.like-button,
 .dislike-button {
   background-color: #c497ff;
   color: white;
@@ -298,19 +276,57 @@ input {
 }
 
 .btn-group button {
-  border-right: 1px solid #ccc; /* Adjust the color and width as needed */
-  border-left: 1px solid #ccc; /* Adjust the color and width as needed */
+  border-right: 1px solid #ccc;
+  border-left: 1px solid #ccc;
 }
 
 .btn-group button:last-child {
-  border-right: none; /* Remove the border from the last button */
+  border-right: none;
 }
 
 .btn-group button:first-child {
-  border-left: none; /* Remove the border from the first button */
+  border-left: none;
 }
 
 .btn-group button:hover {
-  background-color: #AC6AFE; /* Change the background color on hover */
+  background-color: #AC6AFE;
+}
+
+.like-button.highlighted,
+.dislike-button.highlighted {
+  background-color: #AC6AFE;
+  color: white;
+}
+
+.button-container {
+  display: flex;
+  align-items: center;
+}
+
+.progress-bar {
+  width: 4vw;
+  height: 10px;
+  background-color: lightgrey;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+  position:relative;
+}
+
+.progress-bar-positive {
+  background-color: #31D916;
+  height: 100%;
+  width: 50%;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.progress-bar-negative {
+  background-color: #ED4949;
+  height: 100%;
+  width: 50%;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
 }
 

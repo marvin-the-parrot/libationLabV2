@@ -47,7 +47,7 @@ export class CocktailMenuComponent {
   submitted = false;
   // Error flag
   error = false;
-  cocktails_list: CocktailListDto[] = [];
+  cocktails_list: CocktailDetailDto[] = [];
   nameOfCocktail: string;
   nameOfIngredient: string;
   nameOfPreference: string;
@@ -56,6 +56,7 @@ export class CocktailMenuComponent {
   searchParams: CocktailTagSearchDto = {};
   selectedIngredients: string[] = []; // List of selected ingredients (tags)
   selectedPreferences: string[] = []; // List of selected preferences (tags)
+  initialLoad = true;
 
 
   constructor(
@@ -138,6 +139,10 @@ export class CocktailMenuComponent {
 
 
   searchChanged() {
+    if (this.initialLoad) {
+      this.initialLoad = false;
+      return;
+    }
     if (this.ingredient != null && this.ingredient.name !== "") {
       if (this.selectedIngredients.includes(this.ingredient.name)) {
         this.notification.info("You already added this ingredient!");

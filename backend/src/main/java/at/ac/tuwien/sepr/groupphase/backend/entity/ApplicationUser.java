@@ -39,6 +39,9 @@ public class ApplicationUser {
     @OneToMany(mappedBy = "applicationUser", cascade = CascadeType.REMOVE)
     private Set<ApplicationMessage> applicationMessages;
 
+    @OneToMany(mappedBy = "applicationUser", cascade = CascadeType.REMOVE)
+    private Set<Feedback> feedbacks;
+
     @ManyToMany
     @JoinTable(
         name = "user_ingredients",
@@ -127,6 +130,14 @@ public class ApplicationUser {
 
     public void setPreferences(Set<Preference> preferences) {
         this.preferences = preferences;
+    }
+
+    public Set<Feedback> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(Set<Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
     }
 
     public Boolean getAdmin() {

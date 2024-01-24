@@ -12,8 +12,10 @@ import {DialogService} from 'src/app/services/dialog.service';
 import {ConfirmationDialogMode} from "../../../confirmation-dialog/confirmation-dialog.component";
 import {IngredientGroupDto} from "../../../dtos/ingredient";
 import {IngredientService} from "../../../services/ingredient.service";
-import { CocktailService } from 'src/app/services/cocktail.service';
-import {MenuCocktailsDetailViewDto, MenuCocktailsDto} from 'src/app/dtos/menu';
+import {CocktailService} from 'src/app/services/cocktail.service';
+import {MenuCocktailsDetailViewDto, MenuCocktailsDetailViewHostDto, MenuCocktailsDto} from 'src/app/dtos/menu';
+import {CocktailFeedbackDto, FeedbackState} from "../../../dtos/cocktail";
+import {FeedbackService} from "../../../services/feedback.service";
 
 @Component({
   selector: 'app-group-detail',
@@ -29,7 +31,12 @@ export class GroupDetailComponent {
     members: [],
   }
 
-  menu: MenuCocktailsDto = {
+  menu: MenuCocktailsDetailViewDto = {
+    groupId: null,
+    cocktailsList: [],
+  }
+
+  menuHost: MenuCocktailsDetailViewHostDto = {
     groupId: null,
     cocktailsList: [],
   }
@@ -58,6 +65,7 @@ export class GroupDetailComponent {
     private notification: ToastrService,
     private route: ActivatedRoute,
     private cocktailService: CocktailService,
+    private feedbackService: FeedbackService
   ) {
   }
 
@@ -65,7 +73,8 @@ export class GroupDetailComponent {
     const groupId = this.route.snapshot.params['id'];
     this.getGroup(groupId);
     this.getIngredients(groupId);
-    this.getCocktailsMenu(groupId);
+    //this.getCocktailsMenu(groupId);
+
     console.log(this.group.cocktails);
   }
 
@@ -117,6 +126,7 @@ export class GroupDetailComponent {
           next: data => {
             this.notification.success(`Successfully removed '${member.name}' from Group '${this.group.name}'.`);
             this.getGroup(this.group.id); // refresh group
+            this.deleteFeedbackRelationsAtUserLeavingGroup(this.group.id, member.id);
           },
           error: error => {
             console.error(`Error removing member '${member.name}' from group.`, error);
@@ -125,6 +135,18 @@ export class GroupDetailComponent {
         });
       }
     });
+  }
+
+  private deleteFeedbackRelationsAtUserLeavingGroup(groupId: number, memberId: number) {
+    this.feedbackService.deleteFeedbackRelationsAtUserLeavingGroup(groupId, memberId).subscribe({
+      next: data => {
+        this.notification.success('Successfully removed unused feedbacks');
+      },
+      error: error => {
+        console.error(`Error removing unused feedback from user`, error);
+        this.notification.error(`Error removing feedbacks from group.`);
+      }
+    })
   }
 
   private makeMemberHost(member: UserListDto) {
@@ -172,11 +194,19 @@ export class GroupDetailComponent {
       next: (group: GroupOverview) => {
         this.group = group;
         console.log(this.group)
+
+        const groupId = this.route.snapshot.params['id'];
+        if (this.username == this.group.host.name) {
+          this.getCocktailsMenuHost(groupId);
+          //this.getCocktailsMenu(groupId);
+        } else {
+          this.getCocktailsMenu(groupId);
+        }
+
       },
       error: error => {
         console.error('Could not fetch group due to:');
         this.defaultServiceErrorHandling(error);
-        // todo: Handle error appropriately (e.g., show a message to the user)
       }
     });
   }
@@ -192,11 +222,21 @@ export class GroupDetailComponent {
     });
   }
 
-  //TODO: change Dto to MenuCocktailsDetailViewDto
   private getCocktailsMenu(groupId: number): void {
-    this.cocktailService.getCocktailMenu(groupId).subscribe({
-      next: (menu: MenuCocktailsDto) => {
+    this.cocktailService.getCocktailMenuDetailView(groupId).subscribe({
+      next: (menu: MenuCocktailsDetailViewDto) => {
         this.menu = menu;
+      },
+      error: error => {
+        console.error('Could not fetch cocktails menu due to:');
+      }
+    });
+  }
+
+  private getCocktailsMenuHost(groupId: number): void {
+    this.cocktailService.getCocktailMenuDetailViewHost(groupId).subscribe({
+      next: (menu: MenuCocktailsDetailViewHostDto) => {
+        this.menuHost = menu;
       },
       error: error => {
         console.error('Could not fetch cocktails menu due to:');
@@ -228,10 +268,74 @@ export class GroupDetailComponent {
 
   likeCocktail(cocktailId: number) {
 
+    const cocktailFeedback: CocktailFeedbackDto = {
+      cocktailId: cocktailId,
+      groupId: this.group.id,
+      rating: FeedbackState.Like
+    }
+
+    for (let cocktail of this.menu.cocktailsList) {
+      if (cocktail.id == cocktailId) {
+        cocktail.rating = FeedbackState.Like;
+      }
+    }
+
+    this.feedbackService.updateCocktailFeedback(cocktailFeedback).subscribe({
+      next: () => {
+        this.notification.success("Successfully liked cocktail");
+      },
+      error: error => {
+        console.error('Like did not work, something went wrong');
+        this.notification.error('Like did not work, something went wrong');
+      }
+    });
+
   }
 
   dislikeCocktail(cocktailId: number) {
+    const cocktailFeedback: CocktailFeedbackDto = {
+      cocktailId: cocktailId,
+      groupId: this.group.id,
+      rating: FeedbackState.Dislike
+    }
 
+    for (let cocktail of this.menu.cocktailsList) {
+      if (cocktail.id == cocktailId) {
+        cocktail.rating = FeedbackState.Dislike;
+      }
+    }
+
+    this.feedbackService.updateCocktailFeedback(cocktailFeedback).subscribe({
+      next: () => {
+        this.notification.success("Successfully disliked cocktail");
+      },
+      error: error => {
+        console.error('Dislike did not work, something went wrong');
+        this.notification.error('Like did not work, something went wrong');
+      }
+    });
+  }
+
+  calculatePositiveBar (positiveRating: number, negativeRating: number): string {
+    const total = positiveRating + negativeRating;
+    if (total == 0) {
+      return '0%';
+    }
+    const positive = (positiveRating / total) * 100;
+    return positive + '%';
+  }
+
+  calculateNegativeBar (positiveRating: number, negativeRating: number): string {
+    const total = positiveRating + negativeRating;
+    if (total == 0) {
+      return '0%';
+    }
+    const negative = (negativeRating / total) * 100;
+    return negative + '%';
+  }
+
+  getTooltipText(positiveRating: number, negativeRating: number): string {
+    return `Positive: ${positiveRating}, Negative: ${negativeRating}`;
   }
 
 }

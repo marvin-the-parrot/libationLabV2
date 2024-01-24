@@ -1,10 +1,16 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
 import java.lang.invoke.MethodHandles;
+import java.util.List;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackHostDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewHostDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.RecommendedMenuesDto;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
+import at.ac.tuwien.sepr.groupphase.backend.service.MenuService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +45,11 @@ public class MenuEndpoint {
     static final String BASE_PATH = "/api/v1/menu";
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final String ROLE_USER = SecurityRolesEnum.Roles.ROLE_USER;
-    private final MenuServiceImpl menuServiceImpl;
+    private final MenuService menuService;
 
     @Autowired
-    public MenuEndpoint(MenuServiceImpl menuServiceImpl) {
-        this.menuServiceImpl = menuServiceImpl;
+    public MenuEndpoint(MenuService menuService) {
+        this.menuService = menuService;
     }
 
     /**
@@ -61,7 +67,7 @@ public class MenuEndpoint {
     public MenuCocktailsDto create(@RequestBody MenuCocktailsDto toCreate) throws ValidationException, ConflictException {
         LOGGER.info("POST " + BASE_PATH + "/{}", toCreate);
         LOGGER.debug("Body of request:\n{}", toCreate);
-        return menuServiceImpl.create(toCreate);
+        return menuService.create(toCreate);
     }
 
     @Secured(ROLE_USER)
@@ -70,7 +76,19 @@ public class MenuEndpoint {
     @Operation(summary = "Get cocktails menu of specific group", security = @SecurityRequirement(name = "apiKey"))
     public MenuCocktailsDto getMenu(@PathVariable Long id) {
         LOGGER.info("GET " + BASE_PATH + "/{}", id);
-        return menuServiceImpl.findMenuOfGroup(id);
+        return menuService.findMenuOfGroup(id);
+    }
+
+    @Secured(ROLE_USER)
+    @GetMapping("/{groupId}/detail/host")
+    public MenuCocktailsDetailViewHostDto getRatings(@PathVariable Long groupId) {
+        LOGGER.info("GET " + BASE_PATH + "/get-ratings/{}", groupId);
+
+        try {
+            return menuService.getMenuWithRatings(groupId);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 
     @Secured(ROLE_USER)
@@ -79,7 +97,7 @@ public class MenuEndpoint {
     @Operation(summary = "Update mixable cocktails of groups when changing ingredients")
     public void updateMixableCocktails(@RequestBody IngredientListDto[] userIngredients) {
         LOGGER.info("POST " + BASE_PATH + "/updateMixableCocktails");
-        menuServiceImpl.updateMixableCocktails();
+        menuService.updateMixableCocktails();
     }
 
     @Secured(ROLE_USER)
@@ -89,7 +107,7 @@ public class MenuEndpoint {
                                                  @RequestParam(name = "numberOfCocktails", required = false, defaultValue = "5") Integer numberOfCocktails) {
         LOGGER.info("GET " + BASE_PATH + "recommendation/{}", id);
         try {
-            return menuServiceImpl.createRecommendation(id, numberOfCocktails, 1);
+            return menuService.createRecommendation(id, numberOfCocktails, 1);
         } catch (IllegalArgumentException e) {
             LOGGER.error("Error while creating recommendation", e);
             HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -100,6 +118,25 @@ public class MenuEndpoint {
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
 
+    }
+
+    @Secured(ROLE_USER)
+    @Transactional
+    @GetMapping(value = "/{groupId}/detail")
+    public MenuCocktailsDetailViewDto getMenuDetail(@PathVariable Long groupId) {
+        LOGGER.info("GET " + BASE_PATH + "/{groupId}/detail");
+
+        try {
+            return menuService.findMenuDetailOfGroup(groupId);
+        } catch (NotFoundException e) {
+            LOGGER.error("Error while creating recommendation", e);
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        } catch (Exception e) {
+            LOGGER.error("Error while creating recommendation", e);
+            HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
     }
 
 

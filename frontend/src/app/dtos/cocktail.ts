@@ -5,8 +5,6 @@ export interface CocktailListDto {
   id: number;
   name: string;
   imagePath: string;
-  ingredients: Map<string, string>;
-  preferenceName: List<string>;
 }
 
 
@@ -16,9 +14,19 @@ export interface CocktailListDto {
 export interface CocktailListMenuDto {
   id: number;
   name: string;
-  imagePath: string;
   rating: FeedbackState;
 }
+
+/**
+ * A Dto for storing the data of a cocktail in Group Detail View (when you are Host) which also contains amount of Ratings for the cocktail
+ */
+export interface CocktailFeedbackHostDto {
+  id: number;
+  name: string;
+  positiveRating: number;
+  negativeRating: number;
+}
+
 
 export interface CocktailOverviewDto {
   id: number;
@@ -33,8 +41,8 @@ export interface CocktailDetailDto {
   name: string;
   imagePath: string;
   ingredients: Map<string, string>;
-  instructions: string;
   preferenceName: string[];
+  instructions: string;
 }
 
 export interface CocktailSearch {
@@ -50,9 +58,9 @@ export interface CocktailTagSearchDto {
 }
 
 export enum FeedbackState {
-  Like = 'like',
-  Dislike = 'dislike',
-  NotVoted = 'notVoted',
+  Like,
+  Dislike,
+  NotVoted,
 }
 
 export interface CocktailFeedbackDto {

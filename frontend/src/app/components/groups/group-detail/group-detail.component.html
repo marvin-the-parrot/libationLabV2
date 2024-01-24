@@ -47,58 +47,89 @@
       <h3 class="m-0">The Cocktail Card</h3>
       <div>of Group {{group.name}}</div>
     </div>
-    <div *ngIf="menu.cocktailsList.length === 0" class="d-flex justify-content-center align-items-center h-100">
-      <span *ngIf="group?.host?.name === username; else noHost"></span>
+    <div *ngIf="menuHost.cocktailsList.length === 0" class="d-flex justify-content-center align-items-center h-100">
+      <span *ngIf="group?.host?.name === username"></span>
       <button *ngIf="group?.host?.name === username" class="btn menu-button" [routerLink]="['../menu']">Make a Cocktail Card</button>
-      <ng-template #noHost>
-        <p>There is currently no cocktail card created.</p>
-      </ng-template>
+      <div *ngIf="group?.host?.name !== username">
+        <p *ngIf="menu.cocktailsList.length === 0">There is currently no cocktail card created.</p>
+      </div>
     </div>
 
 
+    <!-- Guest Menu -->
     <div *ngIf="menu.cocktailsList.length !== 0">
 
       <div class="cocktails-container">
         <div>
           <p class="cocktails-count">{{menu.cocktailsList.length}} Cocktails</p>
         </div>
-        <div class="cocktails-list">
+        <div *ngIf="group?.host?.name !== username" class="cocktails-list">
+
           <div *ngFor="let cocktail of menu.cocktailsList; index as i" class="cocktails-item">
             {{ cocktail.name }}
 
-            <!-- Button Group (Show only if not the host) -->
-            <div *ngIf="group?.host?.name !== username" class="btn-group" role="group" aria-label="Cocktail Actions">
+            <div class="button-container">
+              <div class="btn-group" role="group" aria-label="Cocktail Actions">
 
-              <!-- Like Button -->
-              <button class="btn like-button" (click)="likeCocktail(cocktail.id)">
-                <i class="bi bi-hand-thumbs-up"></i>
-              </button>
+                <!-- Like Button -->
+                <button class="btn like-button" (click)="likeCocktail(cocktail.id)" [class.highlighted]="cocktail.rating === 'Like' || cocktail.rating === 0">
+                  <i class="bi bi-hand-thumbs-up"></i>
+                </button>
 
-              <!-- Dislike Button -->
-              <button class="btn dislike-button" (click)="dislikeCocktail(cocktail.id)">
-                <i class="bi bi-hand-thumbs-down"></i>
-              </button>
-
+                <!-- Dislike Button -->
+                <button class="btn dislike-button" (click)="dislikeCocktail(cocktail.id)" [class.highlighted]="cocktail.rating === 'Dislike' || cocktail.rating === 1">
+                  <i class="bi bi-hand-thumbs-down"></i>
+                </button>
+              </div>
               <!-- See Detail Button -->
               <button class="btn see-detail-button" (click)="openCocktailDetails(cocktail.id)">
                 <i class="bi bi-book"></i>
               </button>
-
             </div>
 
-            <button *ngIf="group?.host?.name === username" class="btn see-detail-button" (click)="openCocktailDetails(cocktail.id)">
-              <i class="bi bi-book"></i>
-            </button>
           </div>
         </div>
-        <div *ngIf="group?.host?.name === username" class="container-safe-button">
-          <button type="button" class="btn btn-primary save-btn" [routerLink]="['../menu']">Edit</button>
-        </div>
+
       </div>
       <br>
     </div>
 
-  </div>
+    <!-- Host Menu -->
+    <div *ngIf="menuHost.cocktailsList.length !== 0">
+      <div class="cocktails-container">
+        <div>
+          <p class="cocktails-count">{{menuHost.cocktailsList.length}} Cocktails</p>
+        </div>
+
+        <div *ngIf="group?.host?.name === username" class="cocktails-list">
+          <div *ngFor="let cocktail of menuHost.cocktailsList; index as i" class="cocktails-item">
+            {{ cocktail.name }}
+
+            <div class="button-container">
+
+              <div class="progress-bar" ngbPopover= "{{ getTooltipText(cocktail.positiveRating, cocktail.negativeRating) }}" triggers="mouseenter:mouseleave">
+                <div class="progress-bar-positive" [style.width]="calculatePositiveBar(cocktail.positiveRating, cocktail.negativeRating)"></div>
+                <div class="progress-bar-negative" [style.width]="calculateNegativeBar(cocktail.positiveRating, cocktail.negativeRating)"></div>
+              </div>
+
+              <button class="btn see-detail-button" (click)="openCocktailDetails(cocktail.id)">
+                <i class="bi bi-book"></i>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <div *ngIf="group?.host?.name === username" class="container-safe-button">
+          <button type="button" class="btn btn-primary save-btn" [routerLink]="['../menu']">Edit</button>
+        </div>
+
+      </div>
+      <br>
+    </div>
+
+
+    </div>
 
   <div class="grid-item-3">
     <div>
@@ -110,7 +141,7 @@
         <div *ngFor="let ingredient of ingredients" class="list-item">
           <div class="list-name">{{ ingredient.name }}</div>
           <div class="list-action">
-            <i class="bi bi-info-circle info" [attr.data-tooltip]="getUsersOfIngredient(ingredient)"></i>
+            <i class="bi bi-info-circle info" ngbPopover= "{{ getUsersOfIngredient(ingredient) }}" triggers="mouseenter:mouseleave"></i>
           </div>
         </div>
       </div>

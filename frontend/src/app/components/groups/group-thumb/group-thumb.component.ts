@@ -6,6 +6,7 @@ import {ConfirmationDialogMode} from "../../../confirmation-dialog/confirmation-
 import {GroupsService} from "../../../services/groups.service";
 import {Router} from "@angular/router";
 import {ToastrService} from "ngx-toastr";
+import {FeedbackService} from "../../../services/feedback.service";
 
 @Component({
   selector: 'app-group-thumb',
@@ -23,7 +24,8 @@ export class GroupThumbComponent {
     private dialogService: DialogService,
     private service: GroupsService,
     private router: Router,
-    private notification: ToastrService
+    private notification: ToastrService,
+    private feedbackService: FeedbackService
   ) {
   }
 
@@ -40,6 +42,7 @@ export class GroupThumbComponent {
           next: data => {
             this.notification.success(`Successfully left Group '${this.group.name}'.`);
             this.groupLeft.emit();
+            this.deleteFeedbackRelationsAtUserLeavingGroup(this.group.id, user.id);
           },
           error: error => {
             console.error(`Error leaving group.`, error);
@@ -48,5 +51,17 @@ export class GroupThumbComponent {
         });
       }
     });
+  }
+
+  private deleteFeedbackRelationsAtUserLeavingGroup(groupId: number, memberId: number) {
+    this.feedbackService.deleteFeedbackRelationsAtUserLeavingGroup(groupId, memberId).subscribe({
+      next: data => {
+        this.notification.success('Successfully removed unused feedbacks');
+      },
+      error: error => {
+        console.error(`Error removing unused feedback from user`, error);
+        this.notification.error(`Error removing feedbacks from group.`);
+      }
+    })
   }
 }
