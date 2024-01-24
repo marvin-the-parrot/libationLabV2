@@ -13,10 +13,10 @@ import java.util.List;
 public interface MenuMapper {
 
     default MenuCocktailsDetailViewHostDto cocktailFeedbackToCocktailFeedbackHostDto(HashMap<Cocktail, int[]> cocktailRatings, Long groupId) {
-        CocktailFeedbackHostDto cocktailFeedbackHostDto = new CocktailFeedbackHostDto();
         List<CocktailFeedbackHostDto> cocktailFeedbackHostDtoList = new ArrayList<>();
 
         for (Cocktail cocktail : cocktailRatings.keySet()) {
+            CocktailFeedbackHostDto cocktailFeedbackHostDto = new CocktailFeedbackHostDto();
             cocktailFeedbackHostDto.setId(cocktail.getId());
             cocktailFeedbackHostDto.setName(cocktail.getName());
             cocktailFeedbackHostDto.setPositiveRating(cocktailRatings.get(cocktail)[0]);

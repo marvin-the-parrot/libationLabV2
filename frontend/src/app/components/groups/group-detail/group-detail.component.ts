@@ -197,8 +197,8 @@ export class GroupDetailComponent {
 
         const groupId = this.route.snapshot.params['id'];
         if (this.username == this.group.host.name) {
-          //this.getCocktailsMenuHost(groupId);
-          this.getCocktailsMenu(groupId);
+          this.getCocktailsMenuHost(groupId);
+          //this.getCocktailsMenu(groupId);
         } else {
           this.getCocktailsMenu(groupId);
         }

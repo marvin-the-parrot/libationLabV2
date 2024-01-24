@@ -38,6 +38,7 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.CocktailService;
 import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -235,6 +236,7 @@ public class MenuServiceImpl implements MenuService {
         return menuCocktailsDetailViewDto;
     }
 
+    @Transactional
     @Override
     public MenuCocktailsDetailViewHostDto getMenuWithRatings(Long groupId) throws NotFoundException {
         LOGGER.debug("Get ratings for group {}", groupId);
@@ -247,7 +249,7 @@ public class MenuServiceImpl implements MenuService {
         }
 
         int[] ratings = new int[2];
-        HashMap<Cocktail, int[]> cocktailRatings = new HashMap<>();
+        LinkedHashMap<Cocktail, int[]> cocktailRatings = new LinkedHashMap<>();
         cocktailRatings.put(cocktails.get(0), ratings);
         int index = 0;
 
@@ -258,7 +260,6 @@ public class MenuServiceImpl implements MenuService {
                 } else if (feedback.getRating() == FeedbackState.Dislike) {
                     ratings[1]++;
                 }
-
                 cocktailRatings.replace(cocktails.get(index), ratings);
             } else {
                 ratings = new int[2];
