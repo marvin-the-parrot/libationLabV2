@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackHostDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.FeedbackCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.FeedbackRepository;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.invoke.MethodHandles;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/feedback")
@@ -38,6 +40,18 @@ public class FeedbackEndpoint {
     @Autowired
     public FeedbackEndpoint(FeedbackService feedbackService) {
         this.feedbackService = feedbackService;
+    }
+
+    @Secured(ROLE_USER)
+    @GetMapping("/{groupId}")
+    public List<CocktailFeedbackHostDto> getRatings(@PathVariable Long groupId) {
+        LOGGER.info("GET " + BASE_PATH + "/get-ratings/{}", groupId);
+
+        try {
+            return feedbackService.getRatings(groupId);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 
     @Secured(ROLE_USER)
@@ -60,7 +74,6 @@ public class FeedbackEndpoint {
 
     @Secured(ROLE_USER)
     @PutMapping("/update")
-    @Transactional
     public void update(@RequestBody CocktailFeedbackDto feedbackToUpdate) {
         LOGGER.info("PUT " + BASE_PATH + "/update: {}", feedbackToUpdate);
 
