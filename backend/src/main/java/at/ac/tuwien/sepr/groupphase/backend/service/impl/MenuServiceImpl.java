@@ -253,14 +253,17 @@ public class MenuServiceImpl implements MenuService {
         cocktailRatings.put(cocktails.get(0), ratings);
         int index = 0;
 
+        feedbacks.sort(Comparator.comparing(o -> o.getCocktail().getId()));
         for (Feedback feedback : feedbacks) {
             if (feedback.getCocktail() == cocktailRatings.keySet().toArray()[index]) {
-                if (feedback.getRating() == FeedbackState.Like) {
-                    ratings[0]++;
-                } else if (feedback.getRating() == FeedbackState.Dislike) {
-                    ratings[1]++;
+                if (feedback.getRating() != FeedbackState.NotVoted) {
+                    if (feedback.getRating() == FeedbackState.Like) {
+                        ratings[0]++;
+                    } else if (feedback.getRating() == FeedbackState.Dislike) {
+                        ratings[1]++;
+                    }
+                    cocktailRatings.replace(cocktails.get(index), ratings);
                 }
-                cocktailRatings.replace(cocktails.get(index), ratings);
             } else {
                 ratings = new int[2];
                 if (feedback.getRating() == FeedbackState.Like) {

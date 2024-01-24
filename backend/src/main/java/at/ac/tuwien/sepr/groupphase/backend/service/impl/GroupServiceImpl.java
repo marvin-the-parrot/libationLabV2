@@ -220,6 +220,8 @@ public class GroupServiceImpl implements GroupService {
                 message.setUserId(member.getId());
                 message.setGroupId(saved.getId());
                 messageService.create(message);
+
+
             }
         }
 

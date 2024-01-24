@@ -52,7 +52,7 @@ public class FeedbackEndpoint {
         }
 
         try {
-            feedbackService.create(feedbackToCreate);
+            feedbackService.createFeedbackRelations(feedbackToCreate);
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (Exception e) {
@@ -70,7 +70,7 @@ public class FeedbackEndpoint {
         }
 
         try {
-            feedbackService.update(feedbackToUpdate);
+            feedbackService.updateRatings(feedbackToUpdate);
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (Exception e) {

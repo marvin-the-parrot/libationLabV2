@@ -32,7 +32,7 @@ public class ApplicationGroup {
     @OneToMany(mappedBy = "applicationGroup", cascade = CascadeType.REMOVE)
     private Set<Feedback> feedbacks;
 
-    @ManyToMany(cascade = CascadeType.REMOVE)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
         name = "menu",
         joinColumns = @JoinColumn(name = "application_group_id"),

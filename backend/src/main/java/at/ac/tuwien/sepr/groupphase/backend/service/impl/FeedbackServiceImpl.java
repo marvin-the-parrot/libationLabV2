@@ -17,6 +17,7 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.FeedbackService;
 import jakarta.transaction.Transactional;
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +51,8 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Transactional
     @Override
-    public void create(FeedbackCreateDto feedbackToCreate) throws NotFoundException {
-        LOGGER.debug("Create recommendation {}", feedbackToCreate);
+    public void createFeedbackRelations(FeedbackCreateDto feedbackToCreate) throws NotFoundException {
+        LOGGER.debug("Create feedback {}", feedbackToCreate);
 
         //TODO validation
 
@@ -84,8 +85,26 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Transactional
     @Override
-    public void update(CocktailFeedbackDto feedbackToUpdate) throws NotFoundException {
-        LOGGER.debug("Update recommendation {}", feedbackToUpdate);
+    public void createFeedbackRelationsForNewUser(ApplicationGroup group, ApplicationUser user) throws NotFoundException {
+        LOGGER.debug("Create feedback relations for new user {}", user.getName());
+
+        for (Cocktail cocktail : group.getCocktails()) {
+            Feedback feedback = new Feedback();
+
+            feedback.setFeedbackKey(new FeedbackKey(user.getId(), group.getId(), cocktail.getId()));
+            feedback.setApplicationUser(user);
+            feedback.setApplicationGroup(group);
+            feedback.setCocktail(cocktail);
+            feedback.setRating(FeedbackState.NotVoted);
+
+            feedbackRepository.save(feedback);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void updateRatings(CocktailFeedbackDto feedbackToUpdate) throws NotFoundException {
+        LOGGER.debug("Update feedback {}", feedbackToUpdate);
 
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         ApplicationUser user = userRepository.findByEmail(userEmail);
