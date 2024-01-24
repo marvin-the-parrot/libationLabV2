@@ -3,7 +3,7 @@ import {Globals} from '../global/globals';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {CocktailDetailDto, CocktailListDto, CocktailTagSearchDto} from "../dtos/cocktail";
 import {Observable} from "rxjs";
-import {MenuCocktailsDetailViewDto, MenuCocktailsDto} from '../dtos/menu';
+import {MenuCocktailsDetailViewDto, MenuCocktailsDetailViewHostDto, MenuCocktailsDto} from '../dtos/menu';
 import {IngredientListDto} from "../dtos/ingredient";
 import {PreferenceListDto} from "../dtos/preference";
 import {RecommendedMenues} from "../dtos/recommendedMenues";
@@ -103,5 +103,13 @@ export class CocktailService {
    */
   getCocktailMenuDetailView(groupId: number): Observable<MenuCocktailsDetailViewDto> {
       return this.httpClient.get<MenuCocktailsDetailViewDto>(this.menuBaseUri + `/${groupId}/detail`);
+  }
+
+  /**
+   * Get cocktail menu of a group with rating of user for GroupDetailView
+   *
+   */
+  getCocktailMenuDetailViewHost(groupId: number): Observable<MenuCocktailsDetailViewHostDto> {
+    return this.httpClient.get<MenuCocktailsDetailViewHostDto>(this.menuBaseUri + `/${groupId}/detail/host`);
   }
 }

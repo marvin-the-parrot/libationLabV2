@@ -319,3 +319,33 @@ input {
   color: white;
 }
 
+.button-container {
+  display: flex;
+  align-items: center;
+}
+
+.progress-bar {
+  width: 100px;
+  height: 10px;
+  background-color: lightgrey;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+.progress-bar-positive {
+  background-color: #31D916;
+  height: 100%;
+  width: 50%;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.progress-bar-negative {
+  background-color: #ED4949;
+  height: 100%;
+  width: 50%;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+

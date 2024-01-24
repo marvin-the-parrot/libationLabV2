@@ -1,4 +1,4 @@
-import {CocktailFeedbackDto, CocktailListDto, CocktailListMenuDto} from "./cocktail";
+import {CocktailFeedbackDto, CocktailFeedbackHostDto, CocktailListDto, CocktailListMenuDto} from "./cocktail";
 
 export interface MenuCocktailsDto {
   groupId: number
@@ -13,3 +13,10 @@ export interface MenuCocktailsDetailViewDto {
   groupId: number
   cocktailsList: CocktailListMenuDto[];
 }
+
+export interface MenuCocktailsDetailViewHostDto {
+  groupId: number;
+  cocktailsList: CocktailFeedbackHostDto[];
+}
+
+

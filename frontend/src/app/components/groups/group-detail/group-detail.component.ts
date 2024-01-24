@@ -13,7 +13,7 @@ import {ConfirmationDialogMode} from "../../../confirmation-dialog/confirmation-
 import {IngredientGroupDto} from "../../../dtos/ingredient";
 import {IngredientService} from "../../../services/ingredient.service";
 import {CocktailService} from 'src/app/services/cocktail.service';
-import {MenuCocktailsDetailViewDto, MenuCocktailsDto} from 'src/app/dtos/menu';
+import {MenuCocktailsDetailViewDto, MenuCocktailsDetailViewHostDto, MenuCocktailsDto} from 'src/app/dtos/menu';
 import {CocktailFeedbackDto, FeedbackState} from "../../../dtos/cocktail";
 import {FeedbackService} from "../../../services/feedback.service";
 
@@ -32,6 +32,11 @@ export class GroupDetailComponent {
   }
 
   menu: MenuCocktailsDetailViewDto = {
+    groupId: null,
+    cocktailsList: [],
+  }
+
+  menuHost: MenuCocktailsDetailViewHostDto = {
     groupId: null,
     cocktailsList: [],
   }
@@ -68,7 +73,8 @@ export class GroupDetailComponent {
     const groupId = this.route.snapshot.params['id'];
     this.getGroup(groupId);
     this.getIngredients(groupId);
-    this.getCocktailsMenu(groupId);
+    //this.getCocktailsMenu(groupId);
+
     console.log(this.group.cocktails);
   }
 
@@ -188,11 +194,19 @@ export class GroupDetailComponent {
       next: (group: GroupOverview) => {
         this.group = group;
         console.log(this.group)
+
+        const groupId = this.route.snapshot.params['id'];
+        if (this.username == this.group.host.name) {
+          //this.getCocktailsMenuHost(groupId);
+          this.getCocktailsMenu(groupId);
+        } else {
+          this.getCocktailsMenu(groupId);
+        }
+
       },
       error: error => {
         console.error('Could not fetch group due to:');
         this.defaultServiceErrorHandling(error);
-        // todo: Handle error appropriately (e.g., show a message to the user)
       }
     });
   }
@@ -208,11 +222,21 @@ export class GroupDetailComponent {
     });
   }
 
-  //TODO: change Dto to MenuCocktailsDetailViewDto
   private getCocktailsMenu(groupId: number): void {
     this.cocktailService.getCocktailMenuDetailView(groupId).subscribe({
       next: (menu: MenuCocktailsDetailViewDto) => {
         this.menu = menu;
+      },
+      error: error => {
+        console.error('Could not fetch cocktails menu due to:');
+      }
+    });
+  }
+
+  private getCocktailsMenuHost(groupId: number): void {
+    this.cocktailService.getCocktailMenuDetailViewHost(groupId).subscribe({
+      next: (menu: MenuCocktailsDetailViewHostDto) => {
+        this.menuHost = menu;
       },
       error: error => {
         console.error('Could not fetch cocktails menu due to:');

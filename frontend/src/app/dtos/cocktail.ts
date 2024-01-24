@@ -17,6 +17,17 @@ export interface CocktailListMenuDto {
   rating: FeedbackState;
 }
 
+/**
+ * A Dto for storing the data of a cocktail in Group Detail View (when you are Host) which also contains amount of Ratings for the cocktail
+ */
+export interface CocktailFeedbackHostDto {
+  id: number;
+  name: string;
+  positiveRating: number;
+  negativeRating: number;
+}
+
+
 export interface CocktailOverviewDto {
   id: number;
   name: string;

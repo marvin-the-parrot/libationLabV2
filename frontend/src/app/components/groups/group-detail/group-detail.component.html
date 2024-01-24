@@ -85,9 +85,17 @@
               </button>
             </div>
 
-            <button *ngIf="group?.host?.name === username" class="btn see-detail-button" (click)="openCocktailDetails(cocktail.id)">
-              <i class="bi bi-book"></i>
-            </button>
+            <div *ngIf="group?.host?.name === username" class="button-container">
+              <!-- Fixed-size bar to show positive and negative reviews -->
+              <div class="progress-bar">
+                <div class="progress-bar-positive"></div>
+                <div class="progress-bar-negative"></div>
+              </div>
+
+              <button class="btn see-detail-button" (click)="openCocktailDetails(cocktail.id)">
+                <i class="bi bi-book"></i>
+              </button>
+            </div>
 
           </div>
         </div>
