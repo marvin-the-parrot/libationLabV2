@@ -4,6 +4,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,10 +19,13 @@ import java.util.stream.Collectors;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListMenuDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.FeedbackState;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewHostDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuRecommendationDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.RecommendedMenuesDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.MenuMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Feedback;
@@ -33,7 +37,6 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.PreferenceRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.CocktailService;
-import at.ac.tuwien.sepr.groupphase.backend.service.FeedbackService;
 import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,12 +68,13 @@ public class MenuServiceImpl implements MenuService {
     private final CocktailIngredientMapper cocktailIngredientMapper;
     private final CocktailService cocktailService;
     private final IngredientService ingredientService;
-    private final FeedbackService feedbackService;
+    private final MenuMapper menuMapper;
 
     @Autowired
     public MenuServiceImpl(GroupRepository groupRepository, PreferenceRepository preferenceRepository,
                            CocktailRepository cocktailRepository, UserGroupRepository userGroupRepository, UserRepository userRepository,
-                           FeedbackRepository feedbackRepository, CocktailIngredientMapper cocktailIngredientMapper, CocktailService cocktailService, IngredientService ingredientService, FeedbackService feedbackService) {
+                           FeedbackRepository feedbackRepository, CocktailIngredientMapper cocktailIngredientMapper, CocktailService cocktailService,
+                           IngredientService ingredientService, MenuMapper menuMapper) {
         this.groupRepository = groupRepository;
         this.preferenceRepository = preferenceRepository;
         this.cocktailRepository = cocktailRepository;
@@ -80,7 +84,7 @@ public class MenuServiceImpl implements MenuService {
         this.cocktailIngredientMapper = cocktailIngredientMapper;
         this.cocktailService = cocktailService;
         this.ingredientService = ingredientService;
-        this.feedbackService = feedbackService;
+        this.menuMapper = menuMapper;
     }
 
     @Override
@@ -229,6 +233,47 @@ public class MenuServiceImpl implements MenuService {
         menuCocktailsDetailViewDto.setCocktailsList(cocktailListMenuDtoList.toArray(new CocktailListMenuDto[0]));
 
         return menuCocktailsDetailViewDto;
+    }
+
+    @Override
+    public MenuCocktailsDetailViewHostDto getMenuWithRatings(Long groupId) throws NotFoundException {
+        LOGGER.debug("Get ratings for group {}", groupId);
+
+        List<Feedback> feedbacks = feedbackRepository.findByApplicationGroup(groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException("Group not found")));
+        List<Cocktail> cocktails = cocktailRepository.findDistinctByFeedbacksIn(feedbacks);
+
+        if (cocktails.isEmpty()) {
+            throw new NotFoundException("No cocktails found");
+        }
+
+        int[] ratings = new int[2];
+        HashMap<Cocktail, int[]> cocktailRatings = new HashMap<>();
+        cocktailRatings.put(cocktails.get(0), ratings);
+        int index = 0;
+
+        for (Feedback feedback : feedbacks) {
+            if (feedback.getCocktail() == cocktailRatings.keySet().toArray()[index]) {
+                if (feedback.getRating() == FeedbackState.Like) {
+                    ratings[0]++;
+                } else if (feedback.getRating() == FeedbackState.Dislike) {
+                    ratings[1]++;
+                }
+
+                cocktailRatings.replace(cocktails.get(index), ratings);
+            } else {
+                ratings = new int[2];
+                if (feedback.getRating() == FeedbackState.Like) {
+                    ratings[0]++;
+                } else if (feedback.getRating() == FeedbackState.Dislike) {
+                    ratings[1]++;
+                }
+                cocktailRatings.put(feedback.getCocktail(), ratings);
+
+                index++;
+            }
+        }
+
+        return menuMapper.cocktailFeedbackToCocktailFeedbackHostDto(cocktailRatings, groupId);
     }
 
     /**

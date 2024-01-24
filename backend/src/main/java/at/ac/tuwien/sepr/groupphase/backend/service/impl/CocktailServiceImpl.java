@@ -144,9 +144,6 @@ public class CocktailServiceImpl implements CocktailService {
         return cocktailIngredientMapper.cocktailIngredientToCocktailListDto(resultCocktails);
     }
 
-
-
-
     @Override
     @Transactional
     public List<CocktailDetailDto> getMixableCocktails(Long groupId) {

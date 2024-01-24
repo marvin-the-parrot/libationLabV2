@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackHostDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewHostDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
 import org.mapstruct.Mapper;
 
@@ -9,9 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 
 @Mapper
-public interface FeedbackMapper {
+public interface MenuMapper {
 
-    default List<CocktailFeedbackHostDto> cocktailFeedbackToCocktailFeedbackHostDto(HashMap<Cocktail, int[]> cocktailRatings) {
+    default MenuCocktailsDetailViewHostDto cocktailFeedbackToCocktailFeedbackHostDto(HashMap<Cocktail, int[]> cocktailRatings, Long groupId) {
         CocktailFeedbackHostDto cocktailFeedbackHostDto = new CocktailFeedbackHostDto();
         List<CocktailFeedbackHostDto> cocktailFeedbackHostDtoList = new ArrayList<>();
 
@@ -23,6 +24,10 @@ public interface FeedbackMapper {
             cocktailFeedbackHostDtoList.add(cocktailFeedbackHostDto);
         }
 
-        return cocktailFeedbackHostDtoList;
+        MenuCocktailsDetailViewHostDto menuCocktailsDetailViewHostDto = new MenuCocktailsDetailViewHostDto();
+        menuCocktailsDetailViewHostDto.setGroupId(groupId);
+        menuCocktailsDetailViewHostDto.setCocktailsList(cocktailFeedbackHostDtoList.toArray(new CocktailFeedbackHostDto[0]));
+
+        return menuCocktailsDetailViewHostDto;
     }
 }

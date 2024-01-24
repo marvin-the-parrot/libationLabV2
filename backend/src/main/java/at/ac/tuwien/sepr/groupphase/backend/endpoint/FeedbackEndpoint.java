@@ -43,18 +43,6 @@ public class FeedbackEndpoint {
     }
 
     @Secured(ROLE_USER)
-    @GetMapping("/{groupId}")
-    public List<CocktailFeedbackHostDto> getRatings(@PathVariable Long groupId) {
-        LOGGER.info("GET " + BASE_PATH + "/get-ratings/{}", groupId);
-
-        try {
-            return feedbackService.getRatings(groupId);
-        } catch (NotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-    }
-
-    @Secured(ROLE_USER)
     @PostMapping("/create")
     public void create(@Valid @RequestBody FeedbackCreateDto feedbackToCreate) {
         LOGGER.info("POST " + BASE_PATH + "/create: {}", feedbackToCreate);

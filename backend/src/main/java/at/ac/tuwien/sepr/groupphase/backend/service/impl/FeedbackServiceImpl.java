@@ -4,7 +4,6 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackHostDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.FeedbackCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.FeedbackState;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.FeedbackMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
@@ -39,53 +38,14 @@ public class FeedbackServiceImpl implements FeedbackService {
     private final CocktailRepository cocktailRepository;
     private final GroupRepository groupRepository;
     private final UserGroupRepository userGroupRepository;
-    private final FeedbackMapper feedbackMapper;
 
     @Autowired
-    public FeedbackServiceImpl(FeedbackRepository feedbackRepository, UserRepository userRepository, CocktailRepository cocktailRepository, GroupRepository groupRepository, UserGroupRepository userGroupRepository, FeedbackMapper feedbackMapper) {
+    public FeedbackServiceImpl(FeedbackRepository feedbackRepository, UserRepository userRepository, CocktailRepository cocktailRepository, GroupRepository groupRepository, UserGroupRepository userGroupRepository) {
         this.feedbackRepository = feedbackRepository;
         this.userRepository = userRepository;
         this.cocktailRepository = cocktailRepository;
         this.groupRepository = groupRepository;
         this.userGroupRepository = userGroupRepository;
-        this.feedbackMapper = feedbackMapper;
-    }
-
-    @Override
-    public List<CocktailFeedbackHostDto> getRatings(Long groupId) throws NotFoundException {
-        LOGGER.debug("Get ratings for group {}", groupId);
-
-        List<Feedback> feedbacks = feedbackRepository.findByApplicationGroup(groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException("Group not found")));
-
-        int[] ratings = new int[2];
-        HashMap<Cocktail, int[]> cocktailRatings = new HashMap<>();
-        List<Cocktail> cocktails = cocktailRepository.findDistinctByFeedbacksIn(feedbacks);
-        cocktailRatings.put(cocktails.get(0), ratings);
-
-        int index = 0;
-        for (Feedback feedback : feedbacks) {
-            if (feedback.getCocktail() == cocktailRatings.keySet().toArray()[index]) {
-                if (feedback.getRating() == FeedbackState.Like) {
-                    ratings[0]++;
-                } else if (feedback.getRating() == FeedbackState.Dislike) {
-                    ratings[1]++;
-                }
-
-                cocktailRatings.replace(cocktails.get(index), ratings);
-            } else {
-                ratings = new int[2];
-                if (feedback.getRating() == FeedbackState.Like) {
-                    ratings[0]++;
-                } else if (feedback.getRating() == FeedbackState.Dislike) {
-                    ratings[1]++;
-                }
-                cocktailRatings.put(feedback.getCocktail(), ratings);
-
-                index++;
-            }
-        }
-
-        return feedbackMapper.cocktailFeedbackToCocktailFeedbackHostDto(cocktailRatings);
     }
 
     @Transactional

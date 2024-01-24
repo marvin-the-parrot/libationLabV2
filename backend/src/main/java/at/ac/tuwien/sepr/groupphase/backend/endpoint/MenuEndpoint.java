@@ -1,9 +1,12 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
 import java.lang.invoke.MethodHandles;
+import java.util.List;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackHostDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewHostDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.RecommendedMenuesDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
@@ -74,6 +77,18 @@ public class MenuEndpoint {
     public MenuCocktailsDto getMenu(@PathVariable Long id) {
         LOGGER.info("GET " + BASE_PATH + "/{}", id);
         return menuService.findMenuOfGroup(id);
+    }
+
+    @Secured(ROLE_USER)
+    @GetMapping("/{groupId}/detail/host")
+    public MenuCocktailsDetailViewHostDto getRatings(@PathVariable Long groupId) {
+        LOGGER.info("GET " + BASE_PATH + "/get-ratings/{}", groupId);
+
+        try {
+            return menuService.getMenuWithRatings(groupId);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 
     @Secured(ROLE_USER)
