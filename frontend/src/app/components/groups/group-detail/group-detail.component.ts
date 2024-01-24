@@ -316,6 +316,28 @@ export class GroupDetailComponent {
     });
   }
 
+  calculatePositiveBar (positiveRating: number, negativeRating: number): string {
+    const total = positiveRating + negativeRating;
+    if (total == 0) {
+      return '0%';
+    }
+    const positive = (positiveRating / total) * 100;
+    return positive + '%';
+  }
+
+  calculateNegativeBar (positiveRating: number, negativeRating: number): string {
+    const total = positiveRating + negativeRating;
+    if (total == 0) {
+      return '0%';
+    }
+    const negative = (negativeRating / total) * 100;
+    return negative + '%';
+  }
+
+  getTooltipText(positiveRating: number, negativeRating: number): string {
+    return `Positive: ${positiveRating}, Negative: ${negativeRating}`;
+  }
+
 }
 
 function takeUntil(destroy$: any): any {
