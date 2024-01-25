@@ -218,7 +218,7 @@ public class UserEndpointTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/authentication")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginDto)))
-            .andExpect(status().isNotFound()).andReturn();
+            .andExpect(status().isUnauthorized()).andReturn();
     }
 
     @Test

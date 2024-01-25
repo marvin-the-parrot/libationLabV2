@@ -148,7 +148,7 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public String login(UserLoginDto userLoginDto) {
+    public String login(UserLoginDto userLoginDto) throws BadCredentialsException, UsernameNotFoundException {
         LOGGER.debug("Login user");
         UserDetails userDetails = loadUserByUsername(userLoginDto.getEmail());
         if (userDetails != null
