@@ -64,7 +64,10 @@ export class GroupEditComponent {
           },
           error: error => {
             console.error('Error deleting group', error);
-            this.notification.error(`Error deleting group "${this.group.name}".`);
+            this.notification.error(error.error.detail, `Error deleting group "${this.group.name}".`, {
+              enableHtml: true,
+              timeOut: 10000,
+            });
           }
         });
       }
@@ -96,7 +99,6 @@ export class GroupEditComponent {
     }
   }
 
-  // todo: pass the existing members to the autocomplete
   memberSuggestions = (input: string): Observable<UserListDto[]> => (input === '')
     ? of([])
     : this.userService.searchUsersGroupCreating(input, this.group.members);
@@ -148,7 +150,10 @@ export class GroupEditComponent {
       },
       error: error => {
         console.error('Error fetching group', error);
-        this.notification.error(`Error fetching group.`); // todo: show error message from backend?
+        this.notification.error(error.error, `Error fetching group.`, {
+          enableHtml: true,
+          timeOut: 10000,
+        });
       }
     });
   }

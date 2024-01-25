@@ -67,7 +67,11 @@ export class LoginComponent implements OnInit {
         if (error.status==401) {
           this.notification.error('Unrecognised combination of username and password');
         }else{
-          this.notification.error('Error during Log in:');
+          console.log(error);
+          this.notification.error(error.error, 'Error during Log in', {
+            enableHtml: true,
+            timeOut: 10000,
+          });
         }
       }
     });

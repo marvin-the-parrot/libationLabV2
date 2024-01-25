@@ -1,26 +1,17 @@
 import {Component, ViewChild} from '@angular/core';
 import {IngredientGroupDto, IngredientListDto} from "../../../dtos/ingredient";
 import {GroupsService} from "../../../services/groups.service";
-import {UserService} from "../../../services/user.service";
-import {IngredientService} from "../../../services/ingredient.service";
 import {DialogService} from "../../../services/dialog.service";
 import {CocktailService} from 'src/app/services/cocktail.service';
-import {MessageService} from "../../../services/message.service";
 import {ToastrService} from "ngx-toastr";
 import {ActivatedRoute, Router} from "@angular/router";
 import {
-  CocktailDetailDto, CocktailFeedbackDto,
-  CocktailListDto,
-  CocktailOverviewDto,
-  CocktailSearch,
+  CocktailDetailDto, CocktailListDto,
   CocktailTagSearchDto
 } from "../../../dtos/cocktail";
-import {ErrorFormatterService} from "../../../services/error-formatter.service";
 import {MenuCocktailsDto} from 'src/app/dtos/menu';
 import {PreferenceListDto} from "../../../dtos/preference";
 import {Observable, of} from "rxjs";
-import {List} from 'immutable';
-import {RecommendedMenues} from "../../../dtos/recommendedMenues";
 import {AutocompleteComponent} from "../../autocomplete/autocomplete.component";
 import {FeedbackService} from "../../../services/feedback.service";
 import {FeedbackCreateDto} from "../../../dtos/feedback"; // Import List from Immutable.js
@@ -112,9 +103,8 @@ export class CocktailMenuComponent {
         this.persistendCocktails = cocktails;
       },
       error: error => {
-        console.error('Could not fetch cocktails due to:');
+        console.error('Could not fetch cocktails due to:', error);
         this.defaultServiceErrorHandling(error);
-        // todo: Handle error appropriately (e.g., show a message to the user)
       }
     });
   }
@@ -122,7 +112,10 @@ export class CocktailMenuComponent {
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
-    this.notification.error(error.error.detail);
+    this.notification.error(error.error, `Error fetching cocktails.`, {
+      enableHtml: true,
+      timeOut: 10000,
+    });
   }
 
   /**

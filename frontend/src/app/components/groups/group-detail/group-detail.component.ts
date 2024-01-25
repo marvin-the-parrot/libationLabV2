@@ -130,7 +130,10 @@ export class GroupDetailComponent {
           },
           error: error => {
             console.error(`Error removing member '${member.name}' from group.`, error);
-            this.notification.error(`Error removing member '${member.name}' from group.`); // todo: show error message from backend
+            this.notification.error(error.error.detail, `Error removing member '${member.name}' from group.`, {
+              enableHtml: true,
+              timeOut: 10000,
+            });
           }
         });
       }
@@ -160,7 +163,10 @@ export class GroupDetailComponent {
           },
           error: error => {
             console.error(`Error making member '${member.name}' host of group.`, error);
-            this.notification.error(`Error making member '${member.name}' host of group.`); // todo: show error message from backend
+            this.notification.error(error.error.detail, `Error making member '${member.name}' host of group.`, {
+              enableHtml: true,
+              timeOut: 10000,
+            });
           }
         });
       }

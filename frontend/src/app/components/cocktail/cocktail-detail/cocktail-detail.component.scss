@@ -65,7 +65,7 @@
 .inner-grid-container {
   display: grid;
   justify-content: space-evenly;
-  align-items: flex-start; // todo: change to stretch if it looks better when both items have the same height
+  align-items: flex-start; // change to stretch if it looks better when both items have the same height
   grid-template-columns: 0.5fr 1fr;
 }
 

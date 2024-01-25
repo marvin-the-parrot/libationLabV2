@@ -46,7 +46,10 @@ export class GroupThumbComponent {
           },
           error: error => {
             console.error(`Error leaving group.`, error);
-            this.notification.error(`Error leaving group.`); // todo: show error message from backend
+            this.notification.error(error.error.detail, `Error leaving group.`, {
+              enableHtml: true,
+              timeOut: 10000,
+            });
           }
         });
       }

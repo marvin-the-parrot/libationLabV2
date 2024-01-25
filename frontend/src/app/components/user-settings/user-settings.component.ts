@@ -130,9 +130,11 @@ export class UserSettingsComponent {
         this.updateMixableCocktails();
       },
       error: error => {
-        this.notification.error('Could not save ingredients.');
-        console.log('Could not save ingredients due to:');
-        console.log(error);
+        console.log('Could not save ingredients due to:', error);
+        this.notification.error(error.error.detail, 'Could not save ingredients:', {
+          enableHtml: true,
+          timeOut: 10000,
+        });
       }
     });
   }
@@ -143,9 +145,11 @@ export class UserSettingsComponent {
         this.notification.success('Cocktails updated successfully.');
       },
       error: error => {
-        this.notification.error('Could not update cocktails.');
-        console.log('Could not update cocktails due to:');
-        console.log(error);
+        console.log('Could not update cocktails due to:', error);
+        this.notification.error(error.error.detail, 'Could not update cocktails.', {
+          enableHtml: true,
+          timeOut: 10000,
+        });
       }
     });
   }
