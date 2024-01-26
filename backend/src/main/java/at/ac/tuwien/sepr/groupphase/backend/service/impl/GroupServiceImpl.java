@@ -1,8 +1,11 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListGroupDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
@@ -16,6 +19,7 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.MessageService;
+import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import at.ac.tuwien.sepr.groupphase.backend.service.validators.GroupValidator;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -41,15 +45,19 @@ public class GroupServiceImpl implements GroupService {
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
     private final UserMapper userMapper;
+    private final UserService userService;
+    private final GroupMapper groupMapper;
 
     public GroupServiceImpl(GroupRepository groupRepository, GroupValidator validator, MessageService messageService,
-                            UserRepository userRepository, UserGroupRepository userGroupRepository, UserMapper userMapper) {
+                            UserRepository userRepository, UserGroupRepository userGroupRepository, UserMapper userMapper, UserService userService, GroupMapper groupMapper) {
         this.groupRepository = groupRepository;
         this.validator = validator;
         this.messageService = messageService;
         this.userRepository = userRepository;
         this.userGroupRepository = userGroupRepository;
         this.userMapper = userMapper;
+        this.userService = userService;
+        this.groupMapper = groupMapper;
     }
 
     @Override
@@ -265,6 +273,41 @@ public class GroupServiceImpl implements GroupService {
         currentUserGroup.setHost(false);
         userGroupRepository.save(currentUserGroup);
 
+    }
+
+    @Override
+    public GroupOverviewDto findGroupById(Long id) throws NotFoundException, ValidationException {
+
+        // verify the user
+        String currentUserMail = SecurityContextHolder.getContext().getAuthentication().getName();
+        // get current user
+        ApplicationUser currentUser = userRepository.findByEmail(currentUserMail);
+        if (currentUser == null) {
+            throw new NotFoundException("Could not find current user");
+        }
+        // get group
+        ApplicationGroup group = groupRepository.findById(id).orElse(null);
+        if (group == null) {
+            throw new NotFoundException("Could not find group");
+        }
+        // check if user is member of the group
+        UserGroup currentUserGroup = userGroupRepository.findById(new UserGroupKey(currentUser.getId(), id)).orElse(null);
+        if (currentUserGroup == null) {
+            throw new ValidationException("This action is not allowed", List.of("You are not a member of this group"));
+        }
+
+        // get members to build group
+        List<UserListGroupDto> users = userService.findUsersByGroup(group);
+        GroupOverviewDto groupOverviewDto = groupMapper.grouptToGroupOverviewDto(group);
+        groupOverviewDto.setMembers(users.toArray(new UserListGroupDto[0]));
+
+        //set host
+        for (UserListGroupDto user : users) {
+            if (user.isHost()) {
+                groupOverviewDto.setHost(user);
+            }
+        }
+        return groupOverviewDto;
     }
 
 

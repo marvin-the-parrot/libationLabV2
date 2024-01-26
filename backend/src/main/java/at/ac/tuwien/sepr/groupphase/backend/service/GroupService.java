@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
@@ -86,4 +87,14 @@ public interface GroupService {
      * @throws ValidationException if the user is not a member of the group or the current user is not the host
      */
     void makeMemberHost(Long groupId, Long userId) throws ValidationException;
+
+
+    /**
+     * Returns the requested group.
+     * @param id the id of the group
+     * @return the requested group as GroupOverviewDto
+     * @throws NotFoundException if the group does not exist
+     * @throws ValidationException if the user is not a member of the group
+     */
+    GroupOverviewDto findGroupById(Long id) throws NotFoundException, ValidationException;
 }
