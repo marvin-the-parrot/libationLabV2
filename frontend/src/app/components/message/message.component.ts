@@ -46,6 +46,7 @@ export class MessageComponent implements OnInit {
 
     this.messageService.setAllMessagesRead(this.messagesToSetRead).subscribe({
       next: () => {
+        this.notification.success("Successfully set all messages to read");
         this.loadMessage();
       },
       error: error => {
@@ -62,6 +63,7 @@ export class MessageComponent implements OnInit {
 
     this.messageService.setAllMessagesRead(this.messagesToSetRead).subscribe({
       next: () => {
+        this.notification.success("Successfully set all messages to unread");
         this.loadMessage();
       },
       error: error => {

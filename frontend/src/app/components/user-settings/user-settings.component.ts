@@ -142,7 +142,7 @@ export class UserSettingsComponent {
   updateMixableCocktails() {
     this.cocktailService.updateCocktailMenu(this.userIngredients).subscribe({
       next: () => {
-        this.notification.success('Cocktails updated successfully.');
+        this.notification.success('Mixable Cocktails in all groups updated successfully.');
       },
       error: error => {
         console.log('Could not update cocktails due to:', error);
