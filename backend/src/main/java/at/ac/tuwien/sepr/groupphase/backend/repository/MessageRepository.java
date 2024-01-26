@@ -39,4 +39,12 @@ public interface MessageRepository extends JpaRepository<ApplicationMessage, Lon
      * @return list of all message entries
      */
     List<ApplicationMessage> findAllByApplicationUserAndGroupId(ApplicationUser user, Long groupId);
+
+    /**
+     * Find all message entries of a given id list.
+     *
+     * @param ids of message
+     * @return list of all message entries
+     */
+    List<ApplicationMessage> findByIdIn(List<Long> ids);
 }

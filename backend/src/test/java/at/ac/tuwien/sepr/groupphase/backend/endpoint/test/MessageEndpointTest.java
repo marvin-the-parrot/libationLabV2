@@ -200,7 +200,7 @@ public class MessageEndpointTest {
 
         Map responseMap = objectMapper.readValue(result.getResponse().getContentAsString(), Map.class);
 
-        assertEquals("Could not find message from group Group3 sent at " + localDateTime, responseMap.get("detail"));
+        assertEquals("Could not find message with id " + message.getId(), responseMap.get("detail"));
     }
 
     @Test

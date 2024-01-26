@@ -2,6 +2,7 @@ package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageSetReadDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -106,6 +108,25 @@ public class SimpleMessageService implements MessageService {
                 messageId));
         }
         messageRepository.deleteById(messageId);
+    }
+
+    @Transactional
+    @Override
+    public void markAllAsRead(MessageSetReadDto[] messagesToSetRead) throws NotFoundException {
+        LOGGER.debug("Mark messages as read {}", (Object) messagesToSetRead);
+
+        List<Long> messageIds = new ArrayList<>();
+        for (MessageSetReadDto message : messagesToSetRead) {
+            messageIds.add(message.getId());
+        }
+
+        List<ApplicationMessage> messages = messageRepository.findByIdIn(messageIds);
+
+        for (int i = 0; i < messages.size(); i++) {
+            messages.get(i).setIsRead(messagesToSetRead[i].getIsRead());
+        }
+
+        messageRepository.saveAll(messages);
     }
 
 }

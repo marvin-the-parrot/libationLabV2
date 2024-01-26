@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {MessageService} from '../../services/message.service';
-import {MessageDetailDto} from "../../dtos/message";
+import {MessageDetailDto, MessageSetReadDto} from "../../dtos/message";
 import {ToastrService} from "ngx-toastr";
 import {MessageHeaderSharedService} from "../../services/message-header-shared.service";
 
@@ -17,6 +17,7 @@ export class MessageComponent implements OnInit {
   submitted = false;
 
   private messages: MessageDetailDto[];
+  private messagesToSetRead: MessageSetReadDto[];
 
   constructor(
     private messageService: MessageService,
@@ -32,6 +33,42 @@ export class MessageComponent implements OnInit {
   getMessage(): MessageDetailDto[] {
     console.log(this.messages);
     return this.messages;
+  }
+
+  getUnreadMessageCount(): number {
+    return this.messages.filter(message => !message.isRead).length;
+  }
+
+  setAllMessagesRead() {
+    this.messagesToSetRead = this.messages.map(message => {
+      return {id: message.id, isRead: true};
+    });
+
+    this.messageService.setAllMessagesRead(this.messagesToSetRead).subscribe({
+      next: () => {
+        this.loadMessage();
+      },
+      error: error => {
+        console.log('Could not set all messages read due to:');
+        this.defaultServiceErrorHandling(error);
+      }
+    });
+  }
+
+  setAllMessagesUnread() {
+    this.messagesToSetRead = this.messages.map(message => {
+      return {id: message.id, isRead: false};
+    });
+
+    this.messageService.setAllMessagesRead(this.messagesToSetRead).subscribe({
+      next: () => {
+        this.loadMessage();
+      },
+      error: error => {
+        console.log('Could not set all messages read due to:');
+        this.defaultServiceErrorHandling(error);
+      }
+    });
   }
 
   acceptInvitation(message: MessageDetailDto) {

@@ -3,6 +3,7 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCountDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageSetReadDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.MessageMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
@@ -137,15 +138,11 @@ public class MessageEndpoint {
     public void acceptGroupInvitation(@Valid @RequestBody MessageDetailDto message) {
         LOGGER.info("POST /api/v1/messages body: {}", message);
         try {
-            messageService.update(message);
+            messageService.delete(message.getId());
             userGroupService.create(message.getGroup().getId());
         } catch (NotFoundException e) {
             logClientError(HttpStatus.NOT_FOUND, "Failed to accept message since ", e);
             HttpStatus status = HttpStatus.NOT_FOUND;
-            throw new ResponseStatusException(status, e.getMessage(), e);
-        } catch (ValidationException e) {
-            logClientError(HttpStatus.UNPROCESSABLE_ENTITY, "Failed to accept message since ", e);
-            HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
@@ -174,6 +171,20 @@ public class MessageEndpoint {
         } catch (ValidationException e) {
             HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
             logClientError(status, "Message to update is invalid", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+    @Secured(ROLE_USER)
+    @PutMapping("/read")
+    @Operation(summary = "Mark all messages as read")
+    public void markAllAsRead(@RequestBody MessageSetReadDto[] messagesToSetRead) {
+        LOGGER.info("PUT " + BASE_PATH + "/read");
+        try {
+            messageService.markAllAsRead(messagesToSetRead);
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Message to update not found", e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }

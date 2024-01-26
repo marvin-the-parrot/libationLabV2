@@ -18,3 +18,8 @@ export class MessageCreate {
     public groupId: number
   ) {}
 }
+
+export interface MessageSetReadDto {
+  id: number;
+  isRead: boolean;
+}
