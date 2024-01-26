@@ -4,6 +4,8 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCountDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageSetReadDto;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.transaction.Transactional;
@@ -321,5 +323,47 @@ public class MessageEndpointTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/messages/{0}", -60L)).andExpect(status().isNotFound());
         int result = messageRepository.findAll().size();
         assertEquals(expected, result);
+    }
+
+    @Test
+    @WithMockUser(username = "user1@email.com")
+    public void markAllAsRead_markAllAsReadWithValidData_expectedTrue() throws Exception {
+        int expectedReadMessagesSize = 1;
+        MessageSetReadDto[] messagesToSetRead = new MessageSetReadDto[1];
+        messagesToSetRead[0] = new MessageSetReadDto();
+        messagesToSetRead[0].setRead(true);
+        messagesToSetRead[0].setId(1L);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/messages/read")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(messagesToSetRead)))
+            .andExpect(status().isOk());
+
+        List<ApplicationMessage> messages = messageRepository.findAllByApplicationUserOrderByIsReadAscSentAtDesc(userRepository.findByEmail("user1@email.com"));
+        int result = 0;
+        for (ApplicationMessage message : messages) {
+            if (message.getIsRead()) {
+                result++;
+            }
+        }
+        assertEquals(expectedReadMessagesSize, result);
+    }
+
+    @Test
+    @WithMockUser(username = "user1@email.com")
+    public void markAllAsRead_markAllAsReadWithInvalidData_expectedNotFound() throws Exception {
+        MessageSetReadDto[] messagesToSetRead = new MessageSetReadDto[1];
+        messagesToSetRead[0] = new MessageSetReadDto();
+        messagesToSetRead[0].setRead(true);
+        messagesToSetRead[0].setId(-1L);
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/messages/read")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(messagesToSetRead)))
+            .andExpect(status().isNotFound()).andReturn();
+
+        Map responseMap = objectMapper.readValue(result.getResponse().getContentAsString(), Map.class);
+
+        assertEquals("Could not find messages", responseMap.get("detail"));
     }
 }

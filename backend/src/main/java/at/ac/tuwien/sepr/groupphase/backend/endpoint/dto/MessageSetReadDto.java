@@ -5,19 +5,19 @@ public class MessageSetReadDto {
     private Long id;
     private boolean isRead;
 
-    public MessageSetReadDto() {
-    }
-
-    public MessageSetReadDto(Long id, boolean isRead) {
-        this.id = id;
-        this.isRead = isRead;
-    }
-
     public Long getId() {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public boolean getIsRead() {
         return isRead;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
     }
 }

@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.endpoint.InvalidEndpointRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -43,18 +45,17 @@ public class FeedbackEndpoint {
     }
 
     @Secured(ROLE_USER)
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
     public void create(@Valid @RequestBody FeedbackCreateDto feedbackToCreate) {
         LOGGER.info("POST " + BASE_PATH + "/create: {}", feedbackToCreate);
-
-        if (feedbackToCreate == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Recommendation must not be null");
-        }
 
         try {
             feedbackService.createFeedbackRelations(feedbackToCreate);
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (InvalidEndpointRequestException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }

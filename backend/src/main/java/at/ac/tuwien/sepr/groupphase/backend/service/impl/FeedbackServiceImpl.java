@@ -21,6 +21,7 @@ import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.endpoint.InvalidEndpointRequestException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -51,10 +52,12 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Transactional
     @Override
-    public void createFeedbackRelations(FeedbackCreateDto feedbackToCreate) throws NotFoundException {
+    public void createFeedbackRelations(FeedbackCreateDto feedbackToCreate) throws InvalidEndpointRequestException, NotFoundException {
         LOGGER.debug("Create feedback {}", feedbackToCreate);
 
-        //TODO validation
+        if (feedbackToCreate.getGroupId() == null || feedbackToCreate.getCocktailIds() == null) {
+            throw new InvalidEndpointRequestException("No Feedback to create sent", "the sent groupId or cocktailIds are null");
+        }
 
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         ApplicationUser host = userRepository.findByEmail(userEmail);

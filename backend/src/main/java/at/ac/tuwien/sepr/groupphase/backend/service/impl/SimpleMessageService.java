@@ -122,6 +122,10 @@ public class SimpleMessageService implements MessageService {
 
         List<ApplicationMessage> messages = messageRepository.findByIdIn(messageIds);
 
+        if (messages.isEmpty()) {
+            throw new NotFoundException("Could not find messages");
+        }
+
         for (int i = 0; i < messages.size(); i++) {
             messages.get(i).setIsRead(messagesToSetRead[i].getIsRead());
         }
