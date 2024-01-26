@@ -48,8 +48,8 @@ public class GroupServiceImpl implements GroupService {
     private final UserService userService;
     private final GroupMapper groupMapper;
 
-    public GroupServiceImpl(GroupRepository groupRepository, GroupValidator validator, MessageService messageService,
-                            UserRepository userRepository, UserGroupRepository userGroupRepository, UserMapper userMapper, UserService userService, GroupMapper groupMapper) {
+    public GroupServiceImpl(GroupRepository groupRepository, GroupValidator validator, MessageService messageService, UserRepository userRepository,
+                            UserGroupRepository userGroupRepository, UserMapper userMapper, UserService userService, GroupMapper groupMapper) {
         this.groupRepository = groupRepository;
         this.validator = validator;
         this.messageService = messageService;
