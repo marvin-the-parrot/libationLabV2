@@ -9,16 +9,20 @@
     <div class="table-column">
       <div class="table-container">
         <p class="entry-count">our suggestions</p>
-        <table class="table align-baseline equal-columns">
-          <tbody>
-          <tr class="list-row" *ngFor="let ingredient of ingredients; index as i">
-            <td [ngClass]="{'ingredient-row-selected': i === currentIngredient, 'ingredient-row': true}" (click)="currentIngredient = i">
-              {{ingredient.name}}
-              <span>{{ingredient.possibleCocktails.length}} new</span>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+
+        <div class="container-scrollable">
+          <table class="table align-baseline equal-columns">
+            <tbody>
+            <tr class="list-row" *ngFor="let ingredient of ingredients; index as i">
+              <td [ngClass]="{'ingredient-row-selected': i === currentIngredient, 'ingredient-row': true}" (click)="currentIngredient = i">
+                {{ingredient.name}}
+                <span>{{ingredient.possibleCocktails.length}} new</span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </div>
 

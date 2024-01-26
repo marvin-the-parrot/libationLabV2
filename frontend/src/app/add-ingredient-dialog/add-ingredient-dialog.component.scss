@@ -1,10 +1,12 @@
 // component:
 .mat-mdc-dialog-content {
   max-height: 100%;
+  overflow-y: clip;
 }
 
 .grid-container {
   height: 100%;
+  background-color: #ECECEC;
 }
 
 // header:
@@ -41,10 +43,11 @@
 
 // list of ingredients:
 .table-container {
-  max-height: 50vh; /* Set a fixed height for the container */
+  max-height: 65vh; /* Set a fixed height for the container */
   min-height: 200px;
-  background-color: white;
-  overflow-y: auto; /* Enable vertical scrolling when content exceeds height */
+  background-color: #D9D9D9;
+  //overflow-x: clip;
+  //overflow-y: auto; /* Enable vertical scrolling when content exceeds height */
   border: 1px solid #ccc; /* Optional: Add a border for the container */
   padding: 10px; /* Optional: Add padding for the container */
   border-radius: 15px; /* Rounded corners */
@@ -52,19 +55,41 @@
   width: 90%;
 }
 
+.container-scrollable {
+  margin-top: 5px;
+  height: 95%;
+  overflow-y: auto;
+  overflow-x: clip;
+  padding-right: 5px;
+  margin-left: 5px;
+}
+
+.container-scrollable::-webkit-scrollbar {
+  width: 4px;
+}
+
+.container-scrollable::-webkit-scrollbar-thumb {
+  background-color: grey;
+  border-radius: 3px;
+}
+
+.container-scrollable::-webkit-scrollbar-track {
+  background-color: #eee;
+}
+
 .cocktail-column {
   justify-content: center;
 }
 
 .cocktail-container {
-  background-color: white;
+  background-color: #D9D9D9;
   border: 1px solid #ccc; /* Optional: Add a border for the container */
   padding: 10px 10px 0 10px;; /* Optional: Add padding for the container */
   border-radius: 15px; /* Rounded corners */
   margin-bottom: 20px;
   margin-top: 20px;
   width: 90%;
-  height: 90%;
+  height: 65vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -77,6 +102,19 @@
   justify-content: space-between;
   grid-template-columns: repeat(auto-fit, minmax(175px, 0.5fr));
   gap: 2px;
+}
+
+.cocktail-container-grid::-webkit-scrollbar {
+  width: 4px;
+}
+
+.cocktail-container-grid::-webkit-scrollbar-thumb {
+  background-color: grey;
+  border-radius: 3px;
+}
+
+.cocktail-container-grid::-webkit-scrollbar-track {
+  background-color: #eee;
 }
 
 
@@ -117,7 +155,7 @@
   align-items: center; /* Vertically center content */
   justify-content: space-between;
   border-bottom: white;
-  background-color: white;
+  background-color: #D9D9D9;
 }
 
 .ingredient-row > span {
@@ -125,7 +163,7 @@
 }
 
 .ingredient-row:hover {
-  background-color: #d9d9d9;
+  background-color: #bebebe;
   cursor: pointer;
 }
 
@@ -170,7 +208,7 @@
 }
 
 .card {
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.15);
   margin: 0.25rem;
   margin-bottom: 1rem;
   padding: 0;

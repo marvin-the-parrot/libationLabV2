@@ -9,19 +9,22 @@
     <div class="table-column">
       <div class="table-container">
         <p class="entry-count">our suggestions</p>
-        <table class="table align-baseline equal-columns">
-          <tbody>
 
-          <tr class="list-row" *ngFor="let menu of menus.menuList; index as i">
-            <td *ngIf="i===0" [ngClass]="{'menu-row-selected': i === currentMenu, 'menu-row': true}" (click)="currentMenu = i">
-              <span>Optimized Suggestion</span> <span style="margin-left: 1.5em">LV: {{ menu.lv | number: '1.2-2'}}</span>
-            </td>
-            <td *ngIf="i!==0" [ngClass]="{'menu-row-selected': i === currentMenu, 'menu-row': true}" (click)="currentMenu = i">
-              Versatile Suggestion {{i}} <span style="margin-left: 1em">LV: {{ menu.lv | number: '1.2-2'}}</span>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+        <div class="container-scrollable">
+          <table class="table align-baseline equal-columns">
+            <tbody>
+            <tr class="list-row" *ngFor="let menu of menus.menuList; index as i">
+              <td *ngIf="i===0" [ngClass]="{'menu-row-selected': i === currentMenu, 'menu-row': true}" (click)="currentMenu = i">
+                <span>Optimized Suggestion</span> <span style="margin-left: 1.5em">LV: {{ menu.lv | number: '1.2-2'}}</span>
+              </td>
+              <td *ngIf="i!==0" [ngClass]="{'menu-row-selected': i === currentMenu, 'menu-row': true}" (click)="currentMenu = i">
+                Versatile Suggestion {{i}} <span style="margin-left: 1em">LV: {{ menu.lv | number: '1.2-2'}}</span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </div>
 

@@ -15,7 +15,10 @@
         <li *ngFor="let cocktail of group.cocktails">{{cocktail.name}}</li>
       </ul>
       <ng-template #noCocktails>
-        <p>There are currently no selected cocktails. <br><br></p>
+        <div class="noCocktails">
+          <p>There are currently no selected cocktails. <br><br></p>
+        </div>
+
       </ng-template>
     </div>
   </a>

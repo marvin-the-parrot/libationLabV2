@@ -29,8 +29,11 @@
       </div>
     </div>
 
-    <div class="list">
+    <div class = "list user-ingredient-header">
       <p class="entry-count">{{group.members.length}} Users in Group</p>
+    </div>
+
+    <div class="container-scrollable">
       <div *ngFor="let member of group.members" class="list-item">
           <div class="list-name">{{ member.name }} <span *ngIf="member.name===username"> (You)</span></div>
         <div *ngIf="group?.host?.name === member?.name" class="list-action">👑</div>
@@ -47,12 +50,12 @@
       <h3 class="m-0">The Cocktail Card</h3>
       <div>of Group {{group.name}}</div>
     </div>
-    <div *ngIf="menuHost.cocktailsList.length === 0" class="d-flex justify-content-center align-items-center h-100">
-      <span *ngIf="group?.host?.name === username"></span>
+    <div *ngIf="menuHost.cocktailsList.length === 0 && group?.host?.name === username" class="d-flex justify-content-center align-items-center h-100">
       <button *ngIf="group?.host?.name === username" class="btn menu-button" [routerLink]="['../menu']">Make a Cocktail Card</button>
-      <div *ngIf="group?.host?.name !== username">
-        <p *ngIf="menu.cocktailsList.length === 0">There is currently no cocktail card created.</p>
-      </div>
+    </div>
+
+    <div *ngIf="menu.cocktailsList.length === 0 && group?.host?.name !== username" class="d-flex justify-content-center align-items-center h-100">
+      <p *ngIf="menu.cocktailsList.length === 0">There is currently no cocktail card created.</p>
     </div>
 
 
@@ -135,16 +138,18 @@
     <div>
       <h3>Ingredients</h3>
     </div>
+    <div class="list user-ingredient-header" *ngIf="ingredients !== null">
+      <p class="entry-count">{{ingredients.length}} Ingredients in Group</p>
+    </div>
     <div class="container-scrollable">
-      <div class="list ingredient-list" *ngIf="ingredients !== null">
-        <p class="entry-count">{{ingredients.length}} Ingredients in Group</p>
+
         <div *ngFor="let ingredient of ingredients" class="list-item">
           <div class="list-name">{{ ingredient.name }}</div>
           <div class="list-action">
             <i class="bi bi-info-circle info" ngbPopover= "{{ getUsersOfIngredient(ingredient) }}" triggers="mouseenter:mouseleave"></i>
           </div>
         </div>
-      </div>
+
     </div>
   </div>
 </div>

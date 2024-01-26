@@ -58,7 +58,8 @@
         </div>
 
         <div class="flex-container">
-          <i class="bi bi-info-circle info" data-tooltip="In your ingredients list you can add all the ingredients you have at home and want to use for cocktails"></i>
+          <i class="bi bi-info-circle info" ngbPopover= "In your ingredients list you can add all the ingredients you have at home and want to use for cocktails" triggers="mouseenter:mouseleave">
+          </i>
           <div class="wrapper">
             <app-autocomplete
               name="ingredientsSelection"
@@ -86,7 +87,7 @@
       </div>
 
       <div class="flex-container">
-        <i class="bi bi-info-circle info" data-tooltip="In your preferences list you can add all the preferences for your cocktails"></i>
+        <i class="bi bi-info-circle info" ngbPopover= "In your preferences list you can add all the preferences for your cocktails" triggers="mouseenter:mouseleave"></i>
         <div class="wrapper">
           <app-autocomplete
             name="preferenceSelection"

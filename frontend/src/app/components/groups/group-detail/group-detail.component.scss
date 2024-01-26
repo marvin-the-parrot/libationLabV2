@@ -42,16 +42,19 @@
 .grid-item-1 {
   grid-column: 1;
   grid-row: 1;
+  background-color: #D9D9D9;
 }
 
 .grid-item-2 {
   grid-column: 2 / 4;
   grid-row: 1;
+  background-color: #D9D9D9;
 }
 
 .grid-item-3 {
   grid-column: 4 / 4;
   grid-row: 1;
+  background-color: #D9D9D9;
 }
 
 .grid-item:hover {
@@ -64,6 +67,7 @@
 
 .row {
   margin: 0;
+  padding-bottom: 0;
 }
 
 .input-container{
@@ -107,21 +111,37 @@
 }
 
 .container-scrollable {
-  padding: 0;
-  margin: 0;
-  height: 430px;
+  height: 60vh;
   overflow-y: auto;
   overflow-x: clip;
+  margin: 0 1em;
+  padding-right: 5px;
+
+}
+
+.container-scrollable::-webkit-scrollbar {
+  width: 4px;
+}
+
+.container-scrollable::-webkit-scrollbar-thumb {
+  background-color: grey;
+  border-radius: 3px;
+}
+
+.container-scrollable::-webkit-scrollbar-track {
+  background-color: #eee;
 }
 
 .list {
   display: flex;
   flex-direction: column;
   margin: 0 1em;
+  overflow-y: auto;
 }
 
-.ingredient-list {
+.user-ingredient-header {
   margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .list-item {
@@ -132,15 +152,15 @@
   padding: 0.2em;
   min-height: 2.5em;
 }
-.list-item:first-of-type {
-  border-top: 1px solid #ccc;
-}
+
 
 .entry-count{
   opacity: 0.5;
   margin: 0;
-  margin-bottom: 10px;
+  padding-bottom: 10px;
   margin-top: 10px;
+  border-bottom: #333333 solid 1px;
+
 }
 
 .list-name{
@@ -163,8 +183,9 @@ input {
   margin: 3rem 5rem 3rem 5rem;
   border-radius: 10px;
   height: 3em;
-  background-color: #6200ee;
-  opacity: 0.72;
+  background-color: #AC6AFE;
+  border: none;
+  //opacity: 0.72;
   color: white;
 }
 
@@ -197,7 +218,7 @@ input {
 .cocktails-container {
   background-color: white;
   margin-left: 9vw;
-  margin-top: calc(0vh + 27px);
+  margin-top: 6vh;
   display: flex;
   flex-direction: column;
   width: 20vw;
@@ -264,6 +285,10 @@ input {
 }
 
 .save-btn:active {
+  background-color: #6200EE;
+}
+
+.save-btn:hover {
   background-color: #6200EE;
 }
 
