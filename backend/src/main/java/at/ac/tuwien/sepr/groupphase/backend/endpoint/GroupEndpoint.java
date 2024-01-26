@@ -6,7 +6,6 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
@@ -97,22 +96,10 @@ public class GroupEndpoint {
     @GetMapping(value = "/{id}")
     @Transactional
     @Operation(summary = "Get detailed information about a specific group", security = @SecurityRequirement(name = "apiKey"))
-    public GroupOverviewDto find(@PathVariable Long id) {
-        //TODO "ROLE_USER" in ENUM
+    public GroupOverviewDto find(@PathVariable Long id) throws ValidationException {
         LOGGER.info("GET /api/v1/groups/{}", id);
-        ApplicationGroup group = groupService.findOne(id);
-        List<UserListGroupDto> users = userService.findUsersByGroup(group);
-        GroupOverviewDto groupOverviewDto = groupMapper.grouptToGroupOverviewDto(group);
-        groupOverviewDto.setMembers(users.toArray(new UserListGroupDto[0]));
 
-        //set host
-        for (UserListGroupDto user : users) {
-            if (user.isHost()) {
-                groupOverviewDto.setHost(user);
-            }
-        }
-
-        return groupOverviewDto;
+        return groupService.findGroupById(id);
     }
 
     /**

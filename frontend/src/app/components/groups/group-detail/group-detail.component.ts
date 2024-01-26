@@ -16,6 +16,7 @@ import {CocktailService} from 'src/app/services/cocktail.service';
 import {MenuCocktailsDetailViewDto, MenuCocktailsDetailViewHostDto, MenuCocktailsDto} from 'src/app/dtos/menu';
 import {CocktailFeedbackDto, FeedbackState} from "../../../dtos/cocktail";
 import {FeedbackService} from "../../../services/feedback.service";
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'app-group-detail',
@@ -65,7 +66,8 @@ export class GroupDetailComponent {
     private notification: ToastrService,
     private route: ActivatedRoute,
     private cocktailService: CocktailService,
-    private feedbackService: FeedbackService
+    private feedbackService: FeedbackService,
+    private location: Location
   ) {
   }
 
@@ -211,8 +213,14 @@ export class GroupDetailComponent {
 
       },
       error: error => {
-        console.error('Could not fetch group due to:');
-        this.defaultServiceErrorHandling(error);
+        console.error('Could not fetch group due to:', error);
+        this.error = true;
+        const displayError = error.error.errors != null ? error.error.errors : error.error;
+        this.notification.error(displayError, "Error fetching group", {
+          enableHtml: true,
+          timeOut: 10000,
+        });
+        this.location.back();
       }
     });
   }
@@ -223,7 +231,7 @@ export class GroupDetailComponent {
         this.ingredients = ingredients;
       },
       error: error => {
-        console.error('Could not fetch ingredients due to:');
+        console.error('Could not fetch ingredients due to:', error);
       }
     });
   }

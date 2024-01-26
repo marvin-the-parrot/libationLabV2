@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
@@ -26,15 +27,15 @@ public interface GroupService {
     /**
      * Deleting group entry by id, only possible by host.
      *
-     * @param groupId         the id of the group
+     * @param groupId the id of the group
      */
     void deleteGroup(Long groupId) throws ValidationException;
 
     /**
      * Deleting member user in group, only possible by host.
      *
-     * @param groupId         the id of the group
-     * @param userId          the id of member to be deleted
+     * @param groupId the id of the group
+     * @param userId  the id of member to be deleted
      */
     void deleteMember(Long groupId, Long userId) throws ValidationException;
 
@@ -60,7 +61,7 @@ public interface GroupService {
     /**
      * Updates the group with given ID with the data given in {@code toUpdate}.
      *
-     * @param toUpdate        the data of the group to update
+     * @param toUpdate the data of the group to update
      * @return the updated group
      * @throws NotFoundException   if the group with given ID does not exist
      *                             in the persistent data store
@@ -81,9 +82,20 @@ public interface GroupService {
     /**
      * Make the user with the given ID host of the group with the given ID.
      *
-     * @param groupId         the ID of the group
-     * @param userId          the ID of the user to make host
+     * @param groupId the ID of the group
+     * @param userId  the ID of the user to make host
      * @throws ValidationException if the user is not a member of the group or the current user is not the host
      */
     void makeMemberHost(Long groupId, Long userId) throws ValidationException;
+
+
+    /**
+     * Returns the requested group.
+     *
+     * @param id the id of the group
+     * @return the requested group as GroupOverviewDto
+     * @throws NotFoundException   if the group does not exist
+     * @throws ValidationException if the user is not a member of the group
+     */
+    GroupOverviewDto findGroupById(Long id) throws NotFoundException, ValidationException;
 }
