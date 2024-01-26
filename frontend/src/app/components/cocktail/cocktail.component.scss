@@ -161,8 +161,12 @@
   height: 36px;
 }
 .btn.rounded-button:active {
-  background-color: white; /* Set background color to transparent */
+  background-color: #6200EE;
   box-shadow: none;
+}
+
+.btn.rounded-button:hover {
+  background-color: #6200EE;
 }
 
 .selected-ingredients-preferences {

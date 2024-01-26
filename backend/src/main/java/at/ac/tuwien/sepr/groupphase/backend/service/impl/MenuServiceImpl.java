@@ -245,7 +245,8 @@ public class MenuServiceImpl implements MenuService {
         List<Cocktail> cocktails = cocktailRepository.findDistinctByFeedbacksIn(feedbacks);
 
         if (cocktails.isEmpty()) {
-            throw new NotFoundException("No cocktails found");
+            LinkedHashMap<Cocktail, int[]> cocktailRatingsEmpty = new LinkedHashMap<>();
+            return menuMapper.cocktailFeedbackToCocktailFeedbackHostDto(cocktailRatingsEmpty, groupId);
         }
 
         int[] ratings = new int[2];

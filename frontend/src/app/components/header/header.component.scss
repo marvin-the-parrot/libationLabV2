@@ -1,5 +1,8 @@
 .custom-navbar {
   background-color: #6200EE;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .custom-navbar .navbar-logo {

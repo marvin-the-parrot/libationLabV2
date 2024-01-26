@@ -72,11 +72,13 @@
 
 .menu-card{
   position: relative;
-  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+  //box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
   margin: 0.25rem 0.25rem 1rem;
   padding: 0;
-  background-color: white;
+  background-color: #D9D9D9;
   border-radius: 0.25rem;
+  height: 100%;
+
 }
 .menu-header{
   color: white;
@@ -87,6 +89,9 @@
   padding: 0.5rem;
   font-size: 1.5rem;
   font-weight: bold;
+  height: 60px;
+  justify-content: center;
+  align-items: center;
 }
 
 .menu-body{
@@ -114,7 +119,12 @@
   margin-left: 6vw;
 }
 .btn.rounded-button:active {
-  background-color: white; /* Set background color to transparent */
+  background-color: #6200EE;
+  box-shadow: none;
+}
+
+.btn.rounded-button:hover {
+  background-color: #6200EE;
   box-shadow: none;
 }
 
@@ -165,7 +175,7 @@
 
 
 .cocktails-container {
-  background-color: #D9D9D9;
+  background-color: white;
   margin-left: 1vw;
   margin-top: calc(1vh + 27px);
   display: flex;
@@ -242,43 +252,8 @@
   background-color: #6200EE;
 }
 
-.info {
-  margin-right: 5px;
-  font-size: 20px;
-  cursor: pointer;
-  position:relative;
-}
-
-.info::after {
-  content: attr(data-tooltip);
-  background-color: #AC6AFE;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 14px;
-
-  /* Positioning */
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-  pointer-events: none;
-  z-index: 999;
-  width: 200px;
-  max-width: 300px;
-  white-space: normal;
-
-  text-overflow: ellipsis;
-
-
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-  border: 1px solid #D9D9D9;
-}
-
-.info:hover::after {
-  opacity: 1;
+.save-btn:hover {
+  background-color: #6200EE;
 }
 
 .selected-ingredients-preferences {
