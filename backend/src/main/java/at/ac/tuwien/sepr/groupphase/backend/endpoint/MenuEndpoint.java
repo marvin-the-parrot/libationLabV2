@@ -107,7 +107,7 @@ public class MenuEndpoint {
                                                  @RequestParam(name = "numberOfCocktails", required = false, defaultValue = "5") Integer numberOfCocktails) {
         LOGGER.info("GET " + BASE_PATH + "recommendation/{}", id);
         try {
-            return menuService.createRecommendation(id, numberOfCocktails, 1);
+            return menuService.createRecommendation(id, numberOfCocktails, 3);
         } catch (IllegalArgumentException e) {
             LOGGER.error("Error while creating recommendation", e);
             HttpStatus status = HttpStatus.BAD_REQUEST;

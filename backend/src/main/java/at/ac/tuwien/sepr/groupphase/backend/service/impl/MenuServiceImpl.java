@@ -161,7 +161,7 @@ public class MenuServiceImpl implements MenuService {
             throw new IllegalArgumentException("No preferences found for group with id " + groupId);
         }
 
-        // generate a optimal menu
+        // generate an optimal menu
         List<MenuRecommendationDto> recommendations = new ArrayList<>();
         recommendations.add(pickCocktailMenu(size, orderedCocktails, orderedPreferenceMap));
 
