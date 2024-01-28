@@ -26,8 +26,8 @@ public class CocktailIngredientsRepositoryTest {
     }
 
     @Test
-    public void findByIngredientNameAndCocktailName_searchByCocktailName_Expected1() {
-        int expected = 4;
+    public void findByIngredientNameAndCocktailName_searchByCocktailName_Expected5() {
+        int expected = 5;
         int result = cocktailIngredientsRepository.findByCocktailNameContainingIgnoreCase("Mojito").size();
 
         assertEquals(expected, result);
