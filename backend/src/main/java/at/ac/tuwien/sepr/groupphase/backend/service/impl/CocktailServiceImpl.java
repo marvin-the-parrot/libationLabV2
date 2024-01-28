@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -95,7 +96,8 @@ public class CocktailServiceImpl implements CocktailService {
         // Filter Cocktails by ingredients
         List<String> ingredientsString = searchTagParameters.getIngredientsName();
         if (cocktails.isEmpty() && searchParameters.getIngredientsName() != null && !searchParameters.getIngredientsName().isEmpty()) {
-            List<CocktailIngredients> cocktailIngredients = cocktailIngredientsRepository.findByIngredientNameIgnoreCase(searchTagParameters.getIngredientsName().get(0));
+            List<CocktailIngredients> cocktailIngredients =
+                cocktailIngredientsRepository.findByIngredientNameIgnoreCase(searchTagParameters.getIngredientsName().get(0));
             cocktails = cocktailRepository.findDistinctByCocktailIngredientsIn(cocktailIngredients);
 
             cocktails = filterCocktailsByIngredients(cocktails, ingredientsString);
@@ -146,37 +148,36 @@ public class CocktailServiceImpl implements CocktailService {
 
         // get all ingredients
         List<IngredientGroupDto> availableIngredients = ingredientService.getAllGroupIngredients(groupId);
-        // TODO: use one function for both cases
-        List<String> availableIngredientsList = new ArrayList<>();
-        for (IngredientGroupDto ingredientGroupDto : availableIngredients) {
-            availableIngredientsList.add(ingredientGroupDto.getName());
-        }
+        List<String> names = availableIngredients.stream().map(IngredientGroupDto::getName).toList();
+        List<Ingredient> ingredients = ingredientsRepository.findByNameIn(names);
 
-        // get all cocktails
-        List<Cocktail> cocktails = cocktailRepository.findAllByOrderByNameAsc();
+        // fetch how many ingredients each cocktail has
+        List<Object[]> cocktailIngredientsCount = cocktailIngredientsRepository.countIngredientsByCocktail();
+        Map<Long, Long> cocktailIngredientsCountMap = cocktailIngredientsCount.stream().collect(Collectors.toMap(
+            cocktail -> (Long) cocktail[0],
+            cocktail -> (Long) cocktail[1]
+        ));
 
-        // check if cocktail can be mixed with ingredients
-        // if yes add cocktail to list
-        List<Cocktail> cocktailsWithAllIngredients = new ArrayList<>();
-        for (Cocktail cocktail : cocktails) {
-            // List<Ingredient> cocktailIngredients = ingredientsRepository.findByCocktailIngredientsIn(cocktailIngredientsRepository.findAllByCocktail(cocktail));
-            List<Ingredient> cocktailIngredients = cocktail.getCocktailIngredients().stream().map(CocktailIngredients::getIngredient).toList();
+        // fetch how many ingredients each cocktail has that are available
+        List<Object[]> cocktailAvailableIngredientsCount = cocktailIngredientsRepository.countIngredientsByCocktailsIn(ingredients);
+        Map<Long, Long> cocktailAvailableIngredientsCountMap = cocktailAvailableIngredientsCount.stream().collect(Collectors.toMap(
+            cocktail -> (Long) cocktail[0],
+            cocktail -> (Long) cocktail[1]
+        ));
 
-            boolean hasAllIngredients = true;
-            for (Ingredient ingredient : cocktailIngredients) {
-                if (!availableIngredientsList.contains(ingredient.getName())) {
-                    hasAllIngredients = false;
-                    break;
-                }
-            }
-
-            if (hasAllIngredients) {
-                cocktailsWithAllIngredients.add(cocktail);
+        // compare the two maps and get the cocktails that have all ingredients available
+        List<Long> mixableCocktailIds = new ArrayList<>();
+        for (Map.Entry<Long, Long> entry : cocktailIngredientsCountMap.entrySet()) {
+            if (entry.getValue().equals(cocktailAvailableIngredientsCountMap.get(entry.getKey()))) {
+                mixableCocktailIds.add(entry.getKey());
             }
         }
+
+        // fetch all available cocktails from database
+        List<Cocktail> mixableCocktails = cocktailRepository.findAllById(mixableCocktailIds);
 
         List<CocktailDetailDto> cocktailOverviewDto = new ArrayList<>();
-        for (Cocktail cocktail : cocktailsWithAllIngredients) {
+        for (Cocktail cocktail : mixableCocktails) {
             cocktailOverviewDto.add(cocktailIngredientMapper.cocktailToCocktailDetailDto(cocktail));
         }
         return cocktailOverviewDto;

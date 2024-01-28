@@ -31,5 +31,7 @@ public interface IngredientsRepository extends JpaRepository<Ingredient, Long> {
 
     Ingredient findByName(String name);
 
+    List<Ingredient> findByNameIn(List<String> names);
+
     List<Ingredient> findByCocktailIngredientsIn(List<CocktailIngredients> cocktailIngredients);
 }
