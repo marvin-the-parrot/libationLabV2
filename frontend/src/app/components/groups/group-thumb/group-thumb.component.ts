@@ -59,11 +59,10 @@ export class GroupThumbComponent {
   private deleteFeedbackRelationsAtUserLeavingGroup(groupId: number, memberId: number) {
     this.feedbackService.deleteFeedbackRelationsAtUserLeavingGroup(groupId, memberId).subscribe({
       next: () => {
-        this.notification.success('Successfully removed unused feedbacks');
+        console.log(`Successfully removed unused feedbacks`);
       },
       error: error => {
         console.error(`Error removing unused feedback from user`, error);
-        this.notification.error(`Error removing feedbacks from group.`);
       }
     })
   }

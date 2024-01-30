@@ -73,8 +73,6 @@ export class GroupDetailComponent {
     const groupId = this.route.snapshot.params['id'];
     this.getGroup(groupId);
     this.getIngredients(groupId);
-    //this.getCocktailsMenu(groupId);
-
     console.log(this.group.cocktails);
   }
 
@@ -143,11 +141,10 @@ export class GroupDetailComponent {
   private deleteFeedbackRelationsAtUserLeavingGroup(groupId: number, memberId: number) {
     this.feedbackService.deleteFeedbackRelationsAtUserLeavingGroup(groupId, memberId).subscribe({
       next: () => {
-        this.notification.success('Successfully removed unused feedbacks');
+        console.log(`Successfully removed feedback from user`);
       },
       error: error => {
         console.error(`Error removing unused feedback from user`, error);
-        this.notification.error(`Error removing feedbacks from group.`);
       }
     })
   }

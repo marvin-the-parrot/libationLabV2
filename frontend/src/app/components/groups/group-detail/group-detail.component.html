@@ -60,7 +60,7 @@
 
 
     <!-- Guest Menu -->
-    <div *ngIf="menu.cocktailsList.length !== 0">
+    <div *ngIf="menu.cocktailsList.length !== 0 && group?.host?.name !== username">
 
       <div class="cocktails-container">
         <div>
@@ -98,7 +98,7 @@
     </div>
 
     <!-- Host Menu -->
-    <div *ngIf="menuHost.cocktailsList.length !== 0">
+    <div *ngIf="menuHost.cocktailsList.length !== 0 && group?.host?.name === username">
       <div class="cocktails-container">
         <div>
           <p class="cocktails-count">{{menuHost.cocktailsList.length}} Cocktails</p>

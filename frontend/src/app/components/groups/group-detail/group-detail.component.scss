@@ -299,9 +299,14 @@ input {
   background-color: #6200EE;
 }
 
-.like-button,
+.like-button {
+  background-color: #7ef06c;
+  color: white;
+  border: none;
+  margin-left: 1em;
+}
 .dislike-button {
-  background-color: #c497ff;
+  background-color: #e6a1a1;
   color: white;
   border: none;
   margin-left: 1em;
@@ -320,13 +325,20 @@ input {
   border-left: none;
 }
 
-.btn-group button:hover {
-  background-color: #AC6AFE;
+.like-button:hover {
+  background-color: #31D916;
 }
 
-.like-button.highlighted,
+.dislike-button:hover {
+  background-color: #ED4949;
+}
+
+.like-button.highlighted {
+  background-color: #31D916;
+  color: white;
+}
 .dislike-button.highlighted {
-  background-color: #AC6AFE;
+  background-color: #ED4949;
   color: white;
 }
 
