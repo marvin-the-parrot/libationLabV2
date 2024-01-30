@@ -30,7 +30,7 @@ export class ForgotPasswordComponent {
         this.notification.info('An Email has been sent to the provided email address');
         this.router.navigate(['/login']);
       },
-      error: error => {
+      error: () => {
         this.notification.info('An Email has been sent to the provided email address');
         this.router.navigate(['/login']);
       }

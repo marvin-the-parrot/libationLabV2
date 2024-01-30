@@ -1,5 +1,4 @@
 import {IngredientDto} from "./ingredient";
-import { List } from 'immutable'; // Import List from Immutable.js
 
 export interface CocktailListDto {
   id: number;
@@ -43,12 +42,6 @@ export interface CocktailDetailDto {
   ingredients: Map<string, string>;
   preferenceName: string[];
   instructions: string;
-}
-
-export interface CocktailSearch {
-  cocktailName?: string;
-  ingredientsName?: string;
-  preferenceName?: string;
 }
 
 export interface CocktailTagSearchDto {

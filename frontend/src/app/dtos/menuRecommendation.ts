@@ -1,4 +1,4 @@
-import {CocktailListDto, CocktailOverviewDto} from "./cocktail";
+import {CocktailListDto} from "./cocktail";
 
 export interface MenuRecommendation {
     cocktailMenu: CocktailListDto[];

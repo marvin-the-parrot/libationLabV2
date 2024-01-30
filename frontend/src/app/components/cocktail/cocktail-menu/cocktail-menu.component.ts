@@ -42,7 +42,6 @@ export class CocktailMenuComponent {
   nameOfCocktail: string;
   nameOfIngredient: string;
   nameOfPreference: string;
-  bannerError: string | null = null;
   selectedCocktails: CocktailListDto[] = [];
   searchParams: CocktailTagSearchDto = {};
   selectedIngredients: string[] = []; // List of selected ingredients (tags)
@@ -174,10 +173,7 @@ export class CocktailMenuComponent {
           },
           error: error => {
             console.error('Error fetching cocktails', error);
-            this.bannerError = 'Could not fetch cocktails: ' + error.message;
-            const errorMessage = error.status === 0
-              ? 'Is the backend up?'
-              : error.message.message;
+            this.notification.error('Something went wrong, Could load cocktail card.');
           }
         });
     } else {
@@ -192,10 +188,7 @@ export class CocktailMenuComponent {
           },
           error: error => {
             console.error('Error fetching cocktails', error);
-            this.bannerError = 'Could not fetch cocktails: ' + error.message;
-            const errorMessage = error.status === 0
-              ? 'Is the backend up?'
-              : error.message.message;
+            this.notification.error('Something went wrong, Could load cocktail card.');
           }
         });
     }
@@ -260,7 +253,6 @@ export class CocktailMenuComponent {
 
     this.feedbackService.createFeedbackRelations(newFeedbackRelations).subscribe({
       next: () => {
-        this.notification.success('Feedback relations saved successfully.');
         this.router.navigate(['/groups/' + newFeedbackRelations.groupId + '/detail']);
       },
         error: error => {
@@ -277,7 +269,9 @@ export class CocktailMenuComponent {
         this.selectedCocktails = menu.cocktailsList;
       },
       error: error => {
+        this.notification.error('Could not load cocktails menu.');
         console.error('Could not fetch cocktails menu due to:');
+          console.log(error);
       }
     });
   }
@@ -289,7 +283,7 @@ export class CocktailMenuComponent {
 
     let result = 'Ingredients: ';
     let ingredientNames = Array.from(Object.keys(ingredients))
-    ingredientNames.forEach((name, index) => {
+    ingredientNames.forEach((name) => {
       result += name + ', ';
     });
     result = result.substring(0, result.length - 2);

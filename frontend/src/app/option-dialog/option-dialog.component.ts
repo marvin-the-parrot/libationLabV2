@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { DialogService } from '../services/dialog.service';
 
 @Component({
   selector: 'app-option-dialog',
@@ -7,5 +6,5 @@ import { DialogService } from '../services/dialog.service';
   styleUrls: ['./option-dialog.component.scss']
 })
 export class OptionDialogComponent {
-  
+
 }

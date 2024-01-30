@@ -18,7 +18,6 @@ export class CreateAccountComponent implements OnInit {
   submitted = false;
   // Error flag
   error = false;
-  errorMessage = '';
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -64,13 +63,6 @@ export class CreateAccountComponent implements OnInit {
         this.error = true;
       }
     });
-  }
-
-  /**
-   * Error flag will be deactivated, which clears the error message
-   */
-  vanishError() {
-    this.error = false;
   }
 
   ngOnInit() {

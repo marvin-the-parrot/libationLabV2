@@ -1,12 +1,11 @@
 import {Component, EventEmitter, Inject, OnInit, Output} from '@angular/core';
 import {MAT_DIALOG_DATA} from "@angular/material/dialog";
-import {IngredientListDto, IngredientSuggestionDto} from "../dtos/ingredient";
+import {IngredientSuggestionDto} from "../dtos/ingredient";
 import {ToastrService} from "ngx-toastr";
 import {CocktailService} from 'src/app/services/cocktail.service';
 import {ErrorFormatterService} from "../services/error-formatter.service";
 import {RecommendedMenues} from "../dtos/recommendedMenues";
-import {CocktailListDto} from "../dtos/cocktail";
-import {MenuCocktailsDto} from "../dtos/menu"; // Import List from Immutable.js
+import {MenuCocktailsDto} from "../dtos/menu";
 
 
 @Component({
@@ -18,7 +17,7 @@ export class GenerateMenuDialogComponent implements OnInit {
   ingredients: IngredientSuggestionDto[] = [];
   currentMenu: number = 0; // the index of the ingredient that is currently selected, to show its cocktails
   menus: RecommendedMenues = null;
-  @Output() result = new EventEmitter<boolean>(); // emits true if a ingredient was added, false if not (undefined if the dialog was closed)
+  @Output() result = new EventEmitter<boolean>(); // emits true if an ingredient was added, false if not (undefined if the dialog was closed)
 
 
   constructor(
@@ -43,9 +42,10 @@ export class GenerateMenuDialogComponent implements OnInit {
   }
 
   /**
-   * Get suggestions for menues from the backend
+   * Get suggestions for menus from the backend
    *
    * @param id The id of the group to get suggestions for
+   * @param numberOfCocktails how many cocktails should be in the menu
    */
   private getGeneratedMenu(id: number, numberOfCocktails: number) {
     this.cocktailService.generateCocktailMenu(id,numberOfCocktails).subscribe({
@@ -71,7 +71,7 @@ export class GenerateMenuDialogComponent implements OnInit {
       cocktailsList: this.menus.menuList[this.currentMenu].cocktailMenu,
     };
     this.cocktailService.saveCocktails(menu).subscribe({
-      next: (menu: MenuCocktailsDto) => {
+      next: () => {
         this.notification.success("Successfully saved menu!");
         this.result.emit(true);
       },

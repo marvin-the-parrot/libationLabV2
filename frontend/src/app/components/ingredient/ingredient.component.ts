@@ -1,5 +1,4 @@
 import {Component, OnInit } from '@angular/core';
-import {Subject} from 'rxjs';
 import {IngredientService} from 'src/app/services/ingredient.service';
 import {IngredientListDto} from '../../dtos/ingredient';
 import {ToastrService} from 'ngx-toastr';
@@ -13,7 +12,6 @@ import {Modes} from "../user-settings/user-settings.component";
 })
 export class IngredientComponent implements OnInit {
   ingredients: IngredientListDto[] = [];
-  searchChangedObservable = new Subject<void>();
   nameOfIngredient: String = "";
   bannerError: string | null = null;
   firstImageUrlPart:string = "https://www.thecocktaildb.com/images/ingredients/";

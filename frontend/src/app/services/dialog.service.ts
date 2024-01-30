@@ -1,10 +1,10 @@
-import {Injectable, numberAttribute} from '@angular/core';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
 import {
   ConfirmationDialogComponent,
   ConfirmationDialogMode
 } from '../confirmation-dialog/confirmation-dialog.component';
-import {Observable, Subject} from 'rxjs';
+import {Observable} from 'rxjs';
 import {OptionDialogComponent} from '../option-dialog/option-dialog.component';
 import {AddIngredientDialogComponent} from "../add-ingredient-dialog/add-ingredient-dialog.component";
 import {GenerateMenuDialogComponent} from "../generate-menu-dialog/generate-menu-dialog.component";
@@ -14,8 +14,6 @@ import {CocktailDetailComponent} from "../components/cocktail/cocktail-detail/co
   providedIn: 'root',
 })
 export class DialogService {
-  private selectedOptionSubject = new Subject<string>();
-  private dialogRef: MatDialogRef<OptionDialogComponent>;
 
   constructor(private dialog: MatDialog) {
   }
@@ -72,8 +70,9 @@ export class DialogService {
   }
 
   /**
-   * Opens a dialog that shows the user menues and lets the user add one of them to the group
-   * @param groupId the id of the group for which the menues should be generated
+   * Opens a dialog that shows the user menus and lets the user add one of them to the group
+   * @param groupId the id of the group for which the menus should be generated
+   * @param numberOfCocktails number of cocktails that should be in the menu
    */
   openGenerateMenuDialog(groupId: number, numberOfCocktails: number): Observable<boolean> {
     const dialogRef = this.dialog.open<GenerateMenuDialogComponent, any, boolean>(

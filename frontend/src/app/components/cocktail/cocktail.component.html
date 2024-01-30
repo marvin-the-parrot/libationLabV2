@@ -12,7 +12,7 @@
 
       <div class="search-container">
         <label class="label-search-name">Name</label>
-        <!-- Suchfeld für Name -->
+        <!-- Search-field for name -->
         <div class="wrapper-name col-md-6 col-lg-6">
           <input matInput
                  type="text"
@@ -22,7 +22,6 @@
                  class="form-control"
                  [(ngModel)]="nameOfCocktail"
                  (ngModelChange)="searchChanged()"
-                 #groupNameModel="ngModel"
                  required
                  autofocus
           >
@@ -32,7 +31,7 @@
 
       <div class="search-container">
         <label class="label-search-ing-pref">Ingredients</label>
-        <!-- Suchfeld für Zutaten -->
+        <!-- Search-field for Ingredients -->
         <div class="wrapper-ing-pref col-md-6 col-lg-6">
           <app-autocomplete #ingredientAutocomplete
             name="ingredientsSelection"
@@ -65,7 +64,7 @@
         <label class="label-search-ing-pref">
           Preferences
         </label>
-        <!-- Suchfeld für Präferenzen -->
+        <!-- Search-field for Preferences -->
         <div class="wrapper-ing-pref col-md-6 col-lg-6">
           <app-autocomplete #preferenceAutocomplete
             name="preferencesSelection"
@@ -119,7 +118,7 @@
 
   <div class="right-container col-lg-3 col-md-3 col-sm-3 col-3">
     <figure *ngIf="isToShowImg">
-      <img class="image-style" [src]="imageUrl">
+      <img class="image-style" [src]="imageUrl" alt="Image of cocktail">
       <figcaption class="image-name">{{imageName}}</figcaption>
     </figure>
     <br> <br>

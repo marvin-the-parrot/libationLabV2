@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {AuthService} from "../../services/auth.service";
 import {GroupOverview} from "../../dtos/group-overview";
 import {GroupsService} from "../../services/groups.service";
 import {MenuCocktailsDto} from 'src/app/dtos/menu';
@@ -21,7 +20,6 @@ export class GroupsComponent implements OnInit {
   username: string = JSON.parse(localStorage.getItem('user')).name;
 
   constructor(
-    public authService: AuthService,
     public groupService: GroupsService,
     private cocktailService: CocktailService,
     private notification: ToastrService,

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Globals} from '../global/globals';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {CocktailDetailDto, CocktailListDto, CocktailTagSearchDto} from "../dtos/cocktail";
+import {CocktailDetailDto, CocktailTagSearchDto} from "../dtos/cocktail";
 import {Observable} from "rxjs";
 import {MenuCocktailsDetailViewDto, MenuCocktailsDetailViewHostDto, MenuCocktailsDto} from '../dtos/menu';
 import {IngredientListDto} from "../dtos/ingredient";

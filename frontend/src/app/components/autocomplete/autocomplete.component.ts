@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {debounceTime, of, Subject, switchMap, tap} from 'rxjs';
 
@@ -8,7 +8,7 @@ import {debounceTime, of, Subject, switchMap, tap} from 'rxjs';
  * The using site needs to supply a callback that produces the autocomplete options
  * and a callback that formats the model objects to readable text.
  *
- * @param T the model type. In practice only used as a placeholder and helper for typesafety inside this class.
+ * @param T the model type. In practice only used as a placeholder and helper for type safety inside this class.
  */
 @Component({
   selector: 'app-autocomplete',

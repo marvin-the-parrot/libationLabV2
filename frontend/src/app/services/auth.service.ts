@@ -46,23 +46,6 @@ export class AuthService {
     return localStorage.getItem('authToken');
   }
 
-
-  /**
-   * Returns the user role based on the current token
-   */
-  getUserRole() {
-    if (this.getToken() != null) {
-      const decoded: any = jwtDecode(this.getToken());
-      const authInfo: string[] = decoded.rol;
-      if (authInfo.includes('ROLE_ADMIN')) {
-        return 'ADMIN';
-      } else if (authInfo.includes('ROLE_USER')) {
-        return 'USER';
-      }
-    }
-    return 'UNDEFINED';
-  }
-
   private setToken(authResponse: string) {
     localStorage.setItem('authToken', authResponse);
   }

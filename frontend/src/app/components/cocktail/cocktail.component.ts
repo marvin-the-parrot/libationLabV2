@@ -1,9 +1,8 @@
 import {Component, ViewChild} from '@angular/core';
-import {Observable, of, Subject} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {CocktailService} from 'src/app/services/cocktail.service';
-import {CocktailDetailDto, CocktailListDto, CocktailTagSearchDto} from '../../dtos/cocktail';
+import {CocktailDetailDto, CocktailTagSearchDto} from '../../dtos/cocktail';
 import {ToastrService} from 'ngx-toastr';
-import {List} from 'immutable'; // Import List from Immutable.js
 import {IngredientListDto} from "../../dtos/ingredient";
 import {PreferenceListDto} from "../../dtos/preference";
 import {AutocompleteComponent} from '../autocomplete/autocomplete.component';
@@ -25,12 +24,9 @@ export class CocktailComponent {
 
   cocktails: CocktailDetailDto[] = [];
   cocktailIngredients: Map<string, string>;
-  userPreferences: List<String>;
-  searchChangedObservable = new Subject<void>();
   nameOfCocktail: string;
   nameOfIngredient: string;
   nameOfPreference: string;
-  bannerError: string | null = null;
   imageUrl: string = "";
   isToShowImg: boolean = false;
   imageName: String = "";
@@ -145,14 +141,14 @@ export class CocktailComponent {
           if (data == null) {
             this.isToShowImg = false;
           }
-          this.showImage(this.cocktails[0].name);
+          if (this.cocktails.length != 0) {
+            this.showImage(this.cocktails[0].name);
+          }
+
         },
         error: error => {
           console.error('Error fetching cocktails', error);
-          this.bannerError = 'Could not fetch cocktails: ' + error.message;
-          const errorMessage = error.status === 0
-            ? 'Is the backend up?'
-            : error.message.message;
+          this.notification.error('Something went wrong, could not load cocktails');
         }
       });
   }

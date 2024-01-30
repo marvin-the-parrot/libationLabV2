@@ -39,7 +39,7 @@ export class GroupThumbComponent {
     this.dialogService.openConfirmationDialog(ConfirmationDialogMode.Leave).subscribe((result) => {
       if (result) {
         this.service.removeMemberFromGroup(this.group.id, user.id).subscribe({
-          next: data => {
+          next: () => {
             this.notification.success(`Successfully left Group '${this.group.name}'.`);
             this.groupLeft.emit();
             this.deleteFeedbackRelationsAtUserLeavingGroup(this.group.id, user.id);
@@ -58,7 +58,7 @@ export class GroupThumbComponent {
 
   private deleteFeedbackRelationsAtUserLeavingGroup(groupId: number, memberId: number) {
     this.feedbackService.deleteFeedbackRelationsAtUserLeavingGroup(groupId, memberId).subscribe({
-      next: data => {
+      next: () => {
         this.notification.success('Successfully removed unused feedbacks');
       },
       error: error => {

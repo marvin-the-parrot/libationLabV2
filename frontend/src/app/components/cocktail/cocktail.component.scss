@@ -95,7 +95,7 @@
   grid-template-rows: 1fr auto;
   position: relative;
   width: 17vw;
-  margin-top: 0vh;
+  margin-top: 0;
   margin-left: -5vw;
 }
 
@@ -125,7 +125,7 @@
 
 .result-style {
   font-size: 14px;
-  margin-left: 0vw;
+  margin-left: 0;
   position: sticky;
   top: 0;
   background-color: #ECECEC !important;

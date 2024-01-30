@@ -60,7 +60,7 @@ export class GroupEditComponent {
     this.dialogService.openConfirmationDialog(ConfirmationDialogMode.DeleteGroup).subscribe((result) => {
       if (result) {
         this.service.deleteGroup(this.group.id).subscribe({
-          next: data => {
+          next: () => {
             this.notification.success(`Successfully deleted Group "${this.group.name}".`);
             this.router.navigate(['/groups']);
           },

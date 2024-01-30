@@ -39,18 +39,18 @@
           <div class="card-buttons col-xl-2 col-lg-2 p-1">
             <div class="btn-group">
               <button class="btn btn-info btn-sm responsive-info-button"
-                      aria-label="Accept GroupOverview Invation"
+                      aria-label="Accept GroupOverview Invitation"
                       (click)="acceptInvitation(message)">
                 <i class="bi bi-check-lg"></i>
               </button>
               <button class="btn btn-danger btn-sm responsive-warning-button"
-                      aria-label="Decline GroupOverview Invitaion"
+                      aria-label="Decline GroupOverview Invitation"
                       *ngIf="message.isRead === false"
                       (click)="declineInvitation(message)">
                 <i class="bi bi-x-lg"></i>
               </button>
               <button class="btn btn-trash btn-sm responsive-danger-button"
-                      aria-label="Trash GroupOverview Invitaion"
+                      aria-label="Trash GroupOverview Invitation"
                       *ngIf="message.isRead === true"
                       (click)="deleteMessage(message)">
                 <i class="bi bi-trash"></i>

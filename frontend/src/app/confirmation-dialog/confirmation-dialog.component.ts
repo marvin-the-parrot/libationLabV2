@@ -69,6 +69,4 @@ export class ConfirmationDialogComponent {
         break;
     }
   }
-
-  protected readonly ConfirmationDialogMode = ConfirmationDialogMode;
 }

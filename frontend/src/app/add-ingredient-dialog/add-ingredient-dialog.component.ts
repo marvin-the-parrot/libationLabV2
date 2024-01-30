@@ -14,7 +14,7 @@ export class AddIngredientDialogComponent implements OnInit {
     ingredients: IngredientSuggestionDto[] = [];
     currentIngredient: number = 0; // the index of the ingredient that is currently selected, to show its cocktails
 
-    @Output() result = new EventEmitter<boolean>(); // emits true if a ingredient was added, false if not (undefined if the dialog was closed)
+    @Output() result = new EventEmitter<boolean>(); // emits true if an ingredient was added, false if not (undefined if the dialog was closed)
 
 
     constructor(

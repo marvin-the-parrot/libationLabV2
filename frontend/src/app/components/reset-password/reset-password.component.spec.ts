@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
 import {ResetPasswordComponent} from './reset-password.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {RouterTestingModule} from '@angular/router/testing';
@@ -6,8 +6,8 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 
 describe('ResetPasswordComponent', () => {
-  let component;
-  let fixture;
+  let component: any;
+  let fixture: ComponentFixture<ResetPasswordComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({

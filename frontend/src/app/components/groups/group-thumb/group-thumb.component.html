@@ -12,7 +12,7 @@
       <h5>Selected Cocktails:</h5>
       <ul *ngIf="group.cocktails && group.cocktails.length > 0; else noCocktails" class="cocktails-list">
         <!-- TODO: cocktail.name is not defined -->
-        <li *ngFor="let cocktail of group.cocktails">{{cocktail.name}}</li>
+        <li *ngFor="let cocktail of group.cocktails">{{ cocktail.name }}</li>
       </ul>
       <ng-template #noCocktails>
         <div class="noCocktails">

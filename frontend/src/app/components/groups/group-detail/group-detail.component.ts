@@ -13,7 +13,7 @@ import {ConfirmationDialogMode} from "../../../confirmation-dialog/confirmation-
 import {IngredientGroupDto} from "../../../dtos/ingredient";
 import {IngredientService} from "../../../services/ingredient.service";
 import {CocktailService} from 'src/app/services/cocktail.service';
-import {MenuCocktailsDetailViewDto, MenuCocktailsDetailViewHostDto, MenuCocktailsDto} from 'src/app/dtos/menu';
+import {MenuCocktailsDetailViewDto, MenuCocktailsDetailViewHostDto} from 'src/app/dtos/menu';
 import {CocktailFeedbackDto, FeedbackState} from "../../../dtos/cocktail";
 import {FeedbackService} from "../../../services/feedback.service";
 import {Location} from "@angular/common";
@@ -51,11 +51,9 @@ export class GroupDetailComponent {
 
   ingredients: IngredientGroupDto[] = [];
 
-  dummyMemberSelectionModel: unknown; // Just needed for the autocomplete
   submitted = false;
   // Error flag
   error = false;
-  errorMessage = '';
 
   constructor(
     private groupsService: GroupsService,
@@ -125,7 +123,7 @@ export class GroupDetailComponent {
     this.dialogService.openConfirmationDialog(ConfirmationDialogMode.RemoveUser).subscribe((result) => {
       if (result) {
         this.groupsService.removeMemberFromGroup(this.group.id, member.id).subscribe({
-          next: data => {
+          next: () => {
             this.notification.success(`Successfully removed '${member.name}' from Group '${this.group.name}'.`);
             this.getGroup(this.group.id); // refresh group
             this.deleteFeedbackRelationsAtUserLeavingGroup(this.group.id, member.id);
@@ -144,7 +142,7 @@ export class GroupDetailComponent {
 
   private deleteFeedbackRelationsAtUserLeavingGroup(groupId: number, memberId: number) {
     this.feedbackService.deleteFeedbackRelationsAtUserLeavingGroup(groupId, memberId).subscribe({
-      next: data => {
+      next: () => {
         this.notification.success('Successfully removed unused feedbacks');
       },
       error: error => {
@@ -159,7 +157,7 @@ export class GroupDetailComponent {
       if (result) {
 
         this.groupsService.makeMemberHost(this.group.id, member.id).subscribe({
-          next: data => {
+          next: () => {
             this.notification.success(`Successfully made '${member.name}' host of Group '${this.group.name}'.`);
             this.getGroup(this.group.id); // refresh group
           },
@@ -241,8 +239,8 @@ export class GroupDetailComponent {
       next: (menu: MenuCocktailsDetailViewDto) => {
         this.menu = menu;
       },
-      error: error => {
-        console.error('Could not fetch cocktails menu due to:');
+      error: () => {
+        console.error('Could not fetch cocktails menu');
       }
     });
   }
@@ -252,8 +250,8 @@ export class GroupDetailComponent {
       next: (menu: MenuCocktailsDetailViewHostDto) => {
         this.menuHost = menu;
       },
-      error: error => {
-        console.error('Could not fetch cocktails menu due to:');
+      error: () => {
+        console.error('Could not fetch cocktails menu');
       }
     });
   }
@@ -298,7 +296,7 @@ export class GroupDetailComponent {
       next: () => {
         this.notification.success("Successfully liked cocktail");
       },
-      error: error => {
+      error: () => {
         console.error('Like did not work, something went wrong');
         this.notification.error('Like did not work, something went wrong');
       }
@@ -323,7 +321,7 @@ export class GroupDetailComponent {
       next: () => {
         this.notification.success("Successfully disliked cocktail");
       },
-      error: error => {
+      error: ()=> {
         console.error('Dislike did not work, something went wrong');
         this.notification.error('Like did not work, something went wrong');
       }
@@ -352,10 +350,6 @@ export class GroupDetailComponent {
     return `Positive: ${positiveRating}, Negative: ${negativeRating}`;
   }
 
-}
-
-function takeUntil(destroy$: any): any {
-  throw new Error('Function not implemented.');
 }
 
 

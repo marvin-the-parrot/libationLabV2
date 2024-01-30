@@ -12,7 +12,6 @@ import {MessageHeaderSharedService} from "../../services/message-header-shared.s
 export class MessageComponent implements OnInit {
 
   error = false;
-  errorMessage = '';
   // After first submission attempt, form validation will start
   submitted = false;
 

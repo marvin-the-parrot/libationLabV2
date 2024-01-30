@@ -1,8 +1,7 @@
 import {Injectable} from "@angular/core";
 import {Globals} from '../global/globals';
-import {HttpClient, HttpParams} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {IngredientListDto} from "../dtos/ingredient";
 import {PreferenceListDto} from "../dtos/preference";
 
 @Injectable({
@@ -23,9 +22,6 @@ export class PreferenceService {
    * Loads all fitting preferences for autocomplete
    */
   searchPreferencesUserExisting(name: string): Observable<PreferenceListDto[]> {
-    let params = new HttpParams();
-    params = params.append("name", name);
-
     return this.httpClient.get<PreferenceListDto[]>(this.preferenceBaseUri + '/user-preference-auto/' + name);
   }
 
