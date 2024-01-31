@@ -135,6 +135,10 @@ public class MenuServiceImpl implements MenuService {
     public RecommendedMenuesDto createRecommendation(Long groupId, Integer size, Integer numberOfRandomMenues) throws IllegalArgumentException {
         LOGGER.info("Create recommendation for group {}", groupId);
 
+        if (size == 0) {
+            throw new IllegalArgumentException("Size of Menu must be greater than 0");
+        }
+
         // fetch preferences of group from db
         Set<UserGroup> group = userGroupRepository.findAllByIdGroup(groupId);
         if (group == null) {
@@ -241,7 +245,8 @@ public class MenuServiceImpl implements MenuService {
     public MenuCocktailsDetailViewHostDto getMenuWithRatings(Long groupId) throws NotFoundException {
         LOGGER.debug("Get ratings for group {}", groupId);
 
-        List<Feedback> feedbacks = feedbackRepository.findByApplicationGroup(groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException("Group not found")));
+        List<Feedback> feedbacks =
+            feedbackRepository.findByApplicationGroup(groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException("Group not found")));
         List<Cocktail> cocktails = cocktailRepository.findDistinctByFeedbacksIn(feedbacks);
 
         if (cocktails.isEmpty()) {

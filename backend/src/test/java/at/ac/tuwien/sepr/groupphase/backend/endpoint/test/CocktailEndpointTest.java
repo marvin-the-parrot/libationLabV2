@@ -141,13 +141,13 @@ public class CocktailEndpointTest {
             () -> assertEquals("Amaretto", result.get(0).getName()),
             () -> assertEquals("Aperol", result.get(1).getName()),
             () -> assertEquals("Aromatic", result.get(2).getName()),
-            () -> assertEquals("Beer mug", result.get(3).getName()),
-            () -> assertEquals("Beer pilsner", result.get(4).getName()),
+            () -> assertEquals("Beer Mug", result.get(3).getName()),
+            () -> assertEquals("Beer Pilsner", result.get(4).getName()),
             () -> assertEquals("Berry", result.get(5).getName()),
             () -> assertEquals("Bitter", result.get(6).getName()),
             () -> assertEquals("Bourbon", result.get(7).getName()),
             () -> assertEquals("Brandy", result.get(8).getName()),
-            () -> assertEquals("Brandy snifter", result.get(9).getName())
+            () -> assertEquals("Brandy Snifter", result.get(9).getName())
         );
     }
 

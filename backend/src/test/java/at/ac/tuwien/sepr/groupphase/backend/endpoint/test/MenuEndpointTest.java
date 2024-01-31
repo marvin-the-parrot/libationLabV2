@@ -58,7 +58,7 @@ public class MenuEndpointTest {
             () -> Assert.eq(result.getCocktailsList().size(), 0, "Number of cocktails in menu.")
         );
     }
-    
+
     @Test
     @WithMockUser(roles = {"USER"})
     public void getMenu_ExpectedNotFoundException() throws Exception {
@@ -80,7 +80,7 @@ public class MenuEndpointTest {
     	MenuCocktailsDto menuCocktailsDto = new MenuCocktailsDto();
     	menuCocktailsDto.setGroupId(1L);
     	menuCocktailsDto.setCocktailsList(List.of(cocktailOverviewDto));
-    	
+
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/menu")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(menuCocktailsDto))
@@ -107,7 +107,7 @@ public class MenuEndpointTest {
     	MenuCocktailsDto menuCocktailsDto = new MenuCocktailsDto();
     	menuCocktailsDto.setGroupId(-1L);
     	menuCocktailsDto.setCocktailsList(List.of(cocktailOverviewDto));
-    	
+
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/menu")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(menuCocktailsDto))
@@ -117,7 +117,7 @@ public class MenuEndpointTest {
 
         assertEquals("Group with id -1 not found", contentResult);
     }
-    
+
     @Test
     @WithMockUser(roles = {"USER"}, username = "user1@email.com")
     @Transactional
@@ -130,7 +130,7 @@ public class MenuEndpointTest {
     	MenuCocktailsDto menuCocktailsDto = new MenuCocktailsDto();
     	menuCocktailsDto.setGroupId(1L);
     	menuCocktailsDto.setCocktailsList(List.of(cocktailOverviewDto));
-    	
+
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/menu")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(menuCocktailsDto))
@@ -140,7 +140,7 @@ public class MenuEndpointTest {
 
         assertEquals("{\"message\":\"CONFLICT: Not all cocktails found\",\"errors\":[\"the given cocktails do not match the ones found\"]}", contentResult);
     }
-    
+
     @Test
     @WithMockUser(roles = {"USER"})
     public void getSuggestionForCocktails_Expected2Menus() throws Exception {
@@ -156,5 +156,13 @@ public class MenuEndpointTest {
 
 
     }
+
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void getSuggestionForCocktailsMenuSize0_ExpectedException() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/menu/1/recommendation?numberOfCocktails=0")).andExpect(status().isBadRequest());
+
+    }
+
 
 }

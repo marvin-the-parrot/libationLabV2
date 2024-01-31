@@ -105,11 +105,11 @@ public class PreferenceEndpointTest {
     public void addUserPreferences_addingPreferencesPositive_expectedSize() throws Exception {
         PreferenceListDto[] preferences = new PreferenceListDto[2];
         PreferenceListDto ginger = new PreferenceListDto();
-        ginger.setId(47L);
+        ginger.setId(67L);
         ginger.setName("Ginger");
         preferences[0] = ginger;
         PreferenceListDto cherry = new PreferenceListDto();
-        cherry.setId(48L);
+        cherry.setId(54L);
         cherry.setName("Cherry");
         preferences[1] = cherry;
 
@@ -124,8 +124,8 @@ public class PreferenceEndpointTest {
 
         assertAll(
             () -> assertEquals(2, result.size()),
-            () -> assertEquals("Ginger", result.get(0).getName()),
-            () -> assertEquals("Cherry", result.get(1).getName())
+            () -> assertEquals("Cherry", result.get(0).getName()),
+            () -> assertEquals("Ginger", result.get(1).getName())
         );
     }
 
@@ -134,11 +134,11 @@ public class PreferenceEndpointTest {
     public void addUserPreferences_addingPreferencesNegative_NotFoundExceptionBecauseUserNotExists() throws Exception {
         PreferenceListDto[] preferences = new PreferenceListDto[2];
         PreferenceListDto ginger = new PreferenceListDto();
-        ginger.setId(47L);
+        ginger.setId(67L);
         ginger.setName("Ginger");
         preferences[0] = ginger;
         PreferenceListDto cherry = new PreferenceListDto();
-        cherry.setId(48L);
+        cherry.setId(54L);
         cherry.setName("Cherry");
         preferences[1] = cherry;
 
@@ -202,7 +202,7 @@ public class PreferenceEndpointTest {
         assertEquals(HttpStatus.CONFLICT.value(), status);
         assertAll(
             () -> assertEquals(HttpStatus.CONFLICT.value(), status),
-            () -> assertTrue(response.getContentAsString().contains("Wrong Preference is not the same as Sour"))
+            () -> assertTrue(response.getContentAsString().contains("Wrong Preference is not the same as Creamy"))
         );
     }
 
