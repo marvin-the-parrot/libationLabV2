@@ -18,6 +18,10 @@ public class GroupOverviewDto {
         this.members = members;
     }
 
+    // Default constructor
+    public GroupOverviewDto() {
+    }
+
     public UserListGroupDto getHost() {
         return host;
     }

@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListDto;
 
-@ActiveProfiles("generateData")
+@ActiveProfiles({"test", "generateData"})
 @SpringBootTest
 public class CocktailEndpointTest {
 

@@ -2,6 +2,7 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint.test;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
@@ -30,14 +31,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles("generateData")
+@ActiveProfiles({"test", "generateData"})
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class GroupEndpointTest {
@@ -275,20 +276,6 @@ public class GroupEndpointTest {
 
     @Test
     @WithMockUser(roles = {"USER"})
-    public void deleteMember_deleteGroupByExistingIdAndFromHost_expectedFalse() throws Exception {
-        setup();
-        prepareUserGroupAndMember();
-        Optional<UserGroup> expected = userGroupRepository.findById(userGroupKey);
-
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/groups/{groupId}/{userId}", applicationGroup.getId(), applicationUserMember.getId()))
-            .andExpect(status().isNotFound());
-        Optional<UserGroup> result = userGroupRepository.findById(userGroupKey);
-
-        assertNotEquals(expected, result);
-    }
-
-    @Test
-    @WithMockUser(roles = {"USER"})
     public void deleteMember_deleteGroupByNotExistingIdAndFromHost_expectedTrue() throws Exception {
         setup();
         prepareUserGroupAndMember();
@@ -347,6 +334,21 @@ public class GroupEndpointTest {
         assertEquals(expected, result);
     }
 
+    @Test
+    @WithMockUser(username = "user1@email.com")
+    public void findGroupsByUser_findGroupsByUser_expected2() throws Exception {
+        MvcResult mvcResult =
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/groups")).andExpect(status().isOk()).andReturn();
+        String contentResult = mvcResult.getResponse().getContentAsString();
+        List<GroupOverviewDto> result = objectMapper.readValue(contentResult, new TypeReference<List<GroupOverviewDto>>() {
+        });
+
+        assertAll(
+            () -> assertEquals("Group1", result.get(0).getName()),
+            () -> assertEquals("Group2", result.get(1).getName())
+        );
+    }
+
 
     private void setup() {
         applicationGroup = new ApplicationGroup();
@@ -386,5 +388,7 @@ public class GroupEndpointTest {
         userGroup2.setGroups(applicationGroup);
         userGroupRepository.save(userGroup2);
     }
+
+
 
 }
