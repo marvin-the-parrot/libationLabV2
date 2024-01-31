@@ -310,11 +310,6 @@ public class CustomUserDetailService implements UserService {
 
     private void sendEmail(String recipientEmail) {
         // Sender's email address and password
-
-        //DONT DELTE THIS!!!
-        // final String senderPassword = "mvry hsuu mjvm mxrz ";
-        //DONT DELTE THIS!!!
-
         long userId = userRepository.findByEmail(recipientEmail).getId();
 
         // Setup properties for the SMTP server

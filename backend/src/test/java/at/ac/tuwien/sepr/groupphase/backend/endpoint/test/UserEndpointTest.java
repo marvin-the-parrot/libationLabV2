@@ -157,44 +157,8 @@ public class UserEndpointTest {
     @Test
     @Rollback
     @Transactional
-    public void resetPassword_resetPasswordWithCorrectToken_expectSuccessfulReset() throws Exception {
-        //TODO: TestDataSet witch Tokens
-    }
-
-    @Test
-    @Rollback
-    @Transactional
     public void resetPassword_resetPasswordWithIncorrectToken_expectError() throws Exception {
         ResetPasswordDto resetPasswordDto = new ResetPasswordDto();
-        resetPasswordDto.setToken("WRONG_TOKEN");
-        resetPasswordDto.setPassword("newPassword");
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/reset-password")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(resetPasswordDto)))
-            .andExpect(status().isNotFound()).andReturn();
-    }
-
-    @Test
-    @Rollback
-    @Transactional
-    public void resetPassword_resetPasswordWithIncorrectPassword_expectError() throws Exception {
-        ResetPasswordDto resetPasswordDto = new ResetPasswordDto();
-        //TODO: TestDataSet witch Tokens
-        resetPasswordDto.setToken("WRONG_TOKEN");
-        resetPasswordDto.setPassword("1234567");
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/reset-password")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(resetPasswordDto)))
-            //TODO: Change to isBadRequest
-            .andExpect(status().isNotFound()).andReturn();
-    }
-
-    @Test
-    @Rollback
-    @Transactional
-    public void resetPassword_resetPasswordWithTokenWithoutUser_expectError() throws Exception {
-        ResetPasswordDto resetPasswordDto = new ResetPasswordDto();
-        //TODO: TestDataSet witch Tokens
         resetPasswordDto.setToken("WRONG_TOKEN");
         resetPasswordDto.setPassword("newPassword");
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/reset-password")

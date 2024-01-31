@@ -73,6 +73,7 @@ public class CocktailServiceImpl implements CocktailService {
     @Override
     @Transactional
     public List<CocktailListDto> searchCocktails(CocktailSerachDto searchParameters) {
+        //if no search parameters are given, return all cocktails
         if (searchParameters.getCocktailName() == null && searchParameters.getIngredientsName() == null && searchParameters.getPreferenceName() == null) {
             List<CocktailListDto> results = cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktailRepository.findAll());
             // Sorting the result list by name
@@ -96,11 +97,8 @@ public class CocktailServiceImpl implements CocktailService {
         // Filter Cocktails by ingredients
         List<String> ingredientsString = searchTagParameters.getIngredientsName();
         if (cocktails.isEmpty() && searchParameters.getIngredientsName() != null && !searchParameters.getIngredientsName().isEmpty()) {
-            List<CocktailIngredients> cocktailIngredients =
-                cocktailIngredientsRepository.findByIngredientNameIgnoreCase(searchTagParameters.getIngredientsName().get(0));
-            cocktails = cocktailRepository.findDistinctByCocktailIngredientsIn(cocktailIngredients);
 
-            cocktails = filterCocktailsByIngredients(cocktails, ingredientsString);
+            cocktails = cocktailRepository.findCocktailsWithIngredients(ingredientsString, ingredientsString.size());
 
             if (cocktails.isEmpty()) {
                 return new ArrayList<>();
@@ -108,7 +106,7 @@ public class CocktailServiceImpl implements CocktailService {
 
         } else if (searchParameters.getIngredientsName() != null && !searchParameters.getIngredientsName().isEmpty()) {
 
-            cocktails = filterCocktailsByIngredients(cocktails, ingredientsString);
+            cocktails.retainAll(cocktailRepository.findCocktailsWithIngredients(ingredientsString, ingredientsString.size()));
 
             if (cocktails.isEmpty()) {
                 return new ArrayList<>();
@@ -118,23 +116,21 @@ public class CocktailServiceImpl implements CocktailService {
         // Filter Cocktails by preferences
         List<String> preferencesString = searchTagParameters.getPreferenceName();
         if (cocktails.isEmpty() && searchParameters.getPreferenceName() != null && !searchParameters.getPreferenceName().isEmpty()) {
-            Preference preferenceOne = preferenceRepository.findByName(searchTagParameters.getPreferenceName().get(0));
-            cocktails = cocktailRepository.findByPreferences(preferenceOne);
 
-            if (searchTagParameters.getPreferenceName().size() > 1) {
-                cocktails = filterCocktailsByPreferences(cocktails, preferencesString);
-            }
+            cocktails = cocktailRepository.findCocktailsWithPreferences(preferencesString, preferencesString.size());
+
             if (cocktails.isEmpty()) {
                 return new ArrayList<>();
             }
         } else if (searchParameters.getPreferenceName() != null && !searchParameters.getPreferenceName().isEmpty()) {
-            cocktails = filterCocktailsByPreferences(cocktails, preferencesString);
+            cocktails.retainAll(cocktailRepository.findCocktailsWithPreferences(preferencesString, preferencesString.size()));
 
             if (cocktails.isEmpty()) {
                 return new ArrayList<>();
             }
         }
 
+        //Map to CocktailListDto
         List<CocktailListDto> results = cocktailIngredientMapper.cocktailIngredientToCocktailListDto(cocktails);
         // Sorting the result list by name
         results.sort(Comparator.comparing(CocktailListDto::getName));
@@ -205,31 +201,4 @@ public class CocktailServiceImpl implements CocktailService {
         }
         return cocktailIngredientMapper.cocktailToCocktailDetailDto(cocktail);
     }
-
-    private List<Cocktail> filterCocktailsByIngredients(List<Cocktail> cocktails, List<String> ingredients) {
-        return cocktails.stream()
-            .filter(cocktail ->
-                ingredients.stream().allMatch(ingredient ->
-                    cocktail.getCocktailIngredients().stream()
-                        .anyMatch(ci ->
-                            ci.getIngredient().getName().equalsIgnoreCase(ingredient)
-                        )
-                )
-            )
-            .toList();
-    }
-
-    private List<Cocktail> filterCocktailsByPreferences(List<Cocktail> cocktails, List<String> preferences) {
-        return cocktails.stream()
-            .filter(cocktail ->
-                preferences.stream().allMatch(preference ->
-                    cocktail.getPreferences().stream()
-                        .anyMatch(cocktailPreference ->
-                            cocktailPreference.getName().equalsIgnoreCase(preference)
-                        )
-                )
-            )
-            .toList();
-    }
-
 }

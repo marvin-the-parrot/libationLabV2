@@ -151,4 +151,65 @@ public class CocktailEndpointTest {
         );
     }
 
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void searchCocktails_searchCocktailsByName_ExpectedEmptyResult() throws Exception {
+        int expected = 0;
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/cocktails?cocktailName=masdsadasd", "masdsadasd")).andExpect(status().isOk()).andReturn();
+        String contentResult = mvcResult.getResponse().getContentAsString();
+        int result = objectMapper.readValue(contentResult, new TypeReference<List<CocktailListDto>>() {
+        }).size();
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void searchCocktails_searchCocktailsByIngredientsAndName_ExpectedEmptyResult() throws Exception {
+        int expected = 0;
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/cocktails?cocktailName=a&ingredientsName=Vodka,Anis", "a", "Vodka,Anis")).andExpect(status().isOk()).andReturn();
+        String contentResult = mvcResult.getResponse().getContentAsString();
+        int result = objectMapper.readValue(contentResult, new TypeReference<List<CocktailListDto>>() {
+        }).size();
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void searchCocktails_searchCocktailsByPreferencesAndName_ExpectedEmptyResult() throws Exception {
+        int expected = 0;
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/cocktails?cocktailName=a&preferenceName=Vodka,Sour,Bitter", "a" ,"Vodka,Sour,Bitter")).andExpect(status().isOk()).andReturn();
+        String contentResult = mvcResult.getResponse().getContentAsString();
+        int result = objectMapper.readValue(contentResult, new TypeReference<List<CocktailListDto>>() {
+        }).size();
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void searchCocktails_searchCocktailsByPreferences_ExpectedFiveResults() throws Exception {
+        int expected = 5;
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/cocktails?preferenceName=Anise", "Anise")).andExpect(status().isOk()).andReturn();
+        String contentResult = mvcResult.getResponse().getContentAsString();
+        int result = objectMapper.readValue(contentResult, new TypeReference<List<CocktailListDto>>() {
+        }).size();
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    @WithMockUser(roles = {"USER"})
+    public void searchCocktails_searchCocktailsByPreferences_ExpectedEmptyResult() throws Exception {
+        int expected = 0;
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/cocktails?preferenceName=Anise,Almond", "Anise,Almond")).andExpect(status().isOk()).andReturn();
+        String contentResult = mvcResult.getResponse().getContentAsString();
+        int result = objectMapper.readValue(contentResult, new TypeReference<List<CocktailListDto>>() {
+        }).size();
+
+        assertEquals(expected, result);
+    }
+
+
 }

@@ -29,7 +29,21 @@ public interface CocktailRepository extends JpaRepository<Cocktail, Long> {
 
     Set<Cocktail> findByIdIn(List<Long> ids);
 
-    List<Cocktail> findByApplicationGroups(ApplicationGroup applicationGroup);
-
     List<Cocktail> findDistinctByFeedbacksIn(List<Feedback> feedbacks);
+
+    @Query("SELECT c FROM Cocktail c "
+        + "JOIN c.cocktailIngredients ci "
+        + "WHERE ci.ingredient.name IN :ingredientNames "
+        + "GROUP BY c "
+        + "HAVING COUNT(DISTINCT ci.ingredient) = :totalIngredients")
+    List<Cocktail> findCocktailsWithIngredients(@Param("ingredientNames") List<String> ingredientNames,
+                                                @Param("totalIngredients") int totalIngredients);
+
+    @Query("SELECT c FROM Cocktail c "
+        + "JOIN c.preferences p "
+        + "WHERE p.name IN :preferenceNames "
+        + "GROUP BY c "
+        + "HAVING COUNT(DISTINCT p) = :totalPreferences")
+    List<Cocktail> findCocktailsWithPreferences(@Param("preferenceNames") List<String> preferenceNames,
+                                                @Param("totalPreferences") int totalPreferences);
 }
