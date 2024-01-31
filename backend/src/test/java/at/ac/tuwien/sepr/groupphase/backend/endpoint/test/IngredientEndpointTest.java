@@ -74,9 +74,9 @@ public class IngredientEndpointTest {
     public void getIngredientSuggestions_getSuggestionsForGroup1_expectedSuccess() throws Exception {
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/ingredients/suggestions/{groupId}", 1)).andExpect(status().isOk()).andReturn();
         var contentResult = mvcResult.getResponse().getContentAsString();
-        assertTrue(contentResult.contains("Pineapple Juice"));
-        assertTrue(contentResult.contains("Sugar Syrup"));
-        assertTrue(contentResult.contains("Gin"));
+        assertTrue(contentResult.contains("Vodka"));
+        assertTrue(contentResult.contains("Maraschino Liqueur"));
+        assertTrue(contentResult.contains("Lemon"));
     }
 
     @Test
@@ -126,9 +126,9 @@ public class IngredientEndpointTest {
 
         assertAll(
             () -> assertEquals(24, result.size()),
-            () -> assertEquals("Advocaat", result.get(0).getName()),
-            () -> assertEquals("Amaretto", result.get(1).getName()),
-            () -> assertEquals("Cherry Juice", result.get(2).getName())
+            () -> assertEquals("Apple Brandy", result.get(0).getName()),
+            () -> assertEquals("Beer", result.get(1).getName()),
+            () -> assertEquals("Bitters", result.get(2).getName())
         );
     }
 
@@ -149,11 +149,11 @@ public class IngredientEndpointTest {
     public void addUserIngredients_addingIngredientsPositive_expectedSize() throws Exception {
         IngredientListDto[] ingredients = new IngredientListDto[2];
         IngredientListDto darkRum = new IngredientListDto();
-        darkRum.setId(86L);
+        darkRum.setId(56L);
         darkRum.setName("Dark Rum");
         ingredients[0] = darkRum;
         IngredientListDto spicedRum = new IngredientListDto();
-        spicedRum.setId(52L);
+        spicedRum.setId(35L);
         spicedRum.setName("Spiced Rum");
         ingredients[1] = spicedRum;
 
@@ -256,7 +256,7 @@ public class IngredientEndpointTest {
             () -> assertEquals(69, result.size()),
             () -> assertEquals("Advocaat", result.get(0).getName()),
             () -> assertEquals("Amaretto", result.get(1).getName()),
-            () -> assertEquals("Angostura Bitters", result.get(2).getName())
+            () -> assertEquals("Anisette", result.get(2).getName())
         );
     }
 

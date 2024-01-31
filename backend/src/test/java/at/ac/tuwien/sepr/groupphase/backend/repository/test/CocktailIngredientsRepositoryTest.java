@@ -35,7 +35,7 @@ public class CocktailIngredientsRepositoryTest {
 
     @Test
     public void findByIngredientNameAndCocktailName_searchByIngredientsName_ExpectedTwentyFive() {
-        int expected = 24;
+        int expected = 25;
         int result = cocktailIngredientsRepository.findByIngredientNameContainingIgnoreCase("Lime").size();
 
         assertEquals(expected, result);

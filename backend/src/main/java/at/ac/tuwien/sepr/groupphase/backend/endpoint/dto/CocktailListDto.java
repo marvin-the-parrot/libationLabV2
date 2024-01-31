@@ -3,6 +3,9 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * DTO to send list of cocktails to the frontend to display in menu creation.
+ */
 public class CocktailListDto {
 
     private Long id;

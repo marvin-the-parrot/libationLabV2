@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,8 +42,8 @@ public class PreferenceEndpoint {
     @GetMapping("/user-preference-auto/{preferenceName}")
     @Secured(ROLE_USER)
     public List<PreferenceListDto> searchAutocomplete(@PathVariable String preferenceName) {
-        LOGGER.info("GET " + BASE_PATH + "user-preference-auto");
-        LOGGER.debug("Request Params: {}", preferenceName);
+        LOGGER.info("GET " + BASE_PATH + "/user-preference-auto/{}", preferenceName);
+
         try {
             return preferenceService.searchUserPreferences(preferenceName);
         } catch (NotFoundException e) {
@@ -55,7 +56,7 @@ public class PreferenceEndpoint {
     @GetMapping("/user-preferences")
     @Secured(ROLE_USER)
     public List<PreferenceListDto> getUserPreferences() {
-        LOGGER.info("GET " + BASE_PATH + "user-preferences");
+        LOGGER.info("GET " + BASE_PATH + "/user-preferences");
         try {
             return preferenceService.getUserPreferences();
         } catch (NotFoundException e) {
@@ -68,7 +69,8 @@ public class PreferenceEndpoint {
     @PostMapping("/user-preferences")
     @Secured(ROLE_USER)
     public List<PreferenceListDto> addUserPreferences(@RequestBody PreferenceListDto[] preferences) {
-        LOGGER.info("POST " + BASE_PATH + "user-preferences");
+        LOGGER.info("POST " + BASE_PATH + "/user-preferences/{}", Arrays.toString(preferences));
+
         try {
             return preferenceService.addPreferencesToUser(preferences);
         } catch (NotFoundException e) {

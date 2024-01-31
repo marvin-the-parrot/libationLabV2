@@ -1,5 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+/**
+ * DTO to store preference lists.
+ */
 public class PreferenceListDto {
     private Long id;
     private String name;

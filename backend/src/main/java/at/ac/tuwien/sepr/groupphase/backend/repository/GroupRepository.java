@@ -16,6 +16,12 @@ import org.springframework.stereotype.Repository;
 public interface GroupRepository extends
     JpaRepository<ApplicationGroup, Long> {
 
+    /**
+     * Find a groups where user is in.
+     *
+     * @param userId id of the user
+     * @return groups of the user
+     */
     @Query("SELECT ug.applicationGroup FROM UserGroup ug "
         + "WHERE ug.applicationUser.id = :userId")
     ApplicationGroup[] getGroupsOfUser(@Param("userId") Long userId);

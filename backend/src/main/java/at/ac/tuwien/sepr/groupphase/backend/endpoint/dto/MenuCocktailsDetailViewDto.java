@@ -1,5 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+/**
+ * DTO for cocktails in a menu.
+ */
 public class MenuCocktailsDetailViewDto {
     private Long groupId;
     private CocktailListMenuDto[] cocktailsList;

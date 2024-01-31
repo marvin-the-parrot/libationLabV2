@@ -2,6 +2,9 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
 import java.util.Objects;
 
+/**
+ * DTO to store users.
+ */
 public class UserListDto {
     private Long id;
     private String name;

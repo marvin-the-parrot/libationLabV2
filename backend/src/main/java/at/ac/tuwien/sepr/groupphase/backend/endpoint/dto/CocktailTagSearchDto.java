@@ -2,6 +2,9 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
 import java.util.List;
 
+/**
+ * DTO to search for a according to names, ingredients and preferences using tags.
+ */
 public class CocktailTagSearchDto {
     String cocktailName;
     List<String> ingredientsName;

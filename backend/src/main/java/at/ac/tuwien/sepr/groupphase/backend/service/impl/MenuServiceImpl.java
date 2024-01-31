@@ -1,10 +1,47 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailDetailDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListMenuDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.FeedbackState;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewHostDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuRecommendationDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.RecommendedMenuesDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailIngredientMapper;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.MenuMapper;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
+import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
+import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
+import at.ac.tuwien.sepr.groupphase.backend.entity.Feedback;
+import at.ac.tuwien.sepr.groupphase.backend.entity.Preference;
+import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.FeedbackRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.PreferenceRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
+import at.ac.tuwien.sepr.groupphase.backend.service.CocktailService;
+import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
+import at.ac.tuwien.sepr.groupphase.backend.service.MenuService;
+import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,45 +52,6 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailDetailDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListMenuDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.FeedbackState;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewHostDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuRecommendationDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.RecommendedMenuesDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.MenuMapper;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
-import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
-import at.ac.tuwien.sepr.groupphase.backend.entity.Feedback;
-import at.ac.tuwien.sepr.groupphase.backend.entity.Preference;
-import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
-import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailRepository;
-import at.ac.tuwien.sepr.groupphase.backend.repository.FeedbackRepository;
-import at.ac.tuwien.sepr.groupphase.backend.repository.PreferenceRepository;
-import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
-import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
-import at.ac.tuwien.sepr.groupphase.backend.service.CocktailService;
-import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
-import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailIngredientMapper;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
-import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
-import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
-import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
-import at.ac.tuwien.sepr.groupphase.backend.service.MenuService;
 
 @Service
 public class MenuServiceImpl implements MenuService {
@@ -88,6 +86,7 @@ public class MenuServiceImpl implements MenuService {
         this.menuMapper = menuMapper;
     }
 
+    @Transactional
     @Override
     public MenuCocktailsDto findMenuOfGroup(Long groupId) throws NotFoundException {
         ApplicationGroup applicationGroup = groupRepository.findById(groupId).orElse(null);
@@ -104,6 +103,7 @@ public class MenuServiceImpl implements MenuService {
         return new MenuCocktailsDto(groupId, cocktailOverviewDtoList);
     }
 
+    @Transactional
     @Override
     public MenuCocktailsDto create(MenuCocktailsDto toCreate) throws NotFoundException, ConflictException {
         LOGGER.debug("Create menu {}", toCreate);
@@ -135,6 +135,10 @@ public class MenuServiceImpl implements MenuService {
     public RecommendedMenuesDto createRecommendation(Long groupId, Integer size, Integer numberOfRandomMenues) throws IllegalArgumentException {
         LOGGER.info("Create recommendation for group {}", groupId);
 
+        if (size == 0) {
+            throw new IllegalArgumentException("Size of Menu must be greater than 0");
+        }
+
         // fetch preferences of group from db
         Set<UserGroup> group = userGroupRepository.findAllByIdGroup(groupId);
         if (group == null) {
@@ -149,7 +153,7 @@ public class MenuServiceImpl implements MenuService {
 
         List<CocktailDetailDto> mixableCocktails = cocktailService.getMixableCocktails(groupId);
 
-        // fetch cocktials from db that fulfill atleast one of the listed preferences
+        // fetch cocktails from db that fulfill latest one of the listed preferences
         List<Cocktail> cocktails =
             cocktailRepository.findAllByPreferencesInAndIdIn(preferences, mixableCocktails.stream().map(CocktailDetailDto::getId).collect(
                 Collectors.toList()));
@@ -241,7 +245,8 @@ public class MenuServiceImpl implements MenuService {
     public MenuCocktailsDetailViewHostDto getMenuWithRatings(Long groupId) throws NotFoundException {
         LOGGER.debug("Get ratings for group {}", groupId);
 
-        List<Feedback> feedbacks = feedbackRepository.findByApplicationGroup(groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException("Group not found")));
+        List<Feedback> feedbacks =
+            feedbackRepository.findByApplicationGroup(groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException("Group not found")));
         List<Cocktail> cocktails = cocktailRepository.findDistinctByFeedbacksIn(feedbacks);
 
         if (cocktails.isEmpty()) {
@@ -282,7 +287,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     /**
-     * Orderes cocktails from most occurences of preferences to least.
+     * Orders cocktails from most occurrences of preferences to least.
      *
      * @param cocktails            list of cocktails that fulfill atleast one of the preferences
      * @param orderedPreferenceMap map of preferences ordered by most wanted to least

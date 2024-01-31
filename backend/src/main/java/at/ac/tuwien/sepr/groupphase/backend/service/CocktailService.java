@@ -15,10 +15,10 @@ import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 public interface CocktailService {
 
     /**
-     * Searching for cocktail by cocktails name and ingredients name.
+     * Searching for cocktail by cocktails name and ingredients name and preferences (tag based search).
      *
-     * @param searchParameters the search parameters
-     * @return cocktails
+     * @param searchParameters the search parameters on which to search
+     * @return a list of cocktails matching the search parameters, may be empty if no cocktail matches
      */
     List<CocktailListDto> searchCocktails(CocktailSerachDto searchParameters);
 
