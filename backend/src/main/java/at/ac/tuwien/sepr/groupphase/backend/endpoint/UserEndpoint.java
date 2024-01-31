@@ -64,7 +64,8 @@ public class UserEndpoint {
     @PermitAll
     @ResponseStatus(HttpStatus.CREATED)
     public void createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
-        LOGGER.info("POST /api/v1/user body: {}", userCreateDto);
+        LOGGER.info("POST " + BASE_PATH + "/{}", userCreateDto.getEmail());
+
         try {
             userService.register(userCreateDto);
         } catch (ConstraintViolationException e) {
@@ -79,15 +80,13 @@ public class UserEndpoint {
         }
     }
 
-    private void logClientError(HttpStatus status, String message, Exception e) {
-        LOGGER.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
-    }
-
     @PostMapping("/forgot-password")
     @PermitAll
     @ResponseStatus(HttpStatus.CREATED)
     public void forgotPassword(@RequestBody UserEmailDto email) {
-        LOGGER.info("POST /api/v1/user body: {}", email);
+        LOGGER.info("POST " + BASE_PATH + "/forgot-password/{}", email);
+        LOGGER.debug("Request Body:\n{}", email);
+
         try {
             userService.forgotPassword(email.getEmail());
         } catch (NotFoundException e) {
@@ -100,7 +99,8 @@ public class UserEndpoint {
     @PermitAll
     @ResponseStatus(HttpStatus.CREATED)
     public void resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
-        LOGGER.info("PUT /api/v1/user body: {}", resetPasswordDto);
+        LOGGER.info("PUT " + BASE_PATH + "/reset-password/{}", resetPasswordDto.getToken());
+
         try {
             userService.resetPassword(resetPasswordDto);
         } catch (NotFoundException e) {
@@ -118,7 +118,8 @@ public class UserEndpoint {
     @PermitAll
     @ResponseStatus(HttpStatus.OK)
     public UserLocalStorageDto getUser() {
-        LOGGER.info("GET /api/v1/user/user");
+        LOGGER.info("GET " + BASE_PATH + "/user");
+
         try {
             return userService.getUserByEmail();
         } catch (NotFoundException e) {
@@ -132,7 +133,7 @@ public class UserEndpoint {
     @Secured(ROLE_USER)
     @ResponseStatus(HttpStatus.OK)
     public void deleteUser() {
-        LOGGER.info("DELETE /api/v1/user/delete");
+        LOGGER.info("DELETE " + BASE_PATH + "/delete");
         try {
             userService.deleteUserByEmail();
         } catch (NotFoundException e) {
@@ -140,5 +141,9 @@ public class UserEndpoint {
             logClientError(status, String.format("Failed to delete user with mail %s", SecurityContextHolder.getContext().getAuthentication().getName()), e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
+    }
+
+    private void logClientError(HttpStatus status, String message, Exception e) {
+        LOGGER.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
     }
 }

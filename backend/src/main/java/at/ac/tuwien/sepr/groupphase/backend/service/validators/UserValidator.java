@@ -60,9 +60,6 @@ public class UserValidator {
 
         List<String> constraintViolationErrors = new ArrayList<>();
 
-        // if (userService.findApplicationUserByEmail(toCreate.getEmail()) != null) {
-        // constraintViolationErrors.add("User with this email already exists");
-        // }
 
         if (!validationErrors.isEmpty()) {
             throw new ValidationException("Validation of user for create failed", validationErrors);

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,14 +48,14 @@ public class  IngredientEndpoint {
     @GetMapping("searchIngredients/{ingredientsName}")
     @ResponseStatus(HttpStatus.OK)
     public List<IngredientListDto> searchIngredients(@PathVariable String ingredientsName) throws JsonProcessingException {
-        LOGGER.info("GET " + BASE_PATH + "searchIngredients/{}", ingredientsName);
+        LOGGER.info("GET " + BASE_PATH + "/searchIngredients/{}", ingredientsName);
         return ingredientService.searchIngredients(ingredientsName);
     }
 
     @Secured(ROLE_USER)
     @GetMapping("/{groupId}")
     public List<IngredientGroupDto> getAllGroupIngredients(@PathVariable Long groupId) {
-        LOGGER.info("GET " + BASE_PATH + "getAllGroupIngredients/{}", groupId);
+        LOGGER.info("GET " + BASE_PATH + "/getAllGroupIngredients/{}", groupId);
         try {
             return ingredientService.getAllGroupIngredients(groupId);
         } catch (NotFoundException e) {
@@ -67,7 +68,7 @@ public class  IngredientEndpoint {
     @Secured(ROLE_USER)
     @GetMapping("/suggestions/{groupId}")
     public List<IngredientSuggestionDto> getIngredientSuggestions(@PathVariable Long groupId) throws ConflictException {
-        LOGGER.info("GET " + BASE_PATH + "getIngredientSuggestions/{}", groupId);
+        LOGGER.info("GET " + BASE_PATH + "/getIngredientSuggestions/{}", groupId);
         try {
             return ingredientService.getIngredientSuggestions(groupId);
         } catch (NotFoundException e) {
@@ -81,8 +82,8 @@ public class  IngredientEndpoint {
     @GetMapping("/user-ingredients-auto/{ingredientsName}")
     @Secured(ROLE_USER)
     public List<IngredientListDto> searchAutocomplete(@PathVariable String ingredientsName) {
-        LOGGER.info("GET " + BASE_PATH + "user-ingredients-auto");
-        LOGGER.debug("Request Params: {}", ingredientsName);
+        LOGGER.info("GET " + BASE_PATH + "/user-ingredients-auto/{}", ingredientsName);
+
         try {
             return ingredientService.searchUserIngredients(ingredientsName);
         } catch (NotFoundException e) {
@@ -95,7 +96,7 @@ public class  IngredientEndpoint {
     @GetMapping("/user-ingredients")
     @Secured(ROLE_USER)
     public List<IngredientListDto> getUserIngredients() {
-        LOGGER.info("GET " + BASE_PATH + "user-ingredients");
+        LOGGER.info("GET " + BASE_PATH + "/user-ingredients");
         try {
             return ingredientService.getUserIngredients();
         } catch (NotFoundException e) {
@@ -108,7 +109,8 @@ public class  IngredientEndpoint {
     @PostMapping("/user-ingredients")
     @Secured(ROLE_USER)
     public List<IngredientListDto> addUserIngredients(@RequestBody IngredientListDto[] ingredients) {
-        LOGGER.info("POST " + BASE_PATH + "user-ingredients");
+        LOGGER.info("POST " + BASE_PATH + "/user-ingredients/{}", Arrays.toString(ingredients));
+        LOGGER.debug("Request Body:\n{}", Arrays.toString(ingredients));
         try {
             return ingredientService.addIngredientsToUser(ingredients);
         } catch (NotFoundException e) {

@@ -1,16 +1,18 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
-import java.lang.invoke.MethodHandles;
-import java.util.List;
-
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackHostDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewHostDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.RecommendedMenuesDto;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
 import at.ac.tuwien.sepr.groupphase.backend.service.MenuService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +27,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDto;
-import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
-import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
-import at.ac.tuwien.sepr.groupphase.backend.service.impl.MenuServiceImpl;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.transaction.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.lang.invoke.MethodHandles;
+import java.util.Arrays;
+
 
 /**
  * Menu endpoint.
@@ -87,6 +85,7 @@ public class MenuEndpoint {
         try {
             return menuService.getMenuWithRatings(groupId);
         } catch (NotFoundException e) {
+            logClientError(HttpStatus.NOT_FOUND, "User or group not found", e);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
@@ -96,7 +95,9 @@ public class MenuEndpoint {
     @Transactional
     @Operation(summary = "Update mixable cocktails of groups when changing ingredients")
     public void updateMixableCocktails(@RequestBody IngredientListDto[] userIngredients) {
-        LOGGER.info("POST " + BASE_PATH + "/updateMixableCocktails");
+        LOGGER.info("POST " + BASE_PATH + "/updateMixableCocktails/{}", Arrays.toString(userIngredients));
+        LOGGER.debug("Body of request:\n{}", Arrays.toString(userIngredients));
+
         menuService.updateMixableCocktails();
     }
 
@@ -106,6 +107,8 @@ public class MenuEndpoint {
     public RecommendedMenuesDto getAutomatedMenu(@PathVariable Long id,
                                                  @RequestParam(name = "numberOfCocktails", required = false, defaultValue = "5") Integer numberOfCocktails) {
         LOGGER.info("GET " + BASE_PATH + "recommendation/{}", id);
+        LOGGER.debug("Request Body:\n{}", numberOfCocktails);
+
         try {
             return menuService.createRecommendation(id, numberOfCocktails, 3);
         } catch (IllegalArgumentException e) {
@@ -129,7 +132,7 @@ public class MenuEndpoint {
         try {
             return menuService.findMenuDetailOfGroup(groupId);
         } catch (NotFoundException e) {
-            LOGGER.error("Error while creating recommendation", e);
+            logClientError(HttpStatus.NOT_FOUND, "User or group not found", e);
             HttpStatus status = HttpStatus.NOT_FOUND;
             throw new ResponseStatusException(status, e.getMessage(), e);
         } catch (Exception e) {
@@ -139,5 +142,8 @@ public class MenuEndpoint {
         }
     }
 
+    private void logClientError(HttpStatus status, String message, Exception e) {
+        LOGGER.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
+    }
 
 }

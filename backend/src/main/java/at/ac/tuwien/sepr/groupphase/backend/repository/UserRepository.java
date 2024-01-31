@@ -23,13 +23,6 @@ public interface UserRepository extends JpaRepository<ApplicationUser, Long> {
      */
     ApplicationUser findByEmail(String email);
 
-    /**
-     * Find user by name.
-     *
-     * @param name of user
-     * @return ApplicationUser found by name
-     */
-    ApplicationUser findByName(String name);
 
     /**
      * Find users by username for adding Users to existing Group.
