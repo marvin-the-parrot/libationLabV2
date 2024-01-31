@@ -60,6 +60,8 @@ public class FeedbackEndpointTest {
     private UserRepository userRepository;
     @Autowired
     private MessageRepository messageRepository;
+    @Autowired
+    private CocktailRepository cocktailRepository;
 
     @BeforeEach
     public void setup() {

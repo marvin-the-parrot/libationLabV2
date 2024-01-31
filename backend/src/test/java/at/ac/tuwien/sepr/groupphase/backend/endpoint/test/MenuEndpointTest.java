@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackDto;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -43,6 +45,7 @@ import jakarta.transaction.Transactional;
 
 @ActiveProfiles({"test", "generateData"})
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class MenuEndpointTest {
 
     @Autowired
@@ -227,6 +230,20 @@ public class MenuEndpointTest {
             () -> Assert.eq(result.getCocktailsList()[1].getId(), 76L, "First cocktail should have id 76"),
             () -> Assert.eq(result.getCocktailsList()[2].getId(), 79L, "First cocktail should have id 79")
         );
+    }
+
+    @Test
+    @WithMockUser(username = "user1@email.com")
+    public void getMenuDetail_withInvalidGroup_ExpectedNotFoundException() throws Exception {
+        createMenu();
+        createRatings();
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/menu/-99/detail"))
+            .andExpect(status().isNotFound()).andReturn();
+
+        Map responseMap = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Map.class);
+
+        assertEquals("Group not found", responseMap.get("detail"));
     }
 
     private void createRatings() throws Exception {
