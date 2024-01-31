@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.test;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.impl.IngredientServiceImpl;
@@ -7,7 +9,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,25 +24,37 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class IngredientServiceImplTest {
 
     @Autowired
-    private IngredientsRepository ingredientsRepository;
-
-    @Autowired
     private IngredientServiceImpl ingredientServiceImpl;
 
     @Test
     public void findByNameContainingIgnoreCase_searchingForIngredientVery_findingTwoResult() throws JsonProcessingException {
-        int expected = 7;
+        int expected = 4;
         int result = ingredientServiceImpl.searchIngredients("Lemon").size();
 
         assertEquals(expected, result);
     }
 
     @Test
-    public void findByNameContainingIgnoreCase_searchingForIngredientYeastWhichIsNotInDb_findingOneResult() throws JsonProcessingException {
-        int expected = 1;
-        int result = ingredientServiceImpl.searchIngredients("Milk").size();
+    public void findByNameContainingIgnoreCase_searchingForIngredientBabyOilWhichIsNotInDb() throws JsonProcessingException {
+        List<IngredientListDto> result = ingredientServiceImpl.searchIngredients("Baby Oil");
 
-        assertEquals(expected, result);
+        assertEquals(null, result);
+    }
+
+    @Test
+    @WithMockUser(username = "user1@email.com")
+    public void getIngredientSuggestions_fromUserOutsideGroup_expectedException() {
+        ConflictException exception = assertThrows(ConflictException.class, () -> ingredientServiceImpl.getIngredientSuggestions(3L));
+        assertEquals("Getting ingredient suggestions failed.", exception.summary());
+        assertEquals("User is not a member of the group", exception.errors().get(0));
+    }
+
+    @Test
+    @WithMockUser(username = "user1@email.com")
+    public void getIngredientSuggestions_fromUserThatIsNotHost_expectedException() {
+        ConflictException exception = assertThrows(ConflictException.class, () -> ingredientServiceImpl.getIngredientSuggestions(2L));
+        assertEquals("Getting ingredient suggestions failed.", exception.summary());
+        assertEquals("User is not the host of the group", exception.errors().get(0));
     }
 
     @Test
@@ -56,7 +73,7 @@ public class IngredientServiceImplTest {
     @Test
     public void getAllGroupIngredients_withValidGroupId_expectedSuccess() {
         var ingredients = assertDoesNotThrow(() -> ingredientServiceImpl.getAllGroupIngredients(1L));
-        assertEquals(86, ingredients.size());
+        assertEquals(69, ingredients.size());
 
     }
 

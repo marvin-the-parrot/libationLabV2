@@ -1,18 +1,22 @@
-.options-buttons {
-    display: flex;
-    flex-direction: column-reverse;
-    justify-content: space-between;
-  }
-  
-  .options-buttons button {
-    margin-right: 8px; 
-    border: none;
-  }
 
-  .orange-text {
-    color: orange;
-  }
-  
-  .red-text {
-    color: red;
-  }
+.dialog {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.option-btn {
+  text-align: left;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: none;
+}
+
+.option-btn:hover {
+  background-color: #d3d3d3;
+}
+
+.red-text {
+  color: red;
+  margin: 3px;
+}

@@ -3,86 +3,130 @@
 <div class="grid-container">
 
   <div class="left-container col-lg-9 col-md-9 col-sm-9 col-9">
-       
+
     <div class="header-left-container">
       <h2> Search for Cocktails </h2>
     </div>
 
     <div class="flex-container">
 
-    <div class="search-container">
-         <label class="label-search-name">
-             Name
-         </label>
-          <!-- Suchfeld für Name -->
-          <div class="wrapper-name col-md-6 col-lg-6">
-            <input matInput
-                   type="text"
-                   id="searchName"
-                   name="searchName"
-                   placeholder="Search for Cocktails"
-                   class="form-control"
-                   [(ngModel)]="nameOfCocktail"
-                   (ngModelChange)="searchChanged()"
-                   #groupNameModel="ngModel"
-                   required
-                   autofocus
-            >
-    </div>
-    </div>
-    
-
-   <div class="search-container">
-        <label class="label-search-ing">
-          Ingredients
-        </label>
-            <!-- Suchfeld für Zutaten -->
-      <div class="wrapper-ingredients col-md-6 col-lg-6">
-        <input matInput
-               type="text"
-               id="searchName"
-               name="searchName"
-               placeholder="Search for Ingredients"
-               class="form-control"
-               [(ngModel)]="nameOfIngredient"
-               (ngModelChange)="searchChanged()"
-               #groupNameModel="ngModel"
-               required
-               autofocus
-        >
+      <div class="search-container">
+        <label class="label-search-name">Name</label>
+        <!-- Search-field for name -->
+        <div class="wrapper-name col-md-6 col-lg-6">
+          <input matInput
+                 type="text"
+                 id="searchName"
+                 name="searchName"
+                 placeholder="Search for Cocktail Name"
+                 class="form-control"
+                 [(ngModel)]="nameOfCocktail"
+                 (ngModelChange)="searchChanged()"
+                 required
+                 autofocus
+          >
+        </div>
       </div>
-   </div>
+
+
+      <div class="search-container">
+        <label class="label-search-ing-pref">Ingredients</label>
+        <!-- Search-field for Ingredients -->
+        <div class="wrapper-ing-pref col-md-6 col-lg-6">
+          <app-autocomplete #ingredientAutocomplete
+            name="ingredientsSelection"
+            textInputClass="form-control"
+            [placeholderText]="'Search for Ingredients'"
+            [suggestions]="ingredientSuggestions"
+            [formatModel]="formatIngredient"
+            valueNeedsToMatchSuggestion="true"
+            [(ngModel)]="ingredient"
+            (ngModelChange)="searchChanged()"
+          >
+          </app-autocomplete>
+
+          <!-- Selected Ingredients (Tags) -->
+          <div class="selected-ingredients-preferences">
+            <div *ngFor="let selected of selectedIngredients" class="tag">
+              {{ selected }}
+              <button (click)="removeTagIngredients(selected)" class="remove-tag-btn">
+                <i class="bi bi-x-circle"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+      <div class="search-container">
+        <label class="label-search-ing-pref">
+          Preferences
+        </label>
+        <!-- Search-field for Preferences -->
+        <div class="wrapper-ing-pref col-md-6 col-lg-6">
+          <app-autocomplete #preferenceAutocomplete
+            name="preferencesSelection"
+            textInputClass="form-control"
+            [placeholderText]="'Search for Preferences'"
+            [suggestions]="preferenceSuggestion"
+            [formatModel]="formatPreference"
+            valueNeedsToMatchSuggestion="true"
+            [(ngModel)]="preference"
+            (ngModelChange)="searchChanged()"
+          >
+          </app-autocomplete>
+
+          <!-- Selected Preferences (Tags) -->
+          <div class="selected-ingredients-preferences">
+            <div *ngFor="let selected of selectedPreferences" class="tag">
+              {{ selected }}
+              <button (click)="removeTagPreferences(selected)" class="remove-tag-btn">
+                <i class="bi bi-x-circle"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
 
-     <br><br>  
-     
-     <div class="label-table" *ngIf = "cocktails?.length > 0">
-       <p class="result-style"> &nbsp;&nbsp;&nbsp;{{cocktails.length}} Result</p>
-       <table >
-         <tbody>
-           <tr *ngFor="let cocktail of cocktails" [style.background]="selectedCocktail === cocktail.name ? '#D9D9D9' : '#ECECEC'">
-             <td class="td-style" 
-             (click)="showImage(cocktail.name)">
-             {{cocktail.name}}</td>
-           </tr>
-         </tbody>
-       </table>
+    <br><br>
+
+    <div class="label-table" *ngIf="cocktails?.length > 0">
+      <p class="result-style"> &nbsp;&nbsp;&nbsp;{{cocktails.length}} Result</p>
+      <table>
+        <tbody>
+        <tr *ngFor="let cocktail of cocktails"
+            [style.background]="selectedCocktail === cocktail.name ? '#D9D9D9' : '#ECECEC'">
+          <td class="td-style"
+              (click)="showImage(cocktail.name)">
+            {{cocktail.name}}
+            <button class="btn rounded-button"
+                    (click)="openCocktailDetails(cocktail.id)">
+              <i class="bi bi-book"></i>
+              see details
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
     </div>
 
-   </div>
+  </div>
 
-  <div class="right-container col-lg-3 col-md-3 col-sm-3 col-3" >
+  <div class="right-container col-lg-3 col-md-3 col-sm-3 col-3">
     <figure *ngIf="isToShowImg">
-      <img class="image-style" [src]="imageUrl" >
+      <img class="image-style" [src]="imageUrl" alt="Image of cocktail">
       <figcaption class="image-name">{{imageName}}</figcaption>
-    </figure>   
+    </figure>
     <br> <br>
     <div class="info-ing-container" *ngIf="isToShowImg">
       <p class="info-ing">Ingredients:</p>
       <ul class="info-ings">
-        <li *ngFor="let ingredient of cocktailIngredients">{{ ingredient }}</li>
-      </ul>  
+        <li *ngFor="let ingredient of cocktailIngredients|keyvalue">{{ ingredient.key }} - {{ ingredient.value }}</li>
+      </ul>
     </div>
   </div>
 

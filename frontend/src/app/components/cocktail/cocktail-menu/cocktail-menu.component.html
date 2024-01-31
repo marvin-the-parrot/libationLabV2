@@ -3,33 +3,139 @@
 <div class="grid-container p-3 ">
   <div class="row">
     <div class="col-md-8">
-      <div class="row g-0 menu-card">
+      <div class="row g-0 menu-card ">
         <div class="menu-header">
           <h2>Mixable Cocktails</h2>
         </div>
 
-        <div class="m-2">
-          <label for="searchName" class="label-name">
-          </label>
-          <mat-form-field class="search-field-name">
-            <mat-icon matPrefix>search</mat-icon>
-            <input
-              matInput
-              type="text"
-              id="searchName"
-              name="searchName"
-              placeholder="!NOT YET IMPLEMENTED!"
-            />
-          </mat-form-field>
+        <div class="m-2 d-flex justify-content-sm-between p-3">
+
+          <!-- Search fields for cocktails -->
+
+          <div class="flex-container">
+
+            <div class="search-container">
+              <label class="label-search-name">
+                Name
+              </label>
+              <!-- Search field for cocktails by name -->
+              <div class="wrapper-name col-md-6 col-lg-6">
+                <input matInput
+                       type="text"
+                       id="searchName"
+                       name="searchName"
+                       placeholder="Search for Cocktail Name"
+                       class="form-control"
+                       [(ngModel)]="nameOfCocktail"
+                       (ngModelChange)="searchChanged()"
+                       required
+                       autofocus
+                >
+              </div>
+            </div>
+
+
+            <div class="search-container">
+              <label class="label-search-ing-pref">
+                Ingredients
+              </label>
+              <!-- Search field for cocktails by ingredients -->
+              <div class="wrapper-ing-pref col-md-6 col-lg-6">
+                <app-autocomplete #ingredientAutocomplete
+                  name="ingredientsSelection"
+                  textInputClass="form-control"
+                  [placeholderText]="'Search for Ingredients'"
+                  [suggestions]="ingredientSuggestions"
+                  [formatModel]="formatIngredient"
+                  valueNeedsToMatchSuggestion="true"
+                  [(ngModel)]="ingredient"
+                  (ngModelChange)="searchChanged()"
+                >
+                </app-autocomplete>
+
+                <!-- Selected Ingredients (Tags) -->
+                <div class="selected-ingredients-preferences">
+                  <div *ngFor="let selected of selectedIngredients" class="tag">
+                    {{ selected }}
+                    <button (click)="removeTagIngredients(selected)" class="remove-tag-btn">
+                      <i class="bi bi-x-circle"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="search-container">
+              <label class="label-search-ing-pref">
+                Preferences
+              </label>
+              <!-- Search field for cocktails by preferences -->
+              <div class="wrapper-ing-pref col-md-6 col-lg-6">
+                <app-autocomplete #preferenceAutocomplete
+                  name="preferencesSelection"
+                  textInputClass="form-control"
+                  [placeholderText]="'Search for Preferences'"
+                  [suggestions]="preferenceSuggestion"
+                  [formatModel]="formatPreference"
+                  valueNeedsToMatchSuggestion="true"
+                  [(ngModel)]="preference"
+                  (ngModelChange)="searchChanged()"
+                >
+                </app-autocomplete>
+
+                <!-- Selected Preferences (Tags) -->
+                <div class="selected-ingredients-preferences">
+                  <div *ngFor="let selected of selectedPreferences" class="tag">
+                    {{ selected }}
+                    <button (click)="removeTagPreferences(selected)" class="remove-tag-btn">
+                      <i class="bi bi-x-circle"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="search-container d-flex justify-content-right">
+              <div class="wrapper-btn d-flex flex-column align-items-end">
+                <label class="btn-info mb-2">
+                  Not satisfied with the possible cocktails?
+                </label>
+                <div class="wrapper-btn">
+                  <button class="btn rounded-button" (click)="openAddIngredientModal()">
+                    <i class="bi bi-bag-plus-fill"></i>
+                    Add new Ingredients
+                  </button>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+
         </div>
-        <div *ngFor="let cocktail of cocktails" class="mb-3 col-xxl-2 col-lg-3 col-md-6 col-sm-12">
-          <div class="card h-100">
-            <div class="container-fluid card-header">{{ cocktail.name }}</div>
-            <div class="card-body">
-              <img src="{{ cocktail.imagePath }}" class="img-fluid" alt="Responsive image">
+
+        <div class="row g-0 menu-card cards-container">
+          <div *ngFor="let cocktail of cocktails" class="mb-3 col-xxl-2 col-lg-3 col-md-6 col-sm-12">
+            <div class="card h-100" (click)="clickOnCocktailImage(cocktail.name)">
+              <div class="container-fluid card-header" [class.selected]="isSelected(cocktail.name)" [title]="cocktail.name">
+
+                <span class="cocktail-name">{{ cocktail.name }}</span>
+
+                <span class="bi bi-info-circle"
+                   ngbPopover= "{{ getIngredientsString(cocktail.ingredients) }}"
+                   triggers="mouseenter:mouseleave">
+                </span>
+
+              </div>
+              <div class="card-body">
+                <img src="{{ cocktail.imagePath }}" class="img-fluid" alt="Responsive image">
+              </div>
             </div>
           </div>
         </div>
+
       </div>
 
     </div>
@@ -39,9 +145,47 @@
           <h2>Selected Menu</h2>
         </div>
         <div class="card-body">
-            <div class="menu-body d-flex align-items-center justify-content-center">
-              <h5> this is where selected cocktails will go</h5>
+          <div class="menu-body d-flex align-items-center justify-content-center">
+
+            <div class="cocktails-container" *ngIf="selectedCocktails.length!==0">
+              <div>
+                <p class="cocktails-count">{{selectedCocktails.length}} Cocktails</p>
+                <p *ngIf="lv && selectedCocktails.length !== 0">LibationValue: {{lv}}</p>
+              </div>
+              <div class="cocktails-list">
+                <div *ngFor="let cocktail of selectedCocktails; index as i" class="cocktails-item">
+                  {{ cocktail.name }}
+                  <i class="bi bi-dash-circle remove-item" (click)="removeCocktail(i)"></i>
+                </div>
+              </div>
+
+              <div class="container-safe-button">
+                <button type="button" class="btn btn-primary save-btn" (click)="saveCocktails()">Save</button>
+              </div>
             </div>
+
+            <div class="cocktails-container justify-content-center" *ngIf="selectedCocktails.length===0" [ngStyle]="{'background-color': '#D9D9D9'}">
+              <div class="align-self-center" *ngIf="selectedCocktails.length===0">
+                <div class="card">
+                  <div class="card-body purple row" style="margin:0">
+                    <div class="col-8">
+                      <p class="mb-0">How many cocktails?</p>
+                    </div>
+                    <div class="col-4">
+                      <input [(ngModel)]="numberOfCocktails" type="number" class="form-control p-1 mb-1"/>
+                    </div>
+                    <button type="button" class="btn generate-cocktails-button" (click)="openSelectMenuModal()">Generate
+                      Cocktails
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="container-safe-button">
+                <button type="button" class="btn btn-primary save-btn" (click)="saveCocktails()">Save</button>
+              </div>
+            </div>
+
+          </div>
         </div>
 
       </div>

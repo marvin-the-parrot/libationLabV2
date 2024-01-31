@@ -1,9 +1,9 @@
 import {Component, OnInit } from '@angular/core';
-import {debounceTime, Subject} from 'rxjs';
 import {IngredientService} from 'src/app/services/ingredient.service';
 import {IngredientListDto} from '../../dtos/ingredient';
 import {ToastrService} from 'ngx-toastr';
 import { Router } from '@angular/router';
+import {Modes} from "../user-settings/user-settings.component";
 
 @Component({
   selector: 'app-ingredient',
@@ -12,8 +12,7 @@ import { Router } from '@angular/router';
 })
 export class IngredientComponent implements OnInit {
   ingredients: IngredientListDto[] = [];
-  searchChangedObservable = new Subject<void>();
-  nameOfIngredient: String;
+  nameOfIngredient: String = "";
   bannerError: string | null = null;
   firstImageUrlPart:string = "https://www.thecocktaildb.com/images/ingredients/";
   imageUrl: string = "";
@@ -28,6 +27,7 @@ export class IngredientComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.searchChanged();
   }
 
   searchChanged() {
@@ -38,6 +38,8 @@ export class IngredientComponent implements OnInit {
       .subscribe({
         next: data => {
           this.ingredients = data;
+          this.selectedIngredient = this.ingredients[0].name;
+          this.showImage(this.selectedIngredient)
           if (data == null) {
             this.isToShowImg = false;
           }
@@ -55,19 +57,40 @@ export class IngredientComponent implements OnInit {
       this.ingredients = []
       this.isToShowImg = false;
       this.selectedIngredient = null;
+      this.nameOfIngredient = "";
+
+      this.service.search(this.nameOfIngredient)
+        .subscribe({
+          next: data => {
+            this.ingredients = data;
+            this.selectedIngredient = this.ingredients[0].name;
+            this.showImage(this.selectedIngredient)
+            if (data == null) {
+              this.isToShowImg = false;
+            }
+          },
+          error: error => {
+            console.error('Error fetching ingredients', error);
+            this.bannerError = 'Could not fetch ingredients: ' + error.message;
+            const errorMessage = error.status === 0
+              ? 'Is the backend up?'
+              : error.message.message;
+            this.notification.error(errorMessage, 'Could Not Fetch Ingredients');
+          }
+        })
     }
 
   }
-  
+
   showImage(name: String) : void {
     this.isToShowImg = true;
-    this.imageUrl = this.firstImageUrlPart + name + "-Medium.png"; 
+    this.imageUrl = this.firstImageUrlPart + name + "-Medium.png";
     this.imageName = name;
     this.selectedIngredient = name;
   }
 
   navigateToMyIngredients(): void {
-    this.router.navigate(['/settings']);
+    this.router.navigate(['/settings'], { queryParams: { mode: Modes.Ingredients } });
   }
-  
+
 }

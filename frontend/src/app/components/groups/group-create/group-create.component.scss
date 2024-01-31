@@ -32,24 +32,18 @@
 
 .group-name {
 
-  padding-top: 40px;
-  padding-bottom: 20px;
-  padding-left: 0px;
-  padding-right: 0px;
+  padding: 40px 0 20px;
 }
 
 .add-group-member {
 
-  padding-top: 20px;
-  padding-bottom: 20px;
-  padding-left: 0px;
-  padding-right: 0px;
+  padding: 20px 0;
 }
 
 
 .table-container {
-  max-height: 500px; /* Set a fixed height for the container */
-  min-height: 500px;
+  height: 40vh;
+  min-height: 100px;
   background-color: white;
   overflow-y: auto; /* Enable vertical scrolling when content exceeds height */
   border: 1px solid #ccc; /* Optional: Add a border for the container */
@@ -71,6 +65,16 @@
 
 .custom-button{
   margin-bottom: 20px;
+  background-color: #AC6AFE;
+  border-color: #AC6AFE;
+}
+
+.custom-button:hover {
+  background-color: #6200EE;
+  border-color: #6200EE;
+}
+
+.custom-button:active {
   background-color: #6200EE;
   border-color: #6200EE;
 }

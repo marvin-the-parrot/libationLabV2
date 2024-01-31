@@ -14,6 +14,9 @@ import {GroupEditComponent} from "./components/groups/group-edit/group-edit.comp
 import {GroupCreateComponent} from "./components/groups/group-create/group-create.component";
 import { CocktailComponent } from './components/cocktail/cocktail.component';
 import { CocktailMenuComponent } from './components/cocktail/cocktail-menu/cocktail-menu.component';
+import {
+  CocktailDetailPageComponent
+} from "./components/cocktail/cocktail-detail/cocktail-detail-page/cocktail-detail-page.component";
 
 const routes: Routes = [
   {path: '', pathMatch: 'full', redirectTo: 'groups'},
@@ -33,7 +36,10 @@ const routes: Routes = [
     ]
   },
   {path: 'ingredient', canActivate: mapToCanActivate([AuthGuard]), component: IngredientComponent},
-  {path: 'cocktail', canActivate: mapToCanActivate([AuthGuard]), component: CocktailComponent}
+  {path: 'cocktail', canActivate: mapToCanActivate([AuthGuard]), children: [
+      {path: '', component: CocktailComponent},
+      {path: ':id/detail', component: CocktailDetailPageComponent},
+    ]}
 ];
 
 @NgModule({

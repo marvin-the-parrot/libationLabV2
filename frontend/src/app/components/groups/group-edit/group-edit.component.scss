@@ -35,7 +35,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 10%;
-  padding: 0px;
+  padding: 0;
 }
 
 .form-column {
@@ -92,6 +92,16 @@
 .custom-button{
   margin-bottom: 20px;
   margin-right: 20px;
+  background-color: #AC6AFE;
+  border-color: #AC6AFE;
+}
+
+.custom-button:hover {
+  background-color: #6200EE;
+  border-color: #6200EE;
+}
+
+.custom-button:active {
   background-color: #6200EE;
   border-color: #6200EE;
 }

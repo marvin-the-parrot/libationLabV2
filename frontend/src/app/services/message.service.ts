@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Globals} from '../global/globals';
-import {MessageCountDto, MessageCreate, MessageDetailDto} from "../dtos/message";
+import {MessageCountDto, MessageCreate, MessageDetailDto, MessageSetReadDto} from "../dtos/message";
 
 @Injectable({
   providedIn: 'root'
@@ -67,5 +67,12 @@ export class MessageService {
    */
   acceptGroupInvitation(message: MessageDetailDto): Observable<any> {
     return this.httpClient.post<MessageDetailDto>(this.messageBaseUri + '/accept', message);
+  }
+
+  /**
+   * Set all messages to read.
+   */
+  setAllMessagesRead(messages: MessageSetReadDto[]): Observable<any> {
+    return this.httpClient.put<MessageDetailDto>(this.messageBaseUri + '/read', messages);
   }
 }

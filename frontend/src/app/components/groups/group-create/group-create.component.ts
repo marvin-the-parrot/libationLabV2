@@ -7,7 +7,6 @@ import {ToastrService} from 'ngx-toastr';
 import {Observable, of} from "rxjs";
 import {UserListDto, UserListGroupDto} from "../../../dtos/user";
 import {UserService} from "../../../services/user.service";
-import {DialogService} from 'src/app/services/dialog.service';
 import {ErrorFormatterService} from "../../../services/error-formatter.service";
 
 @Component({
@@ -35,7 +34,6 @@ export class GroupCreateComponent implements OnInit {
   constructor(
     private service: GroupsService,
     private userService: UserService,
-    private dialogService: DialogService,
     private notification: ToastrService,
     private router: Router,
     private errorFormatter: ErrorFormatterService,
@@ -45,17 +43,17 @@ export class GroupCreateComponent implements OnInit {
   ngOnInit(): void {
 
     // add the user that creates the group first and make him the host
-    var user = JSON.parse(localStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem('user'));
     if (user == null) {
       this.router.navigate(['/login']);
       return;
     }
 
-    var host: UserListGroupDto = {
+    const host: UserListGroupDto = {
       id: user.id,
       name: user.name,
       isHost: true
-    }
+    };
 
     this.group.members.push(host);
     this.group.host = host;
@@ -67,7 +65,7 @@ export class GroupCreateComponent implements OnInit {
     console.log("is form valid?", form.valid, this.group);
     if (form.valid) {
       this.service.create(this.group).subscribe({
-        next: data => {
+        next: () => {
           this.router.navigate(["/groups"]);
           this.notification.success(`Successfully created Group "${this.group.name}".`);
         },

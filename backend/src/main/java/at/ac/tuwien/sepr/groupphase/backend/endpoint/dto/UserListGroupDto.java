@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
-import org.springframework.web.bind.annotation.GetMapping;
 
 public class UserListGroupDto {
     public UserListGroupDto(Long id, String name, boolean isHost) {

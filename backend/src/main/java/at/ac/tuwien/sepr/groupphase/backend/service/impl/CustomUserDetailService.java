@@ -15,42 +15,40 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
-import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.ResetTokenRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.security.JwtTokenizer;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import at.ac.tuwien.sepr.groupphase.backend.service.validators.UserValidator;
-import org.springframework.security.core.context.SecurityContextHolder;
-
-import java.lang.invoke.MethodHandles;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Properties;
-
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.lang.invoke.MethodHandles;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * User service implementation.
@@ -68,6 +66,22 @@ public class CustomUserDetailService implements UserService {
     private final JwtTokenizer jwtTokenizer;
     private final UserValidator validator;
     private final UserMapper userMapper;
+
+    // values for the sendEmail method
+    @Value("${spring.mail.host}")
+    private String host;
+
+    @Value("${spring.mail.port}")
+    private String port;
+
+    @Value("${spring.mail.auth}")
+    private boolean auth;
+
+    @Value("${spring.mail.username}")
+    private String senderEmail;
+
+    @Value("${spring.mail.password}")
+    private String senderPassword;
 
     /**
      * Customer user detail service.
@@ -134,7 +148,7 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public String login(UserLoginDto userLoginDto) {
+    public String login(UserLoginDto userLoginDto) throws BadCredentialsException, UsernameNotFoundException {
         LOGGER.debug("Login user");
         UserDetails userDetails = loadUserByUsername(userLoginDto.getEmail());
         if (userDetails != null
@@ -215,8 +229,9 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public UserLocalStorageDto getUserByEmail(String email) {
+    public UserLocalStorageDto getUserByEmail() {
         LOGGER.debug("Get user by email");
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         ApplicationUser applicationUser = userRepository.findByEmail(email);
         if (applicationUser != null) {
             UserLocalStorageDto user = new UserLocalStorageDto();
@@ -245,15 +260,16 @@ public class CustomUserDetailService implements UserService {
     }
 
     @Override
-    public void deleteUserByEmail(String email) {
+    public void deleteUserByEmail() {
         LOGGER.debug("Delete user by email");
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         ApplicationUser applicationUser = userRepository.findByEmail(email);
         if (applicationUser != null) {
             List<UserGroup> userGroups = userGroupRepository.findAllByApplicationUser(applicationUser);
             for (UserGroup userGroup1 : userGroups) {
                 if (userGroup1.isHost()) {
 
-                    ApplicationGroup group = userGroup1.getGroups();
+                    ApplicationGroup group = userGroup1.getGroup();
                     List<UserGroup> userGroupList = userGroupRepository.findAllByApplicationGroup(group);
                     //If user is only member of group
                     if (userGroupList.size() == 1) {
@@ -292,25 +308,16 @@ public class CustomUserDetailService implements UserService {
         return userMapper.userToUserListDto(userRepository.findFirst5ByEmailNotAndNameIgnoreCaseContaining(email, searchParams.getName()));
     }
 
-    private void sendEmail(String email) {
+    private void sendEmail(String recipientEmail) {
         // Sender's email address and password
-        final String senderEmail = "dionysuslibationlab@gmail.com";
-
-        //DONT DELTE THIS!!!
-        final String senderPassword = "mvry hsuu mjvm mxrz ";
-        //DONT DELTE THIS!!!
-
-        // Recipient's email address
-        String recipientEmail = email;
-
         long userId = userRepository.findByEmail(recipientEmail).getId();
 
         // Setup properties for the SMTP server
         Properties properties = new Properties();
-        properties.put("mail.smtp.host", "smtp.gmail.com");
-        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.host", host);
+        properties.put("mail.smtp.auth", auth);
         properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        properties.put("mail.smtp.socketFactory.port", "465");
+        properties.put("mail.smtp.socketFactory.port", port);
 
         // Create a Session object with authentication
         Session session = Session.getInstance(properties, new javax.mail.Authenticator() {

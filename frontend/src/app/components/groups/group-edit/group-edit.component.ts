@@ -10,6 +10,7 @@ import {Observable, of} from "rxjs";
 import {UserListDto, UserListGroupDto} from "../../../dtos/user";
 import {UserService} from "../../../services/user.service";
 import {ConfirmationDialogMode} from "../../../confirmation-dialog/confirmation-dialog.component";
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'app-group-edit',
@@ -43,6 +44,7 @@ export class GroupEditComponent {
     private router: Router,
     private route: ActivatedRoute,
     private errorFormatter: ErrorFormatterService,
+    private location: Location,
   ) {
   }
 
@@ -58,13 +60,16 @@ export class GroupEditComponent {
     this.dialogService.openConfirmationDialog(ConfirmationDialogMode.DeleteGroup).subscribe((result) => {
       if (result) {
         this.service.deleteGroup(this.group.id).subscribe({
-          next: data => {
+          next: () => {
             this.notification.success(`Successfully deleted Group "${this.group.name}".`);
             this.router.navigate(['/groups']);
           },
           error: error => {
             console.error('Error deleting group', error);
-            this.notification.error(`Error deleting group "${this.group.name}".`);
+            this.notification.error(error.error.detail, `Error deleting group "${this.group.name}".`, {
+              enableHtml: true,
+              timeOut: 10000,
+            });
           }
         });
       }
@@ -96,7 +101,6 @@ export class GroupEditComponent {
     }
   }
 
-  // todo: pass the existing members to the autocomplete
   memberSuggestions = (input: string): Observable<UserListDto[]> => (input === '')
     ? of([])
     : this.userService.searchUsersGroupCreating(input, this.group.members);
@@ -148,7 +152,12 @@ export class GroupEditComponent {
       },
       error: error => {
         console.error('Error fetching group', error);
-        this.notification.error(`Error fetching group.`); // todo: show error message from backend?
+        const displayError = error.error.errors != null ? error.error.errors : error.error;
+        this.notification.error(displayError, `Error fetching group.`, {
+          enableHtml: true,
+          timeOut: 10000,
+        });
+        this.location.back(); // Go back to the previous page
       }
     });
   }

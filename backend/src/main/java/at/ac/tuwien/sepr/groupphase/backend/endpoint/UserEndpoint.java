@@ -8,6 +8,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserLocalStorageDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserSearchExistingGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
@@ -36,8 +37,8 @@ import java.util.List;
 public class UserEndpoint {
 
     static final String BASE_PATH = "/api/v1/users";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final String ROLE_USER = SecurityRolesEnum.Roles.ROLE_USER;
     private final UserService userService;
 
     @Autowired
@@ -45,7 +46,7 @@ public class UserEndpoint {
         this.userService = userService;
     }
 
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @GetMapping
     public List<UserListDto> search(@Valid UserSearchExistingGroupDto searchParams) {
         LOGGER.info("GET " + BASE_PATH);
@@ -92,12 +93,6 @@ public class UserEndpoint {
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Failed to send email", e);
-            //wait for 1000ms to prevent brute force attacks
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException interruptedException) {
-                interruptedException.printStackTrace();
-            }
         }
     }
 
@@ -124,27 +119,25 @@ public class UserEndpoint {
     @ResponseStatus(HttpStatus.OK)
     public UserLocalStorageDto getUser() {
         LOGGER.info("GET /api/v1/user/user");
-        String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
         try {
-            return userService.getUserByEmail(userMail);
+            return userService.getUserByEmail();
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
-            logClientError(status, String.format("Failed to get user with mail %s", userMail), e);
+            logClientError(status, String.format("Failed to get user with mail %s", SecurityContextHolder.getContext().getAuthentication().getName()), e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
 
     @DeleteMapping("/delete")
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @ResponseStatus(HttpStatus.OK)
     public void deleteUser() {
         LOGGER.info("DELETE /api/v1/user/delete");
-        String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
         try {
-            userService.deleteUserByEmail(userMail);
+            userService.deleteUserByEmail();
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
-            logClientError(status, String.format("Failed to delete user with mail %s", userMail), e);
+            logClientError(status, String.format("Failed to delete user with mail %s", SecurityContextHolder.getContext().getAuthentication().getName()), e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }

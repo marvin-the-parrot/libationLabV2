@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AutocompleteComponent } from './autocomplete.component';
 
 describe('AutocompleteComponent', () => {
-  let component: AutocompleteComponent;
-  let fixture: ComponentFixture<AutocompleteComponent>;
+  let component: AutocompleteComponent<any>;
+  let fixture: ComponentFixture<AutocompleteComponent<any>>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({

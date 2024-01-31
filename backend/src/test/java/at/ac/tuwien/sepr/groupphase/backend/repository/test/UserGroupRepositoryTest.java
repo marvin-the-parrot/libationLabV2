@@ -18,10 +18,12 @@ import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroupKey;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("generateData")
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class UserGroupRepositoryTest {
 
     @Autowired
@@ -43,7 +45,7 @@ public class UserGroupRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        userGroupRepository.deleteAll();
+        //userGroupRepository.deleteAll();
         applicationGroup = new ApplicationGroup();
         applicationGroup.setId(9999L);
         applicationGroup.setName("newGroup");
@@ -81,7 +83,7 @@ public class UserGroupRepositoryTest {
         userGroupRepository.deleteById(new UserGroupKey());
         UserGroup result = userGroupRepository.findById(userGroupKey).get();
 
-        assertEquals(expected.getGroups().getId(), result.getGroups().getId());
+        assertEquals(expected.getGroup().getId(), result.getGroup().getId());
         assertEquals(expected.getUser().getId(), result.getUser().getId());
     }
 

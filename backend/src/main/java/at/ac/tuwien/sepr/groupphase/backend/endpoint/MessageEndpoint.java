@@ -3,12 +3,14 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCountDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageSetReadDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.MessageMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
 import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
 import at.ac.tuwien.sepr.groupphase.backend.service.MessageService;
 import at.ac.tuwien.sepr.groupphase.backend.service.UserGroupService;
@@ -45,6 +47,7 @@ public class MessageEndpoint {
     static final String BASE_PATH = "/api/v1/messages";
     private static final Logger LOGGER =
         LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final String ROLE_USER = SecurityRolesEnum.Roles.ROLE_USER;
     private final MessageService messageService;
     private final GroupService groupService;
     private final UserGroupService userGroupService;
@@ -65,7 +68,7 @@ public class MessageEndpoint {
      *
      * @return number of unread messages
      */
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @GetMapping("/count")
     @Operation(summary = "Get number of unread messages")
     public MessageCountDto getUnreadMessageCount() {
@@ -78,7 +81,7 @@ public class MessageEndpoint {
      *
      * @return published messages
      */
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @GetMapping
     @Operation(summary = "Get list of messages without details")
     public List<MessageDetailDto> findAll() {
@@ -104,7 +107,7 @@ public class MessageEndpoint {
     public void create(@Valid @RequestBody MessageCreateDto message) {
         LOGGER.info("POST /api/v1/messages body: {}", message);
         if (message == null) {
-            return;
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Message is null");
         }
         try {
             messageMapper.from(messageService.create(message), groupMapper.groupToGroupDetailDto(groupService.findOne((message.getGroupId()))));
@@ -128,22 +131,18 @@ public class MessageEndpoint {
      *
      * @param message - messageCreateDto
      */
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/accept")
     @Operation(summary = "Accept a group invation")
     public void acceptGroupInvitation(@Valid @RequestBody MessageDetailDto message) {
         LOGGER.info("POST /api/v1/messages body: {}", message);
         try {
-            messageService.update(message);
+            messageService.delete(message.getId());
             userGroupService.create(message.getGroup().getId());
         } catch (NotFoundException e) {
             logClientError(HttpStatus.NOT_FOUND, "Failed to accept message since ", e);
             HttpStatus status = HttpStatus.NOT_FOUND;
-            throw new ResponseStatusException(status, e.getMessage(), e);
-        } catch (ValidationException e) {
-            logClientError(HttpStatus.UNPROCESSABLE_ENTITY, "Failed to accept message since ", e);
-            HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
@@ -151,16 +150,15 @@ public class MessageEndpoint {
     /**
      * Update an existing message entry.
      *
-     * @param id       the id of the message
      * @param toUpdate the message entry to update
      * @return the updated message entry
      * @throws ValidationException if the data is not valid
      * @throws ConflictException   if the data conflicts with existing data
      */
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @PutMapping("{id}")
     @Operation(summary = "Update Message")
-    public MessageDetailDto update(@PathVariable long id, @RequestBody MessageDetailDto toUpdate)
+    public MessageDetailDto update(@RequestBody MessageDetailDto toUpdate)
         throws ValidationException, ConflictException {
         LOGGER.info("PUT " + BASE_PATH + "/{}", toUpdate);
         LOGGER.debug("Body of request:\n{}", toUpdate);
@@ -173,6 +171,20 @@ public class MessageEndpoint {
         } catch (ValidationException e) {
             HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
             logClientError(status, "Message to update is invalid", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+    @Secured(ROLE_USER)
+    @PutMapping("/read")
+    @Operation(summary = "Mark all messages as read")
+    public void markAllAsRead(@RequestBody MessageSetReadDto[] messagesToSetRead) {
+        LOGGER.info("PUT " + BASE_PATH + "/read");
+        try {
+            messageService.markAllAsRead(messagesToSetRead);
+        } catch (NotFoundException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            logClientError(status, "Message to update not found", e);
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }

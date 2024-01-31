@@ -37,6 +37,7 @@
   max-height: 600px;
   overflow-y: scroll;
   border-radius: 0 0 15px 15px;
+  background-color: #D9D9D9;
 }
 
 .border-bottom:last-child {
@@ -93,5 +94,40 @@ h6 {
 .btn-trash {
   background-color: #dc3545;
   border-color: #dc3545;
+  margin-left: 30px;
+}
+
+.unread-message-count-line {
+  opacity: 0.5;
+  border-bottom: #333333 solid 1px;
+  margin: 5px 1em 10px;
+}
+
+.unread-message-count {
+  opacity: 0.5;
+  margin: 0;
+}
+
+.message-header {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  margin-top: 5px;
+}
+
+.btn-envelope-open {
+  border-radius: 4px 4px 4px 4px;
   width: 63px;
+  background-color: #AC6AFE;
+  padding: 3px 3px;
+}
+
+.btn-envelope-open:hover {
+  background-color: #6200ee;
+}
+
+.bi-x-lg {
+  color: black;
 }

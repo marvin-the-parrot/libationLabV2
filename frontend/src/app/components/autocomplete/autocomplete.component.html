@@ -4,6 +4,7 @@
        [(ngModel)]="inputText"
        (ngModelChange)="inputChange.next($event)"
        [disabled]="disabled"
+       [placeholder]="placeholderText"
        (blur)="resetInputText()"
 >
 <datalist [id]="dataListId" [ngClass]="datalistClass">

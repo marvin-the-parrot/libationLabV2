@@ -6,13 +6,14 @@
       <h3>Members</h3>
     </div>
 
-    <div class="row">
+    <div class="row" *ngIf="group?.host?.name === username">
       <div class="input-container">
         <div>
           <app-autocomplete
             class="autocomplete"
             name="memberSelection"
             textInputClass="form-control"
+            [placeholderText]="'Search for users'"
             [suggestions]="memberSuggestions"
             [formatModel]="formatMember"
             valueNeedsToMatchSuggestion="true"
@@ -28,13 +29,16 @@
       </div>
     </div>
 
-    <div class="list">
+    <div class = "list user-ingredient-header">
       <p class="entry-count">{{group.members.length}} Users in Group</p>
+    </div>
+
+    <div class="container-scrollable">
       <div *ngFor="let member of group.members" class="list-item">
           <div class="list-name">{{ member.name }} <span *ngIf="member.name===username"> (You)</span></div>
         <div *ngIf="group?.host?.name === member?.name" class="list-action">👑</div>
         <div *ngIf="member?.name !== username && group?.host?.name === username" class="list-action">
-          <button class="btn btn-light" (click)="openMemberOptions(member)">...</button>
+          <button class="btn btn-light" (click)="openMemberOptions(member, $event)"><i class="bi bi-three-dots"></i></button>
         </div>
       </div>
 
@@ -43,34 +47,109 @@
 
   <div class="grid-item-2 d-flex flex-column" >
     <div class="d-flex flex-column justify-content-center">
-      <h3 class="m-0">Menu</h3>
-      <div>{{group.name}}</div>
+      <h3 class="m-0">The Cocktail Card</h3>
+      <div>of Group {{group.name}}</div>
     </div>
-    <div *ngIf="group.cocktails === null" class="d-flex justify-content-center align-items-center h-100">
-      <span></span>
-      <button *ngIf="group.cocktails === null" class="btn menu-button" [routerLink]="['../menu']" >Create a Cocktail Menu</button>
+    <div *ngIf="menuHost.cocktailsList.length === 0 && group?.host?.name === username" class="d-flex justify-content-center align-items-center h-100">
+      <button *ngIf="group?.host?.name === username" class="btn menu-button" [routerLink]="['../menu']">Make a Cocktail Card</button>
     </div>
-    <div *ngIf="group.cocktails !== null">
-      <span *ngFor="let cocktail of group.cocktails" >
-      {{ cocktail }}
-      </span>
+
+    <div *ngIf="menu.cocktailsList.length === 0 && group?.host?.name !== username" class="d-flex justify-content-center align-items-center h-100">
+      <p *ngIf="menu.cocktailsList.length === 0">There is currently no cocktail card created.</p>
     </div>
-  </div>
+
+
+    <!-- Guest Menu -->
+    <div *ngIf="menu.cocktailsList.length !== 0 && group?.host?.name !== username">
+
+      <div class="cocktails-container">
+        <div>
+          <p class="cocktails-count">{{menu.cocktailsList.length}} Cocktails</p>
+        </div>
+        <div *ngIf="group?.host?.name !== username" class="cocktails-list">
+
+          <div *ngFor="let cocktail of menu.cocktailsList; index as i" class="cocktails-item">
+            {{ cocktail.name }}
+
+            <div class="button-container">
+              <div class="btn-group" role="group" aria-label="Cocktail Actions">
+
+                <!-- Like Button -->
+                <button class="btn like-button" (click)="likeCocktail(cocktail.id)" [class.highlighted]="cocktail.rating === 'Like' || cocktail.rating === 0">
+                  <i class="bi bi-hand-thumbs-up"></i>
+                </button>
+
+                <!-- Dislike Button -->
+                <button class="btn dislike-button" (click)="dislikeCocktail(cocktail.id)" [class.highlighted]="cocktail.rating === 'Dislike' || cocktail.rating === 1">
+                  <i class="bi bi-hand-thumbs-down"></i>
+                </button>
+              </div>
+              <!-- See Detail Button -->
+              <button class="btn see-detail-button" (click)="openCocktailDetails(cocktail.id)">
+                <i class="bi bi-book"></i>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+      <br>
+    </div>
+
+    <!-- Host Menu -->
+    <div *ngIf="menuHost.cocktailsList.length !== 0 && group?.host?.name === username">
+      <div class="cocktails-container">
+        <div>
+          <p class="cocktails-count">{{menuHost.cocktailsList.length}} Cocktails</p>
+        </div>
+
+        <div *ngIf="group?.host?.name === username" class="cocktails-list">
+          <div *ngFor="let cocktail of menuHost.cocktailsList; index as i" class="cocktails-item">
+            {{ cocktail.name }}
+
+            <div class="button-container">
+
+              <div class="progress-bar" ngbPopover= "{{ getTooltipText(cocktail.positiveRating, cocktail.negativeRating) }}" triggers="mouseenter:mouseleave">
+                <div class="progress-bar-positive" [style.width]="calculatePositiveBar(cocktail.positiveRating, cocktail.negativeRating)"></div>
+                <div class="progress-bar-negative" [style.width]="calculateNegativeBar(cocktail.positiveRating, cocktail.negativeRating)"></div>
+              </div>
+
+              <button class="btn see-detail-button" (click)="openCocktailDetails(cocktail.id)">
+                <i class="bi bi-book"></i>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <div *ngIf="group?.host?.name === username" class="container-safe-button">
+          <button type="button" class="btn btn-primary save-btn" [routerLink]="['../menu']">Edit</button>
+        </div>
+
+      </div>
+      <br>
+    </div>
+
+
+    </div>
 
   <div class="grid-item-3">
     <div>
       <h3>Ingredients</h3>
     </div>
+    <div class="list user-ingredient-header" *ngIf="ingredients !== null">
+      <p class="entry-count">{{ingredients.length}} Ingredients in Group</p>
+    </div>
     <div class="container-scrollable">
-      <div class="list ingredient-list" *ngIf="ingredients !== null">
-        <p class="entry-count">{{ingredients.length}} Ingredients in Group</p>
+
         <div *ngFor="let ingredient of ingredients" class="list-item">
           <div class="list-name">{{ ingredient.name }}</div>
           <div class="list-action">
-            <i class="bi bi-info-circle info" [attr.data-tooltip]="getUsersOfIngredient(ingredient)"></i>
+            <i class="bi bi-info-circle info" ngbPopover= "{{ getUsersOfIngredient(ingredient) }}" triggers="mouseenter:mouseleave"></i>
           </div>
         </div>
-      </div>
+
     </div>
   </div>
 </div>

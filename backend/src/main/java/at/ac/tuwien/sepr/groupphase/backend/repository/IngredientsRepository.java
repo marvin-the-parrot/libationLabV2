@@ -17,15 +17,21 @@ import jakarta.transaction.Transactional;
 @Transactional
 public interface IngredientsRepository extends JpaRepository<Ingredient, Long> {
 
-    List<Ingredient> findByNameContainingIgnoreCase(String name);
+    List<Ingredient> findByNameContainingIgnoreCaseOrderByName(String name);
+
+    List<Ingredient> findAllByOrderByName();
 
     List<Ingredient> findAllByApplicationUserInOrderByName(List<ApplicationUser> applicationUser);
 
     List<Ingredient> findAllByApplicationUser(ApplicationUser applicationUser);
 
-    List<Ingredient> findFirst5ByNameNotInAndNameIgnoreCaseContaining(List<String> names, String ingredientName);
+    List<Ingredient> findFirst10ByNameNotInAndNameIgnoreCaseContainingOrderByName(List<String> names, String ingredientName);
+
+    List<Ingredient> findFirst10ByNameIgnoreCaseContainingOrderByName(String ingredientName);
 
     Ingredient findByName(String name);
+
+    List<Ingredient> findByNameIn(List<String> names);
 
     List<Ingredient> findByCocktailIngredientsIn(List<CocktailIngredients> cocktailIngredients);
 }

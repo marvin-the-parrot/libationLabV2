@@ -1,7 +1,4 @@
-<mat-dialog-actions>
-    <div class="options-buttons">
-      <button mat-raised-button [mat-dialog-close]="true" class="red-text">Remove from Group</button>
-      <button mat-raised-button [mat-dialog-close]="false" class="orange-text">Make Host</button>
-    </div>
-  </mat-dialog-actions>
-  
+<mat-dialog-actions class="dialog">
+  <button mat-button [mat-dialog-close]="false" class="option-btn">👑 Make Host</button>
+  <button mat-button [mat-dialog-close]="true" class="option-btn"><i class="bi bi-person-x-fill red-text"></i> Remove from Group</button>
+</mat-dialog-actions>

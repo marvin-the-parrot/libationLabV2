@@ -58,8 +58,12 @@ public class MessageValidator {
         List<ApplicationMessage> messages = messageRepository.findAllByApplicationUserAndGroupId(user, toCreate.getGroupId());
 
         if (!messages.isEmpty()) {
-            assert user != null;
-            validationErrors.add(String.format("You already invited user %s to the group", user.getName()));
+            for (ApplicationMessage message : messages) {
+                if (!message.getIsRead()) {
+                    assert user != null;
+                    validationErrors.add(String.format("You already invited user %s to the group", user.getName()));
+                }
+            }
         }
 
         List<ApplicationUser> groupUsers = userGroupRepository.findUsersByGroupId(toCreate.getGroupId());

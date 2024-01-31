@@ -10,10 +10,16 @@
     </div>
     <div class="p-2">
       <h5>Selected Cocktails:</h5>
-      <ul>
-        <li *ngIf="group.cocktails===null"></li>
-        <li *ngFor="let cocktail of group.cocktails">{{cocktail}}</li>
+      <ul *ngIf="group.cocktails && group.cocktails.length > 0; else noCocktails" class="cocktails-list">
+        <!-- TODO: cocktail.name is not defined -->
+        <li *ngFor="let cocktail of group.cocktails">{{ cocktail.name }}</li>
       </ul>
+      <ng-template #noCocktails>
+        <div class="noCocktails">
+          <p>There are currently no selected cocktails. <br><br></p>
+        </div>
+
+      </ng-template>
     </div>
   </a>
   <div class="d-flex justify-content-between align-items-end">

@@ -1,14 +1,14 @@
 package at.ac.tuwien.sepr.groupphase.backend.service;
 
-import java.util.List;
-
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientSuggestionDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientGroupDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
-import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import java.util.List;
 
 /**
  * Service for Ingredients Entity.
@@ -55,4 +55,13 @@ public interface IngredientService {
      */
     List<IngredientListDto> addIngredientsToUser(IngredientListDto[] ingredientListDto) throws ConflictException;
 
+    /**
+     * Get ingredient suggestions for a group.
+     *
+     * @param groupId id of the group
+     * @return list of ingredient suggestions
+     * @throws NotFoundException if the group does not exist
+     * @throws ConflictException if the current user is not a member of the group or not the host
+     */
+    List<IngredientSuggestionDto> getIngredientSuggestions(Long groupId) throws NotFoundException, ConflictException;
 }

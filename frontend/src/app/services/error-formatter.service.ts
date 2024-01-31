@@ -16,11 +16,6 @@ export class ErrorFormatterService {
     if (!!error.error.errors) {
       message += ':<ul>';
       for (const e of error.error.errors) {
-        /* Use Angular's DomSanitizer to strip dangerous parts out of the HTML
-         * before putting it into the error message.
-         * Toastr already does this, but it can't hurt to do here too,
-         * in case the library every fails to do it.
-         */
         const sanE = this.domSanitizer.sanitize(SecurityContext.HTML, e);
         message += `<li>${sanE}</li>`;
       }

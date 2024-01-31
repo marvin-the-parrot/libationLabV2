@@ -32,6 +32,12 @@ import { MatIconModule } from '@angular/material/icon';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import { CocktailComponent } from './components/cocktail/cocktail.component';
 import { CocktailMenuComponent } from './components/cocktail/cocktail-menu/cocktail-menu.component';
+import { AddIngredientDialogComponent } from './add-ingredient-dialog/add-ingredient-dialog.component';
+import {NgOptimizedImage} from "@angular/common";
+import { CocktailDetailComponent } from './components/cocktail/cocktail-detail/cocktail-detail.component';
+import {MatChipsModule} from "@angular/material/chips";
+import { GenerateMenuDialogComponent } from './generate-menu-dialog/generate-menu-dialog.component';
+import { CocktailDetailPageComponent } from './components/cocktail/cocktail-detail/cocktail-detail-page/cocktail-detail-page.component';
 
 
 @NgModule({
@@ -56,6 +62,10 @@ import { CocktailMenuComponent } from './components/cocktail/cocktail-menu/cockt
     IngredientComponent,
     CocktailComponent,
     CocktailMenuComponent,
+    AddIngredientDialogComponent,
+    CocktailDetailComponent,
+    GenerateMenuDialogComponent,
+    CocktailDetailPageComponent,
   ],
   imports: [
     MatIconModule,
@@ -70,6 +80,8 @@ import { CocktailMenuComponent } from './components/cocktail/cocktail-menu/cockt
     BrowserAnimationsModule,
     MatDialogModule,
     MatCheckboxModule,
+    NgOptimizedImage,
+    MatChipsModule,
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

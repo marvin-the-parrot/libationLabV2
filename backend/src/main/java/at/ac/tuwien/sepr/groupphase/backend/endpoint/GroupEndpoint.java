@@ -1,18 +1,28 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
-import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
-import java.util.List;
-
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailOverviewDto;
-import at.ac.tuwien.sepr.groupphase.backend.service.CocktailIngredientService;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailDetailDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListGroupDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
+import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
+import at.ac.tuwien.sepr.groupphase.backend.service.CocktailService;
+import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
+import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,22 +34,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListGroupDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
-import at.ac.tuwien.sepr.groupphase.backend.entity.UserGroup;
-import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
-import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
-import at.ac.tuwien.sepr.groupphase.backend.service.GroupService;
-import at.ac.tuwien.sepr.groupphase.backend.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.transaction.Transactional;
+import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Group endpoint controller.
@@ -49,41 +46,38 @@ import jakarta.transaction.Transactional;
 public class GroupEndpoint {
 
     static final String BASE_PATH = "/api/v1/groups";
-
+    private static final String ROLE_USER = SecurityRolesEnum.Roles.ROLE_USER;
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final GroupService groupService;
     private final GroupMapper groupMapper;
     private final UserService userService;
-    private final UserMapper userMapper;
-    private final CocktailIngredientService cocktailService;
+    private final CocktailService cocktailService;
 
     @Autowired
-    public GroupEndpoint(GroupService groupService, GroupMapper groupMapper, UserService userService, UserMapper userMapper,
-                         CocktailIngredientService cocktailService) {
+    public GroupEndpoint(GroupService groupService, GroupMapper groupMapper, UserService userService, CocktailService cocktailService) {
         this.groupService = groupService;
         this.groupMapper = groupMapper;
         this.userService = userService;
-        this.userMapper = userMapper;
         this.cocktailService = cocktailService;
     }
 
     /**
      * Get a list of groups that this viewer is part of.
      *
-     * @return list of groups
+     * @return Array of GroupOverviewDto
      */
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @GetMapping()
     @Transactional
     @Operation(summary = "Get a list of groups that this viewer is part of", security = @SecurityRequirement(name = "apiKey"))
     public GroupOverviewDto[] findGroupsByUser() {
         LOGGER.info("GET /api/v1/groups");
-        List<UserGroup> userGroupMatchings = groupService.findGroupsByUser(SecurityContextHolder.getContext().getAuthentication().getName());
+        List<UserGroup> userGroupMatchings = groupService.findGroupsByUser();
         List<GroupOverviewDto> groupOverviewDtos = new ArrayList<>();
         for (UserGroup group : userGroupMatchings) {
             GroupOverviewDto groupOverviewDto;
-            groupOverviewDto = groupMapper.grouptToGroupOverviewDto(group.getGroups());
-            List<UserListGroupDto> users = userService.findUsersByGroup(group.getGroups());
+            groupOverviewDto = groupMapper.grouptToGroupOverviewDto(group.getGroup());
+            List<UserListGroupDto> users = userService.findUsersByGroup(group.getGroup());
             groupOverviewDto.setMembers(users.toArray(new UserListGroupDto[0]));
 
             //set host
@@ -98,26 +92,14 @@ public class GroupEndpoint {
         return groupOverviewDtos.toArray(new GroupOverviewDto[0]);
     }
 
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @GetMapping(value = "/{id}")
     @Transactional
     @Operation(summary = "Get detailed information about a specific group", security = @SecurityRequirement(name = "apiKey"))
-    public GroupOverviewDto find(@PathVariable Long id) {
-        //TODO "ROLE_USER" in ENUM
+    public GroupOverviewDto find(@PathVariable Long id) throws ValidationException {
         LOGGER.info("GET /api/v1/groups/{}", id);
-        ApplicationGroup group = groupService.findOne(id);
-        List<UserListGroupDto> users = userService.findUsersByGroup(group);
-        GroupOverviewDto groupOverviewDto = groupMapper.grouptToGroupOverviewDto(group);
-        groupOverviewDto.setMembers(users.toArray(new UserListGroupDto[0]));
 
-        //set host
-        for (UserListGroupDto user : users) {
-            if (user.isHost()) {
-                groupOverviewDto.setHost(user);
-            }
-        }
-
-        return groupOverviewDto;
+        return groupService.findGroupById(id);
     }
 
     /**
@@ -128,7 +110,7 @@ public class GroupEndpoint {
      * @throws ValidationException if the data is not valid
      * @throws ConflictException   if the data conflicts with existing data
      */
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @PostMapping()
     @Operation(security = @SecurityRequirement(name = "apiKey"))
     @ResponseStatus(HttpStatus.CREATED)
@@ -148,7 +130,7 @@ public class GroupEndpoint {
      * @throws ValidationException if the data is not valid
      * @throws ConflictException   if the data conflicts with existing data
      */
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @PutMapping("{id}")
     @Operation(security = @SecurityRequirement(name = "apiKey"))
     public GroupCreateDto update(@PathVariable long id, @RequestBody GroupCreateDto toUpdate) throws ValidationException, ConflictException {
@@ -157,7 +139,7 @@ public class GroupEndpoint {
 
         toUpdate.setId(id);
         try {
-            return groupService.update(toUpdate, SecurityContextHolder.getContext().getAuthentication().getName());
+            return groupService.update(toUpdate);
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Group to update not found", e);
@@ -165,14 +147,14 @@ public class GroupEndpoint {
         }
     }
 
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @PutMapping("{groupId}/{userId}")
     @Operation(security = @SecurityRequirement(name = "apiKey"))
     @ResponseStatus(HttpStatus.OK)
     public void makeMemberHost(@PathVariable Long groupId, @PathVariable Long userId) throws ValidationException {
         LOGGER.info("PUT " + BASE_PATH + "/{}/{}", groupId, userId);
         try {
-            groupService.makeMemberHost(groupId, userId, SecurityContextHolder.getContext().getAuthentication().getName());
+            groupService.makeMemberHost(groupId, userId);
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Group member to make host not found", e);
@@ -185,14 +167,14 @@ public class GroupEndpoint {
      *
      * @param id the id of the group
      */
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(security = @SecurityRequirement(name = "apiKey"))
     public void delete(@PathVariable Long id) throws ValidationException, ConflictException {
         LOGGER.info("DELETE " + BASE_PATH + "/{}", id);
         try {
-            groupService.deleteGroup(id, SecurityContextHolder.getContext().getAuthentication().getName());
+            groupService.deleteGroup(id);
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Group to delete not found", e);
@@ -206,14 +188,14 @@ public class GroupEndpoint {
      * @param groupId the id of the group
      * @param userId  the id of member to be deleted
      */
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @DeleteMapping("{groupId}/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(security = @SecurityRequirement(name = "apiKey"))
     public void removeMemberFromGroup(@PathVariable Long groupId, @PathVariable Long userId) throws ValidationException {
         LOGGER.info("DELETE " + BASE_PATH + "/{}/{}", groupId, userId);
         try {
-            groupService.deleteMember(groupId, userId, SecurityContextHolder.getContext().getAuthentication().getName());
+            groupService.deleteMember(groupId, userId);
         } catch (NotFoundException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             logClientError(status, "Group member to delete not found", e);
@@ -227,7 +209,7 @@ public class GroupEndpoint {
      * @param groupId the id of the group
      * @return list of matched user
      */
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @GetMapping("searchGroupMember/{groupId}")
     @ResponseStatus(HttpStatus.OK)
     public List<UserListDto> searchGroupMember(@PathVariable Long groupId) {
@@ -239,10 +221,10 @@ public class GroupEndpoint {
         LOGGER.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
     }
 
-    @Secured("ROLE_USER")
+    @Secured(ROLE_USER)
     @GetMapping("{groupId}/mixables")
     @ResponseStatus(HttpStatus.OK)
-    public List<CocktailOverviewDto> getMixableCocktails(@PathVariable Long groupId) throws JsonProcessingException {
+    public List<CocktailDetailDto> getMixableCocktails(@PathVariable Long groupId) throws JsonProcessingException {
         LOGGER.info("GET " + BASE_PATH + groupId + "mixable");
         return cocktailService.getMixableCocktails(groupId);
     }

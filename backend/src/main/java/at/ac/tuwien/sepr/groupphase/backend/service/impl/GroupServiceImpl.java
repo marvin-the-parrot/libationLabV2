@@ -1,8 +1,10 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupOverviewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListGroupDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.GroupMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.UserMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
@@ -22,7 +24,7 @@ import at.ac.tuwien.sepr.groupphase.backend.service.validators.GroupValidator;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
@@ -37,25 +39,25 @@ public class GroupServiceImpl implements GroupService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private final UserService userService;
     private final MessageService messageService;
-    @Autowired
     private final GroupRepository groupRepository;
     private final GroupValidator validator;
-    @Autowired
-    private GroupMapper groupMapper;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private UserGroupRepository userGroupRepository;
-    @Autowired
-    private UserMapper userMapper;
+    private final UserRepository userRepository;
+    private final UserGroupRepository userGroupRepository;
+    private final UserMapper userMapper;
+    private final UserService userService;
+    private final GroupMapper groupMapper;
 
-    public GroupServiceImpl(UserService userService, GroupRepository groupRepository, GroupValidator validator, MessageService messageService) {
-        this.userService = userService;
+    public GroupServiceImpl(GroupRepository groupRepository, GroupValidator validator, MessageService messageService, UserRepository userRepository,
+                            UserGroupRepository userGroupRepository, UserMapper userMapper, UserService userService, GroupMapper groupMapper) {
         this.groupRepository = groupRepository;
         this.validator = validator;
         this.messageService = messageService;
+        this.userRepository = userRepository;
+        this.userGroupRepository = userGroupRepository;
+        this.userMapper = userMapper;
+        this.userService = userService;
+        this.groupMapper = groupMapper;
     }
 
     @Override
@@ -70,13 +72,16 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public void deleteGroup(Long groupId, String currentUserMail) throws ValidationException {
+    @Transactional
+    public void deleteGroup(Long groupId) throws ValidationException {
         LOGGER.debug("Delete group ({})", groupId);
 
         ApplicationGroup group = groupRepository.findById(groupId).orElse(null);
         if (group == null) {
             throw new NotFoundException("Could not find group");
         }
+
+        String currentUserMail = SecurityContextHolder.getContext().getAuthentication().getName();
 
         validator.validateIsCurrentUserHost(userRepository, userGroupRepository, groupId, currentUserMail);
 
@@ -88,7 +93,8 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public void deleteMember(Long groupId, Long userId, String currentUserMail) throws ValidationException {
+    @Transactional
+    public void deleteMember(Long groupId, Long userId) throws ValidationException {
         LOGGER.debug("Remove member from group({}, {})", groupId, userId);
 
         // check if user exists
@@ -96,6 +102,8 @@ public class GroupServiceImpl implements GroupService {
         if (userToRemove.isEmpty()) {
             throw new NotFoundException("Could not find user");
         }
+
+        String currentUserMail = SecurityContextHolder.getContext().getAuthentication().getName();
 
         // check if the user to remove is the current user or if the current user is the host of the group
         if (!userToRemove.get().getEmail().equals(currentUserMail)) {
@@ -132,6 +140,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
     public GroupCreateDto create(GroupCreateDto toCreate) throws ValidationException, ConflictException {
         LOGGER.trace("create({})", toCreate);
         // validate group:
@@ -175,7 +184,9 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public GroupCreateDto update(GroupCreateDto toUpdate, String currentUser) throws NotFoundException, ValidationException, ConflictException {
+    @Transactional
+    public GroupCreateDto update(GroupCreateDto toUpdate) throws NotFoundException, ValidationException, ConflictException {
+        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
         LOGGER.trace("update({})", toUpdate);
         // validate group:
         validator.validateForUpdate(toUpdate, userRepository, userGroupRepository, currentUser);
@@ -217,6 +228,8 @@ public class GroupServiceImpl implements GroupService {
                 message.setUserId(member.getId());
                 message.setGroupId(saved.getId());
                 messageService.create(message);
+
+
             }
         }
 
@@ -225,15 +238,17 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public List<UserGroup> findGroupsByUser(String email) {
+    public List<UserGroup> findGroupsByUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         LOGGER.trace("findGroupsByUser({})", email);
         // find groups in database
-        List<UserGroup> groups = userGroupRepository.findAllByApplicationUser(userRepository.findByEmail(email));
-        return groups;
+        return userGroupRepository.findAllByApplicationUser(userRepository.findByEmail(email));
     }
 
     @Override
-    public void makeMemberHost(Long groupId, Long userId, String currentUserMail) throws ValidationException {
+    @Transactional
+    public void makeMemberHost(Long groupId, Long userId) throws ValidationException {
+        String currentUserMail = SecurityContextHolder.getContext().getAuthentication().getName();
         LOGGER.trace("makeMemberHost({}, {}, {})", groupId, userId, currentUserMail);
 
         // check if group exists
@@ -258,6 +273,41 @@ public class GroupServiceImpl implements GroupService {
         currentUserGroup.setHost(false);
         userGroupRepository.save(currentUserGroup);
 
+    }
+
+    @Override
+    public GroupOverviewDto findGroupById(Long id) throws NotFoundException, ValidationException {
+
+        // verify the user
+        String currentUserMail = SecurityContextHolder.getContext().getAuthentication().getName();
+        // get current user
+        ApplicationUser currentUser = userRepository.findByEmail(currentUserMail);
+        if (currentUser == null) {
+            throw new NotFoundException("Could not find current user");
+        }
+        // get group
+        ApplicationGroup group = groupRepository.findById(id).orElse(null);
+        if (group == null) {
+            throw new NotFoundException("Could not find group");
+        }
+        // check if user is member of the group
+        UserGroup currentUserGroup = userGroupRepository.findById(new UserGroupKey(currentUser.getId(), id)).orElse(null);
+        if (currentUserGroup == null) {
+            throw new ValidationException("This action is not allowed", List.of("You are not a member of this group"));
+        }
+
+        // get members to build group
+        List<UserListGroupDto> users = userService.findUsersByGroup(group);
+        GroupOverviewDto groupOverviewDto = groupMapper.grouptToGroupOverviewDto(group);
+        groupOverviewDto.setMembers(users.toArray(new UserListGroupDto[0]));
+
+        //set host
+        for (UserListGroupDto user : users) {
+            if (user.isHost()) {
+                groupOverviewDto.setHost(user);
+            }
+        }
+        return groupOverviewDto;
     }
 
 

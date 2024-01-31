@@ -1,32 +1,85 @@
 .card-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   color: white;
   background-color: #AC6AFE;
   transition-duration: 0.25s;
 }
 
-.card:hover .card-header{
+.cocktail-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bi-info-circle {
+  margin-left: 5px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.card:hover .card-header {
   color: white;
   background-color: #6200EE;
 }
 
+.selected {
+  background-color: #6200EE;
+  color: white;
+}
+
+.purple{
+  background-color: #AC6AFE;
+  color: white;
+  border-radius: 0.25rem;
+}
+
+.generate-cocktails-button{
+  background-color: #6200EE;
+  color: white;
+}
+
 .card{
   box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
-  margin: 0.25rem;
-  margin-bottom: 1rem;
+  margin: 0.25rem 0.25rem 1rem;
   padding: 0;
+  max-height: 320px;
 }
 
 .card:hover{
   cursor: pointer;
 }
 
+.cards-container {
+  width: 99%;
+  height: auto;
+  max-height: 55vh;
+  overflow-y: auto;
+}
+
+.cards-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.cards-container::-webkit-scrollbar-thumb {
+  background-color: grey;
+  border-radius: 3px;
+}
+
+.cards-container::-webkit-scrollbar-track {
+  background-color: #eee;
+}
+
 .menu-card{
-  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
-  margin: 0.25rem;
-  margin-bottom: 1rem;
+  position: relative;
+  //box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+  margin: 0.25rem 0.25rem 1rem;
   padding: 0;
-  background-color: white;
+  background-color: #D9D9D9;
   border-radius: 0.25rem;
+  height: 100%;
+
 }
 .menu-header{
   color: white;
@@ -37,6 +90,9 @@
   padding: 0.5rem;
   font-size: 1.5rem;
   font-weight: bold;
+  height: 60px;
+  justify-content: center;
+  align-items: center;
 }
 
 .menu-body{
@@ -44,3 +100,187 @@
   padding-left: 0.5rem;
   height: 70vh;
 }
+
+.text-semi-bold{
+  font-weight: 500;
+  margin: .4rem;
+}
+
+.rounded-button {
+  background-color: #AC6AFE;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  padding-bottom: 0;
+  padding-top: 0;
+  width: auto;
+  height: auto;
+  min-height: 36px;
+  margin-top: 0;
+  margin-left: 6vw;
+}
+.btn.rounded-button:active {
+  background-color: #6200EE;
+  box-shadow: none;
+}
+
+.btn.rounded-button:hover {
+  background-color: #6200EE;
+  box-shadow: none;
+}
+
+.btn-info {
+  font-weight: 500;
+  position: relative;
+  margin-left: auto;
+}
+
+.flex-container {
+  margin-left: -3vw;
+  display: flex;
+  align-items: center;
+}
+
+.search-container {
+  margin-left: 3vw;
+  margin-top: -1vh;
+  align-self: flex-start;
+}
+
+.label-search-name {
+  margin-left: 0.2vw;
+  font-size: 18px;
+}
+
+.label-search-ing-pref {
+  margin-left: -0.5vw;
+  font-size: 18px;
+}
+
+.wrapper-name {
+  position: relative;
+  width: 14vw;
+}
+
+.wrapper-ing-pref {
+  position: relative;
+  width: 12vw;
+  margin-top: 0;
+  margin-left: -1vw;
+}
+
+.wrapper-btn {
+  position: relative;
+  justify-content: end;
+}
+
+
+.cocktails-container {
+  background-color: white;
+  margin-left: 1vw;
+  margin-top: calc(1vh + 27px);
+  display: flex;
+  flex-direction: column;
+  width: 20vw;
+  height: 60vh;
+  text-align: center;
+  border-radius: 10px;
+}
+
+
+.cocktails-count{
+  opacity: 0.5;
+  margin: 10px 1em 5px;
+  padding-bottom: 5px;
+  border-bottom: #333333 solid 1px;
+}
+
+.cocktails-list {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  margin: 0 1em;
+  overflow-y: auto;
+}
+
+.cocktails-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.cocktails-list::-webkit-scrollbar-thumb {
+  background-color: grey;
+  border-radius: 3px;
+}
+
+.cocktails-list::-webkit-scrollbar-track {
+  background-color: #eee;
+}
+
+.cocktails-item {
+  display: flex;
+  justify-content: space-between;
+  text-align: left;
+  font-weight: 500;
+  font-size: 20px;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  padding-left: 1vw;
+  padding-right: 1vw;
+  border-bottom: #B0B0B0 solid 1px;
+}
+
+.remove-item {
+  text-align: right;
+  cursor: pointer;
+
+}
+
+.container-safe-button {
+  display: flex;
+  justify-content: right;
+  margin-right: 1em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.save-btn {
+  background-color: #AC6AFE;
+  color: white;
+  border: none;
+}
+
+.save-btn:active {
+  background-color: #6200EE;
+}
+
+.save-btn:hover {
+  background-color: #6200EE;
+}
+
+.selected-ingredients-preferences {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  background-color: #AC6AFE;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 8px;
+  margin-right: 4px;
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.remove-tag-btn {
+  padding: 4px;
+  margin-left: 4px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: white;
+  font-size: 14px;
+}
+

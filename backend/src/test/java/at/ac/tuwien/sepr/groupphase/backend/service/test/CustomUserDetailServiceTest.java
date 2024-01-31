@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -43,6 +44,7 @@ public class CustomUserDetailServiceTest {
 
     @Test
     @Transactional
+    @WithMockUser(username = "user1@email.com")
     public void deleteUserByEmail_withValidEmail_expectedSuccess() {
         var group = groupRepository.findById(1L).orElse(null);
         assertNotNull(group);
@@ -53,7 +55,7 @@ public class CustomUserDetailServiceTest {
         assertNotNull(user);
         assertEquals("User1", user.getName());
 
-        assertDoesNotThrow(() -> customUserDetailService.deleteUserByEmail("user1@email.com"));
+        assertDoesNotThrow(() -> customUserDetailService.deleteUserByEmail());
 
         assertNull(userRepository.findById(1L).orElse(null));
 

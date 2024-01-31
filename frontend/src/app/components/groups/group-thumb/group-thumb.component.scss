@@ -75,3 +75,27 @@ a {
   text-decoration: none;
   color: black;
 }
+
+.cocktails-list {
+  overflow-y: auto;
+  height: 100px;
+}
+
+.cocktails-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.cocktails-list::-webkit-scrollbar-thumb {
+  background-color: grey;
+  border-radius: 3px;
+}
+
+.cocktails-list::-webkit-scrollbar-track {
+  background-color: #eee;
+}
+
+.noCocktails {
+  height: 100px;
+  margin-bottom: 16px;
+}
+

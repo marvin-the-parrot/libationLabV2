@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -218,6 +219,7 @@ public class GroupServiceImplTest {
 
     // update group (edit)
     @Test
+    @WithMockUser(username = "user1@email.com")
     public void update_updateExistingGroupFromHost_expectedTrue() {
 
         int numberOfMessagesBefore = messageRepository.findAll().size();
@@ -225,7 +227,7 @@ public class GroupServiceImplTest {
 
         GroupCreateDto groupCreateDto = createBasicGroup();
         groupCreateDto.setId(1L);
-        GroupCreateDto updatedGroupDto = assertDoesNotThrow(() -> groupService.update(groupCreateDto, "user1@email.com"));
+        GroupCreateDto updatedGroupDto = assertDoesNotThrow(() -> groupService.update(groupCreateDto));
         assertNotNull(updatedGroupDto);
         assertEquals(groupCreateDto.getName(), updatedGroupDto.getName());
         assertEquals(groupCreateDto.getHost(), updatedGroupDto.getHost());
@@ -250,33 +252,37 @@ public class GroupServiceImplTest {
     }
 
     @Test
+    @WithMockUser(username = "user1@email.com")
     public void update_updateGroupWithId0_expectedException() {
         GroupCreateDto groupCreateDto = createBasicGroup();
         groupCreateDto.setId(0L);
 
-        ValidationException validationException = assertThrows(ValidationException.class, () -> groupService.update(groupCreateDto, "user1@email.com"));
+        ValidationException validationException = assertThrows(ValidationException.class, () -> groupService.update(groupCreateDto));
         assertEquals("Validation of group for update failed. Failed validations: Group id must not be 0.", validationException.getMessage());
     }
 
     @Test
+    @WithMockUser(username = "user1@email.com")
     public void update_updateNonExistentGroup_expectedException() {
         GroupCreateDto groupCreateDto = createBasicGroup();
         groupCreateDto.setId(9999L);
 
-        ValidationException validationException = assertThrows(ValidationException.class, () -> groupService.update(groupCreateDto, "user1@email.com"));
+        ValidationException validationException = assertThrows(ValidationException.class, () -> groupService.update(groupCreateDto));
         assertEquals("This action is not allowed. Failed validations: You are not the host of this group.", validationException.getMessage());
     }
 
     @Test
+    @WithMockUser(username = "nonexistent@gmail.com")
     public void update_updateGroupByNonexistentUser_expectedException() {
         GroupCreateDto groupCreateDto = createBasicGroup();
         groupCreateDto.setId(1L);
 
-        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupService.update(groupCreateDto, "nonexisten@email.com"));
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupService.update(groupCreateDto));
         assertEquals("Could not find current user", notFoundException.getMessage());
     }
 
     @Test
+    @WithMockUser(username = "user1@email.com")
     public void update_updateGroupRemovesMembersFromGroup_expectedTrue() {
         // expecting DB to contain the following group:
         var groupMembers = userGroupRepository.findAllByApplicationGroup(groupRepository.findById(1L).orElse(null));
@@ -292,7 +298,7 @@ public class GroupServiceImplTest {
         GroupCreateDto groupCreateDto = createBasicGroup();
         groupCreateDto.setId(1L);
         groupCreateDto.setMembers(Arrays.copyOfRange(groupCreateDto.getMembers(), 0, 2)); // this should remove user 3 and 4 from the group (and add user 2)
-        GroupCreateDto updatedGroupDto = assertDoesNotThrow(() -> groupService.update(groupCreateDto, "user1@email.com"));
+        GroupCreateDto updatedGroupDto = assertDoesNotThrow(() -> groupService.update(groupCreateDto));
 
         assertNotNull(updatedGroupDto);
         assertEquals(groupCreateDto.getName(), updatedGroupDto.getName());
@@ -314,101 +320,113 @@ public class GroupServiceImplTest {
 
     // make member host
     @Test
+    @WithMockUser(username = "user1@email.com")
     public void makeMemberHost_makeMemberHostByExistingIdAndFromHost_expectedTrue() {
 
-        assertDoesNotThrow(() -> groupServiceImpl.makeMemberHost(1L, 3L, "user1@email.com"));
+        assertDoesNotThrow(() -> groupServiceImpl.makeMemberHost(1L, 3L));
 
         GroupCreateDto group = groupServiceImpl.applicationGroupToGroupCreateDto(groupRepository.findById(1L).orElse(null));
         assertEquals(group.getHost().getId(), 3L);
     }
 
     @Test
+    @WithMockUser(username = "nonexistent@mail.com")
     public void makeMemberHost_makeNonexistentMemberHost_expectedException() {
-        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(1L, 9999L, "user1@email.con"));
+        assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(1L, 9999L));
     }
 
     @Test
+    @WithMockUser("user3@email.com")
     public void makeMemberHost_makeMemberHostByExistingIdAndNotFromHost_expectedException() {
 
         ValidationException validationStatusException =
-            assertThrows(ValidationException.class, () -> groupServiceImpl.makeMemberHost(1L, 3L, "user3@email.com"));
+            assertThrows(ValidationException.class, () -> groupServiceImpl.makeMemberHost(1L, 3L));
 
         assertEquals("This action is not allowed. Failed validations: You are not the host of this group.", validationStatusException.getMessage());
     }
 
     @Test
+    @WithMockUser("user1@email.com")
     public void makeMemberHost_makeMemberHostOfNonexistentGroup_expectedException() {
-        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(9999L, 3L, "user1@email.com"));
+        assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(9999L, 3L));
     }
 
     @Test
+    @WithMockUser("user1@email.com")
     public void makeMemberHost_makeUserThatIsNoMemberOfGroupHost_expectedException() {
-        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(1L, 2L, "user1@email.com"));
+        assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(1L, 2L));
     }
 
     @Test
+    @WithMockUser("nonexistent@mail.com")
     public void makeMemberHost_makeUserHostByNonexistentUser_expectedException() {
-        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(1L, 3L, "nonexistent@mail.cmom"));
+        assertThrows(NotFoundException.class, () -> groupServiceImpl.makeMemberHost(1L, 3L));
     }
 
     // delete group
     @Test
+    @WithMockUser(username = "user9999@gmail.com")
     public void deleteGroup_deleteGroupByExistingIdAndFromHost_expectedFalse() throws ValidationException {
         generateTestData();
         prepareUserGroupAndMember();
 
         int expected = groupRepository.findAll().size();
-        groupServiceImpl.deleteGroup(applicationGroup.getId(), applicationUser.getEmail());
+        groupServiceImpl.deleteGroup(applicationGroup.getId());
         int result = groupRepository.findAll().size();
 
         assertNotEquals(expected, result);
     }
 
     @Test
+    @WithMockUser(username = "user9999@gmail.com")
     public void deleteGroup_deleteGroupByNotExistingIdAndFromHost_expectedTrue() throws ValidationException {
         generateTestData();
-        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupServiceImpl.deleteGroup(-60L, applicationUser.getEmail()));
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> groupServiceImpl.deleteGroup(-60L));
 
         assertEquals("Could not find group", notFoundException.getMessage());
     }
 
     @Test
+    @WithMockUser(username = "user9999@gmail.com")
     public void deleteGroup_deleteGroupByExistingIdAndNotFromHost_expectedException() {
         generateTestData();
         applicationUser.setAdmin(false);
         userRepository.save(applicationUser);
 
         ValidationException validationStatusException =
-            assertThrows(ValidationException.class, () -> groupServiceImpl.deleteGroup(applicationGroup.getId(), applicationUser.getEmail()));
+            assertThrows(ValidationException.class, () -> groupServiceImpl.deleteGroup(applicationGroup.getId()));
 
         assertEquals("This action is not allowed. Failed validations: You are not the host of this group.", validationStatusException.getMessage());
     }
 
     // delete member
     @Test
+    @WithMockUser(username = "user9999@gmail.com")
     public void deleteMember_deleteGroupByExistingIdAndFromHost_expectedFalse() throws ValidationException {
         generateTestData();
         prepareUserGroupAndMember();
         Optional<UserGroup> expected = userGroupRepository.findById(userGroupKey);
 
-        groupServiceImpl.deleteMember(applicationGroup.getId(), applicationUser.getId(), applicationUserMember.getEmail());
+        groupServiceImpl.deleteMember(applicationGroup.getId(), applicationUser.getId());
         Optional<UserGroup> result = userGroupRepository.findById(userGroupKey);
 
         assertNotEquals(expected, result);
     }
 
     @Test
+    @WithMockUser(username = "wrong@email.com")
     public void deleteMember_deleteGroupByNotExistingIdAndFromHost_expectedTrue() throws ValidationException {
         generateTestData();
         prepareUserGroupAndMember();
 
         NotFoundException notFoundException =
-            assertThrows(NotFoundException.class, () -> groupServiceImpl.deleteMember(applicationGroup.getId(), applicationUser.getId(), "wrong@email.com"));
+            assertThrows(NotFoundException.class, () -> groupServiceImpl.deleteMember(applicationGroup.getId(), applicationUser.getId()));
 
         assertEquals("Could not find current user", notFoundException.getMessage());
     }
 
     @Test
+    @WithMockUser(username = "user9999@gmail.com")
     public void deleteMember_deleteGroupByExistingIdAndNotFromHost_expectedException() {
         generateTestData();
         prepareUserGroupAndMember();
@@ -420,7 +438,7 @@ public class GroupServiceImplTest {
         userGroupRepository.save(userGroup);
 
         ValidationException validationStatusException = assertThrows(ValidationException.class,
-            () -> groupServiceImpl.deleteMember(applicationGroup.getId(), applicationUserMember.getId(), applicationUser.getEmail()));
+            () -> groupServiceImpl.deleteMember(applicationGroup.getId(), applicationUserMember.getId()));
 
         assertEquals("You are not allowed to remove this user from the group. Failed validations: .", validationStatusException.getMessage());
     }
@@ -449,7 +467,7 @@ public class GroupServiceImplTest {
         applicationUser = new ApplicationUser();
         applicationUser.setAdmin(true);
         applicationUser.setId(9999L);
-        applicationUser.setEmail(UUID.randomUUID() + "@gmail.com");
+        applicationUser.setEmail("user9999@gmail.com");
         applicationUser.setName("New user");
         applicationUser.setPassword("Password");
         groupRepository.save(applicationGroup);

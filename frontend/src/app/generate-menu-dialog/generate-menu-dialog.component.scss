@@ -1,0 +1,218 @@
+// component:
+.mat-mdc-dialog-content {
+  max-height: 100%;
+  overflow-y: clip;
+}
+
+
+.grid-container {
+  height: 100%;
+  background-color: #ECECEC;
+}
+
+// header:
+.grid-container > div:first-child {
+  background-color: #AC6AFE;
+  width: 100%;
+  height: 10%;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.grid-container {
+  padding: 0;
+}
+
+
+// a grid layout to display the content of the ingredient dialog
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-gap: 5%;
+  padding: 0;
+  height: 90%;
+}
+
+// grid column to display list of ingredients in
+.table-column {
+  display: flex;
+  justify-content: center;
+}
+
+// list of ingredients:
+.table-container {
+  max-height: 65vh; /* Set a fixed height for the container */
+  min-height: 200px;
+  background-color: #D9D9D9;
+  //overflow-y: auto; /* Enable vertical scrolling when content exceeds height */
+  border: 1px solid #ccc; /* Optional: Add a border for the container */
+  padding: 10px; /* Optional: Add padding for the container */
+  border-radius: 15px; /* Rounded corners */
+  margin: 20px;
+  width: 90%;
+}
+
+.container-scrollable {
+  margin-top: 5px;
+  height: 95%;
+  overflow-y: auto;
+  overflow-x: clip;
+  padding-right: 5px;
+  margin-left: 5px;
+}
+
+.container-scrollable::-webkit-scrollbar {
+  width: 4px;
+}
+
+.container-scrollable::-webkit-scrollbar-thumb {
+  background-color: grey;
+  border-radius: 3px;
+}
+
+.container-scrollable::-webkit-scrollbar-track {
+  background-color: #eee;
+}
+
+.cocktail-column {
+  justify-content: center;
+}
+
+.cocktail-container {
+  background-color: #D9D9D9;
+  border: 1px solid #ccc; /* Optional: Add a border for the container */
+  padding: 10px 10px 0 10px;; /* Optional: Add padding for the container */
+  border-radius: 15px; /* Rounded corners */
+  margin-bottom: 20px;
+  margin-top: 20px;
+  width: 90%;
+  height: 65vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cocktail-container-grid {
+  max-height: 59vh;
+  overflow-y: auto; /* Enable vertical scrolling when content exceeds height */
+  display: grid;
+  justify-content: space-between;
+  grid-template-columns: repeat(auto-fit, minmax(175px, 0.5fr));
+  gap: 2px;
+}
+
+.cocktail-container-grid::-webkit-scrollbar {
+  width: 4px;
+}
+
+.cocktail-container-grid::-webkit-scrollbar-thumb {
+  background-color: grey;
+  border-radius: 3px;
+}
+
+.cocktail-container-grid::-webkit-scrollbar-track {
+  background-color: #eee;
+}
+
+
+.list-row {
+  border-bottom: 1px solid #ccc;
+}
+
+
+.entry-count {
+  margin-bottom: 0;
+  border-bottom: 1px solid #ccc;
+  color: grey;
+  text-align: center;
+}
+
+.custom-button {
+  margin-bottom: 20px;
+  margin-right: 20px;
+  background-color: #6200EE;
+  border-color: #6200EE;
+}
+
+.table-element {
+  vertical-align: middle; /* Align elements vertically in the cell */
+  text-align: end; /* Optionally center content horizontally */
+}
+
+.equal-columns {
+  table-layout: fixed;
+  width: 100%;
+}
+
+// a ingredient row in the list of ingredients
+.menu-row {
+  width: 100%; /* Set an equal width for both columns */
+  height: 55px;
+  display: flex;
+  align-items: center; /* Vertically center content */
+  justify-content: space-between;
+  border-bottom: white;
+  background-color: #D9D9D9;
+}
+
+.menu-row > span {
+  font-size: smaller;
+}
+
+.menu-row:hover {
+  background-color: #bebebe;
+  cursor: pointer;
+}
+
+.menu-row-selected {
+  background-color: #bebebe;
+}
+
+.add-action {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-left: 10px;
+  border-top: 1px solid #ccc;
+}
+
+.rounded-button {
+  background-color: #AC6AFE;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  padding-bottom: 0;
+  padding-top: 0;
+  height: 36px;
+  margin: 10px 0 10px 10px;
+}
+
+.btn.rounded-button:active {
+  background-color: white; /* Set background color to transparent */
+  box-shadow: none;
+}
+
+
+.card-header {
+  color: white;
+  background-color: #AC6AFE;
+  transition-duration: 0.25s;
+}
+
+.card:hover .card-header {
+  color: white;
+  background-color: #6200EE;
+}
+
+.card {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  margin: 0.25rem 0.25rem 1rem;
+  padding: 0;
+}
+
+.card:hover {
+  cursor: pointer;
+}

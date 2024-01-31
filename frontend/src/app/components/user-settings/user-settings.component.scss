@@ -34,8 +34,7 @@
   text-align: left;
   font-size: 20px;
   width: 80%;
-  padding: 8px;
-  padding-left: 15px;
+  padding: 8px 8px 8px 15px;
   margin-bottom: 15px;
   color: #333;
   border: none;
@@ -155,27 +154,6 @@
   position:relative;
 }
 
-.info::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  background-color: #AC6AFE;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 14px;
-  bottom: calc(100% + 4px);
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-  pointer-events: none;
-  width: 300px;
-}
-
-.info:hover::after {
-  opacity: 1;
-}
-
 .label-search {
   margin-left: 2vw;
   font-size: 18px;
@@ -183,7 +161,7 @@
 
 
 
-.ingredients-container {
+.ingredients-preference-container {
   background-color: #D9D9D9;
   margin-left: 7vw;
   margin-top: calc(10vh + 27px);
@@ -193,31 +171,42 @@
   height: 60vh;
   text-align: center;
   border-radius: 10px;
-
 }
 
 
-.ingredient-count{
+.ingredient-preference-count{
   opacity: 0.5;
   margin: 10px 1em 5px;
   padding-bottom: 5px;
   border-bottom: #333333 solid 1px;
-
-
 }
 
-.ingredient-list {
+.ingredient-preference-list {
   flex-grow: 1; /* Fill the remaining space */
   display: flex;
   flex-direction: column;
   margin: 0 1em;
   //max-height: 50vh;
   overflow-y: auto;
+  padding-right: 5px;
+}
+
+.ingredient-preference-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.ingredient-preference-list::-webkit-scrollbar-thumb {
+  background-color: grey;
+  border-radius: 3px;
+}
+
+.ingredient-preference-list::-webkit-scrollbar-track {
+  background-color: #eee;
 }
 
 
 
-.ingredient-item {
+.ingredient-preference-item {
   display: flex;
   justify-content: space-between;
   text-align: left;
@@ -251,5 +240,9 @@
 }
 
 .save-btn:active {
-  background-color: #6200EE; /* Change hover color */
+  background-color: #6200EE;
+}
+
+.save-btn:hover {
+  background-color: #6200EE;
 }

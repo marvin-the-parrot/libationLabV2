@@ -27,6 +27,8 @@ public class CocktailIngredients {
     @JoinColumn(name = "ingredient_id")
     private Ingredient ingredient;
 
+    private String quantity;
+
     public CocktailIngredientsKey getCocktailIngredientsKey() {
         return cocktailIngredientsKey;
     }
@@ -51,4 +53,11 @@ public class CocktailIngredients {
         this.ingredient = ingredient;
     }
 
+    public String getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(String quantity) {
+        this.quantity = quantity;
+    }
 }

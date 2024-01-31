@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -8,12 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import java.util.UUID;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
-import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
-import com.sun.tools.jconsole.JConsoleContext;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PreferenceListDto;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,10 +32,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.UserListDto;
-import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 
-@ActiveProfiles("generateData")
+@ActiveProfiles({"test", "generateData"})
 @SpringBootTest
 @EnableWebMvc
 @WebAppConfiguration
@@ -75,6 +70,23 @@ public class IngredientEndpointTest {
     }
 
     @Test
+    @WithMockUser(username = "user1@email.com")
+    public void getIngredientSuggestions_getSuggestionsForGroup1_expectedSuccess() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/ingredients/suggestions/{groupId}", 1)).andExpect(status().isOk()).andReturn();
+        var contentResult = mvcResult.getResponse().getContentAsString();
+        assertTrue(contentResult.contains("Pineapple Juice"));
+        assertTrue(contentResult.contains("Sugar Syrup"));
+        assertTrue(contentResult.contains("Gin"));
+    }
+
+    @Test
+    @WithMockUser(username = "user1@email.com")
+    public void getIngredientSuggestions_getSuggestionsForGroup999_expectedNotFound() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/ingredients/suggestions/{groupId}", 999)).andExpect(status().isNotFound()).andReturn();
+        assertTrue(mvcResult.getResponse().getContentAsString().contains("Group not found"));
+    }
+
+    @Test
     @WithMockUser(roles = {"USER"}, username = "user1@email.com")
     public void searchAutocomplete_searchingForIngredientsPositive_FindingResultsContainingR() throws Exception{
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/ingredients/user-ingredients-auto/{ingredientsName}", "r"))
@@ -84,12 +96,11 @@ public class IngredientEndpointTest {
         });
 
         assertAll(
-            () -> assertTrue(result.size() <= 5),
-            () -> assertFalse(result.isEmpty())
+            () -> assertTrue(result.size() <= 10),
+            () -> assertFalse(result.isEmpty()),
+            () -> assertTrue(result.stream().allMatch(item -> item.getName().contains("r")),
+                "All names should contain 'r'")
         );
-        for (int i = 0; i < result.size(); i++) {
-            assertTrue(result.get(i).getName().contains("r"), "Name at index " + i + " should contain 'r'");
-        }
     }
 
     @Test
@@ -98,7 +109,10 @@ public class IngredientEndpointTest {
         var response = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/ingredients/user-ingredients-auto/{ingredientsName}", "r"))
             .andExpect(status().isNotFound()).andReturn().getResponse();
         int status = response.getStatus();
-        assertEquals(HttpStatus.NOT_FOUND.value(), status);
+        assertAll(
+            () -> assertEquals(HttpStatus.NOT_FOUND.value(), status),
+            () -> assertTrue(response.getContentAsString().contains("User not found"))
+        );
     }
 
     @Test
@@ -111,7 +125,10 @@ public class IngredientEndpointTest {
         });
 
         assertAll(
-            () -> assertEquals(41, result.size())
+            () -> assertEquals(24, result.size()),
+            () -> assertEquals("Advocaat", result.get(0).getName()),
+            () -> assertEquals("Amaretto", result.get(1).getName()),
+            () -> assertEquals("Cherry Juice", result.get(2).getName())
         );
     }
 
@@ -132,12 +149,12 @@ public class IngredientEndpointTest {
     public void addUserIngredients_addingIngredientsPositive_expectedSize() throws Exception {
         IngredientListDto[] ingredients = new IngredientListDto[2];
         IngredientListDto darkRum = new IngredientListDto();
-        darkRum.setId(1L);
+        darkRum.setId(86L);
         darkRum.setName("Dark Rum");
         ingredients[0] = darkRum;
         IngredientListDto spicedRum = new IngredientListDto();
-        spicedRum.setId(2L);
-        spicedRum.setName("Spiced rum");
+        spicedRum.setId(52L);
+        spicedRum.setName("Spiced Rum");
         ingredients[1] = spicedRum;
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/ingredients/user-ingredients")
@@ -151,8 +168,8 @@ public class IngredientEndpointTest {
 
         assertAll(
             () -> assertEquals(2, result.size()),
-            () -> assertEquals("Dark Rum", result.get(0).getName()),
-            () -> assertEquals("Spiced rum", result.get(1).getName())
+            () -> assertEquals("Spiced Rum", result.get(0).getName()),
+            () -> assertEquals("Dark Rum", result.get(1).getName())
         );
     }
 
@@ -175,7 +192,10 @@ public class IngredientEndpointTest {
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound()).andReturn().getResponse();
         int status = response.getStatus();
-        assertEquals(HttpStatus.NOT_FOUND.value(), status);
+        assertAll(
+            () -> assertEquals(HttpStatus.NOT_FOUND.value(), status),
+            () -> assertTrue(response.getContentAsString().contains("User not found"))
+        );
     }
 
     @Test
@@ -222,5 +242,70 @@ public class IngredientEndpointTest {
         int status = response.getStatus();
         assertEquals(HttpStatus.CONFLICT.value(), status);
     }
+
+    @Test
+    @WithMockUser(roles = {"USER"}, username = "user1@email.com")
+    public void getAllGroupIngredients_getAllIngredientsFromAGroupPositive_expectedSuccess() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/ingredients/{groupId}", 1))
+            .andExpect(status().isOk()).andReturn();
+        String contentResult = mvcResult.getResponse().getContentAsString();
+        List<IngredientListDto> result = objectMapper.readValue(contentResult, new TypeReference<>() {
+        });
+
+        assertAll(
+            () -> assertEquals(69, result.size()),
+            () -> assertEquals("Advocaat", result.get(0).getName()),
+            () -> assertEquals("Amaretto", result.get(1).getName()),
+            () -> assertEquals("Angostura Bitters", result.get(2).getName())
+        );
+    }
+
+    @Test
+    @WithMockUser(roles = {"USER"}, username = "user1@email.com")
+    public void getAllGroupIngredients_getAllIngredientsFromAGroupThatDoesNotExist_expectedNotFoundException() throws Exception {
+        var response = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/ingredients/{groupId}", -1))
+            .andExpect(status().isNotFound()).andReturn().getResponse();
+        int status = response.getStatus();
+        assertAll(
+            () -> assertEquals(HttpStatus.NOT_FOUND.value(), status),
+            () -> assertTrue(response.getContentAsString().contains("Group not found"))
+        );
+    }
+
+    @Test
+    @WithMockUser(roles = {"USER"}, username = "user1@email.com")
+    @Transactional
+    @Rollback
+    public void searchAutocomplete_deleteAllIngredientsAndGetSuggestions_FindingResultsContainingRAndAllIngredientsDeleted() throws Exception {
+        IngredientListDto[] preferences = new IngredientListDto[0];
+
+        MvcResult mvcResultDeletePreferences = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/ingredients/user-ingredients")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(preferences))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk()).andReturn();
+        String contentResultDeleteIngredients = mvcResultDeletePreferences.getResponse().getContentAsString();
+        List<PreferenceListDto> resultDeleteIngredients = objectMapper.readValue(contentResultDeleteIngredients, new TypeReference<>() {
+        });
+
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/ingredients/user-ingredients-auto/{ingredientsName}", "r"))
+            .andExpect(status().isOk()).andReturn();
+        String contentResult = mvcResult.getResponse().getContentAsString();
+        List<PreferenceListDto> resultAutocomplete = objectMapper.readValue(contentResult, new TypeReference<>() {
+        });
+
+        assertAll(
+            () -> assertTrue(resultAutocomplete.size() <= 10),
+            () -> assertFalse(resultAutocomplete.isEmpty()),
+            () -> assertTrue(resultAutocomplete.stream().allMatch(item -> item.getName().contains("r")),
+                "All names should contain 'r'"),
+            () -> assertEquals(0, resultDeleteIngredients.size())
+        );
+
+    }
+
+
+
 
 }

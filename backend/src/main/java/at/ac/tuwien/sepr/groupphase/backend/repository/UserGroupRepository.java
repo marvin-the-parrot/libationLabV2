@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Repository of UserGroup entity.
@@ -19,6 +20,10 @@ public interface UserGroupRepository extends JpaRepository<UserGroup, UserGroupK
     List<UserGroup> findAllByApplicationUser(ApplicationUser applicationUser);
 
     List<UserGroup> findAllByApplicationGroup(ApplicationGroup applicationGroup);
+
+    Set<UserGroup> findAllByIdGroup(Long applicationUserId);
+
+    UserGroup findByApplicationUserAndApplicationGroup(ApplicationUser applicationUser, ApplicationGroup applicationGroup);
 
     @Query("SELECT u.applicationUser FROM UserGroup u WHERE u.id.group = :groupId")
     List<ApplicationUser> findUsersByGroupId(@Param("groupId") Long groupId);

@@ -2,8 +2,8 @@ package at.ac.tuwien.sepr.groupphase.backend.service;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageSetReadDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
-import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 
@@ -54,4 +54,11 @@ public interface MessageService {
      * @param messageId the id of the message
      */
     void delete(Long messageId) throws NotFoundException;
+
+    /**
+     * Mark message as read.
+     *
+     * @param messagesToSetRead the messages to set reads
+     */
+    void markAllAsRead(MessageSetReadDto[] messagesToSetRead) throws NotFoundException;
 }

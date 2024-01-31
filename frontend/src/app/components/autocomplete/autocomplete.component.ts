@@ -8,7 +8,7 @@ import {debounceTime, of, Subject, switchMap, tap} from 'rxjs';
  * The using site needs to supply a callback that produces the autocomplete options
  * and a callback that formats the model objects to readable text.
  *
- * @param T the model type. In practice only used as a placeholder and helper for typesafety inside this class.
+ * @param T the model type. In practice only used as a placeholder and helper for type safety inside this class.
  */
 @Component({
   selector: 'app-autocomplete',
@@ -45,6 +45,10 @@ export class AutocompleteComponent<T> implements OnInit, ControlValueAccessor {
     const autocompleteId = AutocompleteComponent.counter++;
     this.dataListId = `app-autocomplete-candidates-${autocompleteId}`;
   }
+
+  @Input()
+  placeholderText: string = 'Enter text...'; // Set a default placeholder text if none is provided
+
 
   /** If this is `true`, only inputs that match an option from the suggestion list are considered valid
    * and are assigned to the model variable `value`.
@@ -150,5 +154,9 @@ export class AutocompleteComponent<T> implements OnInit, ControlValueAccessor {
       this.touched = true;
       this.onTouched();
     }
+  }
+
+  resetAutocompleteInput(): void {
+    this.inputText = null;
   }
 }

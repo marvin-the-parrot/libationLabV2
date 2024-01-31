@@ -3,12 +3,9 @@ package at.ac.tuwien.sepr.groupphase.backend.repository;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
 
 import java.util.List;
-import java.util.Optional;
 
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -42,4 +39,12 @@ public interface MessageRepository extends JpaRepository<ApplicationMessage, Lon
      * @return list of all message entries
      */
     List<ApplicationMessage> findAllByApplicationUserAndGroupId(ApplicationUser user, Long groupId);
+
+    /**
+     * Find all message entries of a given id list.
+     *
+     * @param ids of message
+     * @return list of all message entries
+     */
+    List<ApplicationMessage> findByIdIn(List<Long> ids);
 }
