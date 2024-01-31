@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackHostDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.FeedbackCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.FeedbackState;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
@@ -17,7 +16,6 @@ import at.ac.tuwien.sepr.groupphase.backend.repository.UserGroupRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.FeedbackService;
 import jakarta.transaction.Transactional;
-import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +24,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -117,9 +114,9 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         ApplicationGroup group = groupRepository.findById(feedbackToUpdate.getGroupId()).orElseThrow(() -> new NotFoundException("Group not found"));
 
-        Cocktail cocktails = cocktailRepository.findById(feedbackToUpdate.getCocktailId()).orElseThrow(() -> new NotFoundException("Cocktail not found"));
+        Cocktail cocktail = cocktailRepository.findById(feedbackToUpdate.getCocktailId()).orElseThrow(() -> new NotFoundException("Cocktail not found"));
 
-        Feedback feedback = feedbackRepository.findByApplicationUserAndApplicationGroupAndCocktail(user, group, cocktails);
+        Feedback feedback = feedbackRepository.findByApplicationUserAndApplicationGroupAndCocktail(user, group, cocktail);
         if (feedback == null) {
             throw new NotFoundException("Feedback not found");
         }

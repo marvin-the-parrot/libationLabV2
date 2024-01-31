@@ -27,9 +27,4 @@ public interface PreferenceRepository extends JpaRepository<Preference, Long> {
     List<Preference> findByNameEqualsIgnoreCase(String name);
 
     List<Preference> findAllByApplicationUserIsIn(List<ApplicationUser> applicationUsers);
-
-    Preference findByName(String names);
-
-
-
 }

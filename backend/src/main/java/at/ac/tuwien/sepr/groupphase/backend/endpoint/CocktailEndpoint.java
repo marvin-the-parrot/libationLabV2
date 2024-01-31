@@ -57,7 +57,9 @@ public class CocktailEndpoint {
     @Secured(ROLE_USER)
     @GetMapping
     public List<CocktailListDto> searchCocktails(CocktailSerachDto searchParameters) {
-        LOGGER.info("GET " + BASE_PATH + "searchCocktails/{}", searchParameters);
+        LOGGER.info("GET " + BASE_PATH + "/searchCocktails/{}", searchParameters);
+        LOGGER.debug("Request Params:\n{}", searchParameters);
+
         return cocktailService.searchCocktails(searchParameters);
     }
 
@@ -66,20 +68,18 @@ public class CocktailEndpoint {
     @GetMapping("/cocktail-ingredients-auto/{ingredientsName}")
     @ResponseStatus(HttpStatus.OK)
     public List<IngredientListDto> searchIngredientsAuto(@PathVariable String ingredientsName) {
-        LOGGER.info("GET " + BASE_PATH + "cocktail-ingredients-auto");
-        LOGGER.debug("Request Params: {}", ingredientsName);
-        return cocktailService.searchAutoIngredients(ingredientsName);
+        LOGGER.info("GET " + BASE_PATH + "/cocktail-ingredients-auto/{}", ingredientsName);
 
+        return cocktailService.searchAutoIngredients(ingredientsName);
     }
 
     @GetMapping("/cocktail-preferences-auto/{preferenceName}")
     @Secured(ROLE_USER)
     @ResponseStatus(HttpStatus.OK)
     public List<PreferenceListDto> searchPreferencesAuto(@PathVariable String preferenceName) {
-        LOGGER.info("GET " + BASE_PATH + "cocktail-preference-auto");
-        LOGGER.debug("Request Params: {}", preferenceName);
-        return cocktailService.searchAutoPreferences(preferenceName);
+        LOGGER.info("GET " + BASE_PATH + "/cocktail-preference-auto/{}", preferenceName);
 
+        return cocktailService.searchAutoPreferences(preferenceName);
     }
 
     private void logClientError(HttpStatus status, String message, Exception e) {

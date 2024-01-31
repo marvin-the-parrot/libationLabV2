@@ -71,7 +71,7 @@ public class GroupEndpoint {
     @Transactional
     @Operation(summary = "Get a list of groups that this viewer is part of", security = @SecurityRequirement(name = "apiKey"))
     public GroupOverviewDto[] findGroupsByUser() {
-        LOGGER.info("GET /api/v1/groups");
+        LOGGER.info("GET " + BASE_PATH);
         List<UserGroup> userGroupMatchings = groupService.findGroupsByUser();
         List<GroupOverviewDto> groupOverviewDtos = new ArrayList<>();
         for (UserGroup group : userGroupMatchings) {
@@ -97,7 +97,7 @@ public class GroupEndpoint {
     @Transactional
     @Operation(summary = "Get detailed information about a specific group", security = @SecurityRequirement(name = "apiKey"))
     public GroupOverviewDto find(@PathVariable Long id) throws ValidationException {
-        LOGGER.info("GET /api/v1/groups/{}", id);
+        LOGGER.info("GET " + BASE_PATH + "/{}", id);
 
         return groupService.findGroupById(id);
     }
@@ -116,6 +116,7 @@ public class GroupEndpoint {
     @ResponseStatus(HttpStatus.CREATED)
     public GroupCreateDto create(@RequestBody GroupCreateDto toCreate) throws ValidationException, ConflictException {
         LOGGER.info("POST " + BASE_PATH + "/{}", toCreate);
+        LOGGER.debug("Body of request:\n{}", toCreate);
         //TODO no apiKey needed for SecurityContext
         LOGGER.debug("Body of request:\n{}", toCreate);
         return groupService.create(toCreate);
@@ -134,7 +135,7 @@ public class GroupEndpoint {
     @PutMapping("{id}")
     @Operation(security = @SecurityRequirement(name = "apiKey"))
     public GroupCreateDto update(@PathVariable long id, @RequestBody GroupCreateDto toUpdate) throws ValidationException, ConflictException {
-        LOGGER.info("PUT " + BASE_PATH + "/{}", toUpdate);
+        LOGGER.info("PUT " + BASE_PATH + "/{}", id);
         LOGGER.debug("Body of request:\n{}", toUpdate);
 
         toUpdate.setId(id);
@@ -213,20 +214,20 @@ public class GroupEndpoint {
     @GetMapping("searchGroupMember/{groupId}")
     @ResponseStatus(HttpStatus.OK)
     public List<UserListDto> searchGroupMember(@PathVariable Long groupId) {
-        LOGGER.info("GET " + BASE_PATH + "searchGroupMember/{}", groupId);
+        LOGGER.info("GET " + BASE_PATH + "/searchGroupMember/{}", groupId);
         return groupService.searchForMember(groupId);
-    }
-
-    private void logClientError(HttpStatus status, String message, Exception e) {
-        LOGGER.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
     }
 
     @Secured(ROLE_USER)
     @GetMapping("{groupId}/mixables")
     @ResponseStatus(HttpStatus.OK)
     public List<CocktailDetailDto> getMixableCocktails(@PathVariable Long groupId) throws JsonProcessingException {
-        LOGGER.info("GET " + BASE_PATH + groupId + "mixable");
+        LOGGER.info("GET " + BASE_PATH + "/" + groupId + "/mixables");
         return cocktailService.getMixableCocktails(groupId);
+    }
+
+    private void logClientError(HttpStatus status, String message, Exception e) {
+        LOGGER.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
     }
 
 }

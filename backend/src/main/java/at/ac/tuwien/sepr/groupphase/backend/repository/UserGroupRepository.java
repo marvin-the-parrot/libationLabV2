@@ -25,6 +25,12 @@ public interface UserGroupRepository extends JpaRepository<UserGroup, UserGroupK
 
     UserGroup findByApplicationUserAndApplicationGroup(ApplicationUser applicationUser, ApplicationGroup applicationGroup);
 
+    /**
+     * Find all users of a group.
+     *
+     * @param groupId id of the group
+     * @return list of users
+     */
     @Query("SELECT u.applicationUser FROM UserGroup u WHERE u.id.group = :groupId")
     List<ApplicationUser> findUsersByGroupId(@Param("groupId") Long groupId);
 
