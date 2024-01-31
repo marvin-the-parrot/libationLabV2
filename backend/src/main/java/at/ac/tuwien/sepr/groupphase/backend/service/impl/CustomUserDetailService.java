@@ -348,7 +348,7 @@ public class CustomUserDetailService implements UserService {
             LOGGER.info("Sent email successfully");
 
         } catch (MessagingException e) {
-            e.printStackTrace();
+            LOGGER.warn("Failed to send email");
         }
     }
 

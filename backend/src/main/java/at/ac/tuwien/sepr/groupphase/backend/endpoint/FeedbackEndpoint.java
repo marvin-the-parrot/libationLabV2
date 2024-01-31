@@ -1,13 +1,10 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackDto;
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackHostDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.FeedbackCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepr.groupphase.backend.repository.FeedbackRepository;
 import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
 import at.ac.tuwien.sepr.groupphase.backend.service.FeedbackService;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +13,6 @@ import org.springframework.boot.actuate.endpoint.InvalidEndpointRequestException
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.invoke.MethodHandles;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/feedback")

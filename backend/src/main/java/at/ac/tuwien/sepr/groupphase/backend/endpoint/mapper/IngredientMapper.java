@@ -25,6 +25,4 @@ public interface IngredientMapper {
     List<IngredientListDto> ingredientApiToIngredientListDto(List<IngredientApi> ingredient);
 
     Ingredient ingredientListDtoToIngredient(IngredientListDto ingredientListDto);
-
-    List<Ingredient> ingredientListDtoToIngredient(IngredientListDto[] ingredientListDto);
 }

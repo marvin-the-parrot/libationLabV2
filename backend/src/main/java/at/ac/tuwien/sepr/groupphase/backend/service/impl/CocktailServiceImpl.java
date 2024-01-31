@@ -12,9 +12,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailTagSearchDto
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.IngredientMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.PreferenceMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
-import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
-import at.ac.tuwien.sepr.groupphase.backend.entity.Preference;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailIngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailRepository;
@@ -30,7 +28,6 @@ import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;

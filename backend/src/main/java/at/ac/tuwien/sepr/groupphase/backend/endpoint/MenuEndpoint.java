@@ -1,16 +1,18 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint;
 
-import java.lang.invoke.MethodHandles;
-import java.util.List;
-
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackHostDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDetailViewHostDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.RecommendedMenuesDto;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
 import at.ac.tuwien.sepr.groupphase.backend.service.MenuService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +27,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MenuCocktailsDto;
-import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
-import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
-import at.ac.tuwien.sepr.groupphase.backend.service.impl.MenuServiceImpl;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.transaction.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.lang.invoke.MethodHandles;
 
 /**
  * Menu endpoint.

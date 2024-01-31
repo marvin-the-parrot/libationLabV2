@@ -39,12 +39,23 @@ public interface MenuService {
      *
      * @param groupId           of the group for which the recommendation should be created
      * @param numberOfCocktails the number of cocktails to be recommended
-     * @param numberOfMenues    the number of menues to be recommended
+     * @param numberOfMenues    the number of menus to be recommended
      * @return the created recommendation
      */
     RecommendedMenuesDto createRecommendation(Long groupId, Integer numberOfCocktails, Integer numberOfMenues);
 
+    /**
+     * Updates the mixable cocktails if the ingredients change.
+     *
+     */
     void updateMixableCocktails();
 
+    /**
+     * Find menu by group id with ratings for each cocktail
+     * to display for when you are host.
+     *
+     * @param groupId the id of the group
+     * @return the menu
+     */
     MenuCocktailsDetailViewDto findMenuDetailOfGroup(Long groupId) throws NotFoundException;
 }
