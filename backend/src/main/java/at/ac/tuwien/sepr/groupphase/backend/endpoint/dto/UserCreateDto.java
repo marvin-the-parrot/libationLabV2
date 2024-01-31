@@ -1,5 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+/**
+ * DTO to create a user.
+ */
 public class UserCreateDto {
 
     private String name;

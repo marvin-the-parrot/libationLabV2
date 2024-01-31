@@ -2,6 +2,9 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
 import java.util.List;
 
+/**
+ * DTO for a recommended menu.
+ */
 public class RecommendedMenuesDto {
 
     Long id;

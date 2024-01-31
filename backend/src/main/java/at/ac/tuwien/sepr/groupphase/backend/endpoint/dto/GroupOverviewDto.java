@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
 /**
- * Dto to send group detail data to the frontend.
+ * DTO to send group detail data to the frontend.
  */
 public class GroupOverviewDto {
 

@@ -1,5 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+/**
+ * DTO to save user credentials in local storage.
+ */
 public class UserLocalStorageDto {
     private Long id;
     private String name;

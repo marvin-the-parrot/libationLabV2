@@ -1,5 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+/**
+ * DTO to send information if the current user has given feedback yet.
+ */
 public class CocktailFeedbackDto {
 
     private Long cocktailId;

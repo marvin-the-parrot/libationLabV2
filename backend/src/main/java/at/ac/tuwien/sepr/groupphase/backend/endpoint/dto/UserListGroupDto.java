@@ -1,6 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
-
+/**
+ * DTO for user lists in groups.
+ */
 public class UserListGroupDto {
     public UserListGroupDto(Long id, String name, boolean isHost) {
         this.id = id;

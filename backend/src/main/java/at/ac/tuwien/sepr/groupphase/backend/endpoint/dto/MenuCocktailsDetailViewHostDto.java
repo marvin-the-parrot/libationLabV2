@@ -1,5 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+/**
+ * DTO for cocktails in a menu when the user is a host.
+ */
 public class MenuCocktailsDetailViewHostDto {
     private Long groupId;
     private CocktailFeedbackHostDto[] cocktailsList;

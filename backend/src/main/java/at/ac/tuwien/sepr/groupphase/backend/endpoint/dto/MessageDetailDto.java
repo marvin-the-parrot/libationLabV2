@@ -1,5 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+/**
+ * DTO for details of a message for front-end display.
+ */
 public class MessageDetailDto {
 
     private Long id;

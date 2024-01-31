@@ -1,5 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+/**
+ * DTO to send cocktail feedback to the frontend for the host to see.
+ */
 public class CocktailFeedbackHostDto {
 
     private Long id;

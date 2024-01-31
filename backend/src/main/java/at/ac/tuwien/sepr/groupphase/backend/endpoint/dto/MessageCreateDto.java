@@ -1,5 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+/**
+ * DTO to create a message.
+ */
 public class MessageCreateDto {
 
     private Long userId;

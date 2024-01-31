@@ -1,5 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+/**
+ * DTO to search for cocktials according to names, ingredients and preferences.
+ */
 public class CocktailSerachDto {
 
     private String  cocktailName;

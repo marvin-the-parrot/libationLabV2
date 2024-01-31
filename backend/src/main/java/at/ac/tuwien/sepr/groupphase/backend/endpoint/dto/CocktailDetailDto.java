@@ -3,7 +3,9 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 import java.util.HashMap;
 import java.util.List;
 
-
+/**
+ * DTO for cocktail details to display instructions and ingredients.
+ */
 public class CocktailDetailDto {
 
     private Long id;
