@@ -10,6 +10,7 @@ public interface FeedbackService {
 
     /**
      * Create a new feedback for a cocktail.
+     *
      * @param feedbackToCreate the feedback to create
      * @throws NotFoundException if the cocktail does not exist or user does not exist
      */
@@ -17,6 +18,7 @@ public interface FeedbackService {
 
     /**
      * Creates a new feedback Relation for a new User.
+     *
      * @param group the group where the user is new
      * @param user the new user in the group
      * @throws NotFoundException if the group or user does not exist
@@ -25,6 +27,7 @@ public interface FeedbackService {
 
     /**
      * Update a feedback for a cocktail.
+     *
      * @param feedbackToUpdate the feedback to update
      * @throws NotFoundException if user, cocktail, group or feedback does not exist
      */
@@ -32,6 +35,7 @@ public interface FeedbackService {
 
     /**
      * delete a feedback for a cocktail.
+     *
      * @param groupId the group where the feedback is deleted
      * @param userId the user associated with the feedback
      * @throws NotFoundException if group or user does not exist
