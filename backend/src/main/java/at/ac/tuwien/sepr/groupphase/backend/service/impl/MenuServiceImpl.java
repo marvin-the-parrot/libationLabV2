@@ -88,6 +88,7 @@ public class MenuServiceImpl implements MenuService {
         this.menuMapper = menuMapper;
     }
 
+    @Transactional
     @Override
     public MenuCocktailsDto findMenuOfGroup(Long groupId) throws NotFoundException {
         ApplicationGroup applicationGroup = groupRepository.findById(groupId).orElse(null);
@@ -104,6 +105,7 @@ public class MenuServiceImpl implements MenuService {
         return new MenuCocktailsDto(groupId, cocktailOverviewDtoList);
     }
 
+    @Transactional
     @Override
     public MenuCocktailsDto create(MenuCocktailsDto toCreate) throws NotFoundException, ConflictException {
         LOGGER.debug("Create menu {}", toCreate);

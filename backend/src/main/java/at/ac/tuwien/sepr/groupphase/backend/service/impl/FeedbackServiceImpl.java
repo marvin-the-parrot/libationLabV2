@@ -117,9 +117,9 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         ApplicationGroup group = groupRepository.findById(feedbackToUpdate.getGroupId()).orElseThrow(() -> new NotFoundException("Group not found"));
 
-        Cocktail cocktails = cocktailRepository.findById(feedbackToUpdate.getCocktailId()).orElseThrow(() -> new NotFoundException("Cocktail not found"));
+        Cocktail cocktail = cocktailRepository.findById(feedbackToUpdate.getCocktailId()).orElseThrow(() -> new NotFoundException("Cocktail not found"));
 
-        Feedback feedback = feedbackRepository.findByApplicationUserAndApplicationGroupAndCocktail(user, group, cocktails);
+        Feedback feedback = feedbackRepository.findByApplicationUserAndApplicationGroupAndCocktail(user, group, cocktail);
         if (feedback == null) {
             throw new NotFoundException("Feedback not found");
         }

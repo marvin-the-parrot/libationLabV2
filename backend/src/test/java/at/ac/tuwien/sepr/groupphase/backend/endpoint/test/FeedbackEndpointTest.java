@@ -3,12 +3,18 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint.test;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailFeedbackDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.FeedbackCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.FeedbackState;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupDetailDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.MessageDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationMessage;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationUser;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
+import at.ac.tuwien.sepr.groupphase.backend.entity.Feedback;
+import at.ac.tuwien.sepr.groupphase.backend.entity.FeedbackKey;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.FeedbackRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.GroupRepository;
+import at.ac.tuwien.sepr.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,6 +60,8 @@ public class FeedbackEndpointTest {
     private GroupRepository groupRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private MessageRepository messageRepository;
 
     @BeforeEach
     public void setup() {
@@ -113,15 +121,56 @@ public class FeedbackEndpointTest {
 
     @Test
     @WithMockUser(username = "user1@email.com")
-    public void updateFeedback_withInvalidGroup_expectNotFound() throws Exception {
-        FeedbackCreateDto feedbackToCreate = new FeedbackCreateDto();
-        feedbackToCreate.setGroupId(1L);
-        feedbackToCreate.setCocktailIds(new Long[]{76L, 79L, 43L});
+    public void createFeedbackRelationsForNewUser_withValidData_expectSuccess() throws Exception {
+        generateTestData();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/feedback/create")
+        assertEquals(9, feedbackRepository.findAll().size());
+
+        ApplicationMessage message = messageRepository.findById(1L).orElseThrow();
+
+        GroupDetailDto group = new GroupDetailDto();
+        group.setId(3L);
+        group.setName("Group3");
+        MessageDetailDto messageToAccept = new MessageDetailDto();
+        messageToAccept.setId(message.getId());
+        messageToAccept.setText(message.getText());
+        messageToAccept.setGroup(group);
+        messageToAccept.setIsRead(message.getIsRead());
+        messageToAccept.setSentAt(message.getSentAt().toString());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/messages/accept")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(feedbackToCreate)))
+                .content(objectMapper.writeValueAsString(messageToAccept)))
             .andExpect(status().isCreated());
+
+        assertEquals(12, feedbackRepository.findAll().size());
+    }
+
+    @Test
+    @WithMockUser(username = "user7@email.com")
+    public void updateRatings_withValidData_expectSuccess() throws Exception {
+        generateTestData();
+
+        CocktailFeedbackDto feedbackToUpdate = new CocktailFeedbackDto();
+        feedbackToUpdate.setGroupId(3L);
+        feedbackToUpdate.setCocktailId(76L);
+        feedbackToUpdate.setRating(FeedbackState.Like);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/feedback/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(feedbackToUpdate)))
+            .andExpect(status().isOk());
+
+        FeedbackKey feedbackKey = new FeedbackKey(7L, 3L, 76L);
+        Feedback feedback = feedbackRepository.findByFeedbackKey(feedbackKey);
+
+        assertEquals(FeedbackState.Like, feedback.getRating());
+    }
+
+    @Test
+    @WithMockUser(username = "user1@email.com")
+    public void updateRatings_withInvalidGroup_expectNotFound() throws Exception {
+        generateTestData();
 
         CocktailFeedbackDto feedbackToUpdate = new CocktailFeedbackDto();
         feedbackToUpdate.setGroupId(-99L);
@@ -139,19 +188,12 @@ public class FeedbackEndpointTest {
     }
 
     @Test
-    @WithMockUser(username = "user1@email.com")
+    @WithMockUser(username = "user7@email.com")
     public void deleteFeedbackRelationsAtCocktailChange_withValidData_expectSuccess() throws Exception {
-        FeedbackCreateDto feedbackToCreate = new FeedbackCreateDto();
-        feedbackToCreate.setGroupId(1L);
-        feedbackToCreate.setCocktailIds(new Long[]{76L, 79L, 43L});
+        generateTestData();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/feedback/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(feedbackToCreate)))
-            .andExpect(status().isCreated());
-
-        ApplicationGroup group = groupRepository.findById(1L).orElseThrow();
-        ApplicationUser user = userRepository.findByEmail("user1@email.com");
+        ApplicationGroup group = groupRepository.findById(3L).orElseThrow();
+        ApplicationUser user = userRepository.findByEmail("user7@email.com");
 
         assertEquals(9, feedbackRepository.findAll().size());
 
@@ -165,14 +207,7 @@ public class FeedbackEndpointTest {
     @Test
     @WithMockUser(username = "user1@email.com")
     public void deleteFeedbackRelationsAtCocktailChange_withInvalidGroup_expectNotFound() throws Exception {
-        FeedbackCreateDto feedbackToCreate = new FeedbackCreateDto();
-        feedbackToCreate.setGroupId(1L);
-        feedbackToCreate.setCocktailIds(new Long[]{76L, 79L, 43L});
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/feedback/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(feedbackToCreate)))
-            .andExpect(status().isCreated());
+        generateTestData();
 
         ApplicationUser user = userRepository.findByEmail("user1@email.com");
 
@@ -185,5 +220,25 @@ public class FeedbackEndpointTest {
         Map responseMap = objectMapper.readValue(result.getResponse().getContentAsString(), Map.class);
 
         assertEquals("Group not found", responseMap.get("detail"));
+    }
+
+    private void generateTestData() throws Exception {
+        ApplicationGroup group = groupRepository.findById(3L).orElseThrow();
+        group.setCocktails(Set.of(
+            cocktailRepository.findById(76L).orElseThrow(),
+            cocktailRepository.findById(79L).orElseThrow(),
+            cocktailRepository.findById(43L).orElseThrow()
+        ));
+
+        groupRepository.save(group);
+
+        FeedbackCreateDto feedbackToCreate = new FeedbackCreateDto();
+        feedbackToCreate.setGroupId(3L);
+        feedbackToCreate.setCocktailIds(new Long[]{76L, 79L, 43L});
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/feedback/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(feedbackToCreate)))
+            .andExpect(status().isCreated());
     }
 }
