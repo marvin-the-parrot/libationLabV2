@@ -19,6 +19,7 @@ import jakarta.validation.Valid;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -37,11 +38,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.server.ResponseStatusException;
 
+import static at.ac.tuwien.sepr.groupphase.backend.endpoint.MessageEndpoint.BASE_PATH;
+
 /**
  * Message Endpoint.
  */
 @RestController
-@RequestMapping(value = "/api/v1/messages")
+@RequestMapping(value = BASE_PATH)
 public class MessageEndpoint {
 
     static final String BASE_PATH = "/api/v1/messages";
@@ -72,7 +75,7 @@ public class MessageEndpoint {
     @GetMapping("/count")
     @Operation(summary = "Get number of unread messages")
     public MessageCountDto getUnreadMessageCount() {
-        LOGGER.info("GET /api/v1/messages/count");
+        LOGGER.info("GET " + BASE_PATH + "/count");
         return messageMapper.countToMessageCountDto(messageService.getUnreadMessageCount());
     }
 
@@ -85,7 +88,7 @@ public class MessageEndpoint {
     @GetMapping
     @Operation(summary = "Get list of messages without details")
     public List<MessageDetailDto> findAll() {
-        LOGGER.info("GET /api/v1/messages");
+        LOGGER.info("GET " + BASE_PATH);
         List<ApplicationMessage> messages = messageService.findAll();
         List<MessageDetailDto> returnMessages = new ArrayList<>();
         for (ApplicationMessage message : messages) {
@@ -105,7 +108,9 @@ public class MessageEndpoint {
     @PostMapping("/create")
     @Operation(summary = "Publish a new message")
     public void create(@Valid @RequestBody MessageCreateDto message) {
-        LOGGER.info("POST /api/v1/messages body: {}", message);
+        LOGGER.info("POST " + BASE_PATH + "/create/{}", message);
+        LOGGER.debug("Body of request:\n{}", message);
+
         if (message == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Message is null");
         }
@@ -136,7 +141,9 @@ public class MessageEndpoint {
     @PostMapping("/accept")
     @Operation(summary = "Accept a group invation")
     public void acceptGroupInvitation(@Valid @RequestBody MessageDetailDto message) {
-        LOGGER.info("POST /api/v1/messages body: {}", message);
+        LOGGER.info("POST " + BASE_PATH + "/accept/{}", message);
+        LOGGER.debug("Body of request:\n{}", message);
+
         try {
             messageService.delete(message.getId());
             userGroupService.create(message.getGroup().getId());
@@ -160,7 +167,7 @@ public class MessageEndpoint {
     @Operation(summary = "Update Message")
     public MessageDetailDto update(@RequestBody MessageDetailDto toUpdate)
         throws ValidationException, ConflictException {
-        LOGGER.info("PUT " + BASE_PATH + "/{}", toUpdate);
+        LOGGER.info("PUT " + BASE_PATH + "/{}", toUpdate.getId());
         LOGGER.debug("Body of request:\n{}", toUpdate);
         try {
             return messageMapper.from(messageService.update(toUpdate), groupMapper.groupToGroupDetailDto(groupService.findOne((toUpdate.getGroup().getId()))));
@@ -179,7 +186,9 @@ public class MessageEndpoint {
     @PutMapping("/read")
     @Operation(summary = "Mark all messages as read")
     public void markAllAsRead(@RequestBody MessageSetReadDto[] messagesToSetRead) {
-        LOGGER.info("PUT " + BASE_PATH + "/read");
+        LOGGER.info("PUT " + BASE_PATH + "/read/{}", Arrays.toString(messagesToSetRead));
+        LOGGER.debug("Body of request:\n{}", Arrays.toString(messagesToSetRead));
+
         try {
             messageService.markAllAsRead(messagesToSetRead);
         } catch (NotFoundException e) {

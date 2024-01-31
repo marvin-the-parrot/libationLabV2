@@ -16,13 +16,16 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.invoke.MethodHandles;
 
+import static at.ac.tuwien.sepr.groupphase.backend.endpoint.LoginEndpoint.BASE_PATH;
+
 /**
  * Login endpoint.
  */
 @RestController
-@RequestMapping(value = "/api/v1/authentication")
+@RequestMapping(value = BASE_PATH)
 public class LoginEndpoint {
 
+    static final String BASE_PATH = "/api/v1/authentication";
     private final UserService userService;
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -33,6 +36,8 @@ public class LoginEndpoint {
     @PermitAll
     @PostMapping
     public String login(@RequestBody UserLoginDto userLoginDto) {
+        LOGGER.info("POST " + BASE_PATH + "/{}", userLoginDto);
+        LOGGER.debug("Request Body:\n{}", userLoginDto);
         try {
             return userService.login(userLoginDto);
         } catch (BadCredentialsException | UsernameNotFoundException e) {
