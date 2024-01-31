@@ -210,7 +210,7 @@ public class MenuEndpointTest {
 
         MenuCocktailsDto menuCocktailsDtoResult = menuService.findMenuOfGroup(1L);
 
-        assertEquals(menuCocktailsDtoOld.getCocktailsList().size() - 1, menuCocktailsDtoResult.getCocktailsList().size());
+        assertEquals(menuCocktailsDtoOld.getCocktailsList().size() - 2, menuCocktailsDtoResult.getCocktailsList().size());
     }
 
     @Test
