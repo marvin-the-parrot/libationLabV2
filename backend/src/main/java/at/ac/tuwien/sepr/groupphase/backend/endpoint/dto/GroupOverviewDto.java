@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
 /**
- * Dto to send group detail data to the frontend.
+ * DTO to send group detail data to the frontend.
  */
 public class GroupOverviewDto {
 
@@ -16,6 +16,10 @@ public class GroupOverviewDto {
         this.cocktails = cocktails;
         this.host = host;
         this.members = members;
+    }
+
+    // Default constructor
+    public GroupOverviewDto() {
     }
 
     public UserListGroupDto getHost() {

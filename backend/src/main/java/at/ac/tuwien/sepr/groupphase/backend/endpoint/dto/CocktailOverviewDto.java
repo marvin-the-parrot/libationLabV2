@@ -1,5 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+/**
+ * DTO to send information for a cocktail card including an image.
+ */
 public class CocktailOverviewDto {
 
     private Long id;

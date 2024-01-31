@@ -1,5 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+/**
+ * DTO to reset a password.
+ */
 public class ResetPasswordDto {
 
     private String password;

@@ -1,5 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+/**
+ * DTO to search for existing groups.
+ */
 public class UserSearchExistingGroupDto {
 
     private String name;

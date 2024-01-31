@@ -1,5 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+/**
+ * DTO to send a list of ingredients.
+ */
 public class IngredientListDto {
 
     private Long id;

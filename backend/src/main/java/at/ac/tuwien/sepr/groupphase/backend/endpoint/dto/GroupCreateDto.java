@@ -1,5 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+/**
+ * DTO to create a group.
+ */
 public class GroupCreateDto {
     private long id;
     private String name;

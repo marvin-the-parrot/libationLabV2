@@ -2,6 +2,9 @@ package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
 import java.util.List;
 
+/**
+ * DTO to send ingredient Suggestions to the front end.
+ */
 public class IngredientSuggestionDto {
     private long id;
     private String name;

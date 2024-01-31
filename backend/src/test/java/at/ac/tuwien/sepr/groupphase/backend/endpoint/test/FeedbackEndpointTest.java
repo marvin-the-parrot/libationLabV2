@@ -55,8 +55,6 @@ public class FeedbackEndpointTest {
     @Autowired
     private FeedbackRepository feedbackRepository;
     @Autowired
-    private CocktailRepository cocktailRepository;
-    @Autowired
     private GroupRepository groupRepository;
     @Autowired
     private UserRepository userRepository;

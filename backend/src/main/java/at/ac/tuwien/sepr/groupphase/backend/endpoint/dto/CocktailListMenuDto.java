@@ -1,5 +1,8 @@
 package at.ac.tuwien.sepr.groupphase.backend.endpoint.dto;
 
+/**
+ * DTO to send cocktail list displayed in the group overview.
+ */
 public class CocktailListMenuDto {
     private Long id;
     private String name;
