@@ -32,6 +32,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 
+
 /**
  * Menu endpoint.
  */

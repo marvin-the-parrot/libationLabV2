@@ -86,7 +86,7 @@ public interface UserService extends UserDetailsService {
     List<UserListDto> search(UserSearchExistingGroupDto searchParams);
 
     /**
-     * Send an email to the user with a link to reset his password.
+     * Email the user with a link to reset his password.
      *
      * @param email the email address of the user who forgot his password
      */
