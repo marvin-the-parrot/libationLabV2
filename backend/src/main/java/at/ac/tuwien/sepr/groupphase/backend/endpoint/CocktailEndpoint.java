@@ -5,9 +5,12 @@ import java.util.List;
 
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailSerachDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PreferenceListDto;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.security.SecurityRolesEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -81,6 +86,21 @@ public class CocktailEndpoint {
 
         return cocktailService.searchAutoPreferences(preferenceName);
     }
+
+    @PostMapping
+    @Secured(ROLE_USER)
+    @ResponseStatus(HttpStatus.CREATED)
+    public CocktailDetailDto createCocktail(@RequestBody CocktailDetailDto toCreate){
+        LOGGER.info("POST " + BASE_PATH + "{}", toCreate);
+        try {
+            return cocktailService.createCocktail(toCreate);
+        } catch (ValidationException | ConflictException e) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+            logClientError(status, "Failed to create cocktail", e);
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
 
     private void logClientError(HttpStatus status, String message, Exception e) {
         LOGGER.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());

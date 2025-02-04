@@ -5,9 +5,12 @@ import java.util.List;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailSerachDto;
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.GroupCreateDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.IngredientListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.PreferenceListDto;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 
 /**
  * Service for Cocktail and CocktailIngredient Entity.
@@ -54,4 +57,12 @@ public interface CocktailService {
      * @return the cocktail with the given id
      */
     CocktailDetailDto getCocktailById(Long id) throws NotFoundException;
+
+    /**
+     * creates a new cocktail inside the database.
+     *
+     * @param toCreate the new cocktail which should get added to the application
+     * @return the created cocktail
+     */
+    CocktailDetailDto createCocktail(CocktailDetailDto toCreate) throws ValidationException, ConflictException;
 }

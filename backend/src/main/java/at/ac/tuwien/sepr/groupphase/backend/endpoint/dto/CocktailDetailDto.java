@@ -7,7 +7,6 @@ import java.util.List;
  * DTO for cocktail details to display instructions and ingredients.
  */
 public class CocktailDetailDto {
-
     private Long id;
     private String name;
     private String imagePath;

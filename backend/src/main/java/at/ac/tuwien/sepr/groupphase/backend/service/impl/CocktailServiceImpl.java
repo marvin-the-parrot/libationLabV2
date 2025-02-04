@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepr.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.IngredientEndpoint;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailDetailDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailListDto;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailSerachDto;
@@ -11,15 +12,20 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailIngredientMa
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.CocktailTagSearchDtoMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.IngredientMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.PreferenceMapper;
+import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepr.groupphase.backend.exception.ValidationException;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailIngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.CocktailRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.IngredientsRepository;
 import at.ac.tuwien.sepr.groupphase.backend.repository.PreferenceRepository;
 import at.ac.tuwien.sepr.groupphase.backend.service.CocktailService;
 import at.ac.tuwien.sepr.groupphase.backend.service.IngredientService;
+import at.ac.tuwien.sepr.groupphase.backend.service.validators.CocktailValidator;
+import at.ac.tuwien.sepr.groupphase.backend.service.validators.GroupValidator;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,11 +56,14 @@ public class CocktailServiceImpl implements CocktailService {
     private final PreferenceMapper preferenceMapper;
     private final CocktailTagSearchDtoMapper cocktailTagSearchDtoMapper;
 
+    private final CocktailValidator validator;
+
+
     @Autowired
     public CocktailServiceImpl(CocktailIngredientsRepository cocktailIngredientsRepository, CocktailRepository cocktailRepository,
                                IngredientsRepository ingredientsRepository, CocktailIngredientMapper cocktailIngredientMapper,
                                IngredientService ingredientService, IngredientMapper ingredientMapper, PreferenceRepository preferenceRepository,
-                               PreferenceMapper preferenceMapper, CocktailTagSearchDtoMapper cocktailTagSearchDtoMapper) {
+                               PreferenceMapper preferenceMapper, CocktailTagSearchDtoMapper cocktailTagSearchDtoMapper, CocktailValidator validator) {
 
         this.cocktailIngredientsRepository = cocktailIngredientsRepository;
         this.cocktailRepository = cocktailRepository;
@@ -65,6 +74,7 @@ public class CocktailServiceImpl implements CocktailService {
         this.preferenceRepository = preferenceRepository;
         this.preferenceMapper = preferenceMapper;
         this.cocktailTagSearchDtoMapper = cocktailTagSearchDtoMapper;
+      this.validator = validator;
     }
 
     @Override
@@ -197,5 +207,20 @@ public class CocktailServiceImpl implements CocktailService {
             throw new NotFoundException("Cocktail with id " + id + " not found");
         }
         return cocktailIngredientMapper.cocktailToCocktailDetailDto(cocktail);
+    }
+
+    @Override
+    public CocktailDetailDto createCocktail(CocktailDetailDto toCreate) throws ValidationException {
+        LOGGER.trace("create({})", toCreate);
+
+        validator.validateForCreate(toCreate);
+
+        Cocktail cocktail = new Cocktail(toCreate);
+        List<Ingredient> ingredients = ingredientsRepository.findByNameIn(toCreate.getIngredients().keySet().stream().toList());
+        cocktail.setPreferences(preferenceRepository.findByNameIn(toCreate.getPreferenceName()));
+
+        LOGGER.debug("saving cocktail {}", cocktail);
+        Cocktail saved = cocktailRepository.save(cocktail);
+        return cocktailIngredientMapper.cocktailToCocktailDetailDto(saved);
     }
 }

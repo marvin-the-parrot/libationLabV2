@@ -1,0 +1,95 @@
+<form #form="ngForm" [class.was-validated]="form.submitted" (ngSubmit)="onSubmit(form)" class="p-5">
+  <div class="row">
+    <div class="mb-2 col-lg-6">
+      <div class="row">
+        <label for="cocktailName" class="col-form-label text-md-end text-muted col-md-2 col-lg-4">
+          Name
+        </label>
+        <div class="col-md-10 col-lg-8"
+        >
+          <input type="text"
+                 id="cocktailName"
+                 name="cocktailName"
+                 placeholder="Cocktail name"
+                 class="form-control"
+                 [class]="dynamicCssClassesForInput(horseNameModel)"
+                 [(ngModel)]="cocktail.name"
+                 #horseNameModel="ngModel"
+                 required
+          >
+          <div class="invalid-feedback">
+            <!-- This is shown, when the form validation deems the name input to be invalid -->
+            Name is required
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <label class="label-search-ing-pref">Ingredients</label>
+    <!-- Search-field for Ingredients -->
+    <div class="">
+      <app-autocomplete #ingredientAutocomplete
+                        name="ingredientsSelection"
+                        textInputClass="form-control"
+                        [placeholderText]="'Search for Ingredients'"
+                        [suggestions]="ingredientSuggestions"
+                        [formatModel]="formatIngredient"
+                        valueNeedsToMatchSuggestion="true"
+                        [(ngModel)]="ingredient"
+                        (ngModelChange)="addIngredient()"
+      >
+      </app-autocomplete>
+
+      <!-- Selected Ingredients -->
+      <table class="table ">
+        <thead>
+        <tr>
+          <th>Ingredient</th>
+          <th>Amount</th>
+        </thead>
+        <tbody>
+        <tr *ngFor="let selected of selectedIngredients; index as i" class=" w-full border-b py-2">
+          <td>{{ selected }}</td>
+          <td class="d-flex flex-row">
+            <input type="number" style="max-width: 20%"/>
+            <select class="form-select m-1" name="measure" id="" >
+              <option selected value="1">parts</option>
+              <option value="2">cl</option>
+              <option value="3">oz</option>
+              <option value="4">dash</option>
+              <option value="5">tsp</option>
+              <option value="6">fill</option>
+            </select>
+          </td>
+          <td>
+            <i class="bi bi-dash-circle remove-item" (click)="removeIngredient(i)"></i>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <div class="mt-4 d-flex flex-row">
+    <!--<button type="button"
+            class="btn btn-danger"
+            *ngIf="!modeIsCreate"
+            (click)=""
+    >
+      <i class="bi bi-trash"
+      ></i>
+      Delete
+    </button>-->
+    <span class="flex-grow-1"></span>
+    <button type="submit"
+            class="btn btn-primary"
+            [disabled]="!form.valid"
+    >
+      {{ submitButtonText }}
+    </button>
+  </div>
+</form>

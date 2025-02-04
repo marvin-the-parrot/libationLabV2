@@ -17,6 +17,7 @@ import { CocktailMenuComponent } from './components/cocktail/cocktail-menu/cockt
 import {
   CocktailDetailPageComponent
 } from "./components/cocktail/cocktail-detail/cocktail-detail-page/cocktail-detail-page.component";
+import {CocktailCreateComponent} from "./components/cocktail/cocktail-create/cocktail-create.component";
 
 const routes: Routes = [
   {path: '', pathMatch: 'full', redirectTo: 'groups'},
@@ -39,6 +40,7 @@ const routes: Routes = [
   {path: 'cocktail', canActivate: mapToCanActivate([AuthGuard]), children: [
       {path: '', component: CocktailComponent},
       {path: ':id/detail', component: CocktailDetailPageComponent},
+      {path: 'create', component: CocktailCreateComponent}
     ]}
 ];
 

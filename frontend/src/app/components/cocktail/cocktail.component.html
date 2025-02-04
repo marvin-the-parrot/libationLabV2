@@ -4,8 +4,13 @@
 
   <div class="left-container col-lg-9 col-md-9 col-sm-9 col-9">
 
-    <div class="header-left-container">
-      <h2> Search for Cocktails </h2>
+    <div class="justify-content-between flex-container col-11">
+      <div class="header-left-container">
+        <h2> Search for Cocktails </h2>
+      </div>
+      <button class="btn btn-success icon"
+              (click)="openCocktailCreate()">
+        <i class="bi bi-plus-lg"></i> Add Cocktail</button>
     </div>
 
     <div class="flex-container">
@@ -13,7 +18,7 @@
       <div class="search-container">
         <label class="label-search-name">Name</label>
         <!-- Search-field for name -->
-        <div class="wrapper-name col-md-6 col-lg-6">
+        <div class="wrapper-name col-md-4 col-lg-4">
           <input matInput
                  type="text"
                  id="searchName"
@@ -32,7 +37,7 @@
       <div class="search-container">
         <label class="label-search-ing-pref">Ingredients</label>
         <!-- Search-field for Ingredients -->
-        <div class="wrapper-ing-pref col-md-6 col-lg-6">
+        <div class="wrapper-ing-pref col-md-4 col-lg-4">
           <app-autocomplete #ingredientAutocomplete
             name="ingredientsSelection"
             textInputClass="form-control"

@@ -112,4 +112,21 @@ export class CocktailService {
   getCocktailMenuDetailViewHost(groupId: number): Observable<MenuCocktailsDetailViewHostDto> {
     return this.httpClient.get<MenuCocktailsDetailViewHostDto>(this.menuBaseUri + `/${groupId}/detail/host`);
   }
+
+  /**
+   * Send Cocktail to be created in the backend
+   *
+   */
+  create(cocktail: CocktailDetailDto): Observable<CocktailDetailDto> {
+    return this.httpClient.post<CocktailDetailDto>(this.cocktailBaseUri, cocktail);
+  }
+
+  /**
+   * Send Cocktail to be updated in the backend
+   *
+   */
+  update(cocktail: CocktailDetailDto): Observable<CocktailDetailDto> {
+    alert("not implemented yet")
+    return null
+  }
 }

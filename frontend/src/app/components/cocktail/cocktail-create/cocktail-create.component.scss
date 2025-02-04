@@ -1,0 +1,30 @@
+.tag {
+  display: flex;
+  align-items: center;
+  background-color: #AC6AFE;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 8px;
+  margin-right: 4px;
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.remove-tag-btn {
+  padding: 4px;
+  margin-left: 4px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: white;
+  font-size: 14px;
+}
+selected-ingredients-preferences {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.selected-ingredients-preferences {
+  display: flex;
+  flex-wrap: wrap;
+}

@@ -38,6 +38,7 @@ import { CocktailDetailComponent } from './components/cocktail/cocktail-detail/c
 import {MatChipsModule} from "@angular/material/chips";
 import { GenerateMenuDialogComponent } from './generate-menu-dialog/generate-menu-dialog.component';
 import { CocktailDetailPageComponent } from './components/cocktail/cocktail-detail/cocktail-detail-page/cocktail-detail-page.component';
+import { CocktailCreateComponent } from './components/cocktail/cocktail-create/cocktail-create.component';
 
 
 @NgModule({
@@ -66,6 +67,7 @@ import { CocktailDetailPageComponent } from './components/cocktail/cocktail-deta
     CocktailDetailComponent,
     GenerateMenuDialogComponent,
     CocktailDetailPageComponent,
+    CocktailCreateComponent,
   ],
   imports: [
     MatIconModule,

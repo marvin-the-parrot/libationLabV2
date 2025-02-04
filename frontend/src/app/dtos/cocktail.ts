@@ -44,6 +44,14 @@ export interface CocktailDetailDto {
   instructions: string;
 }
 
+export interface CocktailCreateDto {
+  name: string;
+  imagePath: string;
+  ingredients: IngredientDto[];
+  preferenceName: string;
+  instructions: string;
+}
+
 export interface CocktailTagSearchDto {
   cocktailName?: string;
   selectedIngredients?: string[];

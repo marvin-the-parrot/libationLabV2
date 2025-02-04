@@ -63,4 +63,5 @@ public interface CocktailIngredientMapper {
         }
         return new CocktailDetailDto(cocktail.getId(), cocktail.getName(), cocktail.getImagePath(), ingredients, preferenceName, cocktail.getInstructions());
     }
+
 }

@@ -9,6 +9,7 @@ import {OptionDialogComponent} from '../option-dialog/option-dialog.component';
 import {AddIngredientDialogComponent} from "../add-ingredient-dialog/add-ingredient-dialog.component";
 import {GenerateMenuDialogComponent} from "../generate-menu-dialog/generate-menu-dialog.component";
 import {CocktailDetailComponent} from "../components/cocktail/cocktail-detail/cocktail-detail.component";
+import {CocktailCreateComponent} from "../components/cocktail/cocktail-create/cocktail-create.component";
 
 @Injectable({
   providedIn: 'root',
@@ -97,6 +98,12 @@ export class DialogService {
         data: { cocktailId }
       }
     );
+    return dialogRef.afterClosed();
+  }
+
+  openCocktailCreateDialog(): Observable<void | undefined> {
+    const dialogRef = this.dialog.open<CocktailCreateComponent, any, void>(
+      CocktailCreateComponent);
     return dialogRef.afterClosed();
   }
 

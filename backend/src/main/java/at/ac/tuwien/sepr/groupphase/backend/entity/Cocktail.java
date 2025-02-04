@@ -3,6 +3,7 @@ package at.ac.tuwien.sepr.groupphase.backend.entity;
 import java.util.List;
 import java.util.Set;
 
+import at.ac.tuwien.sepr.groupphase.backend.endpoint.dto.CocktailDetailDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,6 +51,12 @@ public class Cocktail implements Comparable<Cocktail> {
         this.id = id;
         this.name = name;
         this.imagePath = imagePath;
+    }
+
+    public Cocktail(CocktailDetailDto toCreate) {
+        this.name = toCreate.getName();
+        this.imagePath = toCreate.getImagePath();
+        this.instructions = toCreate.getInstructions();
     }
 
     public Set<ApplicationGroup> getApplicationGroups() {
@@ -119,5 +126,70 @@ public class Cocktail implements Comparable<Cocktail> {
     @Override
     public int compareTo(Cocktail o) {
         return this.getName().compareTo(o.getName());
+    }
+
+    /**
+     * Group builder.
+     */
+    public static final class CocktailBuilder {
+        private Long id;
+        private String name;
+        private String imagePath;
+        private String instructions;
+        private List<CocktailIngredients> cocktailIngredients;
+        private Set<Preference> preferences;
+        private CocktailBuilder() {
+        }
+
+        public static Cocktail.CocktailBuilder cocktail() {
+            return new Cocktail.CocktailBuilder();
+        }
+
+        public Cocktail.CocktailBuilder withId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Cocktail.CocktailBuilder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Cocktail.CocktailBuilder withImagePath(String imagePath){
+            this.imagePath = imagePath;
+            return this;
+        }
+
+        public Cocktail.CocktailBuilder withInstructions(String instructions){
+            this.instructions = instructions;
+            return this;
+        }
+
+        public Cocktail.CocktailBuilder withCocktailIngredients(List<CocktailIngredients> cocktailIngredients){
+            this.cocktailIngredients = cocktailIngredients;
+            return this;
+        }
+
+        public Cocktail.CocktailBuilder withPreferences(Set<Preference> preferences){
+            this.preferences = preferences;
+            return this;
+        }
+
+
+        /**
+         * Build Cocktail.
+         *
+         * @return Cocktail
+         */
+        public Cocktail build() {
+            Cocktail cocktail = new Cocktail();
+            cocktail.setId(id);
+            cocktail.setName(name);
+            cocktail.setImagePath(imagePath);
+            cocktail.setInstructions(instructions);
+            cocktail.setCocktailIngredients(cocktailIngredients);
+            cocktail.setPreferences(preferences);
+            return cocktail;
+        }
     }
 }

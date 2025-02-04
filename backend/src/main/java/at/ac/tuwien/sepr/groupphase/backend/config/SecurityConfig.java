@@ -50,7 +50,7 @@ public class SecurityConfig {
         @Override
         public void addCorsMappings(CorsRegistry registry) {
             registry.addMapping("/**")
-                .allowedOriginPatterns("http://localhost:4200", "https://*.apps.student.inso-w.at")
+                .allowedOriginPatterns("http://localhost:4200", "https://*.apps.student.inso-w.at", "https://cocktails.alxinger-wg.duckdns.org")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD");
         }
     }

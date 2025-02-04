@@ -208,4 +208,18 @@ export class CocktailComponent {
     });
   }
 
+  /**
+   * Opens the cocktails create in a modal.
+   */
+  openCocktailCreate() {
+    this.dialogService.openCocktailCreateDialog().subscribe({
+      next: () => {
+      },
+      error: error => {
+        this.notification.error(error.error.detail);
+      }
+    });
+  }
+
+
 }

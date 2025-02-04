@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Preference;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Repository of Preference entity.
@@ -27,4 +28,6 @@ public interface PreferenceRepository extends JpaRepository<Preference, Long> {
     List<Preference> findByNameEqualsIgnoreCase(String name);
 
     List<Preference> findAllByApplicationUserIsIn(List<ApplicationUser> applicationUsers);
+
+  Set<Preference> findByNameIn(List<String> preferenceName);
 }
