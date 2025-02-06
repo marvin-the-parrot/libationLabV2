@@ -14,6 +14,7 @@ import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.IngredientMapper;
 import at.ac.tuwien.sepr.groupphase.backend.endpoint.mapper.PreferenceMapper;
 import at.ac.tuwien.sepr.groupphase.backend.entity.ApplicationGroup;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Cocktail;
+import at.ac.tuwien.sepr.groupphase.backend.entity.CocktailIngredients;
 import at.ac.tuwien.sepr.groupphase.backend.entity.Ingredient;
 import at.ac.tuwien.sepr.groupphase.backend.exception.ConflictException;
 import at.ac.tuwien.sepr.groupphase.backend.exception.NotFoundException;
@@ -212,12 +213,20 @@ public class CocktailServiceImpl implements CocktailService {
     @Override
     public CocktailDetailDto createCocktail(CocktailDetailDto toCreate) throws ValidationException {
         LOGGER.trace("create({})", toCreate);
-
         validator.validateForCreate(toCreate);
 
         Cocktail cocktail = new Cocktail(toCreate);
         List<Ingredient> ingredients = ingredientsRepository.findByNameIn(toCreate.getIngredients().keySet().stream().toList());
         cocktail.setPreferences(preferenceRepository.findByNameIn(toCreate.getPreferenceName()));
+        List<CocktailIngredients> cocktailIngredientsList = new ArrayList<>();
+
+        for (Ingredient ingredient : ingredients) {
+            CocktailIngredients cocktailIngredient = new CocktailIngredients();
+            cocktailIngredient.setIngredient(ingredient);
+            cocktailIngredient.setCocktail(cocktail);
+            cocktailIngredientsList.add(cocktailIngredient);
+        }
+        cocktail.setCocktailIngredients(cocktailIngredientsList);
 
         LOGGER.debug("saving cocktail {}", cocktail);
         Cocktail saved = cocktailRepository.save(cocktail);

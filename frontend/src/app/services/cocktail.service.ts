@@ -124,7 +124,7 @@ export class CocktailService {
       name: cocktail.name,
       imagePath: cocktail.imagePath,
       ingredients: null,
-      preferenceName: null, //TODO set preferences
+      preferenceName: cocktail.preferenceName,
       instructions: cocktail.instructions
     };
     const ingredients = new Map<string, string>();

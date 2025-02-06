@@ -58,7 +58,7 @@ export interface CocktailCreateDto {
   name: string;
   imagePath: string;
   ingredients: Map<string, CreateIngredientDto>;
-  preferenceName: string;
+  preferenceName: string[];
   instructions: string;
 }
 

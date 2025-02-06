@@ -66,6 +66,8 @@ export class CocktailCreateComponent {
     console.log('is form valid?', form.valid, this.cocktail);
     if (form.valid) {
       let observable: Observable<CocktailDetailDto>;
+      // add all ingredients names as preferences
+      this.cocktail.preferenceName = Array.from(this.selectedIngredientsMap.keys());
       observable = this.cocktailService.create(this.cocktail);
       observable.subscribe({
         next: data => {
