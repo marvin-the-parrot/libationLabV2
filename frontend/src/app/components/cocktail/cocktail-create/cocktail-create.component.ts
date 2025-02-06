@@ -5,30 +5,26 @@ import {NgForm, NgModel} from "@angular/forms";
 import {Observable, of} from "rxjs";
 import {CocktailCreateDto, CocktailDetailDto} from "../../../dtos/cocktail";
 import {CocktailService} from "../../../services/cocktail.service";
-import {IngredientService} from "../../../services/ingredient.service";
-import {IngredientListDto} from "../../../dtos/ingredient";
+import {CreateIngredientDto, IngredientListDto} from "../../../dtos/ingredient";
 import {PreferenceListDto} from "../../../dtos/preference";
 import {AutocompleteComponent} from "../../autocomplete/autocomplete.component";
 
-export enum CocktailCreateEditMode {
-  create,
-  edit,
-}
 @Component({
   selector: 'app-cocktail-create',
   templateUrl: './cocktail-create.component.html',
   styleUrls: ['./cocktail-create.component.scss']
 })
 export class CocktailCreateComponent {
-  mode: CocktailCreateEditMode = CocktailCreateEditMode.create;
+  selectedIngredientsMap: Map<string, CreateIngredientDto> = new Map<string, CreateIngredientDto>();
+
   cocktail: CocktailCreateDto = {
+    id: 0,
     name: '',
     imagePath: '',
-    ingredients: null,
+    ingredients: this.selectedIngredientsMap,
     preferenceName: null,
     instructions: '',
   };
-  selectedIngredients: string[] = []; // List of selected ingredients (tags)
 
   ingredient: IngredientListDto = {
     id: null,
@@ -49,47 +45,15 @@ export class CocktailCreateComponent {
 
   constructor(
     private cocktailService: CocktailService,
-    private ingredientService: IngredientService,
-    private router: Router,
     private route: ActivatedRoute,
     private notification: ToastrService,
   ) {
   }
 
-  public get submitButtonText(): string {
-    switch (this.mode) {
-      case CocktailCreateEditMode.create:
-        return 'Create';
-      case CocktailCreateEditMode.edit:
-        return 'Update';
-      default:
-        return '?';
-    }
-  }
-
-  get modeIsCreate(): boolean {
-    return this.mode === CocktailCreateEditMode.create;
-  }
-
-  private get modeActionFinished(): string {
-    switch (this.mode) {
-      case CocktailCreateEditMode.create:
-        return 'created';
-      case CocktailCreateEditMode.edit:
-        return 'updated';
-      default:
-        return '?';
-    }
-  }
-
   ngOnInit(): void {
-    this.route.data.subscribe(data => {
-      this.mode = data.mode;
-    });
-    this.route.params.subscribe(params =>{
-      this.cocktail.id  = params['id'];
+    this.route.params.subscribe(params => {
+      this.cocktail.id = params['id'];
     })
-    this.loadHorse()
   }
 
   public dynamicCssClassesForInput(input: NgModel): any {
@@ -98,37 +62,14 @@ export class CocktailCreateComponent {
     };
   }
 
-  loadHorse() {
-    if (this.cocktail.id != undefined){
-      this.cocktailService.getCocktailById(this.cocktail.id)
-        .subscribe({
-          next: data => {
-            this.cocktail = data
-          },
-          error: error => {
-            console.error('Error fetching cocktail', error);
-          }
-        });
-    }
-  }
   public onSubmit(form: NgForm): void {
     console.log('is form valid?', form.valid, this.cocktail);
     if (form.valid) {
       let observable: Observable<CocktailDetailDto>;
-      switch (this.mode) {
-        case CocktailCreateEditMode.create:
-          observable = this.cocktailService.create(this.cocktail);
-          break;
-        case CocktailCreateEditMode.edit:
-          observable = this.cocktailService.update(this.cocktail);
-          break;
-        default:
-          console.error('Unknown CocktailCreateEditMode', this.mode);
-          return;
-      }
+      observable = this.cocktailService.create(this.cocktail);
       observable.subscribe({
         next: data => {
-          this.notification.success(`Cocktail ${this.cocktail.name} successfully ${this.modeActionFinished}.`);
+          this.notification.success(`Cocktail ${this.cocktail.name} successfully created.`);
 
         },
         error: error => {
@@ -151,21 +92,28 @@ export class CocktailCreateComponent {
    */
   addIngredient() {
     if (this.ingredient != null && this.ingredient.name !== "") {
-
-      if (this.selectedIngredients.includes(this.ingredient.name)) {
+      //add ingredients to map which looks like this name -> createIngredientObject, then set all the properties and use them as values for the ngModel in the form
+      if (this.selectedIngredientsMap.has(this.ingredient.name)) {
         this.notification.info("You already added this ingredient!");
         this.ingredientAutocompleteComponent.resetAutocompleteInput(); // Reset autocomplete input
         this.ingredient.name = "";
         return;
       }
-      this.selectedIngredients.push(this.ingredient.name);
+      //construct the ingredient object
+      let createIngredient: CreateIngredientDto = {
+        id: this.ingredient.id,
+        name: this.ingredient.name,
+        amount: 0,
+        measure: "parts"
+      }
+      this.selectedIngredientsMap.set(this.ingredient.name, createIngredient);
       this.ingredientAutocompleteComponent.resetAutocompleteInput(); // Reset autocomplete input
       this.ingredient.name = "";
     }
 
   }
 
-  removeIngredient(i: number) {
-    this.selectedIngredients.splice(i, 1);
+  removeIngredient(key: string) {
+    this.selectedIngredientsMap.delete(key);
   }
 }

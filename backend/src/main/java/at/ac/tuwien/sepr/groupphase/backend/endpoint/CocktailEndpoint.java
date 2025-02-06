@@ -92,6 +92,7 @@ public class CocktailEndpoint {
     @ResponseStatus(HttpStatus.CREATED)
     public CocktailDetailDto createCocktail(@RequestBody CocktailDetailDto toCreate){
         LOGGER.info("POST " + BASE_PATH + "{}", toCreate);
+        LOGGER.debug("Request Body:\n{}", toCreate);
         try {
             return cocktailService.createCocktail(toCreate);
         } catch (ValidationException | ConflictException e) {

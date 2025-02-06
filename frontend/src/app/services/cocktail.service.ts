@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Globals} from '../global/globals';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {CocktailDetailDto, CocktailTagSearchDto} from "../dtos/cocktail";
+import {CocktailCreateDto, CocktailDetailCreateDto, CocktailDetailDto, CocktailTagSearchDto} from "../dtos/cocktail";
 import {Observable} from "rxjs";
 import {MenuCocktailsDetailViewDto, MenuCocktailsDetailViewHostDto, MenuCocktailsDto} from '../dtos/menu';
 import {IngredientListDto} from "../dtos/ingredient";
@@ -117,8 +117,24 @@ export class CocktailService {
    * Send Cocktail to be created in the backend
    *
    */
-  create(cocktail: CocktailDetailDto): Observable<CocktailDetailDto> {
-    return this.httpClient.post<CocktailDetailDto>(this.cocktailBaseUri, cocktail);
+  create(cocktail: CocktailCreateDto): Observable<CocktailDetailDto> {
+    //TODO: remove the wrapping and handle ingredients properly
+    let cocktailDetail: CocktailDetailCreateDto = {
+      id: cocktail.id,
+      name: cocktail.name,
+      imagePath: cocktail.imagePath,
+      ingredients: null,
+      preferenceName: null, //TODO set preferences
+      instructions: cocktail.instructions
+    };
+    const ingredients = new Map<string, string>();
+    for (let [key, value] of cocktail.ingredients) {
+      ingredients.set(key, value.amount + ' ' + value.measure);
+    }
+    //object from entries
+    cocktailDetail.ingredients = Object.fromEntries(ingredients);
+    console.log(JSON.stringify(cocktailDetail))
+    return this.httpClient.post<CocktailDetailDto>(this.cocktailBaseUri, cocktailDetail);
   }
 
   /**

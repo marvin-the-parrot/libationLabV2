@@ -1,4 +1,4 @@
-import {IngredientDto} from "./ingredient";
+import {CreateIngredientDto, IngredientDto} from "./ingredient";
 
 export interface CocktailListDto {
   id: number;
@@ -44,10 +44,20 @@ export interface CocktailDetailDto {
   instructions: string;
 }
 
-export interface CocktailCreateDto {
+export interface CocktailDetailCreateDto {
+  id: number;
   name: string;
   imagePath: string;
-  ingredients: IngredientDto[];
+  ingredients: object;
+  preferenceName: string[];
+  instructions: string;
+}
+
+export interface CocktailCreateDto {
+  id:number;
+  name: string;
+  imagePath: string;
+  ingredients: Map<string, CreateIngredientDto>;
   preferenceName: string;
   instructions: string;
 }

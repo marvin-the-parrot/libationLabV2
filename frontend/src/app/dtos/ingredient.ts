@@ -11,6 +11,13 @@ export interface IngredientListDto {
   name?: string;
 }
 
+export interface CreateIngredientDto{
+  id: number;
+  name: string;
+  amount: number;
+  measure: string;
+}
+
 export interface IngredientDto {
   id: number;
   name: string;

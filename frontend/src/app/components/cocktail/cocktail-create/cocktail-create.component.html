@@ -1,10 +1,9 @@
-<form #form="ngForm" [class.was-validated]="form.submitted" (ngSubmit)="onSubmit(form)" class="p-5">
+<form #form="ngForm" [class.was-validated]="form.submitted" (ngSubmit)="onSubmit(form)" class="create-modal m-5">
   <div class="row">
     <div class="mb-2 col-lg-6">
       <div class="row">
-        <label for="cocktailName" class="col-form-label text-md-end text-muted col-md-2 col-lg-4">
-          Name
-        </label>
+        <label class="p-1" for="cocktailName">Name</label>
+
         <div class="col-md-10 col-lg-8"
         >
           <input type="text"
@@ -28,10 +27,11 @@
 
 
   <div class="row">
-    <label class="label-search-ing-pref">Ingredients</label>
+    <label class="p-1" for="ingredientSelection">Ingredients</label>
     <!-- Search-field for Ingredients -->
     <div class="">
       <app-autocomplete #ingredientAutocomplete
+                        id="ingredientSelection"
                         name="ingredientsSelection"
                         textInputClass="form-control"
                         [placeholderText]="'Search for Ingredients'"
@@ -51,21 +51,21 @@
           <th>Amount</th>
         </thead>
         <tbody>
-        <tr *ngFor="let selected of selectedIngredients; index as i" class=" w-full border-b py-2">
-          <td>{{ selected }}</td>
+        <tr *ngFor="let selected of selectedIngredientsMap | keyvalue; index as i" class=" w-full border-b py-2">
+          <td>{{ selected.value.name }}</td>
           <td class="d-flex flex-row">
-            <input type="number" style="max-width: 20%"/>
-            <select class="form-select m-1" name="measure" id="" >
-              <option selected value="1">parts</option>
-              <option value="2">cl</option>
-              <option value="3">oz</option>
-              <option value="4">dash</option>
-              <option value="5">tsp</option>
-              <option value="6">fill</option>
+            <input type="number" style="max-width: 20%" [(ngModel)]="selected.value.amount" [ngModelOptions]="{standalone: true}"/>
+            <select class="form-select m-1" id=i [(ngModel)]="selected.value.measure" [ngModelOptions]="{standalone: true}">
+              <option value="parts">parts</option>
+              <option value="cl">cl</option>
+              <option value="oz">oz</option>
+              <option value="dash">dash</option>
+              <option value="tsp">tsp</option>
+              <option value="fill">fill</option>
             </select>
           </td>
           <td>
-            <i class="bi bi-dash-circle remove-item" (click)="removeIngredient(i)"></i>
+            <i class="bi bi-dash-circle remove-item" (click)="removeIngredient(selected.key)"></i>
           </td>
         </tr>
         </tbody>
@@ -89,7 +89,7 @@
             class="btn btn-primary"
             [disabled]="!form.valid"
     >
-      {{ submitButtonText }}
+      Create
     </button>
   </div>
 </form>
